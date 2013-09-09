@@ -38,7 +38,7 @@ Parsing is currently limited to CIDR, country, description, name, and state fiel
 
 Some IPs have parent networks listed. The parser attempts to recognize this, and break the networks into individual dictionaries.
 
-Sometimes, you will see whois information with multiple consecutive same name fields, e.g., Description: some text\nDescription: more text. The parser will recognize this and the returned result will have these separated by '\n'.
+Sometimes, you will see whois information with multiple consecutive same name fields, e.g., Description: some text\\nDescription: more text. The parser will recognize this and the returned result will have these separated by '\\n'.
 
 Future Plans
 ============
