@@ -19,7 +19,7 @@ KEYWORDS = [
     "IETF",
 ]
 
-README = open('README.txt').read()
+README = open('README.rst').read()
 
 LICENSE = open('LICENSE.txt').read()
 
