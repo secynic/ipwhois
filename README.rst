@@ -6,6 +6,9 @@ ipwhois is a simple package for retrieving and parsing whois data for IPv4 and I
 
 This version requires Python 3.3 (for the ipaddress library) and dnspython3. Other Python version support is planned.
 
+Usage Examples
+==============
+
 Typical usage::
 
     >>>> import ipwhois
@@ -30,13 +33,24 @@ Typical usage::
 	'query': '74.125.225.229',
 	'raw': None
 	}
+	
+Countries::
 
+	>>>> import ipwhois
+	
+	>>>> countries = ipwhois.get_countries()
+	>>>> obj = ipwhois.IPWhois("74.125.225.229")
+	>>>> results = obj.lookup(False)
+	>>>> print(countries[results['nets'][0]['country']])
+
+	United States
+	
 Parsing
 =======
 
 Parsing is currently limited to CIDR, country, description, name, and state fields. This is assuming that those fields are present.
 
-Some IPs have parent networks listed. The parser attempts to recognize this, and break the networks into individual dictionaries.
+Some IPs have parent networks listed. The parser attempts to recognize this, and break the networks into individual dictionaries. If a single network has multiple CIDRs, they will be separated by ', '.
 
 Sometimes, you will see whois information with multiple consecutive same name fields, e.g., Description: some text\\nDescription: more text. The parser will recognize this and the returned result will have these separated by '\\n'.
 
