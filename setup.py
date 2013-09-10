@@ -19,12 +19,13 @@ KEYWORDS = [
     "IETF",
 ]
 
-README = open('README.rst').read()
+LONG_DESCRIPTION = '\n\n'.join([open('README.rst').read(),
+                                open('CHANGES.rst').read()])
 
 LICENSE = open('LICENSE.txt').read()
 
 URL = "https://github.com/secynic/ipwhois"
-DOWNLOAD_URL = "https://pypi.python.org/packages/source/p/ipwhois"
+DOWNLOAD_URL = "https://github.com/secynic/ipwhois/tarball/master"
 CLASSIFIERS = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
@@ -51,7 +52,7 @@ setup(
     author_email=AUTHOR_EMAIL,
     description=DESCRIPTION,
     keywords=KEYWORDS,
-    long_description=README,
+    long_description=LONG_DESCRIPTION,
     license=LICENSE,
     url=URL,
     download_url=DOWNLOAD_URL,

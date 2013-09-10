@@ -21,10 +21,11 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-__version__ = '0.1.1'
+__version__ = '0.1.2'
 
 import ipaddress, socket, urllib.request, dns.resolver, re
 from xml.dom.minidom import parseString
+from os import path
 
 IETF_RFC_REFERENCES = {
                     #IPv4
@@ -116,7 +117,7 @@ def get_countries():
     try:
         
         #Create the country codes file object.
-        f = open("iso_3166-1_list_en.xml", "r")
+        f = open(str(path.dirname(__file__)) + "/iso_3166-1_list_en.xml", "r")
         
         #Read the file.
         data = f.read()
@@ -283,7 +284,7 @@ def ipv6_is_defined(address):
 
 class IPDefinedError(Exception):
     """
-    An Exception for when the ASN lookup failed.
+    An Exception for when the IP is defined (does not need to be resolved).
     """
     
 class ASNLookupError(Exception):
@@ -504,11 +505,11 @@ class IPWhois():
                     
                     if "," in match.group(1):
                         
-                        iter = match.group(1).split(", ")
+                        cidrs = match.group(1).split(", ")
                         
-                        for i in iter:
+                        for c in cidrs:
                             
-                            ipaddress.ip_network(i.strip())
+                            ipaddress.ip_network(c.strip())
                             
                         cidr = match.group(1).strip()
                         
@@ -553,13 +554,13 @@ class IPWhois():
                 
                 try:
                     
-                    iter = []
+                    addrs = []
                     if match.group(3) and match.group(4):
                         
-                        iter.extend(ipaddress.summarize_address_range(ipaddress.ip_address(match.group(3).strip()), ipaddress.ip_address(match.group(4).strip())))
+                        addrs.extend(ipaddress.summarize_address_range(ipaddress.ip_address(match.group(3).strip()), ipaddress.ip_address(match.group(4).strip())))
                         
                         temp = []
-                        for i in ipaddress.collapse_addresses(iter):
+                        for i in ipaddress.collapse_addresses(addrs):
                             
                             temp.append(i.__str__())
                             
