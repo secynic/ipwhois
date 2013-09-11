@@ -21,7 +21,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-__version__ = '0.1.2'
+__version__ = '0.1.3'
 
 import ipaddress, socket, urllib.request, dns.resolver, re
 from xml.dom.minidom import parseString
@@ -360,6 +360,166 @@ class IPWhois():
             
             self.dns_zone = IPV6_DNS_ZONE.format(self.reversed)
     
+    def get_asn_dns(self):
+        """
+        The function for retrieving ASN information for an IP address from Cymru via port 53 (DNS).
+        
+        Returns:
+            Dictionary: A dictionary containing the following keys:
+                    asn (String) - The Autonomous System Number.
+                    asn_date (String) - The ASN Allocation date.
+                    asn_registry (String) - The assigned ASN registry.
+                    asn_cidr (String) - The assigned ASN CIDR.
+                    asn_country_code (String) - The assigned ASN country code.
+        """
+        
+        try:
+            
+            data = dns.resolver.query(self.dns_zone, "TXT")
+            
+            #Parse out the ASN information.
+            temp = str(data[0]).split("|")
+            
+            ret = {}
+            
+            ret['asn'] = temp[0].strip(' "\n')
+            ret['asn_cidr'] = temp[1].strip(" \n")
+            ret['asn_country_code'] = temp[2].strip(" \n").upper()
+            ret['asn_registry'] = temp[3].strip(" \n")
+            ret['asn_date'] = temp[4].strip(' "\n')
+            
+            return ret
+        
+        except:
+            
+            return None
+        
+    def get_asn_whois(self, retry_count = 3):
+        """
+        The function for retrieving ASN information for an IP address from Cymru via port 43 (WHOIS).
+        
+        Args:
+            retry_count: The number of times to retry in case socket errors, timeouts, connection resets, etc. are encountered.
+    
+        Returns:
+            Dictionary: A dictionary containing the following keys:
+                    asn (String) - The Autonomous System Number.
+                    asn_date (String) - The ASN Allocation date.
+                    asn_registry (String) - The assigned ASN registry.
+                    asn_cidr (String) - The assigned ASN CIDR.
+                    asn_country_code (String) - The assigned ASN country code.
+        """
+        
+        try:
+            
+            #Create the connection for the Cymru whois query.
+            conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            conn.connect((CYMRU_WHOIS, 43))
+            
+            #Query the Cymru whois server, and store the results.  
+            conn.send((" -r -a -c -p -f -o " + self.address_str + "\r\n").encode())
+            
+            data = ''
+            while True:
+                
+                d = conn.recv(4096).decode()
+                data += d
+                
+                if not d:
+                    
+                    break
+                
+            conn.close()
+            
+            #Parse out the ASN information.
+            temp = str(data).split("|")
+            
+            ret = {}
+            
+            ret['asn'] = temp[0].strip(" \n")
+            ret['asn_cidr'] = temp[2].strip(" \n")
+            ret['asn_country_code'] = temp[3].strip(" \n").upper()
+            ret['asn_registry'] = temp[4].strip(" \n")
+            ret['asn_date'] = temp[5].strip(" \n")
+            
+            return ret
+        
+        except (socket.timeout, socket.error):
+            
+            if retry_count > 0:
+                
+                return self.get_asn_whois(retry_count - 1)
+            
+            else:
+                
+                return None
+            
+        except:
+
+            return None
+        
+    def get_whois(self, asn_registry = 'arin', retry_count = 3):
+        """
+        The function for retrieving whois information for an IP address via port 43 (WHOIS).
+        
+        Args:
+            asn_registry: The NIC to run the query against.
+            retry_count: The number of times to retry in case socket errors, timeouts, connection resets, etc. are encountered.
+    
+        Returns:
+            String: The raw whois data.
+        """
+        
+        try:
+            
+            #Create the connection for the whois query.
+            conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            conn.connect((NIC_WHOIS[asn_registry]["server"], 43))
+            
+            #Prep the query.
+            query = self.address_str + "\r\n"
+            if asn_registry == "arin":
+                
+                query = "n + " + query
+            
+            #Query the whois server, and store the results.  
+            conn.send((query).encode())
+            
+            response = ''
+            while True:
+                
+                if asn_registry == "lacnic":
+                    
+                    d = conn.recv(4096).decode("latin-1")
+                    
+                else:
+                    
+                    d = conn.recv(4096).decode()
+                    
+                response += d
+                
+                if not d:
+                    
+                    break
+                
+            conn.close()
+            
+            return response
+    
+        except (socket.timeout, socket.error):
+            
+            if retry_count > 0:
+                
+                return self.get_whois(asn_registry, retry_count - 1)
+            
+            else:
+                
+                return None
+            
+        except:
+
+            return None
+        
     def lookup(self, inc_raw = False):
         """
         The function for retrieving and parsing whois information for an IP address via port 43 (WHOIS).
@@ -381,101 +541,29 @@ class IPWhois():
                     raw (String) - Raw whois results if the inc_raw parameter is True.
         """
         
-        #First attempt to resolve ASN info via Cymru DNS (Faster).  
-        try:
-            
-            for rdata in dns.resolver.query(self.dns_zone, "TXT"):
-                
-                #Attempt to parse out the ASN information.
-                split = str(rdata).split("|")
-                
-                asn = split[0].strip(' "\n')
-                asn_cidr = split[1].strip(" \n")
-                asn_country_code = split[2].strip(" \n")
-                asn_registry = split[3].strip(" \n")
-                asn_date = split[4].strip(' "\n')
-                
-                break
+        #Attempt to resolve ASN info via Cymru. DNS is faster, so try that first.
+        asn_data = self.get_asn_dns()
         
-        #DNS ASN info resolution failed, try via Cymru whois.
-        #except (dns.resolver.NXDOMAIN, dns.resolver.Timeout):
-        except:
-               
-            try:
-                
-                conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                conn.connect((CYMRU_WHOIS, 43))
-                
-                conn.send((" -r -a -c -p -f -o " + self.address_str + "\r\n").encode())
-                
-                rdata = ''
-                while True:
-                    
-                    d = conn.recv(4096).decode()
-                    rdata += d
-                    
-                    if not d:
-                        
-                        break
-                    
-                conn.close()
-                
-                #Attempt to parse out the ASN information.
-                split = str(rdata).split("|")
-    
-                asn = split[0].strip(" \n")
-                asn_cidr = split[2].strip(" \n")
-                asn_country_code = split[3].strip(" \n")
-                asn_registry = split[4].strip(" \n")
-                asn_date = split[5].strip(" \n")
-    
-            except:
+        if asn_data is None:
+
+            asn_data = self.get_asn_whois()
+            
+            if asn_data is None:
                 
                 raise ASNLookupError('ASN lookup failed for %r.' % self.address_str) 
         
         #Create the return dictionary.   
         results = {
                    "query": self.address_str,
-                   "asn": asn,
-                   "asn_date": asn_date,
-                   "asn_registry": asn_registry,
-                   "asn_cidr": asn_cidr,
-                   "asn_country_code": asn_country_code,
                    "nets": [],
                    "raw": None
         }
         
-        #Create the connection for the whois query.
-        conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        conn.connect((NIC_WHOIS[asn_registry]["server"], 43))
+        #Add the ASN information to the return dictionary.
+        results.update(asn_data)
         
-        #Prep the query.
-        query = self.address_str + "\r\n"
-        if asn_registry == "arin":
-            
-            query = "n + " + query
-        
-        #Query the whois server, and store the results.  
-        conn.send((query).encode())
-        
-        response = ''
-        while True:
-            
-            if asn_registry == "lacnic":
-                
-                d = conn.recv(4096).decode("latin-1")
-                
-            else:
-                
-                d = conn.recv(4096).decode()
-                
-            response += d
-            
-            if not d:
-                
-                break
-            
-        conn.close()
+        #Retrieve the whois data.
+        response = self.get_whois(results['asn_registry'])
         
         #If the inc_raw parameter is True, add the response to the return dictionary.
         if inc_raw:
@@ -496,7 +584,7 @@ class IPWhois():
         
         nets = []
         
-        if asn_registry == "arin": 
+        if results['asn_registry'] == "arin": 
             
             #Iterate through all of the networks found, storing the CIDR value and the start and end positions.
             for match in re.finditer(r"^CIDR:[^\S\n]+(.+?,[^\S\n].+|.+)$", response, re.MULTILINE):
@@ -528,7 +616,7 @@ class IPWhois():
                     pass
         
         #Future fix: LACNIC has to be special and shorten inetnum field (no validity testing done for these).
-        elif asn_registry == "lacnic":
+        elif results['asn_registry'] == "lacnic":
             
             #Iterate through all of the networks found, storing the CIDR value and the start and end positions.
             for match in re.finditer(r"^(inetnum|inet6num):[^\S\n]+(.+?,[^\S\n].+|.+)$", response, re.MULTILINE):
@@ -588,9 +676,9 @@ class IPWhois():
                 
                 end = nets[index + 1]["start"]
             
-            for field in NIC_WHOIS[asn_registry]["fields"]:
+            for field in NIC_WHOIS[results['asn_registry']]["fields"]:
 
-                pattern = re.compile(r"" + NIC_WHOIS[asn_registry]["fields"][field], re.MULTILINE)
+                pattern = re.compile(r"" + NIC_WHOIS[results['asn_registry']]["fields"][field], re.MULTILINE)
             
                 if end:
                     
@@ -620,6 +708,10 @@ class IPWhois():
                     
                 if value != "":
                     
+                    if field == "country":
+                        
+                        value = value.upper()
+                        
                     net[field] = value
             
             #The start and end values are no longer needed.
