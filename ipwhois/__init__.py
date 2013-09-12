@@ -21,7 +21,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-__version__ = '0.1.3'
+__version__ = '0.1.4'
 
 import ipaddress, socket, urllib.request, dns.resolver, re
 from xml.dom.minidom import parseString
@@ -109,6 +109,9 @@ IPV6_DNS_ZONE = "{0}.origin6.asn.cymru.com"
 def get_countries():
     """
     The function to generate a dictionary containing ISO_3166-1 country codes to names.
+    
+    Returns:
+        Dictionary: A dictionary with the country codes as the keys and the country names as the values.
     """
 
     #Initialize the countries dictionary.
@@ -300,10 +303,13 @@ class IPWhois():
         address: An IPv4 or IPv6 address in string format.
     """
     
-    def __init__(self, address):
+    def __init__(self, address, timeout = 5):
         
         #IPv4Address or IPv6Address, use ipaddress package exception handling.
         self.address = ipaddress.ip_address(address)
+        
+        #Default timeout for socket connections.
+        self.timeout = timeout
         
         #IP address in string format for use in queries.
         self.address_str = self.address.__str__()
@@ -379,13 +385,18 @@ class IPWhois():
             
             #Parse out the ASN information.
             temp = str(data[0]).split("|")
-            
+
             ret = {}
+            
+            ret['asn_registry'] = temp[3].strip(" \n")
+            
+            if ret['asn_registry'] not in NIC_WHOIS.keys():
+                
+                return None
             
             ret['asn'] = temp[0].strip(' "\n')
             ret['asn_cidr'] = temp[1].strip(" \n")
             ret['asn_country_code'] = temp[2].strip(" \n").upper()
-            ret['asn_registry'] = temp[3].strip(" \n")
             ret['asn_date'] = temp[4].strip(' "\n')
             
             return ret
@@ -414,6 +425,7 @@ class IPWhois():
             
             #Create the connection for the Cymru whois query.
             conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            conn.settimeout(self.timeout)
             conn.connect((CYMRU_WHOIS, 43))
             
             #Query the Cymru whois server, and store the results.  
@@ -436,10 +448,15 @@ class IPWhois():
             
             ret = {}
             
+            ret['asn_registry'] = temp[4].strip(" \n")
+            
+            if ret['asn_registry'] not in NIC_WHOIS.keys():
+                
+                return None
+            
             ret['asn'] = temp[0].strip(" \n")
             ret['asn_cidr'] = temp[2].strip(" \n")
             ret['asn_country_code'] = temp[3].strip(" \n").upper()
-            ret['asn_registry'] = temp[4].strip(" \n")
             ret['asn_date'] = temp[5].strip(" \n")
             
             return ret
@@ -474,6 +491,7 @@ class IPWhois():
             
             #Create the connection for the whois query.
             conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            conn.settimeout(self.timeout)
             conn.connect((NIC_WHOIS[asn_registry]["server"], 43))
             
             #Prep the query.
@@ -488,13 +506,7 @@ class IPWhois():
             response = ''
             while True:
                 
-                if asn_registry == "lacnic":
-                    
-                    d = conn.recv(4096).decode("latin-1")
-                    
-                else:
-                    
-                    d = conn.recv(4096).decode()
+                d = conn.recv(4096).decode("utf-8", "ignore")
                     
                 response += d
                 

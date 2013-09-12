@@ -4,7 +4,7 @@ ipwhois
 
 ipwhois is a simple package for retrieving and parsing whois data for IPv4 and IPv6 addresses. This code was quickly thrown together to demonstrate functionality, and is by no means optimized or fully featured. 
 
-This version requires Python 3.3 (for the ipaddress library) and dnspython3. Other Python version support is planned.
+This version requires Python 3.3+ (for the ipaddress library) and dnspython3. Other Python version support is planned.
 
 Usage Examples
 ==============

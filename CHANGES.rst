@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.1.4 (2013-09-12)
+------------------
+
+- Added validity checks for the asn_registry value due to a bug in the Team Cymru ASN lookup over night.
+- Added timeout argument to IPWhois(). This is the default timeout in seconds for socket connections.
+- Fixed decoding issue in IPWhois.get_whois().
+
 0.1.3 (2013-09-11)
 ------------------
 
