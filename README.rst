@@ -44,6 +44,17 @@ Countries::
 	>>>> print(countries[results['nets'][0]['country']])
 
 	United States
+
+Installing
+==========
+
+Latest version from PyPi::
+
+	pip install ipwhois
+
+Latest version from GitHub::
+
+	pip install -e git+https://github.com/secynic/ipwhois@master#egg=ipwhois
 	
 Parsing
 =======
@@ -53,8 +64,3 @@ Parsing is currently limited to CIDR, country, description, name, and state fiel
 Some IPs have parent networks listed. The parser attempts to recognize this, and break the networks into individual dictionaries. If a single network has multiple CIDRs, they will be separated by ', '.
 
 Sometimes, you will see whois information with multiple consecutive same name fields, e.g., Description: some text\\nDescription: more text. The parser will recognize this and the returned result will have these separated by '\\n'.
-
-Future Plans
-============
-
-IPWhois.httplookup() - Allow parsing of Whois data via RWS feeds from the various NICs. This feature is useful when outbound port 43 is not available. Only ARIN and RIPE have Whois-RWS services at the time of this writing. Although RIPE does have a feature that integrates the other NICs, they are limited on the types of information that is allowed to be displayed. Additionally, as part of this feature, proxy support will also be added.

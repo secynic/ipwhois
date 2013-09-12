@@ -21,11 +21,12 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-__version__ = '0.1.4'
+__version__ = '0.1.5'
 
-import ipaddress, socket, urllib.request, dns.resolver, re
+import ipaddress, socket, dns.resolver, re
 from xml.dom.minidom import parseString
 from os import path
+from urllib import request
 
 IETF_RFC_REFERENCES = {
                     #IPv4
@@ -47,56 +48,58 @@ IETF_RFC_REFERENCES = {
                     "RFC 4291, Section 2.5.7": "http://tools.ietf.org/html/rfc4291#section-2.5.7",
                     "RFC 4193": "https://tools.ietf.org/html/rfc4193"
                      }
-
-NIC_URLS = {
-            "arin": "http://whois.arin.net/rest/nets;q={0}?showDetails=true&showARIN=true",
-            "ripencc": "http://apps.db.ripe.net/whois/grs-search.xml?query-string={0}&source=ripe-grs", 
-            "apnic": "http://apps.db.ripe.net/whois/grs-search.xml?query-string={0}&source=apnic-grs",
-            "lacnic": "http://apps.db.ripe.net/whois/grs-search.xml?query-string={0}&source=lacnic-grs",
-            "afrinic": "http://apps.db.ripe.net/whois/grs-search.xml?query-string={0}&source=afrinic-grs"
-            }
     
 NIC_WHOIS = {
             "arin": {
                      "server": "whois.arin.net",
+                     "url": "http://whois.arin.net/rest/nets;q={0}?showDetails=true&showARIN=true",
                      "fields": {
                                 "name": "^(NetName):[^\S\n]+(.+)$",
                                 "description": "^(OrgName|CustName):[^\S\n]+(.+)$",
                                 "country": "^(Country):[^\S\n]+(.+)$",
                                 "state": "^(StateProv):[^\S\n]+(.+)$",
                                 "city": "^(City):[^\S\n]+(.+)$"
-                                }
+                                },
+                     "fields_rws": {}
                      },
             "ripencc": {
                      "server": "whois.ripe.net",
+                     "url": "http://apps.db.ripe.net/whois/grs-search.xml?query-string={0}&source=ripe-grs", 
                      "fields": {
                                 "name": "^(netname):[^\S\n]+(.+)$",
                                 "description": "^(descr):[^\S\n]+(.+)$",
                                 "country": "^(country):[^\S\n]+(.+)$"
-                                }
+                                },
+                     "fields_rws": {}
                      },
             "apnic": {
                      "server": "whois.apnic.net",
+                     "url": "http://apps.db.ripe.net/whois/grs-search.xml?query-string={0}&source=apnic-grs", 
                      "fields": {
                                 "name": "^(netname):[^\S\n]+(.+)$",
                                 "description": "^(descr):[^\S\n]+(.+)$",
                                 "country": "^(country):[^\S\n]+(.+)$"
-                                }
+                                },
+                     "fields_rws": {}
                      },
             "lacnic": {
                      "server": "whois.lacnic.net",
+                     "url": "http://apps.db.ripe.net/whois/grs-search.xml?query-string={0}&source=lacnic-grs", 
                      "fields": {
                                 "description": "^(owner):[^\S\n]+(.+)$",
                                 "country": "^(country):[^\S\n]+(.+)$"
-                                }
+                                },
+                     "fields_rws": {}
                      },
             "afrinic": {
                      "server": "whois.afrinic.net",
+                     "url": "http://apps.db.ripe.net/whois/grs-search.xml?query-string={0}&source=afrinic-grs", 
                      "fields": {
                                 "name": "^(netname):[^\S\n]+(.+)$",
                                 "description": "^(descr):[^\S\n]+(.+)$",
                                 "country": "^(country):[^\S\n]+(.+)$"
-                                }
+                                },
+                     "fields_rws": {}
                      }
             }
     
@@ -105,7 +108,47 @@ CYMRU_WHOIS = "whois.cymru.com"
 IPV4_DNS_ZONE = "{0}.origin.asn.cymru.com"
 
 IPV6_DNS_ZONE = "{0}.origin6.asn.cymru.com"
-     
+
+def set_proxy(host = None, port = "80", username = None, password = None):
+    """
+    The function to set proxy settings for urllib.request.urlopen().
+    
+    Args:
+        host: The proxy address.
+        port: The proxy port.
+        username: The username to authenticate against the proxy.
+        password: The password to authenticate against the proxy.
+    """
+    
+    #Define the host URL from the schema, host, and port.
+    url = "http://" + host + ":" + port + "/"
+    
+    #Create the proxy handler.
+    handler = request.ProxyHandler({'http': url})
+    
+    #If the proxy user and password are defined.
+    if username is not None and password is not None:
+        
+        #Create the proxy authentication handler.
+        auth_handler = request.ProxyBasicAuthHandler()
+        
+        #Add the user and password to the proxy authentication handler.
+        auth_handler.add_password(None, url, username, password)
+    
+    #If the proxy authentication handler is defined.
+    if auth_handler is not None:
+        
+        #Create the proxy opener with the authentication handler.
+        opener = request.build_opener(handler, auth_handler)
+        
+    else:
+        
+        #Create the proxy opener excluding an authentication handler.
+        opener = request.build_opener(handler)
+    
+    #Install the proxy opener.  
+    request.install_opener(opener)
+                
 def get_countries():
     """
     The function to generate a dictionary containing ISO_3166-1 country codes to names.
@@ -733,3 +776,24 @@ class IPWhois():
         results["nets"] = nets
 
         return results
+    
+    def lookup_rws(self, inc_raw = False):
+        """
+        The function for retrieving and parsing whois information for an IP address via HTTP (Whois-RWS).
+        
+        Args:
+            inc_raw: Boolean for whether to include the raw whois results in the returned dictionary.
+    
+        Returns:
+            Dictionary: A dictionary containing the following keys:
+                    query (String) - The IP address.
+                    asn (String) - The Autonomous System Number.
+                    asn_date (String) - The ASN Allocation date.
+                    asn_registry (String) - The assigned ASN registry.
+                    asn_cidr (String) - The assigned ASN CIDR.
+                    asn_country_code (String) - The assigned ASN country code.
+                    nets (List) - Dictionaries containing network information which consists of the RWS fields 
+                                listed in the NIC_WHOIS dictionary. Certain IPs have more granular network listings, 
+                                hence the need for a list object.
+                    raw (String) - Raw whois results if the inc_raw parameter is True.
+        """

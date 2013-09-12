@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.1.5 ()
+------------------
+
+- Added set_proxy() function for proxy support in Whois-RWS queries.
+- Added IPWhois.lookup_rws() function for Whois-RWS queries.
+
 0.1.4 (2013-09-12)
 ------------------
 
