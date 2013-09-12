@@ -120,13 +120,13 @@ def set_proxy(host = None, port = "80", username = None, password = None):
         password: The password to authenticate against the proxy.
     """
     
-    #Define the host URL from the schema, host, and port.
+    #Define the host URL from the host and port.
     url = "http://" + host + ":" + port + "/"
     
     #Create the proxy handler.
     handler = request.ProxyHandler({'http': url})
     
-    #If the proxy user and password are defined.
+    #If the proxy username and password are defined.
     if username is not None and password is not None:
         
         #Create the proxy authentication handler.
