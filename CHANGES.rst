@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.1.5 ()
+0.1.5 (2013-09-13)
 ------------------
 
 - Added set_proxy() function for proxy support in Whois-RWS queries.
