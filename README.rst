@@ -18,8 +18,8 @@ Typical usage::
     >>>> results = obj.lookup(False)
     >>>> pprint(results)
     
-    {
-    'asn': '15169',
+	{
+	'asn': '15169',
 	'asn_cidr': '74.125.225.0/24',
 	'asn_country_code': 'US',
 	'asn_date': '2007-03-13',
@@ -37,12 +37,12 @@ Typical usage::
 REST (HTTP)::
 
 	>>>> import ipwhois
-    >>>> from pprint import pprint
-    
-    >>>> obj = ipwhois.IPWhois("74.125.225.229")
-    >>>> results = obj.lookup_rws(False)
-    >>>> pprint(results)
-    
+	>>>> from pprint import pprint
+	
+	>>>> obj = ipwhois.IPWhois("74.125.225.229")
+	>>>> results = obj.lookup_rws(False)
+	>>>> pprint(results)
+	
 	{
 	'asn': '15169',
 	'asn_cidr': '74.125.225.0/24',
