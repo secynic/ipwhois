@@ -11,13 +11,13 @@ Usage Examples
 
 Typical usage::
 
-    >>>> import ipwhois
-    >>>> from pprint import pprint
-    
-    >>>> obj = ipwhois.IPWhois("74.125.225.229")
-    >>>> results = obj.lookup(False)
-    >>>> pprint(results)
-    
+	>>>> import ipwhois
+	>>>> from pprint import pprint
+	
+	>>>> obj = ipwhois.IPWhois("74.125.225.229")
+	>>>> results = obj.lookup(False)
+	>>>> pprint(results)
+	
 	{
 	'asn': '15169',
 	'asn_cidr': '74.125.225.0/24',
