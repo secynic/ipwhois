@@ -17,6 +17,13 @@ KEYWORDS = [
     "IPv4",
     "IPv6",
     "IETF",
+    "REST",
+    "Arin",
+    "Ripe",
+    "Apnic",
+    "Lacnic",
+    "Afrinic",
+    "NIC"
 ]
 
 LONG_DESCRIPTION = '\n\n'.join([open('README.rst').read(),
@@ -32,6 +39,7 @@ CLASSIFIERS = [
     "Intended Audience :: Information Technology",
     "License :: OSI Approved :: BSD License",
     "Operating System :: OS Independent",
+    "Programming Language :: Python",
     "Programming Language :: Python :: 3.3",
     "Topic :: Internet",
     "Topic :: Software Development",
