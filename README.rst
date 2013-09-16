@@ -15,7 +15,7 @@ Typical usage::
 	>>>> from pprint import pprint
 	
 	>>>> obj = ipwhois.IPWhois('74.125.225.229')
-	>>>> results = obj.lookup(False)
+	>>>> results = obj.lookup()
 	>>>> pprint(results)
 	
 	{
@@ -42,7 +42,7 @@ REST (HTTP)::
 	>>>> from pprint import pprint
 	
 	>>>> obj = ipwhois.IPWhois('74.125.225.229')
-	>>>> results = obj.lookup_rws(False)
+	>>>> results = obj.lookup_rws()
 	>>>> pprint(results)
 	
 	{
@@ -51,15 +51,7 @@ REST (HTTP)::
 	'asn_country_code': 'US',
 	'asn_date': '2007-03-13',
 	'asn_registry': 'arin',
-	'nets': [{'address': '3635 Concorde Parkway\nSuite 200',
-	          'cidr': '74.0.0.0/8',
-	          'city': 'Chantilly',
-	          'country': 'US',
-	          'description': 'American Registry for Internet Numbers',
-	          'name': 'NET74',
-	          'postal_code': '20151',
-	          'state': 'VA'},
-	         {'address': '1600 Amphitheatre Parkway',
+	'nets': [{'address': '1600 Amphitheatre Parkway',
 	          'cidr': '74.125.0.0/16',
 	          'city': 'Mountain View',
 	          'country': 'US',
@@ -112,7 +104,7 @@ Latest version from GitHub::
 Parsing
 =======
 
-Parsing is currently limited to CIDR, country, description, name, state, city, address, and postal_code fields. This is assuming that those fields are present.
+Parsing is currently limited to CIDR, country, name, description, state, city, address, and postal_code fields. This is assuming that those fields are present.
 
 Some IPs have parent networks listed. The parser attempts to recognize this, and break the networks into individual dictionaries. If a single network has multiple CIDRs, they will be separated by ', '.
 
