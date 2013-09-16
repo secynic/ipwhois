@@ -21,7 +21,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-__version__ = '0.1.6'
+__version__ = '0.1.7'
 
 import ipaddress, socket, dns.resolver, re, json
 from xml.dom.minidom import parseString
@@ -128,7 +128,7 @@ def set_proxy(host = None, port = '80', username = None, password = None):
     auth_handler = None
     
     #If the proxy username and password are defined.
-    if username and password:
+    if username is not None and password is not None:
         
         #Create the proxy authentication handler.
         auth_handler = request.ProxyBasicAuthHandler()
@@ -137,7 +137,7 @@ def set_proxy(host = None, port = '80', username = None, password = None):
         auth_handler.add_password(None, url, username, password)
     
     #If the proxy authentication handler is defined.
-    if auth_handler:
+    if auth_handler is not None:
         
         #Create the proxy opener with the authentication handler.
         opener = request.build_opener(handler, auth_handler)
@@ -909,7 +909,7 @@ class IPWhois():
         if not response:
             
             response = self.get_rws('http://apps.db.ripe.net/whois/grs-search?query-string={0}&source=radb-grs'.format(self.address_str))
-           
+
         #If the inc_raw parameter is True, add the response to the return dictionary.
         if inc_raw:
             
@@ -933,7 +933,13 @@ class IPWhois():
             
             try:
                 
-                for n in response['nets']['net']:
+                net_list = response['nets']['net']
+                
+                if not isinstance(net_list, list):
+                    
+                    net_list = [net_list]
+                                    
+                for n in net_list:
                     
                     if 'orgRef' in n and n['orgRef']['@handle'] in ('ARIN', 'VR-ARIN'):
                         
