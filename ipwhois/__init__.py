@@ -935,6 +935,10 @@ class IPWhois():
                 
                 for n in response['nets']['net']:
                     
+                    if 'orgRef' in n and n['orgRef']['@handle'] in ('ARIN', 'VR-ARIN'):
+                        
+                        continue
+                            
                     addrs = []
                     addrs.extend(ipaddress.summarize_address_range(ipaddress.ip_address(n['startAddress']['$'].strip()), ipaddress.ip_address(n['endAddress']['$'].strip())))
                         

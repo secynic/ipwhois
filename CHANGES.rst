@@ -5,6 +5,7 @@ Changelog
 ------------------
 
 - Fixed bug in set_proxy().
+- Removed ARIN top level network entries from return dictionary of IPWhois.lookup_rws()
 
 0.1.6 (2013-09-16)
 ------------------
