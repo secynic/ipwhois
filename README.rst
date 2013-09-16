@@ -14,7 +14,7 @@ Typical usage::
 	>>>> import ipwhois
 	>>>> from pprint import pprint
 	
-	>>>> obj = ipwhois.IPWhois("74.125.225.229")
+	>>>> obj = ipwhois.IPWhois('74.125.225.229')
 	>>>> results = obj.lookup(False)
 	>>>> pprint(results)
 	
@@ -24,11 +24,13 @@ Typical usage::
 	'asn_country_code': 'US',
 	'asn_date': '2007-03-13',
 	'asn_registry': 'arin',
-	'nets': [{'cidr': '74.125.0.0/16',
+	'nets': [{'address': '1600 Amphitheatre Parkway',
+	          'cidr': '74.125.0.0/16',
 	          'city': 'Mountain View',
 	          'country': 'US',
 	          'description': 'Google Inc.',
 	          'name': 'GOOGLE',
+	          'postal_code': '94043',
 	          'state': 'CA'}],
 	'query': '74.125.225.229',
 	'raw': None
@@ -39,7 +41,7 @@ REST (HTTP)::
 	>>>> import ipwhois
 	>>>> from pprint import pprint
 	
-	>>>> obj = ipwhois.IPWhois("74.125.225.229")
+	>>>> obj = ipwhois.IPWhois('74.125.225.229')
 	>>>> results = obj.lookup_rws(False)
 	>>>> pprint(results)
 	
@@ -49,17 +51,21 @@ REST (HTTP)::
 	'asn_country_code': 'US',
 	'asn_date': '2007-03-13',
 	'asn_registry': 'arin',
-	'nets': [{'cidr': '74.0.0.0/8',
+	'nets': [{'address': '3635 Concorde Parkway\nSuite 200',
+	          'cidr': '74.0.0.0/8',
 	          'city': 'Chantilly',
 	          'country': 'US',
 	          'description': 'American Registry for Internet Numbers',
 	          'name': 'NET74',
+	          'postal_code': '20151',
 	          'state': 'VA'},
-	         {'cidr': '74.125.0.0/16',
+	         {'address': '1600 Amphitheatre Parkway',
+	          'cidr': '74.125.0.0/16',
 	          'city': 'Mountain View',
 	          'country': 'US',
 	          'description': 'Google Inc.',
 	          'name': 'GOOGLE',
+	          'postal_code': '94043',
 	          'state': 'CA'}],
 	'query': '74.125.225.229',
 	'raw': None
@@ -68,14 +74,25 @@ REST (HTTP)::
 Proxy (Optional before ipwhois.IPWhois.lookup_rws())::
 
 	>>>> import ipwhois
-	>>>> ipwhois.set_proxy("192.168.0.1", "80", "some_username", "some_password")
+	>>>> ipwhois.set_proxy('192.168.0.1', '80', 'some_username', 'some_password')
+
+Hostname::
+
+	>>>> import ipwhois
+	>>>> from pprint import pprint
 	
+	>>>> obj = ipwhois.IPWhois('74.125.225.229')
+	>>>> results = obj.get_host()
+	>>>> pprint(results)
+	
+	('dfw06s26-in-f5.1e100.net', [], ['74.125.225.229'])
+		
 Countries::
 
 	>>>> import ipwhois
 	
 	>>>> countries = ipwhois.get_countries()
-	>>>> obj = ipwhois.IPWhois("74.125.225.229")
+	>>>> obj = ipwhois.IPWhois('74.125.225.229')
 	>>>> results = obj.lookup(False)
 	>>>> print(countries[results['nets'][0]['country']])
 
@@ -95,7 +112,7 @@ Latest version from GitHub::
 Parsing
 =======
 
-Parsing is currently limited to CIDR, country, description, name, and state fields. This is assuming that those fields are present.
+Parsing is currently limited to CIDR, country, description, name, state, city, address, and postal_code fields. This is assuming that those fields are present.
 
 Some IPs have parent networks listed. The parser attempts to recognize this, and break the networks into individual dictionaries. If a single network has multiple CIDRs, they will be separated by ', '.
 

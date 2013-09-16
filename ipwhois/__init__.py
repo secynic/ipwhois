@@ -21,7 +21,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-__version__ = '0.1.5'
+__version__ = '0.1.6'
 
 import ipaddress, socket, dns.resolver, re, json
 from xml.dom.minidom import parseString
@@ -30,81 +30,86 @@ from urllib import request
 
 IETF_RFC_REFERENCES = {
                     #IPv4
-                    "RFC 1122, Section 3.2.1.3": "http://tools.ietf.org/html/rfc1122#section-3.2.1.3",
-                    "RFC 1918": "http://tools.ietf.org/html/rfc1918",
-                    "RFC 3927": "http://tools.ietf.org/html/rfc3927",
-                    "RFC 5736": "http://tools.ietf.org/html/rfc5736",
-                    "RFC 5737": "http://tools.ietf.org/html/rfc5737",
-                    "RFC 3068": "http://tools.ietf.org/html/rfc3068",
-                    "RFC 2544": "http://tools.ietf.org/html/rfc2544",
-                    "RFC 3171": "http://tools.ietf.org/html/rfc3171",
-                    "RFC 919, Section 7": "http://tools.ietf.org/html/rfc919#section-7",
+                    'RFC 1122, Section 3.2.1.3': 'http://tools.ietf.org/html/rfc1122#section-3.2.1.3',
+                    'RFC 1918': 'http://tools.ietf.org/html/rfc1918',
+                    'RFC 3927': 'http://tools.ietf.org/html/rfc3927',
+                    'RFC 5736': 'http://tools.ietf.org/html/rfc5736',
+                    'RFC 5737': 'http://tools.ietf.org/html/rfc5737',
+                    'RFC 3068': 'http://tools.ietf.org/html/rfc3068',
+                    'RFC 2544': 'http://tools.ietf.org/html/rfc2544',
+                    'RFC 3171': 'http://tools.ietf.org/html/rfc3171',
+                    'RFC 919, Section 7': 'http://tools.ietf.org/html/rfc919#section-7',
                     #IPv6
-                    "RFC 4291, Section 2.7": "http://tools.ietf.org/html/rfc4291#section-2.7",
-                    "RFC 4291": "http://tools.ietf.org/html/rfc4291",
-                    "RFC 4291, Section 2.5.2": "http://tools.ietf.org/html/rfc4291#section-2.5.2",
-                    "RFC 4291, Section 2.5.3": "http://tools.ietf.org/html/rfc4291#section-2.5.3",
-                    "RFC 4291, Section 2.5.6": "http://tools.ietf.org/html/rfc4291#section-2.5.6",
-                    "RFC 4291, Section 2.5.7": "http://tools.ietf.org/html/rfc4291#section-2.5.7",
-                    "RFC 4193": "https://tools.ietf.org/html/rfc4193"
+                    'RFC 4291, Section 2.7': 'http://tools.ietf.org/html/rfc4291#section-2.7',
+                    'RFC 4291': 'http://tools.ietf.org/html/rfc4291',
+                    'RFC 4291, Section 2.5.2': 'http://tools.ietf.org/html/rfc4291#section-2.5.2',
+                    'RFC 4291, Section 2.5.3': 'http://tools.ietf.org/html/rfc4291#section-2.5.3',
+                    'RFC 4291, Section 2.5.6': 'http://tools.ietf.org/html/rfc4291#section-2.5.6',
+                    'RFC 4291, Section 2.5.7': 'http://tools.ietf.org/html/rfc4291#section-2.5.7',
+                    'RFC 4193': 'https://tools.ietf.org/html/rfc4193'
                      }
     
 NIC_WHOIS = {
-            "arin": {
-                     "server": "whois.arin.net",
-                     "url": "http://whois.arin.net/rest/nets;q={0}?showDetails=true&showARIN=true",
-                     "fields": {
-                                "name": "^(NetName):[^\S\n]+(.+)$",
-                                "description": "^(OrgName|CustName):[^\S\n]+(.+)$",
-                                "country": "^(Country):[^\S\n]+(.+)$",
-                                "state": "^(StateProv):[^\S\n]+(.+)$",
-                                "city": "^(City):[^\S\n]+(.+)$"
+            'arin': {
+                     'server': 'whois.arin.net',
+                     'url': 'http://whois.arin.net/rest/nets;q={0}?showDetails=true&showARIN=true',
+                     'fields': {
+                                'name': '^(NetName):[^\S\n]+(.+)$',
+                                'description': '^(OrgName|CustName):[^\S\n]+(.+)$',
+                                'country': '^(Country):[^\S\n]+(.+)$',
+                                'state': '^(StateProv):[^\S\n]+(.+)$',
+                                'city': '^(City):[^\S\n]+(.+)$',
+                                'address': '^(Address):[^\S\n]+(.+)$',
+                                'postal_code': '^(PostalCode):[^\S\n]+(.+)$'
                                 }
                      },
-            "ripencc": {
-                     "server": "whois.ripe.net",
-                     "url": "http://apps.db.ripe.net/whois/grs-search?query-string={0}&source=ripe-grs", 
-                     "fields": {
-                                "name": "^(netname):[^\S\n]+(.+)$",
-                                "description": "^(descr):[^\S\n]+(.+)$",
-                                "country": "^(country):[^\S\n]+(.+)$"
+            'ripencc': {
+                     'server': 'whois.ripe.net',
+                     'url': 'http://apps.db.ripe.net/whois/grs-search?query-string={0}&source=ripe-grs', 
+                     'fields': {
+                                'name': '^(netname):[^\S\n]+(.+)$',
+                                'description': '^(descr):[^\S\n]+(.+)$',
+                                'country': '^(country):[^\S\n]+(.+)$',
+                                'address': '^(address):[^\S\n]+(.+)$'
                                 }
                      },
-            "apnic": {
-                     "server": "whois.apnic.net",
-                     "url": "http://apps.db.ripe.net/whois/grs-search?query-string={0}&source=apnic-grs", 
-                     "fields": {
-                                "name": "^(netname):[^\S\n]+(.+)$",
-                                "description": "^(descr):[^\S\n]+(.+)$",
-                                "country": "^(country):[^\S\n]+(.+)$"
+            'apnic': {
+                     'server': 'whois.apnic.net',
+                     'url': 'http://apps.db.ripe.net/whois/grs-search?query-string={0}&source=apnic-grs', 
+                     'fields': {
+                                'name': '^(netname):[^\S\n]+(.+)$',
+                                'description': '^(descr):[^\S\n]+(.+)$',
+                                'country': '^(country):[^\S\n]+(.+)$',
+                                'address': '^(address):[^\S\n]+(.+)$'
                                 }
                      },
-            "lacnic": {
-                     "server": "whois.lacnic.net",
-                     "url": "http://apps.db.ripe.net/whois/grs-search?query-string={0}&source=lacnic-grs", 
-                     "fields": {
-                                "description": "^(owner):[^\S\n]+(.+)$",
-                                "country": "^(country):[^\S\n]+(.+)$"
+            'lacnic': {
+                     'server': 'whois.lacnic.net',
+                     'url': 'http://apps.db.ripe.net/whois/grs-search?query-string={0}&source=lacnic-grs', 
+                     'fields': {
+                                'description': '^(owner):[^\S\n]+(.+)$',
+                                'country': '^(country):[^\S\n]+(.+)$'
                                 }
                      },
-            "afrinic": {
-                     "server": "whois.afrinic.net",
-                     "url": "http://apps.db.ripe.net/whois/grs-search?query-string={0}&source=afrinic-grs", 
-                     "fields": {
-                                "name": "^(netname):[^\S\n]+(.+)$",
-                                "description": "^(descr):[^\S\n]+(.+)$",
-                                "country": "^(country):[^\S\n]+(.+)$"
+            'afrinic': {
+                     'server': 'whois.afrinic.net',
+                     'url': 'http://apps.db.ripe.net/whois/grs-search?query-string={0}&source=afrinic-grs', 
+                     'fields': {
+                                'name': '^(netname):[^\S\n]+(.+)$',
+                                'description': '^(descr):[^\S\n]+(.+)$',
+                                'country': '^(country):[^\S\n]+(.+)$',
+                                'address': '^(address):[^\S\n]+(.+)$'
                                 }
                      }
             }
     
-CYMRU_WHOIS = "whois.cymru.com"
+CYMRU_WHOIS = 'whois.cymru.com'
 
-IPV4_DNS_ZONE = "{0}.origin.asn.cymru.com"
+IPV4_DNS_ZONE = '{0}.origin.asn.cymru.com'
 
-IPV6_DNS_ZONE = "{0}.origin6.asn.cymru.com"
+IPV6_DNS_ZONE = '{0}.origin6.asn.cymru.com'
 
-def set_proxy(host = None, port = "80", username = None, password = None):
+def set_proxy(host = None, port = '80', username = None, password = None):
     """
     The function to set proxy settings for urllib.request.urlopen().
     
@@ -116,7 +121,7 @@ def set_proxy(host = None, port = "80", username = None, password = None):
     """
     
     #Define the host URL from the host and port.
-    url = "http://" + host + ":" + port + "/"
+    url = 'http://' + host + ':' + port + '/'
     
     #Create the proxy handler.
     handler = request.ProxyHandler({'http': url})
@@ -158,7 +163,7 @@ def get_countries():
     try:
         
         #Create the country codes file object.
-        f = open(str(path.dirname(__file__)) + "/iso_3166-1_list_en.xml", "r")
+        f = open(str(path.dirname(__file__)) + '/iso_3166-1_list_en.xml', 'r')
         
         #Read the file.
         data = f.read()
@@ -200,74 +205,74 @@ def ipv4_is_defined(address):
 
     Returns:
         Tuple: Boolean - True if the given address is defined, otherwise False
-               String - IETF assignment name if the given address is defined, otherwise ""
-               String - IETF assignment RFC if the given address is defined, otherwise ""
+               String - IETF assignment name if the given address is defined, otherwise ''
+               String - IETF assignment RFC if the given address is defined, otherwise ''
     """
         
     #Initialize the IP address object.
     query_ip = ipaddress.IPv4Address(str(address))
     
     #This Network
-    if query_ip in ipaddress.IPv4Network("0.0.0.0/8"):
+    if query_ip in ipaddress.IPv4Network('0.0.0.0/8'):
         
-        return True, "This Network", "RFC 1122, Section 3.2.1.3"
+        return True, 'This Network', 'RFC 1122, Section 3.2.1.3'
     
     #Private-Use Networks
     elif query_ip.is_private:
         
-        return True, "Private-Use Networks", "RFC 1918"
+        return True, 'Private-Use Networks', 'RFC 1918'
     
     #Loopback
     elif query_ip.is_loopback:
         
-        return True, "Loopback", "RFC 1122, Section 3.2.1.3"
+        return True, 'Loopback', 'RFC 1122, Section 3.2.1.3'
     
     #Link Local
     elif query_ip.is_link_local:
         
-        return True, "Link Local", "RFC 3927"
+        return True, 'Link Local', 'RFC 3927'
     
     #IETF Protocol Assignments
-    elif query_ip in ipaddress.IPv4Network("192.0.0.0/24"):
+    elif query_ip in ipaddress.IPv4Network('192.0.0.0/24'):
         
-        return True, "IETF Protocol Assignments", "RFC 5736"
+        return True, 'IETF Protocol Assignments', 'RFC 5736'
     
     #TEST-NET-1
-    elif query_ip in ipaddress.IPv4Network("192.0.2.0/24"):
+    elif query_ip in ipaddress.IPv4Network('192.0.2.0/24'):
         
-        return True, "TEST-NET-1", "RFC 5737"
+        return True, 'TEST-NET-1', 'RFC 5737'
     
     #6to4 Relay Anycast
-    elif query_ip in ipaddress.IPv4Network("192.88.99.0/24"):
+    elif query_ip in ipaddress.IPv4Network('192.88.99.0/24'):
         
-        return True, "6to4 Relay Anycast", "RFC 3068"
+        return True, '6to4 Relay Anycast', 'RFC 3068'
     
     #Network Interconnect Device Benchmark Testing
-    elif query_ip in ipaddress.IPv4Network("198.18.0.0/15"):
+    elif query_ip in ipaddress.IPv4Network('198.18.0.0/15'):
         
-        return True, "Network Interconnect Device Benchmark Testing", "RFC 2544"
+        return True, 'Network Interconnect Device Benchmark Testing', 'RFC 2544'
     
     #TEST-NET-2
-    elif query_ip in ipaddress.IPv4Network("198.51.100.0/24"):
+    elif query_ip in ipaddress.IPv4Network('198.51.100.0/24'):
         
-        return True, "TEST-NET-2", "RFC 5737"
+        return True, 'TEST-NET-2', 'RFC 5737'
     
     #TEST-NET-3
-    elif query_ip in ipaddress.IPv4Network("203.0.113.0/24"):
+    elif query_ip in ipaddress.IPv4Network('203.0.113.0/24'):
         
-        return True, "TEST-NET-3", "RFC 5737"
+        return True, 'TEST-NET-3', 'RFC 5737'
     
     #Multicast
     elif query_ip.is_multicast:
         
-        return True, "Multicast", "RFC 3171"
+        return True, 'Multicast', 'RFC 3171'
     
     #Limited Broadcast
-    elif query_ip in ipaddress.IPv4Network("255.255.255.255/32"):
+    elif query_ip in ipaddress.IPv4Network('255.255.255.255/32'):
         
-        return True, "Limited Broadcast", "RFC 919, Section 7"
+        return True, 'Limited Broadcast', 'RFC 919, Section 7'
         
-    return False, "", ""
+    return False, '', ''
 
 
 def ipv6_is_defined(address):
@@ -279,8 +284,8 @@ def ipv6_is_defined(address):
 
     Returns:
         Tuple: Boolean - True if the given address is defined, otherwise False
-               String - IETF assignment name if the given address is defined, otherwise ""
-               String - IETF assignment RFC if the given address is defined, otherwise ""
+               String - IETF assignment name if the given address is defined, otherwise ''
+               String - IETF assignment RFC if the given address is defined, otherwise ''
     """
     
     #Initialize the IP address object.
@@ -289,39 +294,39 @@ def ipv6_is_defined(address):
     #Multicast
     if query_ip.is_multicast:
         
-        return True, "Multicast", "RFC 4291, Section 2.7"
+        return True, 'Multicast', 'RFC 4291, Section 2.7'
     
     #Reserved
     elif query_ip.is_reserved:
         
-        return True, "Reserved", "RFC 4291"
+        return True, 'Reserved', 'RFC 4291'
     
     #Unspecified
     elif query_ip.is_unspecified:
         
-        return True, "Unspecified", "RFC 4291, Section 2.5.2"
+        return True, 'Unspecified', 'RFC 4291, Section 2.5.2'
     
     #Loopback.
     elif query_ip.is_loopback:
         
-        return True, "Loopback", "RFC 4291, Section 2.5.3"
+        return True, 'Loopback', 'RFC 4291, Section 2.5.3'
     
     #Link-Local
     elif query_ip.is_link_local:
         
-        return True, "Link-Local", "RFC 4291, Section 2.5.6"
+        return True, 'Link-Local', 'RFC 4291, Section 2.5.6'
     
     #Site-Local
     elif query_ip.is_site_local:
         
-        return True, "Site-Local", "RFC 4291, Section 2.5.7"
+        return True, 'Site-Local', 'RFC 4291, Section 2.5.7'
     
     #Unique Local Unicast
     elif query_ip.is_private:
         
-        return True, "Unique Local Unicast", "RFC 4193"
+        return True, 'Unique Local Unicast', 'RFC 4193'
       
-    return False, "", ""
+    return False, '', ''
 
 class IPDefinedError(Exception):
     """
@@ -365,9 +370,9 @@ class IPWhois():
                 raise IPDefinedError('IPv4 address %r is already defined as %r via %r.' % (self.address_str, is_defined[1], is_defined[2]))
                 
             #Reverse the IPv4Address for the DNS ASN query.
-            split = self.address_str.split(".")
+            split = self.address_str.split('.')
             split.reverse()
-            self.reversed = ".".join(split)
+            self.reversed = '.'.join(split)
             
             self.dns_zone = IPV4_DNS_ZONE.format(self.reversed)
         
@@ -384,10 +389,10 @@ class IPWhois():
             exploded = self.address.exploded
             
             #Cymru seems to timeout when the IPv6 address has trailing '0000' groups. Remove these groups.
-            groups = exploded.split(":")
+            groups = exploded.split(':')
             for index,value in reversed(list(enumerate(groups))):
                 
-                if value == "0000":
+                if value == '0000':
                     
                     del groups[index]
                     
@@ -395,12 +400,12 @@ class IPWhois():
                     
                     break
             
-            exploded = ":".join(groups)
+            exploded = ':'.join(groups)
 
             #Reverse the IPv6Address for the DNS ASN query.
-            val = str(exploded).replace(":", "")
+            val = str(exploded).replace(':', '')
             val = val[::-1]
-            self.reversed = ".".join(val)
+            self.reversed = '.'.join(val)
             
             self.dns_zone = IPV6_DNS_ZONE.format(self.reversed)
     
@@ -419,22 +424,22 @@ class IPWhois():
         
         try:
             
-            data = dns.resolver.query(self.dns_zone, "TXT")
+            data = dns.resolver.query(self.dns_zone, 'TXT')
             
             #Parse out the ASN information.
-            temp = str(data[0]).split("|")
+            temp = str(data[0]).split('|')
 
             ret = {}
             
-            ret['asn_registry'] = temp[3].strip(" \n")
+            ret['asn_registry'] = temp[3].strip(' \n')
             
             if ret['asn_registry'] not in NIC_WHOIS.keys():
                 
                 return None
             
             ret['asn'] = temp[0].strip(' "\n')
-            ret['asn_cidr'] = temp[1].strip(" \n")
-            ret['asn_country_code'] = temp[2].strip(" \n").upper()
+            ret['asn_cidr'] = temp[1].strip(' \n')
+            ret['asn_country_code'] = temp[2].strip(' \n').upper()
             ret['asn_date'] = temp[4].strip(' "\n')
             
             return ret
@@ -467,7 +472,7 @@ class IPWhois():
             conn.connect((CYMRU_WHOIS, 43))
             
             #Query the Cymru whois server, and store the results.  
-            conn.send((" -r -a -c -p -f -o " + self.address_str + "\r\n").encode())
+            conn.send((' -r -a -c -p -f -o ' + self.address_str + '\r\n').encode())
             
             data = ''
             while True:
@@ -482,20 +487,20 @@ class IPWhois():
             conn.close()
             
             #Parse out the ASN information.
-            temp = str(data).split("|")
+            temp = str(data).split('|')
             
             ret = {}
             
-            ret['asn_registry'] = temp[4].strip(" \n")
+            ret['asn_registry'] = temp[4].strip(' \n')
             
             if ret['asn_registry'] not in NIC_WHOIS.keys():
                 
                 return None
             
-            ret['asn'] = temp[0].strip(" \n")
-            ret['asn_cidr'] = temp[2].strip(" \n")
-            ret['asn_country_code'] = temp[3].strip(" \n").upper()
-            ret['asn_date'] = temp[5].strip(" \n")
+            ret['asn'] = temp[0].strip(' \n')
+            ret['asn_cidr'] = temp[2].strip(' \n')
+            ret['asn_country_code'] = temp[3].strip(' \n').upper()
+            ret['asn_date'] = temp[5].strip(' \n')
             
             return ret
         
@@ -530,13 +535,13 @@ class IPWhois():
             #Create the connection for the whois query.
             conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             conn.settimeout(self.timeout)
-            conn.connect((NIC_WHOIS[asn_registry]["server"], 43))
+            conn.connect((NIC_WHOIS[asn_registry]['server'], 43))
             
             #Prep the query.
-            query = self.address_str + "\r\n"
-            if asn_registry == "arin":
+            query = self.address_str + '\r\n'
+            if asn_registry == 'arin':
                 
-                query = "n + " + query
+                query = 'n + ' + query
             
             #Query the whois server, and store the results.  
             conn.send((query).encode())
@@ -544,7 +549,7 @@ class IPWhois():
             response = ''
             while True:
                 
-                d = conn.recv(4096).decode("utf-8", "ignore")
+                d = conn.recv(4096).decode('utf-8', 'ignore')
                     
                 response += d
                 
@@ -585,7 +590,7 @@ class IPWhois():
         try:
             
             #Create the connection for the whois query.
-            conn = request.Request(url, headers = {"Accept":"application/json"})
+            conn = request.Request(url, headers = {'Accept':'application/json'})
             data = request.urlopen(conn, timeout=self.timeout)
             d = json.loads(data.readall().decode())
 
@@ -596,6 +601,47 @@ class IPWhois():
             if retry_count > 0:
                 
                 return self.get_rws(url, retry_count - 1)
+            
+            else:
+                
+                return None
+            
+        except:
+
+            return None
+    
+    def get_host(self, retry_count = 3):
+        """
+        The function for retrieving host information for an IP address.
+        
+        Args:
+            retry_count: The number of times to retry in case socket errors, timeouts, connection resets, etc. are encountered.
+    
+        Returns:
+            Tuple: hostname, aliaslist, ipaddrlist
+        """
+        
+        try:
+            
+            default_timeout_set = False
+            if not socket.getdefaulttimeout():
+                
+                socket.setdefaulttimeout(self.timeout)
+                default_timeout_set = True
+                
+            ret = socket.gethostbyaddr(self.address_str)
+            
+            if default_timeout_set:
+                
+                socket.setdefaulttimeout(None)
+                
+            return ret
+        
+        except (socket.timeout, socket.error):
+            
+            if retry_count > 0:
+                
+                return self.get_host(retry_count - 1)
             
             else:
                 
@@ -639,9 +685,9 @@ class IPWhois():
         
         #Create the return dictionary.   
         results = {
-                   "query": self.address_str,
-                   "nets": [],
-                   "raw": None
+                   'query': self.address_str,
+                   'nets': [],
+                   'raw': None
         }
         
         #Add the ASN information to the return dictionary.
@@ -653,32 +699,34 @@ class IPWhois():
         #If the inc_raw parameter is True, add the response to the return dictionary.
         if inc_raw:
             
-            results["raw"] = response
+            results['raw'] = response
         
         #Create the network dictionary template. The start and end fields will be removed in the final returned dictionary.
         base_net = {
-              "cidr": None,
-              "name": None,
-              "description": None,
-              "country": None,
-              "state": None,
-              "city": None,
-              "start": None,
-              "end": None
+              'cidr': None,
+              'name': None,
+              'description': None,
+              'country': None,
+              'state': None,
+              'city': None,
+              'address': None,
+              'postal_code': None,
+              'start': None,
+              'end': None
               }
         
         nets = []
         
-        if results['asn_registry'] == "arin": 
+        if results['asn_registry'] == 'arin': 
             
             #Iterate through all of the networks found, storing the CIDR value and the start and end positions.
-            for match in re.finditer(r"^CIDR:[^\S\n]+(.+?,[^\S\n].+|.+)$", response, re.MULTILINE):
+            for match in re.finditer(r'^CIDR:[^\S\n]+(.+?,[^\S\n].+|.+)$', response, re.MULTILINE):
                 
                 try:
                     
-                    if "," in match.group(1):
+                    if ',' in match.group(1):
                         
-                        cidrs = match.group(1).split(", ")
+                        cidrs = match.group(1).split(', ')
                         
                         for c in cidrs:
                             
@@ -691,9 +739,9 @@ class IPWhois():
                         cidr = ipaddress.ip_network(match.group(1).strip()).__str__()
                         
                     net = base_net.copy()
-                    net["cidr"] = cidr
-                    net["start"] = match.start()
-                    net["end"] = match.end()
+                    net['cidr'] = cidr
+                    net['start'] = match.start()
+                    net['end'] = match.end()
                     nets.append(net)
                     
                 except:
@@ -701,19 +749,19 @@ class IPWhois():
                     pass
         
         #Future fix: LACNIC has to be special and shorten inetnum field (no validity testing done for these).
-        elif results['asn_registry'] == "lacnic":
+        elif results['asn_registry'] == 'lacnic':
             
             #Iterate through all of the networks found, storing the CIDR value and the start and end positions.
-            for match in re.finditer(r"^(inetnum|inet6num):[^\S\n]+(.+?,[^\S\n].+|.+)$", response, re.MULTILINE):
+            for match in re.finditer(r'^(inetnum|inet6num):[^\S\n]+(.+?,[^\S\n].+|.+)$', response, re.MULTILINE):
                 
                 try:
                     
                     cidr = match.group(2).strip()
                         
                     net = base_net.copy()
-                    net["cidr"] = cidr
-                    net["start"] = match.start()
-                    net["end"] = match.end()
+                    net['cidr'] = cidr
+                    net['start'] = match.start()
+                    net['end'] = match.end()
                     nets.append(net)
                     
                 except:
@@ -723,7 +771,7 @@ class IPWhois():
         else:
             
             #Iterate through all of the networks found, storing the CIDR value and the start and end positions.
-            for match in re.finditer(r"^(inetnum|inet6num):[^\S\n]+((.+?)[^\S\n]-[^\S\n](.+)|.+)$", response, re.MULTILINE):
+            for match in re.finditer(r'^(inetnum|inet6num):[^\S\n]+((.+?)[^\S\n]-[^\S\n](.+)|.+)$', response, re.MULTILINE):
                 
                 try:
                     
@@ -737,16 +785,16 @@ class IPWhois():
                             
                             temp.append(i.__str__())
                             
-                        cidr = ", ".join(temp)
+                        cidr = ', '.join(temp)
                             
                     else:
                         
                         cidr = ipaddress.ip_network(match.group(2).strip()).__str__()
                         
                     net = base_net.copy()
-                    net["cidr"] = cidr
-                    net["start"] = match.start()
-                    net["end"] = match.end()
+                    net['cidr'] = cidr
+                    net['start'] = match.start()
+                    net['end'] = match.end()
                     nets.append(net)
                     
                 except:
@@ -759,21 +807,21 @@ class IPWhois():
             end = None
             if index + 1 < len(nets):
                 
-                end = nets[index + 1]["start"]
+                end = nets[index + 1]['start']
             
-            for field in NIC_WHOIS[results['asn_registry']]["fields"]:
+            for field in NIC_WHOIS[results['asn_registry']]['fields']:
 
-                pattern = re.compile(r"" + NIC_WHOIS[results['asn_registry']]["fields"][field], re.MULTILINE)
+                pattern = re.compile(r'' + NIC_WHOIS[results['asn_registry']]['fields'][field], re.MULTILINE)
             
                 if end:
                     
-                    match = pattern.finditer(response, net["end"], end)
+                    match = pattern.finditer(response, net['end'], end)
                     
                 else:
                     
-                    match = pattern.finditer(response, net["end"])
+                    match = pattern.finditer(response, net['end'])
                 
-                value = ""
+                value = ''
                 sub_end = None
                 for m in match:
                     
@@ -783,27 +831,27 @@ class IPWhois():
                             
                             break 
                         
-                    if value != "":
+                    if value != '':
                         
-                        value += "\n"
+                        value += '\n'
                         
                     value += m.group(2).strip()
                     
                     sub_end = m.end()
                     
-                if value != "":
+                if value != '':
                     
-                    if field == "country":
+                    if field == 'country':
                         
                         value = value.upper()
                         
                     net[field] = value
             
             #The start and end values are no longer needed.
-            del net["start"], net["end"]
+            del net['start'], net['end']
         
         #Add the networks to the return dictionary.  
-        results["nets"] = nets
+        results['nets'] = nets
 
         return results
     
@@ -845,9 +893,9 @@ class IPWhois():
         
         #Create the return dictionary.   
         results = {
-                   "query": self.address_str,
-                   "nets": [],
-                   "raw": None
+                   'query': self.address_str,
+                   'nets': [],
+                   'raw': None
         }
         
         #Add the ASN information to the return dictionary.
@@ -859,26 +907,28 @@ class IPWhois():
         #If the query failed, try the radb-grs source.
         if not response:
             
-            response = self.get_rws("http://apps.db.ripe.net/whois/grs-search?query-string={0}&source=radb-grs".format(self.address_str))
+            response = self.get_rws('http://apps.db.ripe.net/whois/grs-search?query-string={0}&source=radb-grs'.format(self.address_str))
            
         #If the inc_raw parameter is True, add the response to the return dictionary.
         if inc_raw:
             
-            results["raw"] = response
+            results['raw'] = response
         
         #Create the network dictionary template.
         base_net = {
-              "cidr": None,
-              "name": None,
-              "description": None,
-              "country": None,
-              "state": None,
-              "city": None
+              'cidr': None,
+              'name': None,
+              'description': None,
+              'country': None,
+              'state': None,
+              'city': None,
+              'address': None,
+              'postal_code': None
               }
         
         nets = []
         
-        if results['asn_registry'] == "arin": 
+        if results['asn_registry'] == 'arin': 
             
             try:
                 
@@ -892,56 +942,102 @@ class IPWhois():
                         
                         temp.append(i.__str__())
                         
-                    cidr = ", ".join(temp)
+                    cidr = ', '.join(temp)
                         
                     net = base_net.copy()
-                    net["cidr"] = cidr
+                    net['cidr'] = cidr
                     
                     if 'name' in n:
                         
-                        net["name"] = n['name']['$'].strip()
+                        net['name'] = n['name']['$'].strip()
                     
                     if 'customerRef' in n:
                         
-                        net["description"] = n["customerRef"]["@name"].strip()
-                        customer_url = n["customerRef"]["$"].strip()
+                        net['description'] = n['customerRef']['@name'].strip()
+                        customer_url = n['customerRef']['$'].strip()
                         
                         res = self.get_rws(customer_url)
                         
                         if res:
                             
-                            if "city" in res["customer"]:
+                            if 'streetAddress' in res['customer']:
                                 
-                                net["city"] = res["customer"]["city"]["$"]
+                                addr_list = res['customer']['streetAddress']['line']
+                
+                                if not isinstance(addr_list, list):
+                                    
+                                    addr_list = [addr_list]
+                    
+                                value = ''
+                                for line in addr_list:
+                                    
+                                    if value != '':
+                        
+                                        value += '\n'
+                                        
+                                    value += line['$'].strip()
+                                    
+                                net['address'] = value
                                 
-                            if "iso3166-1" in res["customer"]:
+                            if 'postalCode' in res['customer']:
                                 
-                                net["country"] = res["customer"]["iso3166-1"]["code2"]["$"]
+                                net['postal_code'] = res['customer']['postalCode']['$']
                                 
-                            if "iso3166-2" in res["customer"]:
+                            if 'city' in res['customer']:
                                 
-                                net["state"] = res["customer"]["iso3166-2"]["$"]
+                                net['city'] = res['customer']['city']['$']
+                                
+                            if 'iso3166-1' in res['customer']:
+                                
+                                net['country'] = res['customer']['iso3166-1']['code2']['$']
+                                
+                            if 'iso3166-2' in res['customer']:
+                                
+                                net['state'] = res['customer']['iso3166-2']['$']
                     
                     elif 'orgRef' in n:
                     
-                        net["description"] = n["orgRef"]["@name"].strip()
-                        org_url = n["orgRef"]["$"].strip()
+                        net['description'] = n['orgRef']['@name'].strip()
+                        org_url = n['orgRef']['$'].strip()
                         
                         res = self.get_rws(org_url)
-                        
+
                         if res:
                             
-                            if "city" in res["org"]:
+                            if 'streetAddress' in res['org']:
                                 
-                                net["city"] = res["org"]["city"]["$"]
+                                addr_list = res['org']['streetAddress']['line']
+                
+                                if not isinstance(addr_list, list):
+                                    
+                                    addr_list = [addr_list]
+                                    
+                                value = ''
+                                for line in addr_list:
+                                    
+                                    if value != '':
+                        
+                                        value += '\n'
+                                        
+                                    value += line['$'].strip()
+                                    
+                                net['address'] = value
                                 
-                            if "iso3166-1" in res["org"]:
+                            if 'postalCode' in res['org']:
                                 
-                                net["country"] = res["org"]["iso3166-1"]["code2"]["$"]
+                                net['postal_code'] = res['org']['postalCode']['$']
                                 
-                            if "iso3166-2" in res["org"]:
+                            if 'city' in res['org']:
                                 
-                                net["state"] = res["org"]["iso3166-2"]["$"]
+                                net['city'] = res['org']['city']['$']
+                                
+                            if 'iso3166-1' in res['org']:
+                                
+                                net['country'] = res['org']['iso3166-1']['code2']['$']
+                                
+                            if 'iso3166-2' in res['org']:
+                                
+                                net['state'] = res['org']['iso3166-2']['$']
 
                     nets.append(net)
                     
@@ -961,16 +1057,16 @@ class IPWhois():
                     
                 for n in object_list:
 
-                    if n["type"] in ("inetnum", "inet6num", "route", "route6"):
+                    if n['type'] in ('inetnum', 'inet6num', 'route', 'route6'):
                         
                         net = base_net.copy()
                         
                         for a in n['attributes']['attribute']:
                             
-                            if a['name'] in ("inetnum", "inet6num"):
+                            if a['name'] in ('inetnum', 'inet6num'):
                                 
                                 ipr = a['value'].strip()
-                                ip_range = ipr.split(" - ")
+                                ip_range = ipr.split(' - ')
                                 
                                 try:
                                     
@@ -984,22 +1080,22 @@ class IPWhois():
                                             
                                             temp.append(i.__str__())
                                             
-                                        cidr = ", ".join(temp)
+                                        cidr = ', '.join(temp)
                                         
                                     else:
                                         
                                         cidr = ipaddress.ip_network(ip_range[0]).__str__()
                                     
-                                    net["cidr"] = cidr
+                                    net['cidr'] = cidr
                                     
                                 except:
                                     
                                     pass
                                 
-                            elif a['name'] in ("route", "route6"):
+                            elif a['name'] in ('route', 'route6'):
                                 
                                 ipr = a['value'].strip()
-                                ip_ranges = ipr.split(", ")
+                                ip_ranges = ipr.split(', ')
                                 
                                 try:
                                     
@@ -1008,9 +1104,9 @@ class IPWhois():
                                         
                                         temp.append(ipaddress.ip_network(r).__str__())
                                     
-                                    cidr = ", ".join(temp)
+                                    cidr = ', '.join(temp)
                                     
-                                    net["cidr"] = cidr   
+                                    net['cidr'] = cidr   
                                     
                                 except:
                                     
@@ -1018,21 +1114,31 @@ class IPWhois():
                                 
                             elif a['name'] == 'netname':
                                 
-                                net["name"] = a["value"].strip()
+                                net['name'] = a['value'].strip()
                             
                             elif a['name'] == 'descr':
                                 
-                                if net["description"]:
+                                if net['description']:
                                     
-                                    net["description"] += "\n" + a["value"].strip()
+                                    net['description'] += '\n' + a['value'].strip()
                                     
                                 else:
                                     
-                                    net["description"] = a["value"].strip()
+                                    net['description'] = a['value'].strip()
                                 
                             elif a['name'] == 'country':
                                 
-                                net["country"] = a["value"].strip()
+                                net['country'] = a['value'].strip()
+                                
+                            elif a['name'] == 'address':
+                                
+                                if net['address']:
+                                    
+                                    net['address'] += '\n' + a['value'].strip()
+                                    
+                                else:
+                                    
+                                    net['address'] = a['value'].strip()
                                 
                         nets.append(net)
                         
@@ -1043,6 +1149,6 @@ class IPWhois():
                 pass
             
         #Add the networks to the return dictionary.  
-        results["nets"] = nets
+        results['nets'] = nets
 
         return results

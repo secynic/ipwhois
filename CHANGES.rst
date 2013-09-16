@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.1.6 (2013-09-16)
+------------------
+
+- Added IPWhois.get_host() to resolve hostname information.
+- Added address and postal_code fields to parsed results.
+- Normalized single/double quote use.
+
 0.1.5 (2013-09-13)
 ------------------
 
