@@ -58,7 +58,9 @@ NIC_WHOIS = {
                                 'description': '^(OrgName|CustName):[^\S\n]+(.+)$',
                                 'country': '^(Country):[^\S\n]+(.+)$',
                                 'state': '^(StateProv):[^\S\n]+(.+)$',
-                                'city': '^(City):[^\S\n]+(.+)$'
+                                'city': '^(City):[^\S\n]+(.+)$',
+                                'address': '^(Address):[^\S\n]+(.+)$',
+                                'postal_code': '^(PostalCode):[^\S\n]+(.+)$'
                                 }
                      },
             'ripencc': {
@@ -67,7 +69,8 @@ NIC_WHOIS = {
                      'fields': {
                                 'name': '^(netname):[^\S\n]+(.+)$',
                                 'description': '^(descr):[^\S\n]+(.+)$',
-                                'country': '^(country):[^\S\n]+(.+)$'
+                                'country': '^(country):[^\S\n]+(.+)$',
+                                'address': '^(address):[^\S\n]+(.+)$'
                                 }
                      },
             'apnic': {
@@ -76,7 +79,8 @@ NIC_WHOIS = {
                      'fields': {
                                 'name': '^(netname):[^\S\n]+(.+)$',
                                 'description': '^(descr):[^\S\n]+(.+)$',
-                                'country': '^(country):[^\S\n]+(.+)$'
+                                'country': '^(country):[^\S\n]+(.+)$',
+                                'address': '^(address):[^\S\n]+(.+)$'
                                 }
                      },
             'lacnic': {
@@ -93,7 +97,8 @@ NIC_WHOIS = {
                      'fields': {
                                 'name': '^(netname):[^\S\n]+(.+)$',
                                 'description': '^(descr):[^\S\n]+(.+)$',
-                                'country': '^(country):[^\S\n]+(.+)$'
+                                'country': '^(country):[^\S\n]+(.+)$',
+                                'address': '^(address):[^\S\n]+(.+)$'
                                 }
                      }
             }
@@ -604,6 +609,47 @@ class IPWhois():
         except:
 
             return None
+    
+    def get_host(self, retry_count = 3):
+        """
+        The function for retrieving host information for an IP address.
+        
+        Args:
+            retry_count: The number of times to retry in case socket errors, timeouts, connection resets, etc. are encountered.
+    
+        Returns:
+            Tuple: hostname, aliaslist, ipaddrlist
+        """
+        
+        try:
+            
+            default_timeout_set = False
+            if not socket.getdefaulttimeout():
+                
+                socket.setdefaulttimeout(self.timeout)
+                default_timeout_set = True
+                
+            ret = socket.gethostbyaddr(self.address_str)
+            
+            if default_timeout_set:
+                
+                socket.setdefaulttimeout(None)
+                
+            return ret
+        
+        except (socket.timeout, socket.error):
+            
+            if retry_count > 0:
+                
+                return self.get_host(retry_count - 1)
+            
+            else:
+                
+                return None
+            
+        except:
+
+            return None
         
     def lookup(self, inc_raw = False):
         """
@@ -663,6 +709,8 @@ class IPWhois():
               'country': None,
               'state': None,
               'city': None,
+              'address': None,
+              'postal_code': None,
               'start': None,
               'end': None
               }
@@ -873,7 +921,9 @@ class IPWhois():
               'description': None,
               'country': None,
               'state': None,
-              'city': None
+              'city': None,
+              'address': None,
+              'postal_code': None
               }
         
         nets = []
@@ -910,6 +960,29 @@ class IPWhois():
                         
                         if res:
                             
+                            if 'streetAddress' in res['customer']:
+                                
+                                addr_list = res['customer']['streetAddress']['line']
+                
+                                if not isinstance(addr_list, list):
+                                    
+                                    addr_list = [addr_list]
+                    
+                                value = ''
+                                for line in addr_list:
+                                    
+                                    if value != '':
+                        
+                                        value += '\n'
+                                        
+                                    value += line['$'].strip()
+                                    
+                                net['address'] = value
+                                
+                            if 'postalCode' in res['customer']:
+                                
+                                net['postal_code'] = res['customer']['postalCode']['$']
+                                
                             if 'city' in res['customer']:
                                 
                                 net['city'] = res['customer']['city']['$']
@@ -928,9 +1001,32 @@ class IPWhois():
                         org_url = n['orgRef']['$'].strip()
                         
                         res = self.get_rws(org_url)
-                        
+
                         if res:
                             
+                            if 'streetAddress' in res['org']:
+                                
+                                addr_list = res['org']['streetAddress']['line']
+                
+                                if not isinstance(addr_list, list):
+                                    
+                                    addr_list = [addr_list]
+                                    
+                                value = ''
+                                for line in addr_list:
+                                    
+                                    if value != '':
+                        
+                                        value += '\n'
+                                        
+                                    value += line['$'].strip()
+                                    
+                                net['address'] = value
+                                
+                            if 'postalCode' in res['org']:
+                                
+                                net['postal_code'] = res['org']['postalCode']['$']
+                                
                             if 'city' in res['org']:
                                 
                                 net['city'] = res['org']['city']['$']
@@ -1033,6 +1129,16 @@ class IPWhois():
                             elif a['name'] == 'country':
                                 
                                 net['country'] = a['value'].strip()
+                                
+                            elif a['name'] == 'address':
+                                
+                                if net['address']:
+                                    
+                                    net['address'] += '\n' + a['value'].strip()
+                                    
+                                else:
+                                    
+                                    net['address'] = a['value'].strip()
                                 
                         nets.append(net)
                         
