@@ -123,11 +123,12 @@ def set_proxy(host = None, port = '80', username = None, password = None):
     #Define the host URL from the host and port.
     url = 'http://' + host + ':' + port + '/'
     
-    #Create the proxy handler.
+    #Create the proxy handler and auth handler.
     handler = request.ProxyHandler({'http': url})
+    auth_handler = None
     
     #If the proxy username and password are defined.
-    if username is not None and password is not None:
+    if username and password:
         
         #Create the proxy authentication handler.
         auth_handler = request.ProxyBasicAuthHandler()
@@ -136,7 +137,7 @@ def set_proxy(host = None, port = '80', username = None, password = None):
         auth_handler.add_password(None, url, username, password)
     
     #If the proxy authentication handler is defined.
-    if auth_handler is not None:
+    if auth_handler:
         
         #Create the proxy opener with the authentication handler.
         opener = request.build_opener(handler, auth_handler)
