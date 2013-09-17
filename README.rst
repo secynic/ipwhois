@@ -11,10 +11,10 @@ Usage Examples
 
 Typical usage::
 
-	>>>> import ipwhois
+	>>>> from ipwhois import IPWhois
 	>>>> from pprint import pprint
 	
-	>>>> obj = ipwhois.IPWhois('74.125.225.229')
+	>>>> obj = IPWhois('74.125.225.229')
 	>>>> results = obj.lookup()
 	>>>> pprint(results)
 	
@@ -38,10 +38,10 @@ Typical usage::
 	
 REST (HTTP)::
 
-	>>>> import ipwhois
+	>>>> from ipwhois import IPWhois
 	>>>> from pprint import pprint
 	
-	>>>> obj = ipwhois.IPWhois('74.125.225.229')
+	>>>> obj = IPWhois('74.125.225.229')
 	>>>> results = obj.lookup_rws()
 	>>>> pprint(results)
 	
@@ -63,17 +63,20 @@ REST (HTTP)::
 	'raw': None
 	}
 
-Proxy (Optional before ipwhois.IPWhois.lookup_rws())::
+Proxy::
 
-	>>>> import ipwhois
-	>>>> ipwhois.set_proxy('192.168.0.1', '80', 'some_username', 'some_password')
+	>>>> from urllib import request
+	>>>> from ipwhois import IPWhois
+	>>>> handler = request.ProxyHandler({'http': 'http://192.168.0.1:80/'})
+	>>>> opener = request.build_opener(handler)
+	>>>> obj = IPWhois('74.125.225.229', proxy_opener = opener)
 
 Hostname::
 
-	>>>> import ipwhois
+	>>>> from ipwhois import IPWhois
 	>>>> from pprint import pprint
 	
-	>>>> obj = ipwhois.IPWhois('74.125.225.229')
+	>>>> obj = IPWhois('74.125.225.229')
 	>>>> results = obj.get_host()
 	>>>> pprint(results)
 	
@@ -81,10 +84,11 @@ Hostname::
 		
 Countries::
 
-	>>>> import ipwhois
+	>>>> from ipwhois import IPWhois
+	>>>> from ipwhois.utils import get_countries
 	
-	>>>> countries = ipwhois.get_countries()
-	>>>> obj = ipwhois.IPWhois('74.125.225.229')
+	>>>> countries = get_countries()
+	>>>> obj = IPWhois('74.125.225.229')
 	>>>> results = obj.lookup(False)
 	>>>> print(countries[results['nets'][0]['country']])
 
