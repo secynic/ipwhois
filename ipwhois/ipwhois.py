@@ -204,6 +204,10 @@ class IPWhois():
             
             self.dns_zone = IPV6_DNS_ZONE.format(self.reversed)
     
+    def __repr__(self):
+        
+        return 'IPWhois(%r, %r, %r)' % (self.address_str, self.timeout, self.opener)
+    
     def get_asn_dns(self):
         """
         The function for retrieving ASN information for an IP address from Cymru via port 53 (DNS).

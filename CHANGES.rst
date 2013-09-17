@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.1.9 ()
+------------------
+
+- Added exceptions to import in __init__.py.
+- Added IPWhois.__repr__().
+
 0.1.8 (2013-09-17)
 ------------------
 
