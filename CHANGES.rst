@@ -4,8 +4,9 @@ Changelog
 0.1.8 (2013-09-17)
 ------------------
 
-- Removed set_proxy() in favor of having the user provide their own urllib.request.OpenerDirector instance as a parameter to IPWhois()
-- Restructured package in favor of modularity.
+- Removed set_proxy() in favor of having the user provide their own urllib.request.OpenerDirector instance as a parameter to IPWhois().
+- Restructured package in favor of modularity. get_countries() is now located in ipwhois.utils.
+- Added exception WhoisLookupError for IPWhois.lookup() and IPWhois.lookup_rws().
 
 0.1.7 (2013-09-16)
 ------------------

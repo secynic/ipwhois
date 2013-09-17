@@ -115,7 +115,12 @@ class ASNLookupError(Exception):
     """
     An Exception for when the ASN lookup failed.
     """
-    
+
+class WhoisLookupError(Exception):
+    """
+    An Exception for when the Whois lookup failed.
+    """
+     
 class IPWhois():
     """
     The class for performing ASN/whois lookups and parsing for IPv4 and IPv6 addresses.
@@ -486,6 +491,10 @@ class IPWhois():
         #Retrieve the whois data.
         response = self.get_whois(results['asn_registry'])
         
+        if not response:
+            
+            raise WhoisLookupError('Whois lookup failed for %r.' % self.address_str)
+        
         #If the inc_raw parameter is True, add the response to the return dictionary.
         if inc_raw:
             
@@ -698,6 +707,10 @@ class IPWhois():
         if not response:
             
             response = self.get_rws('http://apps.db.ripe.net/whois/grs-search?query-string={0}&source=radb-grs'.format(self.address_str))
+            
+            if not response:
+            
+                raise WhoisLookupError('Whois RWS lookup failed for %r.' % self.address_str)
 
         #If the inc_raw parameter is True, add the response to the return dictionary.
         if inc_raw:
