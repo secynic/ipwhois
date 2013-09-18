@@ -120,7 +120,12 @@ class WhoisLookupError(Exception):
     """
     An Exception for when the Whois lookup failed.
     """
-     
+    
+class HostLookupError(Exception):
+    """
+    An Exception for when the Host lookup failed.
+    """
+         
 class IPWhois():
     """
     The class for performing ASN/whois lookups and parsing for IPv4 and IPv6 addresses.
@@ -204,6 +209,10 @@ class IPWhois():
             
             self.dns_zone = IPV6_DNS_ZONE.format(self.reversed)
     
+    def __repr__(self):
+        
+        return 'IPWhois(%r, %r, %r)' % (self.address_str, self.timeout, self.opener)
+    
     def get_asn_dns(self):
         """
         The function for retrieving ASN information for an IP address from Cymru via port 53 (DNS).
@@ -241,7 +250,7 @@ class IPWhois():
         
         except:
             
-            return None
+            raise ASNLookupError('ASN lookup failed for %r.' % self.address_str) 
         
     def get_asn_whois(self, retry_count = 3):
         """
@@ -267,7 +276,7 @@ class IPWhois():
             conn.connect((CYMRU_WHOIS, 43))
             
             #Query the Cymru whois server, and store the results.  
-            conn.send((' -r -a -c -p -f -o ' + self.address_str + '\r\n').encode())
+            conn.send((' -r -a -c -p -f -o %s%s' % (self.address_str, '\r\n')).encode())
             
             data = ''
             while True:
@@ -307,11 +316,11 @@ class IPWhois():
             
             else:
                 
-                return None
+                raise ASNLookupError('ASN lookup failed for %r.' % self.address_str) 
             
         except:
 
-            return None
+            raise ASNLookupError('ASN lookup failed for %r.' % self.address_str) 
         
     def get_whois(self, asn_registry = 'arin', retry_count = 3):
         """
@@ -336,7 +345,7 @@ class IPWhois():
             query = self.address_str + '\r\n'
             if asn_registry == 'arin':
                 
-                query = 'n + ' + query
+                query = 'n + %s' % query
             
             #Query the whois server, and store the results.  
             conn.send((query).encode())
@@ -364,11 +373,11 @@ class IPWhois():
             
             else:
                 
-                return None
+                raise WhoisLookupError('Whois lookup failed for %r.' % self.address_str)
             
         except:
 
-            return None
+            raise WhoisLookupError('Whois lookup failed for %r.' % self.address_str)
         
     def get_rws(self, url = None, retry_count = 3):
         """
@@ -399,11 +408,11 @@ class IPWhois():
             
             else:
                 
-                return None
+                raise WhoisLookupError('Whois RWS lookup failed for %r.' % url)
             
         except:
 
-            return None
+            raise WhoisLookupError('Whois RWS lookup failed for %r.' % url)
     
     def get_host(self, retry_count = 3):
         """
@@ -440,11 +449,11 @@ class IPWhois():
             
             else:
                 
-                return None
+                raise HostLookupError('Host lookup failed for %r.' % self.address_str)
             
         except:
 
-            return None
+            raise HostLookupError('Host lookup failed for %r.' % self.address_str)
         
     def lookup(self, inc_raw = False):
         """
@@ -468,15 +477,13 @@ class IPWhois():
         """
         
         #Attempt to resolve ASN info via Cymru. DNS is faster, so try that first.
-        asn_data = self.get_asn_dns()
+        try:
+            
+            asn_data = self.get_asn_dns()
         
-        if asn_data is None:
+        except ASNLookupError:
 
             asn_data = self.get_asn_whois()
-            
-            if asn_data is None:
-                
-                raise ASNLookupError('ASN lookup failed for %r.' % self.address_str) 
         
         #Create the return dictionary.   
         results = {
@@ -490,10 +497,6 @@ class IPWhois():
         
         #Retrieve the whois data.
         response = self.get_whois(results['asn_registry'])
-        
-        if not response:
-            
-            raise WhoisLookupError('Whois lookup failed for %r.' % self.address_str)
         
         #If the inc_raw parameter is True, add the response to the return dictionary.
         if inc_raw:
@@ -522,23 +525,9 @@ class IPWhois():
             for match in re.finditer(r'^CIDR:[^\S\n]+(.+?,[^\S\n].+|.+)$', response, re.MULTILINE):
                 
                 try:
-                    
-                    if ',' in match.group(1):
-                        
-                        cidrs = match.group(1).split(', ')
-                        
-                        for c in cidrs:
-                            
-                            ipaddress.ip_network(c.strip())
-                            
-                        cidr = match.group(1).strip()
-                        
-                    else:
-                        
-                        cidr = ipaddress.ip_network(match.group(1).strip()).__str__()
-                        
+
                     net = base_net.copy()
-                    net['cidr'] = cidr
+                    net['cidr'] = ', '.join([ipaddress.ip_network(c.strip()).__str__() for c in match.group(1).split(', ')])
                     net['start'] = match.start()
                     net['end'] = match.end()
                     nets.append(net)
@@ -574,17 +563,12 @@ class IPWhois():
                 
                 try:
                     
-                    addrs = []
                     if match.group(3) and match.group(4):
                         
+                        addrs = []
                         addrs.extend(ipaddress.summarize_address_range(ipaddress.ip_address(match.group(3).strip()), ipaddress.ip_address(match.group(4).strip())))
                         
-                        temp = []
-                        for i in ipaddress.collapse_addresses(addrs):
-                            
-                            temp.append(i.__str__())
-                            
-                        cidr = ', '.join(temp)
+                        cidr = ', '.join([i.__str__() for i in ipaddress.collapse_addresses(addrs)])
                             
                     else:
                         
@@ -680,15 +664,13 @@ class IPWhois():
         """
         
         #Attempt to resolve ASN info via Cymru. DNS is faster, so try that first.
-        asn_data = self.get_asn_dns()
+        try:
+            
+            asn_data = self.get_asn_dns()
         
-        if asn_data is None:
+        except ASNLookupError:
 
             asn_data = self.get_asn_whois()
-            
-            if asn_data is None:
-                
-                raise ASNLookupError('ASN lookup failed for %r.' % self.address_str) 
         
         #Create the return dictionary.   
         results = {
@@ -701,16 +683,14 @@ class IPWhois():
         results.update(asn_data)
         
         #Retrieve the whois data.
-        response = self.get_rws(NIC_WHOIS[results['asn_registry']]['url'].format(self.address_str))
+        try:
+            
+            response = self.get_rws(NIC_WHOIS[results['asn_registry']]['url'].format(self.address_str))
         
         #If the query failed, try the radb-grs source.
-        if not response:
+        except WhoisLookupError:
             
             response = self.get_rws('http://apps.db.ripe.net/whois/grs-search?query-string={0}&source=radb-grs'.format(self.address_str))
-            
-            if not response:
-            
-                raise WhoisLookupError('Whois RWS lookup failed for %r.' % self.address_str)
 
         #If the inc_raw parameter is True, add the response to the return dictionary.
         if inc_raw:
@@ -750,107 +730,56 @@ class IPWhois():
                     addrs = []
                     addrs.extend(ipaddress.summarize_address_range(ipaddress.ip_address(n['startAddress']['$'].strip()), ipaddress.ip_address(n['endAddress']['$'].strip())))
                         
-                    temp = []
-                    for i in ipaddress.collapse_addresses(addrs):
-                        
-                        temp.append(i.__str__())
-                        
-                    cidr = ', '.join(temp)
-                        
                     net = base_net.copy()
-                    net['cidr'] = cidr
+                    net['cidr'] = ', '.join([i.__str__() for i in ipaddress.collapse_addresses(addrs)])
                     
                     if 'name' in n:
                         
                         net['name'] = n['name']['$'].strip()
                     
+                    ref = None
                     if 'customerRef' in n:
                         
-                        net['description'] = n['customerRef']['@name'].strip()
-                        customer_url = n['customerRef']['$'].strip()
+                        ref = ['customerRef', 'customer']
                         
-                        res = self.get_rws(customer_url)
-                        
-                        if res:
-                            
-                            if 'streetAddress' in res['customer']:
-                                
-                                addr_list = res['customer']['streetAddress']['line']
-                
-                                if not isinstance(addr_list, list):
-                                    
-                                    addr_list = [addr_list]
-                    
-                                value = ''
-                                for line in addr_list:
-                                    
-                                    if value != '':
-                        
-                                        value += '\n'
-                                        
-                                    value += line['$'].strip()
-                                    
-                                net['address'] = value
-                                
-                            if 'postalCode' in res['customer']:
-                                
-                                net['postal_code'] = res['customer']['postalCode']['$']
-                                
-                            if 'city' in res['customer']:
-                                
-                                net['city'] = res['customer']['city']['$']
-                                
-                            if 'iso3166-1' in res['customer']:
-                                
-                                net['country'] = res['customer']['iso3166-1']['code2']['$']
-                                
-                            if 'iso3166-2' in res['customer']:
-                                
-                                net['state'] = res['customer']['iso3166-2']['$']
-                    
                     elif 'orgRef' in n:
-                    
-                        net['description'] = n['orgRef']['@name'].strip()
-                        org_url = n['orgRef']['$'].strip()
                         
-                        res = self.get_rws(org_url)
-
-                        if res:
+                        ref = ['orgRef', 'org']
+                        
+                    if ref is not None:
+                        
+                        net['description'] = n[ref[0]]['@name'].strip()
+                        ref_url = n[ref[0]]['$'].strip()
+                        
+                        ref_response = self.get_rws(ref_url)
+                        
+                        if ref_response:
                             
-                            if 'streetAddress' in res['org']:
+                            if 'streetAddress' in ref_response[ref[1]]:
                                 
-                                addr_list = res['org']['streetAddress']['line']
+                                addr_list = ref_response[ref[1]]['streetAddress']['line']
                 
                                 if not isinstance(addr_list, list):
                                     
                                     addr_list = [addr_list]
-                                    
-                                value = ''
-                                for line in addr_list:
-                                    
-                                    if value != '':
-                        
-                                        value += '\n'
-                                        
-                                    value += line['$'].strip()
-                                    
-                                net['address'] = value
+                    
+                                net['address'] = '\n'.join([line['$'].strip() for line in addr_list])
                                 
-                            if 'postalCode' in res['org']:
+                            if 'postalCode' in ref_response[ref[1]]:
                                 
-                                net['postal_code'] = res['org']['postalCode']['$']
+                                net['postal_code'] = ref_response[ref[1]]['postalCode']['$']
                                 
-                            if 'city' in res['org']:
+                            if 'city' in ref_response[ref[1]]:
                                 
-                                net['city'] = res['org']['city']['$']
+                                net['city'] = ref_response[ref[1]]['city']['$']
                                 
-                            if 'iso3166-1' in res['org']:
+                            if 'iso3166-1' in ref_response[ref[1]]:
                                 
-                                net['country'] = res['org']['iso3166-1']['code2']['$']
+                                net['country'] = ref_response[ref[1]]['iso3166-1']['code2']['$']
                                 
-                            if 'iso3166-2' in res['org']:
+                            if 'iso3166-2' in ref_response[ref[1]]:
                                 
-                                net['state'] = res['org']['iso3166-2']['$']
+                                net['state'] = ref_response[ref[1]]['iso3166-2']['$']
 
                     nets.append(net)
                     
@@ -874,11 +803,11 @@ class IPWhois():
                         
                         net = base_net.copy()
                         
-                        for a in n['attributes']['attribute']:
+                        for attr in n['attributes']['attribute']:
                             
-                            if a['name'] in ('inetnum', 'inet6num'):
+                            if attr['name'] in ('inetnum', 'inet6num'):
                                 
-                                ipr = a['value'].strip()
+                                ipr = attr['value'].strip()
                                 ip_range = ipr.split(' - ')
                                 
                                 try:
@@ -888,12 +817,7 @@ class IPWhois():
                                         addrs = []
                                         addrs.extend(ipaddress.summarize_address_range(ipaddress.ip_address(ip_range[0]), ipaddress.ip_address(ip_range[1])))
                                             
-                                        temp = []
-                                        for i in ipaddress.collapse_addresses(addrs):
-                                            
-                                            temp.append(i.__str__())
-                                            
-                                        cidr = ', '.join(temp)
+                                        cidr = ', '.join([i.__str__() for i in ipaddress.collapse_addresses(addrs)])
                                         
                                     else:
                                         
@@ -905,53 +829,46 @@ class IPWhois():
                                     
                                     pass
                                 
-                            elif a['name'] in ('route', 'route6'):
+                            elif attr['name'] in ('route', 'route6'):
                                 
-                                ipr = a['value'].strip()
+                                ipr = attr['value'].strip()
                                 ip_ranges = ipr.split(', ')
                                 
                                 try:
-                                    
-                                    temp = []
-                                    for r in ip_ranges:
-                                        
-                                        temp.append(ipaddress.ip_network(r).__str__())
-                                    
-                                    cidr = ', '.join(temp)
-                                    
-                                    net['cidr'] = cidr   
+
+                                    net['cidr'] = ', '.join(ipaddress.ip_network(r).__str__() for r in ip_ranges)   
                                     
                                 except:
                                     
                                     pass
                                 
-                            elif a['name'] == 'netname':
+                            elif attr['name'] == 'netname':
                                 
-                                net['name'] = a['value'].strip()
+                                net['name'] = attr['value'].strip()
                             
-                            elif a['name'] == 'descr':
+                            elif attr['name'] == 'descr':
                                 
                                 if net['description']:
                                     
-                                    net['description'] += '\n' + a['value'].strip()
+                                    net['description'] += '\n%s' % attr['value'].strip()
                                     
                                 else:
                                     
-                                    net['description'] = a['value'].strip()
+                                    net['description'] = attr['value'].strip()
                                 
-                            elif a['name'] == 'country':
+                            elif attr['name'] == 'country':
                                 
-                                net['country'] = a['value'].strip()
+                                net['country'] = attr['value'].strip()
                                 
-                            elif a['name'] == 'address':
+                            elif attr['name'] == 'address':
                                 
                                 if net['address']:
                                     
-                                    net['address'] += '\n' + a['value'].strip()
+                                    net['address'] += '\n%s' % attr['value'].strip()
                                     
                                 else:
                                     
-                                    net['address'] = a['value'].strip()
+                                    net['address'] = attr['value'].strip()
                                 
                         nets.append(net)
                         
