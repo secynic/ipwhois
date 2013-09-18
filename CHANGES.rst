@@ -1,6 +1,16 @@
 Changelog
 =========
 
+0.1.9 (2013-09-18)
+------------------
+
+- Added exceptions to import in __init__.py.
+- Added IPWhois.__repr__().
+- Moved exceptions to get_*() functions.
+- Added exception HostLookupError.
+- Various optimizations.
+- Added some unit tests.
+
 0.1.8 (2013-09-17)
 ------------------
 
