@@ -23,4 +23,4 @@
 
 __version__ = '0.1.9'
 
-from .ipwhois import IPWhois, IPDefinedError, ASNLookupError, WhoisLookupError
+from .ipwhois import IPWhois, IPDefinedError, ASNLookupError, WhoisLookupError, HostLookupError
