@@ -726,7 +726,10 @@ class IPWhois():
               'state': None,
               'city': None,
               'address': None,
-              'postal_code': None
+              'postal_code': None,
+              'abuse_emails': None,
+              'tech_emails': None,
+              'misc_emails': None
               }
         
         nets = []
@@ -769,38 +772,60 @@ class IPWhois():
                     if ref is not None:
                         
                         net['description'] = n[ref[0]]['@name'].strip()
-                        ref_url = n[ref[0]]['$'].strip()
+                        ref_url = n[ref[0]]['$'].strip() + '?showPocs=true'
                         
-                        ref_response = self.get_rws(ref_url)
-                        
-                        if ref_response:
+                        try:
                             
-                            if 'streetAddress' in ref_response[ref[1]]:
+                            ref_response = self.get_rws(ref_url)
+                        
+                        except WhoisLookupError:
+                            
+                            nets.append(net)
+                            continue
+                        
+                        if 'streetAddress' in ref_response[ref[1]]:
+                            
+                            addr_list = ref_response[ref[1]]['streetAddress']['line']
+            
+                            if not isinstance(addr_list, list):
                                 
-                                addr_list = ref_response[ref[1]]['streetAddress']['line']
+                                addr_list = [addr_list]
                 
-                                if not isinstance(addr_list, list):
+                            net['address'] = '\n'.join([line['$'].strip() for line in addr_list])
+                            
+                        if 'postalCode' in ref_response[ref[1]]:
+                            
+                            net['postal_code'] = ref_response[ref[1]]['postalCode']['$']
+                            
+                        if 'city' in ref_response[ref[1]]:
+                            
+                            net['city'] = ref_response[ref[1]]['city']['$']
+                            
+                        if 'iso3166-1' in ref_response[ref[1]]:
+                            
+                            net['country'] = ref_response[ref[1]]['iso3166-1']['code2']['$']
+                            
+                        if 'iso3166-2' in ref_response[ref[1]]:
+                            
+                            net['state'] = ref_response[ref[1]]['iso3166-2']['$']
+                            
+                        if 'pocs' in ref_response[ref[1]]:
+                            
+                            for poc in ref_response[ref[1]]['pocs']['pocLinkRef']:
+                            
+                                if poc['@description'] in ('Abuse', 'Tech'):
                                     
-                                    addr_list = [addr_list]
-                    
-                                net['address'] = '\n'.join([line['$'].strip() for line in addr_list])
-                                
-                            if 'postalCode' in ref_response[ref[1]]:
-                                
-                                net['postal_code'] = ref_response[ref[1]]['postalCode']['$']
-                                
-                            if 'city' in ref_response[ref[1]]:
-                                
-                                net['city'] = ref_response[ref[1]]['city']['$']
-                                
-                            if 'iso3166-1' in ref_response[ref[1]]:
-                                
-                                net['country'] = ref_response[ref[1]]['iso3166-1']['code2']['$']
-                                
-                            if 'iso3166-2' in ref_response[ref[1]]:
-                                
-                                net['state'] = ref_response[ref[1]]['iso3166-2']['$']
+                                    try:
+                                        
+                                        poc_url = poc['$']
+                                        poc_response = self.get_rws(poc_url)
+                                        
+                                        net['%s_emails' % poc['@description'].lower()] = poc_response['poc']['emails']['email']['$'].strip()
 
+                                    except WhoisLookupError:
+                                        
+                                        pass
+                                    
                     nets.append(net)
                     
             except:
@@ -816,9 +841,24 @@ class IPWhois():
                 if not isinstance(object_list, list):
                     
                     object_list = [object_list]
-                    
+                
+                ripe_abuse_emails = []
+                ripe_misc_emails = []
+                
                 for n in object_list:
 
+                    if n['type'] == 'organisation':
+                        
+                        for attr in n['attributes']['attribute']:
+                            
+                            if attr['name'] == 'abuse-mailbox':
+                                
+                                ripe_abuse_emails.append(attr['value'].strip())
+                                
+                            elif attr['name'] == 'e-mail':
+                                
+                                ripe_misc_emails.append(attr['value'].strip())
+                            
                     if n['type'] in ('inetnum', 'inet6num', 'route', 'route6'):
                         
                         net = base_net.copy()
@@ -891,8 +931,17 @@ class IPWhois():
                                     net['address'] = attr['value'].strip()
                                 
                         nets.append(net)
+                
+                #This is nasty. Since RIPE RWS doesn't provide a granular contact => network relationship, we apply to all networks.
+                if len(ripe_abuse_emails) > 0 or len(ripe_misc_emails) > 0:
+                    
+                    abuse = '\n'.join(ripe_abuse_emails) if ripe_abuse_emails else None
+                    misc = '\n'.join(ripe_misc_emails) if ripe_misc_emails else None
+                    
+                    for net in nets:
                         
-                        break
+                        net['abuse_emails'] = abuse
+                        net['misc_emails'] = misc
                     
             except:
                 
