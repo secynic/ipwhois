@@ -70,8 +70,8 @@ NIC_WHOIS = {
                                 'description': '^(descr):[^\S\n]+(?P<val>.+)$',
                                 'country': '^(country):[^\S\n]+(?P<val>.+)$',
                                 'address': '^(address):[^\S\n]+(?P<val>.+)$',
-                                'abuse_emails': '^(abuse-mailbox:[^\S\n]+(?P<val>.+))|((?!abuse-mailbox).+?:.*[^\S\n]+(?P<val2>[\w\-\.]*abuse[\w\-\.]*@[\w\-\.]+\.[\w\-\.]+)([^\S\n]+.*)*)$',
-                                'misc_emails': '^(?!abuse-mailbox).+?:.*[^\S\n]+(?P<val>(?!abuse)[\w\-\.]+?@[\w\-\.]+\.[\w\-\.]+)([^\S\n]+.*)*$'
+                                'abuse_emails': '^(abuse-mailbox:[^\S\n]+(?P<val>.+))|((?!abuse-mailbox).+?:.*[^\S\n]+(?P<val2>[\w\-\.]*abuse[\w\-\.]*@[\w\-\.]+\.[\w\-]+)([^\S\n]+.*)*)$',
+                                'misc_emails': '^(?!abuse-mailbox).+?:.*[^\S\n]+(?P<val>(?!abuse)[\w\-\.]+?@[\w\-\.]+\.[\w\-]+)([^\S\n]+.*)*$'
                                 }
                      },
             'apnic': {
@@ -82,8 +82,8 @@ NIC_WHOIS = {
                                 'description': '^(descr):[^\S\n]+(?P<val>.+)$',
                                 'country': '^(country):[^\S\n]+(?P<val>.+)$',
                                 'address': '^(address):[^\S\n]+(?P<val>.+)$',
-                                'abuse_emails': '^(abuse-mailbox:[^\S\n]+(?P<val>.+))|((?!abuse-mailbox).+?:.*[^\S\n]+(?P<val2>[\w\-\.]*abuse[\w\-\.]*@[\w\-\.]+\.[\w\-\.]+)([^\S\n]+.*)*)$',
-                                'misc_emails': '^(?!abuse-mailbox).+?:.*[^\S\n]+(?P<val>(?!abuse)[\w\-\.]+?@[\w\-\.]+\.[\w\-\.]+)([^\S\n]+.*)*$'
+                                'abuse_emails': '^(abuse-mailbox:[^\S\n]+(?P<val>.+))|((?!abuse-mailbox).+?:.*[^\S\n]+(?P<val2>[\w\-\.]*abuse[\w\-\.]*@[\w\-\.]+\.[\w\-]+)([^\S\n]+.*)*)$',
+                                'misc_emails': '^(?!abuse-mailbox).+?:.*[^\S\n]+(?P<val>(?!abuse)[\w\-\.]+?@[\w\-\.]+\.[\w\-]+)([^\S\n]+.*)*$'
                                 }
                      },
             'lacnic': {
@@ -92,8 +92,8 @@ NIC_WHOIS = {
                      'fields': {
                                 'description': '^(owner):[^\S\n]+(?P<val>.+)$',
                                 'country': '^(country):[^\S\n]+(?P<val>.+)$',
-                                'abuse_emails': '^(abuse-mailbox:[^\S\n]+(?P<val>.+))|((?!abuse-mailbox).+?:.*[^\S\n]+(?P<val2>[\w\-\.]*abuse[\w\-\.]*@[\w\-\.]+\.[\w\-\.]+)([^\S\n]+.*)*)$',
-                                'misc_emails': '^(?!abuse-mailbox).+?:.*[^\S\n]+(?P<val>(?!abuse)[\w\-\.]+?@[\w\-\.]+\.[\w\-\.]+)([^\S\n]+.*)*$'
+                                'abuse_emails': '^(abuse-mailbox:[^\S\n]+(?P<val>.+))|((?!abuse-mailbox).+?:.*[^\S\n]+(?P<val2>[\w\-\.]*abuse[\w\-\.]*@[\w\-\.]+\.[\w\-]+)([^\S\n]+.*)*)$',
+                                'misc_emails': '^(?!abuse-mailbox).+?:.*[^\S\n]+(?P<val>(?!abuse)[\w\-\.]+?@[\w\-\.]+\.[\w\-]+)([^\S\n]+.*)*$'
                                 }
                      },
             'afrinic': {
@@ -104,8 +104,8 @@ NIC_WHOIS = {
                                 'description': '^(descr):[^\S\n]+(?P<val>.+)$',
                                 'country': '^(country):[^\S\n]+(?P<val>.+)$',
                                 'address': '^(address):[^\S\n]+(?P<val>.+)$',
-                                'abuse_emails': '^(abuse-mailbox:[^\S\n]+(?P<val>.+))|((?!abuse-mailbox).+?:.*[^\S\n]+(?P<val2>[\w\-\.]*abuse[\w\-\.]*@[\w\-\.]+\.[\w\-\.]+)([^\S\n]+.*)*)$',
-                                'misc_emails': '^(?!abuse-mailbox).+?:.*[^\S\n]+(?P<val>(?!abuse)[\w\-\.]+?@[\w\-\.]+\.[\w\-\.]+)([^\S\n]+.*)*$'
+                                'abuse_emails': '^(abuse-mailbox:[^\S\n]+(?P<val>.+))|((?!abuse-mailbox).+?:.*[^\S\n]+(?P<val2>[\w\-\.]*abuse[\w\-\.]*@[\w\-\.]+\.[\w\-]+)([^\S\n]+.*)*)$',
+                                'misc_emails': '^(?!abuse-mailbox).+?:.*[^\S\n]+(?P<val>(?!abuse)[\w\-\.]+?@[\w\-\.]+\.[\w\-]+)([^\S\n]+.*)*$'
                                 }
                      }
             }
