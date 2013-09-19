@@ -51,51 +51,61 @@ NIC_WHOIS = {
                      'server': 'whois.arin.net',
                      'url': 'http://whois.arin.net/rest/nets;q={0}?showDetails=true&showARIN=true',
                      'fields': {
-                                'name': '^(NetName):[^\S\n]+(.+)$',
-                                'description': '^(OrgName|CustName):[^\S\n]+(.+)$',
-                                'country': '^(Country):[^\S\n]+(.+)$',
-                                'state': '^(StateProv):[^\S\n]+(.+)$',
-                                'city': '^(City):[^\S\n]+(.+)$',
-                                'address': '^(Address):[^\S\n]+(.+)$',
-                                'postal_code': '^(PostalCode):[^\S\n]+(.+)$'
+                                'name': '^(NetName):[^\S\n]+(?P<val>.+)$',
+                                'description': '^(OrgName|CustName):[^\S\n]+(?P<val>.+)$',
+                                'country': '^(Country):[^\S\n]+(?P<val>.+)$',
+                                'state': '^(StateProv):[^\S\n]+(?P<val>.+)$',
+                                'city': '^(City):[^\S\n]+(?P<val>.+)$',
+                                'address': '^(Address):[^\S\n]+(?P<val>.+)$',
+                                'postal_code': '^(PostalCode):[^\S\n]+(?P<val>.+)$',
+                                'abuse_emails': '^(OrgAbuseEmail):[^\S\n]+(?P<val>.+)$',
+                                'tech_emails': '^(OrgTechEmail):[^\S\n]+(?P<val>.+)$'
                                 }
                      },
             'ripencc': {
                      'server': 'whois.ripe.net',
                      'url': 'http://apps.db.ripe.net/whois/grs-search?query-string={0}&source=ripe-grs', 
                      'fields': {
-                                'name': '^(netname):[^\S\n]+(.+)$',
-                                'description': '^(descr):[^\S\n]+(.+)$',
-                                'country': '^(country):[^\S\n]+(.+)$',
-                                'address': '^(address):[^\S\n]+(.+)$'
+                                'name': '^(netname):[^\S\n]+(?P<val>.+)$',
+                                'description': '^(descr):[^\S\n]+(?P<val>.+)$',
+                                'country': '^(country):[^\S\n]+(?P<val>.+)$',
+                                'address': '^(address):[^\S\n]+(?P<val>.+)$',
+                                'abuse_emails': '^(abuse-mailbox:[^\S\n]+(?P<val>.+))|((?!abuse-mailbox).+?:.*[^\S\n]+(?P<val2>[\w\-\.]*abuse[\w\-\.]*@[\w\-\.]+\.[\w\-\.]+)([^\S\n]+.*)*)$',
+                                'misc_emails': '^(?!abuse-mailbox).+?:.*[^\S\n]+(?P<val>(?!abuse)[\w\-\.]+?@[\w\-\.]+\.[\w\-\.]+)([^\S\n]+.*)*$'
                                 }
                      },
             'apnic': {
                      'server': 'whois.apnic.net',
                      'url': 'http://apps.db.ripe.net/whois/grs-search?query-string={0}&source=apnic-grs', 
                      'fields': {
-                                'name': '^(netname):[^\S\n]+(.+)$',
-                                'description': '^(descr):[^\S\n]+(.+)$',
-                                'country': '^(country):[^\S\n]+(.+)$',
-                                'address': '^(address):[^\S\n]+(.+)$'
+                                'name': '^(netname):[^\S\n]+(?P<val>.+)$',
+                                'description': '^(descr):[^\S\n]+(?P<val>.+)$',
+                                'country': '^(country):[^\S\n]+(?P<val>.+)$',
+                                'address': '^(address):[^\S\n]+(?P<val>.+)$',
+                                'abuse_emails': '^(abuse-mailbox:[^\S\n]+(?P<val>.+))|((?!abuse-mailbox).+?:.*[^\S\n]+(?P<val2>[\w\-\.]*abuse[\w\-\.]*@[\w\-\.]+\.[\w\-\.]+)([^\S\n]+.*)*)$',
+                                'misc_emails': '^(?!abuse-mailbox).+?:.*[^\S\n]+(?P<val>(?!abuse)[\w\-\.]+?@[\w\-\.]+\.[\w\-\.]+)([^\S\n]+.*)*$'
                                 }
                      },
             'lacnic': {
                      'server': 'whois.lacnic.net',
                      'url': 'http://apps.db.ripe.net/whois/grs-search?query-string={0}&source=lacnic-grs', 
                      'fields': {
-                                'description': '^(owner):[^\S\n]+(.+)$',
-                                'country': '^(country):[^\S\n]+(.+)$'
+                                'description': '^(owner):[^\S\n]+(?P<val>.+)$',
+                                'country': '^(country):[^\S\n]+(?P<val>.+)$',
+                                'abuse_emails': '^(abuse-mailbox:[^\S\n]+(?P<val>.+))|((?!abuse-mailbox).+?:.*[^\S\n]+(?P<val2>[\w\-\.]*abuse[\w\-\.]*@[\w\-\.]+\.[\w\-\.]+)([^\S\n]+.*)*)$',
+                                'misc_emails': '^(?!abuse-mailbox).+?:.*[^\S\n]+(?P<val>(?!abuse)[\w\-\.]+?@[\w\-\.]+\.[\w\-\.]+)([^\S\n]+.*)*$'
                                 }
                      },
             'afrinic': {
                      'server': 'whois.afrinic.net',
                      'url': 'http://apps.db.ripe.net/whois/grs-search?query-string={0}&source=afrinic-grs', 
                      'fields': {
-                                'name': '^(netname):[^\S\n]+(.+)$',
-                                'description': '^(descr):[^\S\n]+(.+)$',
-                                'country': '^(country):[^\S\n]+(.+)$',
-                                'address': '^(address):[^\S\n]+(.+)$'
+                                'name': '^(netname):[^\S\n]+(?P<val>.+)$',
+                                'description': '^(descr):[^\S\n]+(?P<val>.+)$',
+                                'country': '^(country):[^\S\n]+(?P<val>.+)$',
+                                'address': '^(address):[^\S\n]+(?P<val>.+)$',
+                                'abuse_emails': '^(abuse-mailbox:[^\S\n]+(?P<val>.+))|((?!abuse-mailbox).+?:.*[^\S\n]+(?P<val2>[\w\-\.]*abuse[\w\-\.]*@[\w\-\.]+\.[\w\-\.]+)([^\S\n]+.*)*)$',
+                                'misc_emails': '^(?!abuse-mailbox).+?:.*[^\S\n]+(?P<val>(?!abuse)[\w\-\.]+?@[\w\-\.]+\.[\w\-\.]+)([^\S\n]+.*)*$'
                                 }
                      }
             }
@@ -513,6 +523,9 @@ class IPWhois():
               'city': None,
               'address': None,
               'postal_code': None,
+              'abuse_emails': None,
+              'tech_emails': None,
+              'misc_emails': None,
               'start': None,
               'end': None
               }
@@ -604,29 +617,36 @@ class IPWhois():
                     
                     match = pattern.finditer(response, net['end'])
                 
-                value = ''
+                values = []
                 sub_end = None
                 for m in match:
                     
                     if sub_end:
 
-                        if sub_end != (m.start()-1):
+                        if field not in ('abuse_emails', 'tech_emails', 'misc_emails') and sub_end != (m.start()-1):
                             
                             break 
                         
-                    if value != '':
+                    try:
                         
-                        value += '\n'
-                        
-                    value += m.group(2).strip()
+                        values.append(m.group('val').strip())
                     
+                    except:
+                        
+                        values.append(m.group('val2').strip())
+                        
                     sub_end = m.end()
                     
-                if value != '':
+                if len(values) > 0:
                     
                     if field == 'country':
                         
-                        value = value.upper()
+                        value = values[0].upper()
+                        
+                    else:
+                        
+                        values = list(set(values))
+                        value = '\n'.join(values)
                         
                     net[field] = value
             

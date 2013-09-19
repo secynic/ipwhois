@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.2.0 ()
+------------------
+
+- Added support for emails (keys: abuse_emails, tech_emails, misc_emails).
+- Changed regex to use group naming for more complex searching.
+
 0.1.9 (2013-09-18)
 ------------------
 
