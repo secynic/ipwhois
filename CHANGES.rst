@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.2.0 (2013-09-23)
+------------------
+
+- Added support for emails (keys: abuse_emails, tech_emails, misc_emails).
+- Changed regex to use group naming for more complex searching.
+- Added some missing exception handling in lookup_rws().
+
 0.1.9 (2013-09-18)
 ------------------
 

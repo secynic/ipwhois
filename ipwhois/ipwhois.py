@@ -51,51 +51,61 @@ NIC_WHOIS = {
                      'server': 'whois.arin.net',
                      'url': 'http://whois.arin.net/rest/nets;q={0}?showDetails=true&showARIN=true',
                      'fields': {
-                                'name': '^(NetName):[^\S\n]+(.+)$',
-                                'description': '^(OrgName|CustName):[^\S\n]+(.+)$',
-                                'country': '^(Country):[^\S\n]+(.+)$',
-                                'state': '^(StateProv):[^\S\n]+(.+)$',
-                                'city': '^(City):[^\S\n]+(.+)$',
-                                'address': '^(Address):[^\S\n]+(.+)$',
-                                'postal_code': '^(PostalCode):[^\S\n]+(.+)$'
+                                'name': '^(NetName):[^\S\n]+(?P<val>.+)$',
+                                'description': '^(OrgName|CustName):[^\S\n]+(?P<val>.+)$',
+                                'country': '^(Country):[^\S\n]+(?P<val>.+)$',
+                                'state': '^(StateProv):[^\S\n]+(?P<val>.+)$',
+                                'city': '^(City):[^\S\n]+(?P<val>.+)$',
+                                'address': '^(Address):[^\S\n]+(?P<val>.+)$',
+                                'postal_code': '^(PostalCode):[^\S\n]+(?P<val>.+)$',
+                                'abuse_emails': '^(OrgAbuseEmail):[^\S\n]+(?P<val>.+)$',
+                                'tech_emails': '^(OrgTechEmail):[^\S\n]+(?P<val>.+)$'
                                 }
                      },
             'ripencc': {
                      'server': 'whois.ripe.net',
                      'url': 'http://apps.db.ripe.net/whois/grs-search?query-string={0}&source=ripe-grs', 
                      'fields': {
-                                'name': '^(netname):[^\S\n]+(.+)$',
-                                'description': '^(descr):[^\S\n]+(.+)$',
-                                'country': '^(country):[^\S\n]+(.+)$',
-                                'address': '^(address):[^\S\n]+(.+)$'
+                                'name': '^(netname):[^\S\n]+(?P<val>.+)$',
+                                'description': '^(descr):[^\S\n]+(?P<val>.+)$',
+                                'country': '^(country):[^\S\n]+(?P<val>.+)$',
+                                'address': '^(address):[^\S\n]+(?P<val>.+)$',
+                                'abuse_emails': '^(abuse-mailbox:[^\S\n]+(?P<val>.+))|((?!abuse-mailbox).+?:.*[^\S\n]+(?P<val2>[\w\-\.]*abuse[\w\-\.]*@[\w\-\.]+\.[\w\-]+)([^\S\n]+.*)*)$',
+                                'misc_emails': '^(?!abuse-mailbox).+?:.*[^\S\n]+(?P<val>(?!abuse)[\w\-\.]+?@[\w\-\.]+\.[\w\-]+)([^\S\n]+.*)*$'
                                 }
                      },
             'apnic': {
                      'server': 'whois.apnic.net',
                      'url': 'http://apps.db.ripe.net/whois/grs-search?query-string={0}&source=apnic-grs', 
                      'fields': {
-                                'name': '^(netname):[^\S\n]+(.+)$',
-                                'description': '^(descr):[^\S\n]+(.+)$',
-                                'country': '^(country):[^\S\n]+(.+)$',
-                                'address': '^(address):[^\S\n]+(.+)$'
+                                'name': '^(netname):[^\S\n]+(?P<val>.+)$',
+                                'description': '^(descr):[^\S\n]+(?P<val>.+)$',
+                                'country': '^(country):[^\S\n]+(?P<val>.+)$',
+                                'address': '^(address):[^\S\n]+(?P<val>.+)$',
+                                'abuse_emails': '^(abuse-mailbox:[^\S\n]+(?P<val>.+))|((?!abuse-mailbox).+?:.*[^\S\n]+(?P<val2>[\w\-\.]*abuse[\w\-\.]*@[\w\-\.]+\.[\w\-]+)([^\S\n]+.*)*)$',
+                                'misc_emails': '^(?!abuse-mailbox).+?:.*[^\S\n]+(?P<val>(?!abuse)[\w\-\.]+?@[\w\-\.]+\.[\w\-]+)([^\S\n]+.*)*$'
                                 }
                      },
             'lacnic': {
                      'server': 'whois.lacnic.net',
                      'url': 'http://apps.db.ripe.net/whois/grs-search?query-string={0}&source=lacnic-grs', 
                      'fields': {
-                                'description': '^(owner):[^\S\n]+(.+)$',
-                                'country': '^(country):[^\S\n]+(.+)$'
+                                'description': '^(owner):[^\S\n]+(?P<val>.+)$',
+                                'country': '^(country):[^\S\n]+(?P<val>.+)$',
+                                'abuse_emails': '^(abuse-mailbox:[^\S\n]+(?P<val>.+))|((?!abuse-mailbox).+?:.*[^\S\n]+(?P<val2>[\w\-\.]*abuse[\w\-\.]*@[\w\-\.]+\.[\w\-]+)([^\S\n]+.*)*)$',
+                                'misc_emails': '^(?!abuse-mailbox).+?:.*[^\S\n]+(?P<val>(?!abuse)[\w\-\.]+?@[\w\-\.]+\.[\w\-]+)([^\S\n]+.*)*$'
                                 }
                      },
             'afrinic': {
                      'server': 'whois.afrinic.net',
                      'url': 'http://apps.db.ripe.net/whois/grs-search?query-string={0}&source=afrinic-grs', 
                      'fields': {
-                                'name': '^(netname):[^\S\n]+(.+)$',
-                                'description': '^(descr):[^\S\n]+(.+)$',
-                                'country': '^(country):[^\S\n]+(.+)$',
-                                'address': '^(address):[^\S\n]+(.+)$'
+                                'name': '^(netname):[^\S\n]+(?P<val>.+)$',
+                                'description': '^(descr):[^\S\n]+(?P<val>.+)$',
+                                'country': '^(country):[^\S\n]+(?P<val>.+)$',
+                                'address': '^(address):[^\S\n]+(?P<val>.+)$',
+                                'abuse_emails': '^(abuse-mailbox:[^\S\n]+(?P<val>.+))|((?!abuse-mailbox).+?:.*[^\S\n]+(?P<val2>[\w\-\.]*abuse[\w\-\.]*@[\w\-\.]+\.[\w\-]+)([^\S\n]+.*)*)$',
+                                'misc_emails': '^(?!abuse-mailbox).+?:.*[^\S\n]+(?P<val>(?!abuse)[\w\-\.]+?@[\w\-\.]+\.[\w\-]+)([^\S\n]+.*)*$'
                                 }
                      }
             }
@@ -513,6 +523,9 @@ class IPWhois():
               'city': None,
               'address': None,
               'postal_code': None,
+              'abuse_emails': None,
+              'tech_emails': None,
+              'misc_emails': None,
               'start': None,
               'end': None
               }
@@ -604,29 +617,36 @@ class IPWhois():
                     
                     match = pattern.finditer(response, net['end'])
                 
-                value = ''
+                values = []
                 sub_end = None
                 for m in match:
                     
                     if sub_end:
 
-                        if sub_end != (m.start()-1):
+                        if field not in ('abuse_emails', 'tech_emails', 'misc_emails') and sub_end != (m.start()-1):
                             
                             break 
                         
-                    if value != '':
+                    try:
                         
-                        value += '\n'
-                        
-                    value += m.group(2).strip()
+                        values.append(m.group('val').strip())
                     
+                    except:
+                        
+                        values.append(m.group('val2').strip())
+                        
                     sub_end = m.end()
                     
-                if value != '':
+                if len(values) > 0:
                     
                     if field == 'country':
                         
-                        value = value.upper()
+                        value = values[0].upper()
+                        
+                    else:
+                        
+                        values = list(set(values))
+                        value = '\n'.join(values)
                         
                     net[field] = value
             
@@ -706,7 +726,10 @@ class IPWhois():
               'state': None,
               'city': None,
               'address': None,
-              'postal_code': None
+              'postal_code': None,
+              'abuse_emails': None,
+              'tech_emails': None,
+              'misc_emails': None
               }
         
         nets = []
@@ -749,38 +772,60 @@ class IPWhois():
                     if ref is not None:
                         
                         net['description'] = n[ref[0]]['@name'].strip()
-                        ref_url = n[ref[0]]['$'].strip()
+                        ref_url = n[ref[0]]['$'].strip() + '?showPocs=true'
                         
-                        ref_response = self.get_rws(ref_url)
-                        
-                        if ref_response:
+                        try:
                             
-                            if 'streetAddress' in ref_response[ref[1]]:
+                            ref_response = self.get_rws(ref_url)
+                        
+                        except WhoisLookupError:
+                            
+                            nets.append(net)
+                            continue
+                        
+                        if 'streetAddress' in ref_response[ref[1]]:
+                            
+                            addr_list = ref_response[ref[1]]['streetAddress']['line']
+            
+                            if not isinstance(addr_list, list):
                                 
-                                addr_list = ref_response[ref[1]]['streetAddress']['line']
+                                addr_list = [addr_list]
                 
-                                if not isinstance(addr_list, list):
+                            net['address'] = '\n'.join([line['$'].strip() for line in addr_list])
+                            
+                        if 'postalCode' in ref_response[ref[1]]:
+                            
+                            net['postal_code'] = ref_response[ref[1]]['postalCode']['$']
+                            
+                        if 'city' in ref_response[ref[1]]:
+                            
+                            net['city'] = ref_response[ref[1]]['city']['$']
+                            
+                        if 'iso3166-1' in ref_response[ref[1]]:
+                            
+                            net['country'] = ref_response[ref[1]]['iso3166-1']['code2']['$']
+                            
+                        if 'iso3166-2' in ref_response[ref[1]]:
+                            
+                            net['state'] = ref_response[ref[1]]['iso3166-2']['$']
+                            
+                        if 'pocs' in ref_response[ref[1]]:
+                            
+                            for poc in ref_response[ref[1]]['pocs']['pocLinkRef']:
+                            
+                                if poc['@description'] in ('Abuse', 'Tech'):
                                     
-                                    addr_list = [addr_list]
-                    
-                                net['address'] = '\n'.join([line['$'].strip() for line in addr_list])
-                                
-                            if 'postalCode' in ref_response[ref[1]]:
-                                
-                                net['postal_code'] = ref_response[ref[1]]['postalCode']['$']
-                                
-                            if 'city' in ref_response[ref[1]]:
-                                
-                                net['city'] = ref_response[ref[1]]['city']['$']
-                                
-                            if 'iso3166-1' in ref_response[ref[1]]:
-                                
-                                net['country'] = ref_response[ref[1]]['iso3166-1']['code2']['$']
-                                
-                            if 'iso3166-2' in ref_response[ref[1]]:
-                                
-                                net['state'] = ref_response[ref[1]]['iso3166-2']['$']
+                                    try:
+                                        
+                                        poc_url = poc['$']
+                                        poc_response = self.get_rws(poc_url)
+                                        
+                                        net['%s_emails' % poc['@description'].lower()] = poc_response['poc']['emails']['email']['$'].strip()
 
+                                    except WhoisLookupError:
+                                        
+                                        pass
+                                    
                     nets.append(net)
                     
             except:
@@ -796,9 +841,24 @@ class IPWhois():
                 if not isinstance(object_list, list):
                     
                     object_list = [object_list]
-                    
+                
+                ripe_abuse_emails = []
+                ripe_misc_emails = []
+                
                 for n in object_list:
 
+                    if n['type'] == 'organisation':
+                        
+                        for attr in n['attributes']['attribute']:
+                            
+                            if attr['name'] == 'abuse-mailbox':
+                                
+                                ripe_abuse_emails.append(attr['value'].strip())
+                                
+                            elif attr['name'] == 'e-mail':
+                                
+                                ripe_misc_emails.append(attr['value'].strip())
+                            
                     if n['type'] in ('inetnum', 'inet6num', 'route', 'route6'):
                         
                         net = base_net.copy()
@@ -871,8 +931,17 @@ class IPWhois():
                                     net['address'] = attr['value'].strip()
                                 
                         nets.append(net)
+                
+                #This is nasty. Since RIPE RWS doesn't provide a granular contact => network relationship, we apply to all networks.
+                if len(ripe_abuse_emails) > 0 or len(ripe_misc_emails) > 0:
+                    
+                    abuse = '\n'.join(ripe_abuse_emails) if ripe_abuse_emails else None
+                    misc = '\n'.join(ripe_misc_emails) if ripe_misc_emails else None
+                    
+                    for net in nets:
                         
-                        break
+                        net['abuse_emails'] = abuse
+                        net['misc_emails'] = misc
                     
             except:
                 

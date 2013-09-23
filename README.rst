@@ -26,14 +26,17 @@ Typical usage::
 	'asn_country_code': 'US',
 	'asn_date': '2007-03-13',
 	'asn_registry': 'arin',
-	'nets': [{'address': '1600 Amphitheatre Parkway',
+	'nets': [{'abuse_emails': 'arin-contact@google.com',
+	          'address': '1600 Amphitheatre Parkway',
 	          'cidr': '74.125.0.0/16',
 	          'city': 'Mountain View',
 	          'country': 'US',
 	          'description': 'Google Inc.',
+	          'misc_emails': None,
 	          'name': 'GOOGLE',
 	          'postal_code': '94043',
-	          'state': 'CA'}],
+	          'state': 'CA',
+	          'tech_emails': 'arin-contact@google.com'}],
 	'query': '74.125.225.229',
 	'raw': None
 	}
@@ -53,14 +56,17 @@ REST (HTTP)::
 	'asn_country_code': 'US',
 	'asn_date': '2007-03-13',
 	'asn_registry': 'arin',
-	'nets': [{'address': '1600 Amphitheatre Parkway',
+	'nets': [{'abuse_emails': 'arin-contact@google.com',
+	          'address': '1600 Amphitheatre Parkway',
 	          'cidr': '74.125.0.0/16',
 	          'city': 'Mountain View',
 	          'country': 'US',
 	          'description': 'Google Inc.',
+	          'misc_emails': None,
 	          'name': 'GOOGLE',
 	          'postal_code': '94043',
-	          'state': 'CA'}],
+	          'state': 'CA',
+	          'tech_emails': 'arin-contact@google.com'}],
 	'query': '74.125.225.229',
 	'raw': None
 	}
@@ -110,7 +116,7 @@ Latest version from GitHub::
 Parsing
 =======
 
-Parsing is currently limited to CIDR, country, name, description, state, city, address, and postal_code fields. This is assuming that those fields are present.
+Parsing is currently limited to CIDR, country, name, description, state, city, address, postal_code, abuse_emails, tech_emails, and misc_emails fields. This is assuming that those fields are present.
 
 Some IPs have parent networks listed. The parser attempts to recognize this, and break the networks into individual dictionaries. If a single network has multiple CIDRs, they will be separated by ', '.
 
