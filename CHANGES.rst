@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.2.0 ()
+0.2.0 (2013-09-23)
 ------------------
 
 - Added support for emails (keys: abuse_emails, tech_emails, misc_emails).
