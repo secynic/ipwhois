@@ -24,6 +24,7 @@
 import ipaddress, socket, dns.resolver, re, json
 from .utils import ipv4_is_defined, ipv6_is_defined
 from urllib import request
+from time import sleep
 
 IETF_RFC_REFERENCES = {
                     #IPv4
@@ -373,6 +374,11 @@ class IPWhois():
                 
             conn.close()
             
+            if 'Query rate limit exceeded' in response:
+                
+                sleep(1)
+                return self.get_whois(asn_registry, retry_count)
+                
             return response
     
         except (socket.timeout, socket.error):
@@ -549,7 +555,6 @@ class IPWhois():
                     
                     pass
         
-        #Future fix: LACNIC has to be special and shorten inetnum field (no validity testing done for these).
         elif results['asn_registry'] == 'lacnic':
             
             #Iterate through all of the networks found, storing the CIDR value and the start and end positions.
@@ -557,16 +562,28 @@ class IPWhois():
                 
                 try:
                     
-                    cidr = match.group(2).strip()
+                    temp = []                    
+                    for addr in match.group(2).strip().split(', '):
+                        
+                        count = addr.count('.')
+                        if count is not 0 and count < 4:
+                            
+                            addr_split = addr.strip().split('/')
+                            for i in range(count + 1, 4):
+                                addr_split[0] += '.0'
+                                
+                            addr = '/'.join(addr_split)
+                        
+                        temp.append(ipaddress.ip_network(addr.strip()).__str__())
                         
                     net = base_net.copy()
-                    net['cidr'] = cidr
+                    net['cidr'] = ', '.join(temp)
                     net['start'] = match.start()
                     net['end'] = match.end()
                     nets.append(net)
                     
                 except:
-                    
+
                     pass
 
         else:

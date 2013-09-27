@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.2.1 (2013-09-27)
+------------------
+
+- Fixed LACNIC CIDR validation on IPWhois.lookup().
+- Fixed bug in IPWhois.get_whois() for query rate limiting. This was discovered via testing multiprocessing with 8+ processes running asynchronously.
+
 0.2.0 (2013-09-23)
 ------------------
 
