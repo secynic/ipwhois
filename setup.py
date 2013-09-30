@@ -47,7 +47,7 @@ CLASSIFIERS = [
 
 PACKAGES = ['ipwhois']
 
-PACKAGE_DATA = {'ipwhois': ['*.xml']}
+PACKAGE_DATA = {'ipwhois': ['data/*.xml']}
 
 INSTALL_REQUIRES = [
     "dnspython3"

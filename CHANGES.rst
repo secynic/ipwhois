@@ -1,6 +1,14 @@
 Changelog
 =========
 
+0.3.0 (2013-09-30)
+------------------
+
+- Fixed get_countries() to work with frozen executables.
+- Added dnspython3 rdtypes import to fix issue with frozen executables.
+- Moved iso_3166-1_list_en.xml to /data.
+- Added retry_count to IPWhois.lookup() and IPWhois.lookup_rws().
+
 0.2.1 (2013-09-27)
 ------------------
 
