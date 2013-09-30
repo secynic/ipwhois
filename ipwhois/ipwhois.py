@@ -26,6 +26,9 @@ from .utils import ipv4_is_defined, ipv6_is_defined
 from urllib import request
 from time import sleep
 
+#Import the dnspython3 rdtypes to resolve the dynamic import problem when frozen to exe.
+import dns.rdtypes.ANY.TXT
+
 IETF_RFC_REFERENCES = {
                     #IPv4
                     'RFC 1122, Section 3.2.1.3': 'http://tools.ietf.org/html/rfc1122#section-3.2.1.3',
@@ -471,12 +474,13 @@ class IPWhois():
 
             raise HostLookupError('Host lookup failed for %r.' % self.address_str)
         
-    def lookup(self, inc_raw = False):
+    def lookup(self, inc_raw = False, retry_count = 3):
         """
         The function for retrieving and parsing whois information for an IP address via port 43 (WHOIS).
         
         Args:
             inc_raw: Boolean for whether to include the raw whois results in the returned dictionary.
+            retry_count: The number of times to retry in case socket errors, timeouts, connection resets, etc. are encountered.
     
         Returns:
             Dictionary: A dictionary containing the following keys:
@@ -499,7 +503,7 @@ class IPWhois():
         
         except ASNLookupError:
 
-            asn_data = self.get_asn_whois()
+            asn_data = self.get_asn_whois(retry_count)
         
         #Create the return dictionary.   
         results = {
@@ -512,7 +516,7 @@ class IPWhois():
         results.update(asn_data)
         
         #Retrieve the whois data.
-        response = self.get_whois(results['asn_registry'])
+        response = self.get_whois(results['asn_registry'], retry_count)
         
         #If the inc_raw parameter is True, add the response to the return dictionary.
         if inc_raw:
@@ -675,7 +679,7 @@ class IPWhois():
 
         return results
     
-    def lookup_rws(self, inc_raw = False):
+    def lookup_rws(self, inc_raw = False, retry_count = 3):
         """
         The function for retrieving and parsing whois information for an IP address via HTTP (Whois-RWS).
         
@@ -685,6 +689,7 @@ class IPWhois():
             
         Args:
             inc_raw: Boolean for whether to include the raw whois results in the returned dictionary.
+            retry_count: The number of times to retry in case socket errors, timeouts, connection resets, etc. are encountered.
     
         Returns:
             Dictionary: A dictionary containing the following keys:
@@ -707,7 +712,7 @@ class IPWhois():
         
         except ASNLookupError:
 
-            asn_data = self.get_asn_whois()
+            asn_data = self.get_asn_whois(retry_count)
         
         #Create the return dictionary.   
         results = {
@@ -722,12 +727,12 @@ class IPWhois():
         #Retrieve the whois data.
         try:
             
-            response = self.get_rws(NIC_WHOIS[results['asn_registry']]['url'].format(self.address_str))
+            response = self.get_rws(NIC_WHOIS[results['asn_registry']]['url'].format(self.address_str), retry_count)
         
         #If the query failed, try the radb-grs source.
         except WhoisLookupError:
             
-            response = self.get_rws('http://apps.db.ripe.net/whois/grs-search?query-string={0}&source=radb-grs'.format(self.address_str))
+            response = self.get_rws('http://apps.db.ripe.net/whois/grs-search?query-string={0}&source=radb-grs'.format(self.address_str), retry_count)
 
         #If the inc_raw parameter is True, add the response to the return dictionary.
         if inc_raw:
@@ -793,7 +798,7 @@ class IPWhois():
                         
                         try:
                             
-                            ref_response = self.get_rws(ref_url)
+                            ref_response = self.get_rws(ref_url, retry_count)
                         
                         except WhoisLookupError:
                             
@@ -835,7 +840,7 @@ class IPWhois():
                                     try:
                                         
                                         poc_url = poc['$']
-                                        poc_response = self.get_rws(poc_url)
+                                        poc_response = self.get_rws(poc_url, retry_count)
                                         
                                         net['%s_emails' % poc['@description'].lower()] = poc_response['poc']['emails']['email']['$'].strip()
 

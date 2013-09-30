@@ -24,6 +24,7 @@
 import ipaddress
 from xml.dom.minidom import parseString
 from os import path
+import sys
                 
 def get_countries():
     """
@@ -38,8 +39,17 @@ def get_countries():
     
     try:
         
+        #Set the data directory based on if the script is a frozen executable or not.
+        if sys.platform == 'win32' and getattr(sys, 'frozen', False):
+            
+            data_dir = path.dirname(sys.executable)
+            
+        else:
+            
+            data_dir = path.dirname(__file__)
+        
         #Create the country codes file object.
-        f = open(str(path.dirname(__file__)) + '/iso_3166-1_list_en.xml', 'r')
+        f = open(str(data_dir) + '/data/iso_3166-1_list_en.xml', 'r')
         
         #Read the file.
         data = f.read()
