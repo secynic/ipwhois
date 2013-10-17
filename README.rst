@@ -31,12 +31,14 @@ Typical usage::
 	          'cidr': '74.125.0.0/16',
 	          'city': 'Mountain View',
 	          'country': 'US',
+	          'created': '2007-03-13T00:00:00',
 	          'description': 'Google Inc.',
 	          'misc_emails': None,
 	          'name': 'GOOGLE',
 	          'postal_code': '94043',
 	          'state': 'CA',
-	          'tech_emails': 'arin-contact@google.com'}],
+	          'tech_emails': 'arin-contact@google.com',
+	          'updated': '2012-02-24T00:00:00'}],
 	'query': '74.125.225.229',
 	'raw': None
 	}
@@ -61,12 +63,14 @@ REST (HTTP)::
 	          'cidr': '74.125.0.0/16',
 	          'city': 'Mountain View',
 	          'country': 'US',
+	          'created': '2007-03-13T12:09:54-04:00',
 	          'description': 'Google Inc.',
 	          'misc_emails': None,
 	          'name': 'GOOGLE',
 	          'postal_code': '94043',
 	          'state': 'CA',
-	          'tech_emails': 'arin-contact@google.com'}],
+	          'tech_emails': 'arin-contact@google.com',
+	          'updated': '2012-02-24T09:44:34-05:00'}],
 	'query': '74.125.225.229',
 	'raw': None
 	}
@@ -116,11 +120,11 @@ Latest version from GitHub::
 Parsing
 =======
 
-Parsing is currently limited to CIDR, country, name, description, state, city, address, postal_code, abuse_emails, tech_emails, and misc_emails fields. This is assuming that those fields are present.
+Parsing is currently limited to CIDR, country, name, description, state, city, address, postal_code, abuse_emails, tech_emails, misc_emails, created and updated fields. This is assuming that those fields are present.
 
 Some IPs have parent networks listed. The parser attempts to recognize this, and break the networks into individual dictionaries. If a single network has multiple CIDRs, they will be separated by ', '.
 
-Sometimes, you will see whois information with multiple consecutive same name fields, e.g., Description: some text\\nDescription: more text. The parser will recognize this and the returned result will have these separated by '\\n'.
+Sometimes, you will see whois information with multiple consecutive same name fields, e.g., Description: some text\\nDescription: more text. The parser will recognize this and the returned result will have the values separated by '\\n'.
 
 REST (HTTP)
 ===========

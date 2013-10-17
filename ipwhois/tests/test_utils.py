@@ -4,7 +4,9 @@ from ipwhois.utils import get_countries, ipv4_is_defined, ipv6_is_defined
 class TestFunctions(unittest.TestCase):
     
     def test_get_countries(self):
-        self.assertIsInstance(get_countries(), dict)
+        countries = get_countries()
+        self.assertIsInstance(countries, dict)
+        self.assertEqual(countries['US'], 'United States')
         
     def test_ipv4_is_defined(self):
         from ipaddress import AddressValueError

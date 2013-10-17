@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.4.0 (2013-10-17)
+------------------
+
+- Added support for network registered and updated time stamps (keys: created, updated). Value in ISO 8601 format.
+- Added value assertion to test_utils.py.
+- Fixed IPWhois.lookup() handling of processed values. If processing throws an exception, discard the value and not the net dictionary.
+
 0.3.0 (2013-09-30)
 ------------------
 
