@@ -25,6 +25,7 @@ import ipaddress, socket, dns.resolver, re, json
 from .utils import ipv4_is_defined, ipv6_is_defined
 from urllib import request
 from time import sleep
+from datetime import datetime
 
 #Import the dnspython3 rdtypes to resolve the dynamic import problem when frozen to exe.
 import dns.rdtypes.ANY.TXT
@@ -63,8 +64,12 @@ NIC_WHOIS = {
                                 'address': '^(Address):[^\S\n]+(?P<val>.+)$',
                                 'postal_code': '^(PostalCode):[^\S\n]+(?P<val>.+)$',
                                 'abuse_emails': '^(OrgAbuseEmail):[^\S\n]+(?P<val>.+)$',
-                                'tech_emails': '^(OrgTechEmail):[^\S\n]+(?P<val>.+)$'
-                                }
+                                'tech_emails': '^(OrgTechEmail):[^\S\n]+(?P<val>.+)$',
+                                'created': '^(RegDate):[^\S\n]+(?P<val>.+)$',
+                                'updated': '^(Updated):[^\S\n]+(?P<val>.+)$'
+                                },
+                     'dt_format': '%Y-%m-%d',
+                     'dt_rws_format': '%Y-%m-%dT%H:%M:%S%z'
                      },
             'ripencc': {
                      'server': 'whois.ripe.net',
@@ -87,8 +92,10 @@ NIC_WHOIS = {
                                 'country': '^(country):[^\S\n]+(?P<val>.+)$',
                                 'address': '^(address):[^\S\n]+(?P<val>.+)$',
                                 'abuse_emails': '^(abuse-mailbox:[^\S\n]+(?P<val>.+))|((?!abuse-mailbox).+?:.*[^\S\n]+(?P<val2>[\w\-\.]*abuse[\w\-\.]*@[\w\-\.]+\.[\w\-]+)([^\S\n]+.*)*)$',
-                                'misc_emails': '^(?!abuse-mailbox).+?:.*[^\S\n]+(?P<val>(?!abuse)[\w\-\.]+?@[\w\-\.]+\.[\w\-]+)([^\S\n]+.*)*$'
-                                }
+                                'misc_emails': '^(?!abuse-mailbox).+?:.*[^\S\n]+(?P<val>(?!abuse)[\w\-\.]+?@[\w\-\.]+\.[\w\-]+)([^\S\n]+.*)*$',
+                                'updated': '^(changed):[^\S\n]+.*?(?P<val>[0-9]{8})$'
+                                },
+                     'dt_format': '%Y%m%d'
                      },
             'lacnic': {
                      'server': 'whois.lacnic.net',
@@ -97,8 +104,11 @@ NIC_WHOIS = {
                                 'description': '^(owner):[^\S\n]+(?P<val>.+)$',
                                 'country': '^(country):[^\S\n]+(?P<val>.+)$',
                                 'abuse_emails': '^(abuse-mailbox:[^\S\n]+(?P<val>.+))|((?!abuse-mailbox).+?:.*[^\S\n]+(?P<val2>[\w\-\.]*abuse[\w\-\.]*@[\w\-\.]+\.[\w\-]+)([^\S\n]+.*)*)$',
-                                'misc_emails': '^(?!abuse-mailbox).+?:.*[^\S\n]+(?P<val>(?!abuse)[\w\-\.]+?@[\w\-\.]+\.[\w\-]+)([^\S\n]+.*)*$'
-                                }
+                                'misc_emails': '^(?!abuse-mailbox).+?:.*[^\S\n]+(?P<val>(?!abuse)[\w\-\.]+?@[\w\-\.]+\.[\w\-]+)([^\S\n]+.*)*$',
+                                'created': '^(created):[^\S\n]+(?P<val>[0-9]{8}).*$',
+                                'updated': '^(changed):[^\S\n]+(?P<val>[0-9]{8}).*$'
+                                },
+                     'dt_format': '%Y%m%d'
                      },
             'afrinic': {
                      'server': 'whois.afrinic.net',
@@ -536,6 +546,8 @@ class IPWhois():
               'abuse_emails': None,
               'tech_emails': None,
               'misc_emails': None,
+              'created': None,
+              'updated': None,
               'start': None,
               'end': None
               }
@@ -660,14 +672,25 @@ class IPWhois():
                     
                 if len(values) > 0:
                     
-                    if field == 'country':
+                    try:
                         
-                        value = values[0].upper()
+                        if field == 'country':
+                            
+                            value = values[0].upper()
+                            
+                        elif field in ['created', 'updated']:
+
+                            value = datetime.strptime(values[0], NIC_WHOIS[results['asn_registry']]['dt_format']).isoformat('T')
+                            
+                        else:
+                            
+                            values = list(set(values))
+                            value = '\n'.join(values)
+                            
+                    except:
                         
-                    else:
-                        
-                        values = list(set(values))
-                        value = '\n'.join(values)
+                        value = None
+                        pass
                         
                     net[field] = value
             
@@ -751,7 +774,9 @@ class IPWhois():
               'postal_code': None,
               'abuse_emails': None,
               'tech_emails': None,
-              'misc_emails': None
+              'misc_emails': None,
+              'created': None,
+              'updated': None
               }
         
         nets = []
@@ -778,6 +803,14 @@ class IPWhois():
                     net = base_net.copy()
                     net['cidr'] = ', '.join([i.__str__() for i in ipaddress.collapse_addresses(addrs)])
                     
+                    if 'registrationDate' in n:
+
+                        net['created'] = n['registrationDate']['$'].strip()
+                    
+                    if 'updateDate' in n:
+                        
+                        net['updated'] = n['updateDate']['$'].strip()
+                           
                     if 'name' in n:
                         
                         net['name'] = n['name']['$'].strip()
