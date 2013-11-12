@@ -1,12 +1,20 @@
 Changelog
 =========
 
+0.5.0 ()
+------------------
+
+- Reformatting for PEP 8 compliance.
+- Added LACNIC RWS support for IPWhois.lookup_rws().
+
 0.4.0 (2013-10-17)
 ------------------
 
-- Added support for network registered and updated time stamps (keys: created, updated). Value in ISO 8601 format.
+- Added support for network registered and updated time stamps (keys: created,
+	updated). Value in ISO 8601 format.
 - Added value assertion to test_utils.py.
-- Fixed IPWhois.lookup() handling of processed values. If processing throws an exception, discard the value and not the net dictionary.
+- Fixed IPWhois.lookup() handling of processed values. If processing throws
+	an exception, discard the value and not the net dictionary.
 
 0.3.0 (2013-09-30)
 ------------------
@@ -20,7 +28,8 @@ Changelog
 ------------------
 
 - Fixed LACNIC CIDR validation on IPWhois.lookup().
-- Fixed bug in IPWhois.get_whois() for query rate limiting. This was discovered via testing multiprocessing with 8+ processes running asynchronously.
+- Fixed bug in IPWhois.get_whois() for query rate limiting. This was discovered
+	via testing multiprocessing with 8+ processes running asynchronously.
 
 0.2.0 (2013-09-23)
 ------------------
@@ -42,15 +51,19 @@ Changelog
 0.1.8 (2013-09-17)
 ------------------
 
-- Removed set_proxy() in favor of having the user provide their own urllib.request.OpenerDirector instance as a parameter to IPWhois().
-- Restructured package in favor of modularity. get_countries() is now located in ipwhois.utils.
-- Added exception WhoisLookupError for IPWhois.lookup() and IPWhois.lookup_rws().
+- Removed set_proxy() in favor of having the user provide their own
+	urllib.request.OpenerDirector instance as a parameter to IPWhois().
+- Restructured package in favor of modularity. get_countries() is now located
+	in ipwhois.utils.
+- Added exception WhoisLookupError for IPWhois.lookup() and
+	IPWhois.lookup_rws().
 
 0.1.7 (2013-09-16)
 ------------------
 
 - Fixed bug in set_proxy().
-- Removed ARIN top level network entries from return dictionary of IPWhois.lookup_rws().
+- Removed ARIN top level network entries from return dictionary of
+	IPWhois.lookup_rws().
 - Fixed bug in ARIN RWS parsing when only one network.
 
 0.1.6 (2013-09-16)
@@ -69,15 +82,19 @@ Changelog
 0.1.4 (2013-09-12)
 ------------------
 
-- Added validity checks for the asn_registry value due to a bug in the Team Cymru ASN lookup over night.
-- Added timeout argument to IPWhois(). This is the default timeout in seconds for socket connections.
+- Added validity checks for the asn_registry value due to a bug in the Team
+	Cymru ASN lookup over night.
+- Added timeout argument to IPWhois(). This is the default timeout in seconds
+	for socket connections.
 - Fixed decoding issue in IPWhois.get_whois().
 
 0.1.3 (2013-09-11)
 ------------------
 
-- Added exception handling with query retry support for socket errors, timeouts, connection resets.
-- Moved ASN queries to their own functions (IPWhois.get_asn_dns() and IPWhois.get_asn_whois())
+- Added exception handling with query retry support for socket errors,
+	timeouts, connection resets.
+- Moved ASN queries to their own functions (IPWhois.get_asn_dns() and
+	IPWhois.get_asn_whois())
 - Moved whois query to its own function (IPWhois.get_whois())
 - Country codes are now forced as upper case in the return dictionary.
 
