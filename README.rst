@@ -2,9 +2,12 @@
 ipwhois
 =======
 
-ipwhois is a simple package for retrieving and parsing whois data for IPv4 and IPv6 addresses. 
+ipwhois is a simple package for retrieving and parsing whois data for IPv4 
+and IPv6 addresses. 
 
-The various NICs are pretty inconsistent with formatting Whois results and the information contained within. I am still working through how to parse some of these fields in to standard dictionary keys.
+The various NICs are pretty inconsistent with formatting Whois results and the 
+information contained within. I am still working through how to parse some of 
+these fields in to standard dictionary keys.
 
 This version requires Python 3.3+ (for the ipaddress library) and dnspython3.
 
@@ -120,13 +123,23 @@ Latest version from GitHub::
 Parsing
 =======
 
-Parsing is currently limited to CIDR, country, name, description, state, city, address, postal_code, abuse_emails, tech_emails, misc_emails, created and updated fields. This is assuming that those fields are present.
+Parsing is currently limited to CIDR, country, name, description, state, city, 
+address, postal_code, abuse_emails, tech_emails, misc_emails, created and 
+updated fields. This is assuming that those fields are present.
 
-Some IPs have parent networks listed. The parser attempts to recognize this, and break the networks into individual dictionaries. If a single network has multiple CIDRs, they will be separated by ', '.
+Some IPs have parent networks listed. The parser attempts to recognize this, 
+and break the networks into individual dictionaries. If a single network has 
+multiple CIDRs, they will be separated by ', '.
 
-Sometimes, you will see whois information with multiple consecutive same name fields, e.g., Description: some text\\nDescription: more text. The parser will recognize this and the returned result will have the values separated by '\\n'.
+Sometimes, you will see whois information with multiple consecutive same name 
+fields, e.g., Description: some text\\nDescription: more text. The parser will 
+recognize this and the returned result will have the values separated by '\\n'.
 
 REST (HTTP)
 ===========
 
-IPWhois.lookup_rws() should be faster than IPWhois.lookup(), but may not be as reliable. APNIC, LACNIC, and AFRINIC do not have a Whois-RWS service yet. We have to rely on the Ripe RWS service, which does not contain all of the data we need.
+IPWhois.lookup_rws() should be faster than IPWhois.lookup(), but may not be as 
+reliable. APNIC, and AFRINIC do not have a Whois-RWS service yet. We 
+have to rely on the Ripe RWS service, which does not contain all of the data 
+we need. The LACNIC RWS service is supported, but is in beta v2. This may
+result in availability or performance issues.

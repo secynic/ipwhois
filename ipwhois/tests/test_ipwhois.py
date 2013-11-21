@@ -1,32 +1,34 @@
 import unittest
-from ipwhois import IPWhois, IPDefinedError, ASNLookupError, WhoisLookupError, HostLookupError
+from ipwhois import (IPWhois, IPDefinedError, ASNLookupError, WhoisLookupError,
+                     HostLookupError)
+
 
 class TestIPWhois(unittest.TestCase):
-    
+
     def test_ip_invalid(self):
         from ipaddress import AddressValueError
         self.assertRaises(ValueError, IPWhois, '192.168.0.256')
         self.assertRaises(AddressValueError, IPWhois, 1234)
-    
+
     def test_ip_defined(self):
         self.assertRaises(IPDefinedError, IPWhois, '192.168.0.1')
         self.assertRaises(IPDefinedError, IPWhois, 'fe80::')
-        
+
     def test_ip_version(self):
         result = IPWhois('74.125.225.229')
         self.assertEqual(result.version, 4)
         result = IPWhois('2001:4860:4860::8888')
         self.assertEqual(result.version, 6)
-    
+
     def test_timeout(self):
         result = IPWhois('74.125.225.229')
         self.assertIsInstance(result.timeout, int)
-        
+
     def test_proxy_opener(self):
         from urllib.request import OpenerDirector
         result = IPWhois('74.125.225.229')
         self.assertIsInstance(result.opener, OpenerDirector)
-        
+
     def test_get_asn_dns(self):
         result = IPWhois('74.125.225.229')
         try:
@@ -37,7 +39,7 @@ class TestIPWhois(unittest.TestCase):
             raise e
         except Exception as e:
             self.fail('Unexpected exception raised: %r' % e)
-        
+
     def test_get_asn_whois(self):
         result = IPWhois('74.125.225.229')
         try:
@@ -48,7 +50,7 @@ class TestIPWhois(unittest.TestCase):
             raise e
         except Exception as e:
             self.fail('Unexpected exception raised: %r' % e)
-        
+
     def test_get_whois(self):
         result = IPWhois('74.125.225.229')
         try:
@@ -59,19 +61,20 @@ class TestIPWhois(unittest.TestCase):
             raise e
         except Exception as e:
             self.fail('Unexpected exception raised: %r' % e)
-    
+
     def test_get_rws(self):
         from ipwhois.ipwhois import NIC_WHOIS
         result = IPWhois('74.125.225.229')
         try:
-            self.assertIsInstance(result.get_rws(NIC_WHOIS['arin']['url'].format('74.125.225.229')), dict)
+            self.assertIsInstance(result.get_rws(
+                NIC_WHOIS['arin']['url'].format('74.125.225.229')), dict)
         except WhoisLookupError:
             pass
         except AssertionError as e:
             raise e
         except Exception as e:
             self.fail('Unexpected exception raised: %r' % e)
-        
+
     def test_get_host(self):
         result = IPWhois('74.125.225.229')
         try:
@@ -82,7 +85,7 @@ class TestIPWhois(unittest.TestCase):
             raise e
         except Exception as e:
             self.fail('Unexpected exception raised: %r' % e)
-        
+
     def test_lookup(self):
         result = IPWhois('74.125.225.229')
         try:
@@ -93,7 +96,7 @@ class TestIPWhois(unittest.TestCase):
             raise e
         except Exception as e:
             self.fail('Unexpected exception raised: %r' % e)
-        
+
     def test_lookup_rws(self):
         from urllib import request
         result = IPWhois('74.125.225.229')

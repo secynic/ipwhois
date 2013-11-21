@@ -66,6 +66,6 @@ setup(
     download_url=DOWNLOAD_URL,
     classifiers=CLASSIFIERS,
     packages=PACKAGES,
-    package_data = PACKAGE_DATA,
+    package_data=PACKAGE_DATA,
     install_requires=INSTALL_REQUIRES
 )
