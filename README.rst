@@ -139,6 +139,7 @@ REST (HTTP)
 ===========
 
 IPWhois.lookup_rws() should be faster than IPWhois.lookup(), but may not be as 
-reliable. APNIC, LACNIC, and AFRINIC do not have a Whois-RWS service yet. We 
+reliable. APNIC, and AFRINIC do not have a Whois-RWS service yet. We 
 have to rely on the Ripe RWS service, which does not contain all of the data 
-we need.
+we need. The LACNIC RWS service is supported, but is in beta v2. This may
+result in availability or performance issues.

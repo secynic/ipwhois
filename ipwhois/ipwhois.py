@@ -129,8 +129,8 @@ NIC_WHOIS = {
                      },
             'lacnic': {
                      'server': 'whois.lacnic.net',
-                     'url': ('http://apps.db.ripe.net/whois/grs-search?'
-                        'query-string={0}&source=lacnic-grs'),
+                     'url': ('http://restfulwhoisv2.labs.lacnic.net/'
+                        'restfulwhois/ip/{0}'),
                      'fields': {
                                 'description': '^(owner):[^\S\n]+(?P<val>.+)$',
                                 'country': '^(country):[^\S\n]+(?P<val>.+)$',
@@ -146,7 +146,8 @@ NIC_WHOIS = {
                                 'updated':
                                     '^(changed):[^\S\n]+(?P<val>[0-9]{8}).*$'
                                 },
-                     'dt_format': '%Y%m%d'
+                     'dt_format': '%Y%m%d',
+                     'dt_rws_format': '%Y%m%d'
                      },
             'afrinic': {
                      'server': 'whois.afrinic.net',
@@ -1010,6 +1011,110 @@ class IPWhois():
                                         pass
 
                     nets.append(net)
+
+            except:
+
+                pass
+
+        elif results['asn_registry'] == 'lacnic':
+
+            try:
+
+                addrs = []
+                addrs.extend(ipaddress.summarize_address_range(
+                    ipaddress.ip_address(response['startAddress'].strip()),
+                    ipaddress.ip_address(response['endAddress'].strip())))
+
+                net = base_net.copy()
+                net['cidr'] = ', '.join([i.__str__()
+                    for i in ipaddress.collapse_addresses(addrs)])
+
+                net['country'] = response['country'].strip()
+
+                events = response['events']
+
+                if not isinstance(events, list):
+
+                    events = [events]
+
+                for ev in events:
+
+                    if 'eventAction' in ev and 'eventDate' in ev:
+
+                        if ev['eventAction'] == 'registration':
+
+                            tmp = ev['eventDate'].strip()
+
+                            value = datetime.strptime(
+                                tmp,
+                                NIC_WHOIS[
+                                    results['asn_registry']]['dt_rws_format']
+                                ).isoformat('T')
+
+                            net['created'] = value
+
+                        elif ev['eventAction'] == 'last changed':
+
+                            tmp = ev['eventDate'].strip()
+
+                            value = datetime.strptime(
+                                tmp,
+                                NIC_WHOIS[
+                                    results['asn_registry']]['dt_rws_format']
+                                ).isoformat('T')
+
+                            net['updated'] = value
+
+                entities = response['entities']
+
+                if not isinstance(entities, list):
+
+                    entities = [entities]
+
+                for en in entities:
+
+                    if en['roles'][0] == 'registrant':
+
+                        temp = en['vcardArray'][1]
+
+                        for t in temp:
+
+                            if t[0] == 'fn':
+
+                                net['name'] = t[3].strip()
+
+                            elif t[0] == 'org':
+
+                                net['description'] = t[3][0].strip()
+
+                            elif t[0] == 'adr':
+
+                                net['address'] = t[1]['label'].strip()
+
+                            elif t[0] == 'email':
+
+                                net['misc_emails'] = t[3].strip()
+
+                    elif en['roles'][0] == 'abuse':
+
+                        temp = en['vcardArray'][1]
+
+                        for t in temp:
+
+                            if t[0] == 'email':
+
+                                net['abuse_emails'] = t[3].strip()
+
+                    elif en['roles'][0] == 'tech':
+
+                        temp = en['vcardArray'][1]
+
+                        for t in temp:
+
+                            if t[0] == 'email':
+
+                                net['tech_emails'] = t[3].strip()
+                nets.append(net)
 
             except:
 

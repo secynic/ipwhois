@@ -1,11 +1,11 @@
 Changelog
 =========
 
-0.5.0 ()
+0.5.0 (2013-11-20)
 ------------------
 
 - Reformatting for PEP 8 compliance.
-- Added LACNIC RWS support for IPWhois.lookup_rws().
+- Added LACNIC RWS (Beta v2) support for IPWhois.lookup_rws().
 
 0.4.0 (2013-10-17)
 ------------------
