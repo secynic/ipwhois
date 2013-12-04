@@ -1,6 +1,21 @@
 Changelog
 =========
 
+0.5.1 (2013-12-03)
+------------------
+
+- Moved regex string literal declarations to NIC_WHOIS dict.
+- Moved RWS parsing to own private functions.
+- Moved base_net dict to global BASE_NET.
+- More granular exception handling in lookup functions.
+- Fixed email parsing for ARIN and RIPE RWS.
+- Changed some 'if key in dict' statements to try/except for slight performance
+  increase in lookup functions.
+- Removed generic exception handling (returned blank dict) on get_countries().
+- More PEP 8 reformatting.
+- Minor docstring modifications.
+- Added some unit tests to test_lookup() and test_lookup_rws().
+
 0.5.0 (2013-11-20)
 ------------------
 
