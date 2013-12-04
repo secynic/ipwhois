@@ -87,27 +87,60 @@ class TestIPWhois(unittest.TestCase):
             self.fail('Unexpected exception raised: %r' % e)
 
     def test_lookup(self):
-        result = IPWhois('74.125.225.229')
-        try:
-            self.assertIsInstance(result.lookup(), dict)
-        except (ASNLookupError, WhoisLookupError):
-            pass
-        except AssertionError as e:
-            raise e
-        except Exception as e:
-            self.fail('Unexpected exception raised: %r' % e)
+
+        ips = [
+            '74.125.225.229',  # ARIN
+            '2001:4860:4860::8888',
+            '62.239.237.1',  # RIPE
+            '2a00:2381:ffff::1',
+            '210.107.73.73',  # APNIC
+            '2001:240:10c:1::ca20:9d1d',
+            '200.57.141.161',  # LACNIC
+            '2801:10:c000::',
+            '196.11.240.215',  # AFRINIC
+            '2001:43f8:7b0::'
+        ]
+
+        for ip in ips:
+
+            result = IPWhois(ip)
+            try:
+                self.assertIsInstance(result.lookup(), dict)
+            except (ASNLookupError, WhoisLookupError):
+                pass
+            except AssertionError as e:
+                raise e
+            except Exception as e:
+                self.fail('Unexpected exception raised: %r' % e)
 
     def test_lookup_rws(self):
         from urllib import request
-        result = IPWhois('74.125.225.229')
-        try:
-            self.assertIsInstance(result.lookup_rws(), dict)
-        except (ASNLookupError, WhoisLookupError):
-            pass
-        except AssertionError as e:
-            raise e
-        except Exception as e:
-            self.fail('Unexpected exception raised: %r' % e)
+
+        ips = [
+            '74.125.225.229',  # ARIN
+            '2001:4860:4860::8888',
+            '62.239.237.1',  # RIPE
+            '2a00:2381:ffff::1',
+            '210.107.73.73',  # APNIC
+            '2001:240:10c:1::ca20:9d1d',
+            '200.57.141.161',  # LACNIC
+            '2801:10:c000::',
+            '196.11.240.215',  # AFRINIC
+            '2001:43f8:7b0::'
+        ]
+
+        for ip in ips:
+
+            result = IPWhois(ip)
+            try:
+                self.assertIsInstance(result.lookup_rws(), dict)
+            except (ASNLookupError, WhoisLookupError):
+                pass
+            except AssertionError as e:
+                raise e
+            except Exception as e:
+                self.fail('Unexpected exception raised: %r' % e)
+
         handler = request.ProxyHandler({'http': 'http://0.0.0.0:80/'})
         opener = request.build_opener(handler)
         result = IPWhois('74.125.225.229', 0, opener)

@@ -41,51 +41,45 @@ def get_countries():
     #Initialize the countries dictionary.
     countries = {}
 
-    try:
+    #Set the data directory based on if the script is a frozen executable.
+    if sys.platform == 'win32' and getattr(sys, 'frozen', False):
 
-        #Set the data directory based on if the script is a frozen executable.
-        if sys.platform == 'win32' and getattr(sys, 'frozen', False):
+        data_dir = path.dirname(sys.executable)
 
-            data_dir = path.dirname(sys.executable)
+    else:
 
-        else:
+        data_dir = path.dirname(__file__)
 
-            data_dir = path.dirname(__file__)
+    #Create the country codes file object.
+    f = open(str(data_dir) + '/data/iso_3166-1_list_en.xml', 'r')
 
-        #Create the country codes file object.
-        f = open(str(data_dir) + '/data/iso_3166-1_list_en.xml', 'r')
+    #Read the file.
+    data = f.read()
 
-        #Read the file.
-        data = f.read()
-
-        #Check if there is data.
-        if not data:
-
-            return {}
-
-        #Parse the data to get the DOM.
-        dom = parseString(data)
-
-        #Retrieve the country entries.
-        entries = dom.getElementsByTagName('ISO_3166-1_Entry')
-
-        #Iterate through the entries and add to the countries dictionary.
-        for entry in entries:
-
-            #Retrieve the country code and name from the DOM.
-            code = entry.getElementsByTagName(
-                'ISO_3166-1_Alpha-2_Code_element')[0].firstChild.data
-            name = entry.getElementsByTagName(
-                'ISO_3166-1_Country_name')[0].firstChild.data
-
-            #Add to the countries dictionary.
-            countries[code] = name.title()
-
-        return countries
-
-    except:
+    #Check if there is data.
+    if not data:
 
         return {}
+
+    #Parse the data to get the DOM.
+    dom = parseString(data)
+
+    #Retrieve the country entries.
+    entries = dom.getElementsByTagName('ISO_3166-1_Entry')
+
+    #Iterate through the entries and add to the countries dictionary.
+    for entry in entries:
+
+        #Retrieve the country code and name from the DOM.
+        code = entry.getElementsByTagName(
+            'ISO_3166-1_Alpha-2_Code_element')[0].firstChild.data
+        name = entry.getElementsByTagName(
+            'ISO_3166-1_Country_name')[0].firstChild.data
+
+        #Add to the countries dictionary.
+        countries[code] = name.title()
+
+    return countries
 
 
 def ipv4_is_defined(address):
