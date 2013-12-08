@@ -1,6 +1,11 @@
 Changelog
 =========
 
+0.5.2 (2013-12-07)
+------------------
+
+- Fixed special character issue in countries XML file (Issue #23).
+
 0.5.1 (2013-12-03)
 ------------------
 

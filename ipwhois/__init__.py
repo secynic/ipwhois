@@ -22,7 +22,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-__version__ = '0.5.1'
+__version__ = '0.5.2'
 
 from .ipwhois import (IPWhois, IPDefinedError, ASNLookupError,
                       WhoisLookupError, HostLookupError)
