@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.6.0 (2014-01-13)
+------------------
+
+- Added APNIC RWS support for IPWhois.lookup_rws().
+- Fixed issue in IPWhois.lookup_rws() for radb-grs fallback.
+
 0.5.2 (2013-12-07)
 ------------------
 
