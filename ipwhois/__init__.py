@@ -1,4 +1,4 @@
-# Copyright (c) 2013, Philip Hane
+# Copyright (c) 2013, 2014 Philip Hane
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -22,7 +22,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-__version__ = '0.5.2'
+__version__ = '0.6.0'
 
 from .ipwhois import (IPWhois, IPDefinedError, ASNLookupError,
                       WhoisLookupError, HostLookupError)
