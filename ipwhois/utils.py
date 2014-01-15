@@ -22,7 +22,10 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import ipaddress
+try:
+    import ipaddress
+except ImportError:
+    import ipaddr as ipaddress
 from xml.dom.minidom import parseString
 from os import path
 import sys
