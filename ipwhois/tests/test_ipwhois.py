@@ -5,8 +5,20 @@ from ipwhois import (IPWhois, IPDefinedError, ASNLookupError, WhoisLookupError,
 
 class TestIPWhois(unittest.TestCase):
 
+    if not hasattr(unittest.TestCase, 'assertIsInstance'):
+        def assertIsInstance(self, obj, cls, msg=None):
+            if not isinstance(obj, cls):
+                self.fail(self._formatMessage(
+                    msg,
+                    '%s is not an instance of %r' % (repr(obj), cls)
+                ))
+
     def test_ip_invalid(self):
-        from ipaddress import AddressValueError
+        try:
+            from ipaddress import AddressValueError
+        except ImportError:
+            from ipaddr import AddressValueError
+
         self.assertRaises(ValueError, IPWhois, '192.168.0.256')
         self.assertRaises(AddressValueError, IPWhois, 1234)
 
@@ -25,7 +37,11 @@ class TestIPWhois(unittest.TestCase):
         self.assertIsInstance(result.timeout, int)
 
     def test_proxy_opener(self):
-        from urllib.request import OpenerDirector
+        try:
+            from urllib.request import OpenerDirector
+        except ImportError:
+            from urllib2 import OpenerDirector
+
         result = IPWhois('74.125.225.229')
         self.assertIsInstance(result.opener, OpenerDirector)
 
@@ -114,7 +130,10 @@ class TestIPWhois(unittest.TestCase):
                 self.fail('Unexpected exception raised: %r' % e)
 
     def test_lookup_rws(self):
-        from urllib import request
+        try:
+            from urllib.request import ProxyHandler, build_opener
+        except ImportError:
+            from urllib2 import ProxyHandler, build_opener
 
         ips = [
             '74.125.225.229',  # ARIN
@@ -141,7 +160,7 @@ class TestIPWhois(unittest.TestCase):
             except Exception as e:
                 self.fail('Unexpected exception raised: %r' % e)
 
-        handler = request.ProxyHandler({'http': 'http://0.0.0.0:80/'})
-        opener = request.build_opener(handler)
+        handler = ProxyHandler({'http': 'http://0.0.0.0:80/'})
+        opener = build_opener(handler)
         result = IPWhois('74.125.225.229', 0, opener)
         self.assertRaises(WhoisLookupError, result.lookup_rws)

@@ -22,13 +22,34 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import ipaddress
+try:
+    from ipaddress import (ip_address,
+                           ip_network,
+                           summarize_address_range,
+                           collapse_addresses)
+except ImportError:
+    from ipaddr import (IPAddress as ip_address,
+                        IPNetwork as ip_network,
+                        summarize_address_range,
+                        collapse_address_list as collapse_addresses)
+
 import socket
 import dns.resolver
 import re
 import json
 from .utils import ipv4_is_defined, ipv6_is_defined
-from urllib import request
+
+try:
+    from urllib.request import (OpenerDirector,
+                                ProxyHandler,
+                                build_opener,
+                                Request)
+except ImportError:
+    from urllib2 import (OpenerDirector,
+                         ProxyHandler,
+                         build_opener,
+                         Request)
+
 from time import sleep
 from datetime import datetime
 
@@ -239,20 +260,20 @@ class IPWhois():
     def __init__(self, address, timeout=5, proxy_opener=None):
 
         #IPv4Address or IPv6Address, use ipaddress package exception handling.
-        self.address = ipaddress.ip_address(address)
+        self.address = ip_address(address)
 
         #Default timeout for socket connections.
         self.timeout = timeout
 
         #Proxy opener.
-        if isinstance(proxy_opener, request.OpenerDirector):
+        if isinstance(proxy_opener, OpenerDirector):
 
             self.opener = proxy_opener
 
         else:
 
-            handler = request.ProxyHandler()
-            self.opener = request.build_opener(handler)
+            handler = ProxyHandler()
+            self.opener = build_opener(handler)
 
         #IP address in string format for use in queries.
         self.address_str = self.address.__str__()
@@ -497,7 +518,7 @@ class IPWhois():
                 sleep(1)
                 return self.get_whois(asn_registry, retry_count)
 
-            return response
+            return str(response)
 
         except (socket.timeout, socket.error):
 
@@ -537,9 +558,12 @@ class IPWhois():
         try:
 
             #Create the connection for the whois query.
-            conn = request.Request(url, headers={'Accept': 'application/json'})
+            conn = Request(url, headers={'Accept': 'application/json'})
             data = self.opener.open(conn, timeout=self.timeout)
-            d = json.loads(data.readall().decode())
+            try:
+                d = json.loads(data.readall().decode())
+            except AttributeError:
+                d = json.loads(data.read().decode('ascii', 'ignore'))
 
             return d
 
@@ -676,7 +700,7 @@ class IPWhois():
 
                     net = BASE_NET.copy()
                     net['cidr'] = ', '.join(
-                        [ipaddress.ip_network(c.strip()).__str__()
+                        [ip_network(c.strip()).__str__()
                          for c in match.group(1).split(', ')]
                     )
                     net['start'] = match.start()
@@ -711,8 +735,7 @@ class IPWhois():
 
                             addr = '/'.join(addr_split)
 
-                        temp.append(ipaddress.ip_network(
-                            addr.strip()).__str__())
+                        temp.append(ip_network(addr.strip()).__str__())
 
                     net = BASE_NET.copy()
                     net['cidr'] = ', '.join(temp)
@@ -739,19 +762,17 @@ class IPWhois():
                     if match.group(3) and match.group(4):
 
                         addrs = []
-                        addrs.extend(ipaddress.summarize_address_range(
-                            ipaddress.ip_address(match.group(3).strip()),
-                            ipaddress.ip_address(match.group(4).strip())))
+                        addrs.extend(summarize_address_range(
+                            ip_address(match.group(3).strip()),
+                            ip_address(match.group(4).strip())))
 
                         cidr = ', '.join(
-                            [i.__str__()
-                             for i in ipaddress.collapse_addresses(addrs)]
+                            [i.__str__() for i in collapse_addresses(addrs)]
                         )
 
                     else:
 
-                        cidr = ipaddress.ip_network(
-                            match.group(2).strip()).__str__()
+                        cidr = ip_network(match.group(2).strip()).__str__()
 
                     net = BASE_NET.copy()
                     net['cidr'] = cidr
@@ -888,13 +909,12 @@ class IPWhois():
 
             try:
 
-                addrs.extend(ipaddress.summarize_address_range(
-                    ipaddress.ip_address(n['startAddress']['$'].strip()),
-                    ipaddress.ip_address(n['endAddress']['$'].strip())))
+                addrs.extend(summarize_address_range(
+                    ip_address(n['startAddress']['$'].strip()),
+                    ip_address(n['endAddress']['$'].strip())))
 
                 net['cidr'] = ', '.join(
-                    [i.__str__()
-                     for i in ipaddress.collapse_addresses(addrs)]
+                    [i.__str__() for i in collapse_addresses(addrs)]
                 )
 
             except (KeyError, ValueError, TypeError):
@@ -903,7 +923,7 @@ class IPWhois():
 
             try:
 
-                net['created'] = n['registrationDate']['$'].strip()
+                net['created'] = str(n['registrationDate']['$']).strip()
 
             except KeyError:
 
@@ -911,7 +931,7 @@ class IPWhois():
 
             try:
 
-                net['updated'] = n['updateDate']['$'].strip()
+                net['updated'] = str(n['updateDate']['$']).strip()
 
             except KeyError:
 
@@ -919,7 +939,7 @@ class IPWhois():
 
             try:
 
-                net['name'] = n['name']['$'].strip()
+                net['name'] = str(n['name']['$']).strip()
 
             except KeyError:
 
@@ -938,7 +958,7 @@ class IPWhois():
 
                 try:
 
-                    net['description'] = n[ref[0]]['@name'].strip()
+                    net['description'] = str(n[ref[0]]['@name']).strip()
 
                 except KeyError:
 
@@ -965,7 +985,7 @@ class IPWhois():
                         addr_list = [addr_list]
 
                     net['address'] = '\n'.join(
-                        [line['$'].strip() for line in addr_list]
+                        [str(line['$']).strip() for line in addr_list]
                     )
 
                 except KeyError:
@@ -975,7 +995,7 @@ class IPWhois():
                 try:
 
                     net['postal_code'] = (
-                        ref_response[ref[1]]['postalCode']['$']
+                        str(ref_response[ref[1]]['postalCode']['$'])
                     )
 
                 except KeyError:
@@ -984,7 +1004,7 @@ class IPWhois():
 
                 try:
 
-                    net['city'] = ref_response[ref[1]]['city']['$']
+                    net['city'] = str(ref_response[ref[1]]['city']['$'])
 
                 except KeyError:
 
@@ -993,8 +1013,8 @@ class IPWhois():
                 try:
 
                     net['country'] = (
-                        ref_response[ref[1]]['iso3166-1']['code2']['$']
-                    )
+                        str(ref_response[ref[1]]['iso3166-1']['code2']['$'])
+                    ).upper()
 
                 except KeyError:
 
@@ -1003,7 +1023,7 @@ class IPWhois():
                 try:
 
                     net['state'] = (
-                        ref_response[ref[1]]['iso3166-2']['$']
+                        str(ref_response[ref[1]]['iso3166-2']['$'])
                     )
 
                 except KeyError:
@@ -1034,7 +1054,7 @@ class IPWhois():
 
                             for e in emails:
 
-                                temp.append(e['$'].strip())
+                                temp.append(str(e['$']).strip())
 
                             key = '%s_emails' % poc['@description'].lower()
 
@@ -1092,11 +1112,13 @@ class IPWhois():
 
                         if attr['name'] == 'abuse-mailbox':
 
-                            ripe_abuse_emails.append(attr['value'].strip())
+                            ripe_abuse_emails.append(str(
+                                attr['value']
+                            ).strip())
 
                         elif attr['name'] == 'e-mail':
 
-                            ripe_misc_emails.append(attr['value'].strip())
+                            ripe_misc_emails.append(str(attr['value']).strip())
 
                 elif n['type'] in ('inetnum', 'inet6num', 'route', 'route6'):
 
@@ -1106,7 +1128,7 @@ class IPWhois():
 
                         if attr['name'] in ('inetnum', 'inet6num'):
 
-                            ipr = attr['value'].strip()
+                            ipr = str(attr['value']).strip()
                             ip_range = ipr.split(' - ')
 
                             try:
@@ -1115,25 +1137,20 @@ class IPWhois():
 
                                     addrs = []
                                     addrs.extend(
-                                        ipaddress.summarize_address_range(
-                                            ipaddress.ip_address(
-                                                ip_range[0]),
-                                            ipaddress.ip_address(
-                                                ip_range[1])
+                                        summarize_address_range(
+                                            ip_address(ip_range[0]),
+                                            ip_address(ip_range[1])
                                         )
                                     )
 
                                     cidr = ', '.join(
                                         [i.__str__()
-                                         for i in ipaddress.
-                                            collapse_addresses(addrs)]
+                                         for i in collapse_addresses(addrs)]
                                     )
 
                                 else:
 
-                                    cidr = ipaddress.ip_network(
-                                        ip_range[0]
-                                    ).__str__()
+                                    cidr = ip_network(ip_range[0]).__str__()
 
                                 net['cidr'] = cidr
 
@@ -1143,14 +1160,13 @@ class IPWhois():
 
                         elif attr['name'] in ('route', 'route6'):
 
-                            ipr = attr['value'].strip()
+                            ipr = str(attr['value']).strip()
                             ip_ranges = ipr.split(', ')
 
                             try:
 
                                 net['cidr'] = ', '.join(
-                                    ipaddress.ip_network(r).__str__()
-                                    for r in ip_ranges
+                                    ip_network(r).__str__() for r in ip_ranges
                                 )
 
                             except ValueError:
@@ -1159,35 +1175,35 @@ class IPWhois():
 
                         elif attr['name'] == 'netname':
 
-                            net['name'] = attr['value'].strip()
+                            net['name'] = str(attr['value']).strip()
 
                         elif attr['name'] == 'descr':
 
                             if net['description'] is not None:
 
                                 net['description'] += '\n%s' % (
-                                    attr['value'].strip()
+                                    str(attr['value']).strip()
                                 )
 
                             else:
 
-                                net['description'] = attr['value'].strip()
+                                net['description'] = str(attr['value']).strip()
 
                         elif attr['name'] == 'country':
 
-                            net['country'] = attr['value'].strip()
+                            net['country'] = str(attr['value']).strip().upper()
 
                         elif attr['name'] == 'address':
 
                             if net['address'] is not None:
 
                                 net['address'] += '\n%s' % (
-                                    attr['value'].strip()
+                                    str(attr['value']).strip()
                                 )
 
                             else:
 
-                                net['address'] = attr['value'].strip()
+                                net['address'] = str(attr['value']).strip()
 
                     nets.append(net)
 
@@ -1235,13 +1251,12 @@ class IPWhois():
 
         try:
 
-            addrs.extend(ipaddress.summarize_address_range(
-                ipaddress.ip_address(response['startAddress'].strip()),
-                ipaddress.ip_address(response['endAddress'].strip())))
+            addrs.extend(summarize_address_range(
+                ip_address(response['startAddress'].strip()),
+                ip_address(response['endAddress'].strip())))
 
             net['cidr'] = ', '.join(
-                [i.__str__()
-                 for i in ipaddress.collapse_addresses(addrs)]
+                [i.__str__() for i in collapse_addresses(addrs)]
             )
 
         except (KeyError, ValueError, TypeError):
@@ -1250,7 +1265,7 @@ class IPWhois():
 
         try:
 
-            net['country'] = response['country'].strip()
+            net['country'] = str(response['country']).strip().upper()
 
         except KeyError:
 
@@ -1274,11 +1289,11 @@ class IPWhois():
 
                 if ev['eventAction'] == 'registration':
 
-                    net['created'] = ev['eventDate'].strip()
+                    net['created'] = str(ev['eventDate']).strip()
 
                 elif ev['eventAction'] == 'last changed':
 
-                    net['updated'] = ev['eventDate'].strip()
+                    net['updated'] = str(ev['eventDate']).strip()
 
             except (KeyError, ValueError):
 
@@ -1306,13 +1321,13 @@ class IPWhois():
 
                     if 'administrative' in en['roles'] and t[0] == 'fn':
 
-                        net['name'] = t[3].strip()
+                        net['name'] = str(t[3]).strip()
 
                     elif 'administrative' in en['roles'] and t[0] == 'adr':
 
                         try:
 
-                            net['address'] = t[1]['label'].strip()
+                            net['address'] = str(t[1]['label']).strip()
 
                         except KeyError:
 
@@ -1339,11 +1354,11 @@ class IPWhois():
 
                             if net[key] is not None:
 
-                                net[key] += '\n%s' % t[3].strip()
+                                net[key] += '\n%s' % str(t[3]).strip()
 
                             else:
 
-                                net[key] = t[3].strip()
+                                net[key] = str(t[3]).strip()
 
             except (KeyError, IndexError):
 
@@ -1367,7 +1382,7 @@ class IPWhois():
 
                 if rem['title'] == 'description':
 
-                    net['description'] = '\n'.join(rem['description'])
+                    net['description'] = str('\n'.join(rem['description']))
 
             except (KeyError, IndexError):
 
@@ -1395,13 +1410,12 @@ class IPWhois():
 
         try:
 
-            addrs.extend(ipaddress.summarize_address_range(
-                ipaddress.ip_address(response['startAddress'].strip()),
-                ipaddress.ip_address(response['endAddress'].strip())))
+            addrs.extend(summarize_address_range(
+                ip_address(response['startAddress'].strip()),
+                ip_address(response['endAddress'].strip())))
 
             net['cidr'] = ', '.join(
-                [i.__str__()
-                 for i in ipaddress.collapse_addresses(addrs)]
+                [i.__str__() for i in collapse_addresses(addrs)]
             )
 
         except (KeyError, ValueError, TypeError):
@@ -1410,7 +1424,7 @@ class IPWhois():
 
         try:
 
-            net['country'] = response['country'].strip()
+            net['country'] = str(response['country']).strip().upper()
 
         except KeyError:
 
@@ -1434,7 +1448,7 @@ class IPWhois():
 
                 if ev['eventAction'] == 'registration':
 
-                    tmp = ev['eventDate'].strip()
+                    tmp = str(ev['eventDate']).strip()
 
                     value = datetime.strptime(
                         tmp,
@@ -1445,7 +1459,7 @@ class IPWhois():
 
                 elif ev['eventAction'] == 'last changed':
 
-                    tmp = ev['eventDate'].strip()
+                    tmp = str(ev['eventDate']).strip()
 
                     value = datetime.strptime(
                         tmp,
@@ -1482,19 +1496,19 @@ class IPWhois():
 
                         if t[0] == 'fn':
 
-                            net['name'] = t[3].strip()
+                            net['name'] = str(t[3]).strip()
 
                         elif t[0] == 'org':
 
-                            net['description'] = t[3][0].strip()
+                            net['description'] = str(t[3][0]).strip()
 
                         elif t[0] == 'adr':
 
-                            net['address'] = t[1]['label'].strip()
+                            net['address'] = str(t[1]['label']).strip()
 
                         elif t[0] == 'email':
 
-                            net['misc_emails'] = t[3].strip()
+                            net['misc_emails'] = str(t[3]).strip()
 
                 elif en['roles'][0] == 'abuse':
 
@@ -1504,7 +1518,7 @@ class IPWhois():
 
                         if t[0] == 'email':
 
-                            net['abuse_emails'] = t[3].strip()
+                            net['abuse_emails'] = str(t[3]).strip()
 
                 elif en['roles'][0] == 'tech':
 
@@ -1514,7 +1528,7 @@ class IPWhois():
 
                         if t[0] == 'email':
 
-                            net['tech_emails'] = t[3].strip()
+                            net['tech_emails'] = str(t[3]).strip()
 
             except (KeyError, IndexError):
 

@@ -2,6 +2,7 @@
 
 from distutils.core import setup
 from ipwhois import __version__
+import sys
 
 NAME = 'ipwhois'
 VERSION = __version__
@@ -40,6 +41,10 @@ CLASSIFIERS = [
     "License :: OSI Approved :: BSD License",
     "Operating System :: OS Independent",
     "Programming Language :: Python",
+    "Programming Language :: Python :: 2",
+    "Programming Language :: Python :: 2.6",
+    "Programming Language :: Python :: 2.7",
+    "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.3",
     "Topic :: Internet",
     "Topic :: Software Development",
@@ -49,9 +54,14 @@ PACKAGES = ['ipwhois']
 
 PACKAGE_DATA = {'ipwhois': ['data/*.xml']}
 
-INSTALL_REQUIRES = [
-    "dnspython3"
-]
+INSTALL_REQUIRES = []
+if sys.version_info >= (3,):
+    INSTALL_REQUIRES.append("dnspython3")
+else:
+    INSTALL_REQUIRES.append("dnspython")
+
+if sys.version_info < (3, 3,):
+    INSTALL_REQUIRES.append("ipaddr")
 
 setup(
     name=NAME,

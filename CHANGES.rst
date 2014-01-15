@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.7.0 (2014-01-14)
+------------------
+
+- Added Python 2.6+ support.
+- The country field in net dicts is now forced uppercase.
+
 0.6.0 (2014-01-13)
 ------------------
 

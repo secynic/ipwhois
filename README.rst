@@ -9,8 +9,6 @@ The various NICs are pretty inconsistent with formatting Whois results and the
 information contained within. I am still working through how to parse some of 
 these fields in to standard dictionary keys.
 
-This version requires Python 3.3+ (for the ipaddress library) and dnspython3.
-
 Usage Examples
 ==============
 
@@ -108,6 +106,18 @@ Countries::
 	>>>> print(countries[results['nets'][0]['country']])
 
 	United States
+
+Dependencies
+============
+
+Python 2.6, 2.7::
+
+    dnspython
+    ipaddr
+
+Python 3.3::
+
+    dnspython3
 
 Installing
 ==========
