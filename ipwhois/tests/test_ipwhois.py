@@ -1,6 +1,6 @@
 import unittest
-from ipwhois import (IPWhois, IPDefinedError, ASNLookupError, WhoisLookupError,
-                     HostLookupError)
+from ipwhois import (IPWhois, IPDefinedError, ASNLookupError, ASNRegistryError,
+                     WhoisLookupError, HostLookupError)
 
 
 class TestIPWhois(unittest.TestCase):
@@ -49,7 +49,7 @@ class TestIPWhois(unittest.TestCase):
         result = IPWhois('74.125.225.229')
         try:
             self.assertIsInstance(result.get_asn_dns(), dict)
-        except ASNLookupError:
+        except (ASNLookupError, ASNRegistryError):
             pass
         except AssertionError as e:
             raise e
@@ -60,7 +60,7 @@ class TestIPWhois(unittest.TestCase):
         result = IPWhois('74.125.225.229')
         try:
             self.assertIsInstance(result.get_asn_whois(), dict)
-        except ASNLookupError:
+        except (ASNLookupError, ASNRegistryError):
             pass
         except AssertionError as e:
             raise e
@@ -122,7 +122,7 @@ class TestIPWhois(unittest.TestCase):
             result = IPWhois(ip)
             try:
                 self.assertIsInstance(result.lookup(), dict)
-            except (ASNLookupError, WhoisLookupError):
+            except (ASNLookupError, ASNRegistryError, WhoisLookupError):
                 pass
             except AssertionError as e:
                 raise e
@@ -153,7 +153,7 @@ class TestIPWhois(unittest.TestCase):
             result = IPWhois(ip)
             try:
                 self.assertIsInstance(result.lookup_rws(), dict)
-            except (ASNLookupError, WhoisLookupError):
+            except (ASNLookupError, ASNRegistryError, WhoisLookupError):
                 pass
             except AssertionError as e:
                 raise e

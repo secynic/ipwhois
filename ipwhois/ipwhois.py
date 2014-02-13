@@ -107,10 +107,7 @@ NIC_WHOIS = {
     },
     'ripencc': {
         'server': 'whois.ripe.net',
-        'url': (
-            'http://apps.db.ripe.net/whois/grs-search?'
-            'query-string={0}&source=ripe-grs'
-        ),
+        'url': 'http://rest.db.ripe.net/search.json?query-string={0}',
         'fields': {
             'name': r'^(netname):[^\S\n]+(?P<val>.+)$',
             'description': r'^(descr):[^\S\n]+(?P<val>.+)$',
@@ -172,10 +169,7 @@ NIC_WHOIS = {
     },
     'afrinic': {
         'server': 'whois.afrinic.net',
-        'url': (
-            'http://apps.db.ripe.net/whois/grs-search?'
-            'query-string={0}&source=afrinic-grs'
-        ),
+        'url': 'http://rest.db.ripe.net/search.json?query-string={0}',
         'fields': {
             'name': r'^(netname):[^\S\n]+(?P<val>.+)$',
             'description': r'^(descr):[^\S\n]+(?P<val>.+)$',
@@ -192,6 +186,13 @@ NIC_WHOIS = {
             )
         }
     }
+}
+
+ASN_REFERRALS = {
+    'whois://whois.ripe.net': 'ripencc',
+    'whois://whois.apnic.net': 'apnic',
+    'whois://whois.lacnic.net': 'lacnic',
+    'whois://whois.afrinic.net': 'afrinic',
 }
 
 CYMRU_WHOIS = 'whois.cymru.com'
@@ -226,6 +227,13 @@ class IPDefinedError(Exception):
 class ASNLookupError(Exception):
     """
     An Exception for when the ASN lookup failed.
+    """
+
+
+class ASNRegistryError(Exception):
+    """
+    An Exception for when the ASN registry does not match one of the five
+    expected values (arin, ripencc, apnic, lacnic, afrinic).
     """
 
 
@@ -289,7 +297,8 @@ class IPWhois():
             if is_defined[0]:
 
                 raise IPDefinedError(
-                    'IPv4 address %r is already defined as %r via %r.' % (
+                    'IPv4 address %r is already defined as %r via '
+                    '%r.' % (
                         self.address_str, is_defined[1], is_defined[2]
                     )
                 )
@@ -309,7 +318,8 @@ class IPWhois():
             if is_defined[0]:
 
                 raise IPDefinedError(
-                    'IPv6 address %r is already defined as %r via %r.' % (
+                    'IPv6 address %r is already defined as %r via '
+                    '%r.' % (
                         self.address_str, is_defined[1], is_defined[2]
                     )
                 )
@@ -359,6 +369,7 @@ class IPWhois():
                     asn_country_code (String) - The assigned ASN country code.
 
         Raises:
+            ASNRegistryError: The ASN registry is not known.
             ASNLookupError: The ASN lookup failed.
         """
 
@@ -373,7 +384,9 @@ class IPWhois():
 
             if ret['asn_registry'] not in NIC_WHOIS.keys():
 
-                return None
+                raise ASNRegistryError(
+                    'ASN registry %r is not known.' % ret['asn_registry']
+                )
 
             ret['asn'] = temp[0].strip(' "\n')
             ret['asn_cidr'] = temp[1].strip(' \n')
@@ -382,6 +395,10 @@ class IPWhois():
 
             return ret
 
+        except ASNRegistryError:
+
+            raise
+        
         except:
 
             raise ASNLookupError(
@@ -406,6 +423,7 @@ class IPWhois():
                     asn_country_code (String) - The assigned ASN country code.
 
         Raises:
+            ASNRegistryError: The ASN registry is not known.
             ASNLookupError: The ASN lookup failed.
         """
 
@@ -440,7 +458,9 @@ class IPWhois():
 
             if ret['asn_registry'] not in NIC_WHOIS.keys():
 
-                return None
+                raise ASNRegistryError(
+                    'ASN registry %r is not known.' % ret['asn_registry']
+                )
 
             ret['asn'] = temp[0].strip(' \n')
             ret['asn_cidr'] = temp[2].strip(' \n')
@@ -460,6 +480,10 @@ class IPWhois():
                 raise ASNLookupError(
                     'ASN lookup failed for %r.' % self.address_str
                 )
+
+        except ASNRegistryError:
+
+            raise
 
         except:
 
@@ -575,7 +599,8 @@ class IPWhois():
 
             else:
 
-                raise WhoisLookupError('Whois RWS lookup failed for %r.' % url)
+                raise WhoisLookupError('Whois RWS lookup failed for %r.' %
+                                       url)
 
         except:
 
@@ -657,14 +682,58 @@ class IPWhois():
                         is True.
         """
 
+        #Initialize the response.
+        response = None
+
         #Attempt to resolve ASN info via Cymru. DNS is faster, try that first.
         try:
 
             asn_data = self.get_asn_dns()
 
-        except ASNLookupError:
+        except (ASNLookupError, ASNRegistryError):
 
-            asn_data = self.get_asn_whois(retry_count)
+            try:
+
+                asn_data = self.get_asn_whois(retry_count)
+
+            except (ASNLookupError, ASNRegistryError):
+
+                #Lets attempt to get the ASN registry information from ARIN.
+                response = self.get_whois('arin', retry_count)
+
+                asn_data = {
+                    'asn_registry': None,
+                    'asn': None,
+                    'asn_cidr': None,
+                    'asn_country_code': None,
+                    'asn_date': None
+                }
+
+                matched = False
+                for match in re.finditer(
+                    r'^ReferralServer:[^\S\n]+(.+)$',
+                    response,
+                    re.MULTILINE
+                ):
+
+                    matched = True
+
+                    try:
+
+                        referral = match.group(1)
+                        referral = referral.replace(':43', '')
+
+                        asn_data['asn_registry'] = ASN_REFERRALS[referral]
+
+                    except KeyError:
+
+                        raise ASNRegistryError('ASN registry lookup failed.')
+
+                    break
+
+                if not matched:
+
+                    asn_data['asn_registry'] = 'arin'
 
         #Create the return dictionary.
         results = {
@@ -676,8 +745,11 @@ class IPWhois():
         #Add the ASN information to the return dictionary.
         results.update(asn_data)
 
-        #Retrieve the whois data.
-        response = self.get_whois(results['asn_registry'], retry_count)
+        #Only fetch the response if we haven't already.
+        if response is None or results['asn_registry'] is not 'arin':
+
+            #Retrieve the whois data.
+            response = self.get_whois(results['asn_registry'], retry_count)
 
         #If inc_raw parameter is True, add the response to return dictionary.
         if inc_raw:
@@ -788,37 +860,37 @@ class IPWhois():
         #appropriate fields for each.
         for index, net in enumerate(nets):
 
-            end = None
+            section_end = None
             if index + 1 < len(nets):
 
-                end = nets[index + 1]['start']
+                section_end = nets[index + 1]['start']
 
             for field in NIC_WHOIS[results['asn_registry']]['fields']:
 
                 pattern = re.compile(
-                    NIC_WHOIS[results['asn_registry']]['fields'][field],
+                    str(NIC_WHOIS[results['asn_registry']]['fields'][field]),
                     re.MULTILINE
                 )
 
-                if end is not None:
+                if section_end is not None:
 
-                    match = pattern.finditer(response, net['end'], end)
+                    match = pattern.finditer(response, net['end'], section_end)
 
                 else:
 
                     match = pattern.finditer(response, net['end'])
 
                 values = []
-                sub_end = None
+                sub_section_end = None
                 for m in match:
 
-                    if sub_end:
+                    if sub_section_end:
 
                         if field not in (
                             'abuse_emails',
                             'tech_emails',
                             'misc_emails'
-                        ) and (sub_end != (m.start() - 1)):
+                        ) and (sub_section_end != (m.start() - 1)):
 
                             break
 
@@ -830,7 +902,7 @@ class IPWhois():
 
                         values.append(m.group('val2').strip())
 
-                    sub_end = m.end()
+                    sub_section_end = m.end()
 
                 if len(values) > 0:
 
@@ -844,8 +916,8 @@ class IPWhois():
 
                             value = datetime.strptime(
                                 values[0],
-                                NIC_WHOIS[results['asn_registry']]
-                                ['dt_format']).isoformat('T')
+                                str(NIC_WHOIS[results['asn_registry']]
+                                    ['dt_format'])).isoformat('T')
 
                         else:
 
@@ -921,29 +993,19 @@ class IPWhois():
 
                 pass
 
-            try:
+            for k, v in {
+                'created': 'registrationDate',
+                'updated': 'updateDate',
+                'name': 'name'
+            }.items():
 
-                net['created'] = str(n['registrationDate']['$']).strip()
+                try:
 
-            except KeyError:
+                    net[k] = str(n[v]['$']).strip()
 
-                pass
+                except KeyError:
 
-            try:
-
-                net['updated'] = str(n['updateDate']['$']).strip()
-
-            except KeyError:
-
-                pass
-
-            try:
-
-                net['name'] = str(n['name']['$']).strip()
-
-            except KeyError:
-
-                pass
+                    pass
 
             ref = None
             if 'customerRef' in n:
@@ -992,39 +1054,25 @@ class IPWhois():
 
                     pass
 
-                try:
+                for k, v in {
+                    'postal_code': 'postalCode',
+                    'city': 'city',
+                    'state': 'iso3166-2'
+                }.items():
 
-                    net['postal_code'] = (
-                        str(ref_response[ref[1]]['postalCode']['$'])
-                    )
+                    try:
 
-                except KeyError:
+                        net[k] = str(ref_response[ref[1]][v]['$'])
 
-                    pass
+                    except KeyError:
 
-                try:
-
-                    net['city'] = str(ref_response[ref[1]]['city']['$'])
-
-                except KeyError:
-
-                    pass
+                        pass
 
                 try:
 
                     net['country'] = (
                         str(ref_response[ref[1]]['iso3166-1']['code2']['$'])
                     ).upper()
-
-                except KeyError:
-
-                    pass
-
-                try:
-
-                    net['state'] = (
-                        str(ref_response[ref[1]]['iso3166-2']['$'])
-                    )
 
                 except KeyError:
 
@@ -1075,6 +1123,11 @@ class IPWhois():
         The function for retrieving and parsing whois information for a RIPE
         IP address via HTTP (Whois-RWS).
 
+        ***
+        THIS FUNCTION IS TEMPORARILY BROKEN UNTIL RIPE FIXES THEIR API:
+        https://github.com/RIPE-NCC/whois/issues/114
+        ***
+
         Args:
             response: The dictionary containing whois information to parse.
 
@@ -1087,13 +1140,9 @@ class IPWhois():
 
         nets = []
 
-        try:
+        '''try:
 
-            object_list = response['whois-resources']['objects']['object']
-
-            if not isinstance(object_list, list):
-
-                object_list = [object_list]
+            object_list = response['objects']
 
         except KeyError:
 
@@ -1102,11 +1151,13 @@ class IPWhois():
         ripe_abuse_emails = []
         ripe_misc_emails = []
 
+        net = BASE_NET.copy()
+
         for n in object_list:
 
             try:
 
-                if n['type'] == 'organisation':
+                if n['type'] == 'role':
 
                     for attr in n['attributes']['attribute']:
 
@@ -1120,9 +1171,19 @@ class IPWhois():
 
                             ripe_misc_emails.append(str(attr['value']).strip())
 
-                elif n['type'] in ('inetnum', 'inet6num', 'route', 'route6'):
+                        elif attr['name'] == 'address':
 
-                    net = BASE_NET.copy()
+                            if net['address'] is not None:
+
+                                net['address'] += '\n%s' % (
+                                    str(attr['value']).strip()
+                                )
+
+                            else:
+
+                                net['address'] = str(attr['value']).strip()
+
+                elif n['type'] in ('inetnum', 'inet6num'):
 
                     for attr in n['attributes']['attribute']:
 
@@ -1158,21 +1219,6 @@ class IPWhois():
 
                                 pass
 
-                        elif attr['name'] in ('route', 'route6'):
-
-                            ipr = str(attr['value']).strip()
-                            ip_ranges = ipr.split(', ')
-
-                            try:
-
-                                net['cidr'] = ', '.join(
-                                    ip_network(r).__str__() for r in ip_ranges
-                                )
-
-                            except ValueError:
-
-                                pass
-
                         elif attr['name'] == 'netname':
 
                             net['name'] = str(attr['value']).strip()
@@ -1193,23 +1239,11 @@ class IPWhois():
 
                             net['country'] = str(attr['value']).strip().upper()
 
-                        elif attr['name'] == 'address':
-
-                            if net['address'] is not None:
-
-                                net['address'] += '\n%s' % (
-                                    str(attr['value']).strip()
-                                )
-
-                            else:
-
-                                net['address'] = str(attr['value']).strip()
-
-                    nets.append(net)
-
             except KeyError:
 
                 pass
+
+        nets.append(net)
 
         #This is nasty. Since RIPE RWS doesn't provide a granular
         #contact to network relationship, we apply to all networks.
@@ -1227,7 +1261,7 @@ class IPWhois():
             for net in nets:
 
                 net['abuse_emails'] = abuse
-                net['misc_emails'] = misc
+                net['misc_emails'] = misc'''
 
         return nets
 
@@ -1452,7 +1486,7 @@ class IPWhois():
 
                     value = datetime.strptime(
                         tmp,
-                        NIC_WHOIS['lacnic']['dt_rws_format']
+                        str(NIC_WHOIS['lacnic']['dt_rws_format'])
                     ).isoformat('T')
 
                     net['created'] = value
@@ -1463,7 +1497,7 @@ class IPWhois():
 
                     value = datetime.strptime(
                         tmp,
-                        NIC_WHOIS['lacnic']['dt_rws_format']
+                        str(NIC_WHOIS['lacnic']['dt_rws_format'])
                     ).isoformat('T')
 
                     net['updated'] = value
@@ -1568,14 +1602,72 @@ class IPWhois():
                         inc_raw parameter is True.
         """
 
+        #Initialize the response.
+        response = None
+
         #Attempt to resolve ASN info via Cymru. DNS is faster, try that first.
         try:
 
             asn_data = self.get_asn_dns()
 
-        except ASNLookupError:
+        except (ASNLookupError, ASNRegistryError):
 
-            asn_data = self.get_asn_whois(retry_count)
+            try:
+
+                asn_data = self.get_asn_whois(retry_count)
+
+            except (ASNLookupError, ASNRegistryError):
+
+                #Lets attempt to get the ASN registry information from ARIN.
+                response = self.get_rws(
+                    str(NIC_WHOIS['arin']['url']).format(self.address_str),
+                    retry_count
+                )
+
+                asn_data = {
+                    'asn_registry': None,
+                    'asn': None,
+                    'asn_cidr': None,
+                    'asn_country_code': None,
+                    'asn_date': None
+                }
+
+                try:
+
+                    net_list = response['nets']['net']
+
+                    if not isinstance(net_list, list):
+
+                        net_list = [net_list]
+
+                except KeyError:
+
+                    net_list = []
+
+                for n in net_list:
+
+                    try:
+
+                        if n['orgRef']['@handle'] in ('ARIN', 'VR-ARIN'):
+
+                            asn_data['asn_registry'] = 'arin'
+
+                        elif n['orgRef']['@handle'] == 'RIPE':
+
+                            asn_data['asn_registry'] = 'ripencc'
+
+                        else:
+
+                            test = NIC_WHOIS[n['orgRef']['@handle'].lower()]
+                            asn_data['asn_registry'] = (
+                                n['orgRef']['@handle'].lower()
+                            )
+
+                    except KeyError:
+
+                        raise ASNRegistryError('ASN registry lookup failed.')
+
+                    break
 
         #Create the return dictionary.
         results = {
@@ -1587,26 +1679,13 @@ class IPWhois():
         #Add the ASN information to the return dictionary.
         results.update(asn_data)
 
-        #Create the boolean for if the response is a radb-grs search.
-        is_radb = False
+        #Only fetch the response if we haven't already.
+        if response is None or results['asn_registry'] is not 'arin':
 
-        #Retrieve the whois data.
-        try:
-
+            #Retrieve the whois data.
             response = self.get_rws(
-                NIC_WHOIS[results['asn_registry']]['url'].format(
+                str(NIC_WHOIS[results['asn_registry']]['url']).format(
                     self.address_str),
-                retry_count
-            )
-
-        #If the query failed, try the radb-grs source.
-        except WhoisLookupError:
-
-            is_radb = True
-
-            response = self.get_rws((
-                'http://apps.db.ripe.net/whois/grs-search'
-                '?query-string={0}&source=radb-grs').format(self.address_str),
                 retry_count
             )
 
@@ -1615,8 +1694,7 @@ class IPWhois():
 
             results['raw'] = response
 
-        if (results['asn_registry'] in ('ripencc', 'afrinic') or
-           is_radb is True):
+        if results['asn_registry'] in ('ripencc', 'afrinic'):
 
             nets = self._lookup_rws_ripe(response)
 

@@ -1,6 +1,17 @@
 Changelog
 =========
 
+0.8.0 (TBD)
+------------------
+
+- Added ASNRegistryError to handle unknown ASN registry return values.
+- Added ASN registry lookup third tier fallback to ARIN.
+- Fixed variable naming to avoid shadows built-in confusion.
+- Fixed some type errors: Expected type 'str', got 'dict[str, dict]' instead.
+- Fixed RIPE RWS links, since they changed their API.
+- Temporarily removed RIPE RWS functionality until they fix their API.
+- Removed RADB RIPE fallback, since they appeared to have removed it.
+
 0.7.0 (2014-01-14)
 ------------------
 
