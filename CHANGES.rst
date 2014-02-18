@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.8.0 (TBD)
+0.8.0 (2014-02-18)
 ------------------
 
 - Added ASNRegistryError to handle unknown ASN registry return values.
@@ -10,7 +10,7 @@ Changelog
 - Fixed some type errors: Expected type 'str', got 'dict[str, dict]' instead.
 - Fixed RIPE RWS links, since they changed their API.
 - Temporarily removed RIPE RWS functionality until they fix their API.
-- Removed RADB RIPE fallback, since they appeared to have removed it.
+- Removed RADB fallback, since RIPE removed it.
 
 0.7.0 (2014-01-14)
 ------------------

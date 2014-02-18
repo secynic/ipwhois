@@ -154,6 +154,8 @@ Ripe RWS service, which does not contain all of the data we need. The LACNIC
 RWS service is supported, but is in beta v2. This may result in availability
 or performance issues.
 
-**NOTE**
+*****NOTE*****
+
 RIPE RWS functionality is currently disabled until their API is fixed:
+
 https://github.com/RIPE-NCC/whois/issues/114
