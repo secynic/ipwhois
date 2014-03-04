@@ -527,7 +527,7 @@ class IPWhois():
             response = ''
             while True:
 
-                d = conn.recv(4096).decode('utf-8', 'ignore')
+                d = conn.recv(4096).decode('ascii', 'ignore')
 
                 response += d
 
