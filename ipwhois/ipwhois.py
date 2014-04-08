@@ -972,7 +972,7 @@ class IPWhois():
 
                     pass
 
-        elif results['asn_registry'] in ('megapath',"bellsouth","xo"):
+		elif results['asn_registry'] in ('megapath',"bellsouth","xo"):
             pprint("running {0} code".format(results['asn_registry']))
             pprint(response)
             xxx
