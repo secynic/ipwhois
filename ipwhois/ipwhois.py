@@ -38,7 +38,8 @@ import dns.resolver
 import re
 import json
 from .utils import ipv4_is_defined, ipv6_is_defined
-
+from pprint import pprint
+import sys, traceback
 try:
     from urllib.request import (OpenerDirector,
                                 ProxyHandler,
@@ -185,7 +186,46 @@ NIC_WHOIS = {
                 '[\w\-\.]+\.[\w\-]+)([^\S\n]+.*)*$'
             )
         }
-    }
+    },
+    'cogentco': {
+        'server': 'rwhois.cogentco.com',
+        'fields': {
+            'name': r'^(network:ID):(?P<val>.+)$',
+            'description': r'^(network:Org-Name):(?P<val>.+)$',
+            'country': r'^(network:Country):(?P<val>.+)$',
+            'state': r'^(network:State):(?P<val>.+)$',
+            'city': r'^(network:City):(?P<val>.+)$',
+            'address': r'^(network:Street-Address):(?P<val>.+)$',
+            'postal_code': r'^(network:Postal-Code):(?P<val>.+)$',
+            'updated': r'^(network:Updated):(?P<val>.+)$'
+        },
+        'dt_format': '%Y-%m-%d',
+    },
+    'megapath': {
+        'server': 'rwhois.megapath.net',
+    },
+    'bellsouth': {
+        'server': 'rwhois.eng.bellsouth.net',
+    },
+    'twtelecom': {
+        'server': 'rwhois.twtelecom.net',
+        'fields': {
+            'name': r'^(network:ID):(?P<val>.+)$',
+            'description': r'^(network:Org-Name):(?P<val>.+)$',
+            'country': r'^(network:Country):(?P<val>.+)$',
+            'state': r'^(network:State):(?P<val>.+)$',
+            'city': r'^(network:City):(?P<val>.+)$',
+            'address': r'^(network:Street-Address):(?P<val>.+)$',
+            'postal_code': r'^(network:Postal-Code):(?P<val>.+)$',
+            'updated': r'^(network:Updated):(?P<val>.+)$'
+        },
+        'dt_format': '%Y%m%d',
+    },
+
+    'xo': {
+        'server': 'rwhois.eng.xo.com',
+    },
+
 }
 
 ASN_REFERRALS = {
@@ -194,7 +234,9 @@ ASN_REFERRALS = {
     'whois://whois.lacnic.net': 'lacnic',
     'whois://whois.afrinic.net': 'afrinic',
 }
-
+BLACKLISTED_RWHOIS= [
+    "root.rwhois.net"
+]
 CYMRU_WHOIS = 'whois.cymru.com'
 
 IPV4_DNS_ZONE = '{0}.origin.asn.cymru.com'
@@ -217,7 +259,7 @@ BASE_NET = {
     'updated': None
 }
 
-
+ASN_SERVERS={}
 class IPDefinedError(Exception):
     """
     An Exception for when the IP is defined (does not need to be resolved).
@@ -247,7 +289,10 @@ class HostLookupError(Exception):
     """
     An Exception for when the Host lookup failed.
     """
-
+class ServerUnavailableError(Exception):
+    """
+    An Exception for when the Whois Server is unavailable.
+    """
 
 class IPWhois():
     """
@@ -349,6 +394,11 @@ class IPWhois():
 
             self.dns_zone = IPV6_DNS_ZONE.format(self.reversed)
 
+        self.init_ASN_servers()
+    def init_ASN_servers(self):
+        for asn in NIC_WHOIS.keys():
+            ASN_SERVERS[NIC_WHOIS[asn]["server"]]=asn
+        #pprint(ASN_SERVERS)
     def __repr__(self):
 
         return 'IPWhois(%r, %r, %r)' % (
@@ -398,7 +448,7 @@ class IPWhois():
         except ASNRegistryError:
 
             raise
-        
+
         except:
 
             raise ASNLookupError(
@@ -491,7 +541,7 @@ class IPWhois():
                 'ASN lookup failed for %r.' % self.address_str
             )
 
-    def get_whois(self, asn_registry='arin', retry_count=3):
+    def get_whois(self, asn_registry='arin', retry_count=3, no_redirect=True):
         """
         The function for retrieving whois information for an IP address via
         port 43 (WHOIS).
@@ -507,14 +557,88 @@ class IPWhois():
         Raises:
             WhoisLookupError: The whois lookup failed.
         """
+        result=self.get_whois_from_server_recursive(asn_registry, NIC_WHOIS[asn_registry]['server'], 43, retry_count, no_redirect)
+        response={"raw":result[0],"asn_registry":result[1]}
+        return response
 
+
+
+    def get_whois_from_server_recursive(self, asn_registry="arin", server=NIC_WHOIS['arin']['server'], port=43, retry_count=3, no_redirect=True):
+        response=self.get_whois_from_server(asn_registry, server, port, retry_count)
+        if no_redirect:
+            return (response,asn_registry)
+        else:
+            match=None
+            resp=None
+            for match in re.finditer(
+                    r'^(ReferralServer:|%referral)[^\S\n]+(r?whois://[^/]+)/*$',
+                    response,
+                    re.MULTILINE
+                ):
+                redirect_server_and_port=match.group(2)
+                if redirect_server_and_port[:9]=="rwhois://":
+                    (redirect_server, redirect_port)=redirect_server_and_port[9:].split(":")
+                elif redirect_server_and_port[:8]=="whois://":
+                    (redirect_server, redirect_port)=redirect_server_and_port[8:].split(":")
+                else:
+                    pprint("Unknown redirect server: {0}".format(redirect_server_and_port))
+                    raise Exception()
+                if redirect_server not in BLACKLISTED_RWHOIS:
+                    resp=self.get_whois_from_server_recursive(ASN_SERVERS[redirect_server], redirect_server, int(redirect_port), retry_count, no_redirect)
+                    if resp is not None:
+                        if type(resp) is tuple:
+                            response=resp
+                        elif not self.is_server_no_results(resp) and not self.is_server_error(resp):
+                            response=resp
+                        elif not self.is_server_no_results(resp):
+                            return None
+                    if type(resp) is not tuple and self.is_server_error(resp):
+                        raise ServerUnavailableError(
+                            'Whois lookup failed for {0}. Server returned {1}'.format(self.address_str, response)
+                        )
+                    else:
+                        pprint ("server was not unavailable. response was {0}".format(response))
+                else:
+                    pprint("blacklisted")
+                    return None
+            #terminating condition
+            if not match:
+                if self.is_server_no_results(response):
+                    return None
+                elif resp==None:
+                    return (response,asn_registry)
+        return response
+    def is_server_no_results(self, response):
+        if "230 No Objects Found" in str(response):
+            return True
+        return False
+    def is_server_error(self, response):
+        if "%error 501" in str(response):
+            return True
+        return False
+    def get_whois_from_server(self, asn_registry="arin", server=NIC_WHOIS['arin']['server'], port=43, retry_count=3):
+        """
+        The function for retrieving whois information for an IP address via
+        any port using the whois service (WHOIS).
+
+        Args:
+            server: The server to run the query against.
+            port: The port to run the query against
+            retry_count: The number of times to retry in case socket errors,
+                timeouts, connection resets, etc. are encountered.
+
+        Returns:
+            String: The raw whois data.
+
+        Raises:
+            WhoisLookupError: The whois lookup failed.
+        """
+        #pprint("will try to connect to {0} on port {1}".format(server,port))
         try:
 
             #Create the connection for the whois query.
-            conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            conn.settimeout(self.timeout)
-            conn.connect((NIC_WHOIS[asn_registry]['server'], 43))
 
+            conn=socket.create_connection((server, port),self.timeout)
             #Prep the query.
             query = self.address_str + '\r\n'
             if asn_registry == 'arin':
@@ -544,24 +668,28 @@ class IPWhois():
 
             return str(response)
 
-        except (socket.timeout, socket.error):
-
+        except (socket.timeout, socket.error) as e:
             if retry_count > 0:
 
-                return self.get_whois(asn_registry, retry_count - 1)
+                return self.get_whois_from_server(asn_registry, server, port, retry_count - 1)
 
             else:
-
+                pprint(e)
+                exc_type, exc_value, exc_traceback = sys.exc_info()
+                print "*** print_tb:"
+                traceback.print_tb(exc_traceback, limit=1, file=sys.stdout)
                 raise WhoisLookupError(
                     'Whois lookup failed for %r.' % self.address_str
                 )
 
-        except:
-
+        except Exception as e:
+            pprint(e)
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            print "*** print_tb:"
+            traceback.print_tb(exc_traceback, limit=1, file=sys.stdout)
             raise WhoisLookupError(
                 'Whois lookup failed for %r.' % self.address_str
             )
-
     def get_rws(self, url=None, retry_count=3):
         """
         The function for retrieving Whois-RWS information for an IP address
@@ -655,7 +783,7 @@ class IPWhois():
                 'Host lookup failed for %r.' % self.address_str
             )
 
-    def lookup(self, inc_raw=False, retry_count=3):
+    def lookup(self, inc_raw=False, retry_count=3, no_redirect=True):
         """
         The function for retrieving and parsing whois information for an IP
         address via port 43 (WHOIS).
@@ -691,7 +819,6 @@ class IPWhois():
             asn_data = self.get_asn_dns()
 
         except (ASNLookupError, ASNRegistryError):
-
             try:
 
                 asn_data = self.get_asn_whois(retry_count)
@@ -721,6 +848,8 @@ class IPWhois():
                     try:
 
                         referral = match.group(1)
+
+
                         referral = referral.replace(':43', '')
 
                         asn_data['asn_registry'] = ASN_REFERRALS[referral]
@@ -749,8 +878,9 @@ class IPWhois():
         if response is None or results['asn_registry'] is not 'arin':
 
             #Retrieve the whois data.
-            response = self.get_whois(results['asn_registry'], retry_count)
-
+            resp = self.get_whois(results['asn_registry'], retry_count, no_redirect)
+            response=resp["raw"]
+            results['asn_registry']=resp['asn_registry']
         #If inc_raw parameter is True, add the response to return dictionary.
         if inc_raw:
 
@@ -818,6 +948,35 @@ class IPWhois():
                 except ValueError:
 
                     pass
+        elif results['asn_registry'] in ("cogentco","twtelecom"):
+            #Iterate through all of the networks found, storing the CIDR value
+            #and the start and end positions.
+            for match in re.finditer(
+                r'^network:IP-Network:(.+?,[^\S\n].+|.+)$',
+                response,
+                re.MULTILINE
+            ):
+
+                try:
+                    #pprint(match.group(1))
+                    net = BASE_NET.copy()
+                    net['cidr'] = ', '.join(
+                        [ip_network(c.strip()).__str__()
+                         for c in match.group(1).split(', ')]
+                    )
+                    net['start'] = 1
+                    net['end'] = match.end()
+                    nets.append(net)
+
+                except ValueError:
+
+                    pass
+
+		elif results['asn_registry'] in ('megapath',"bellsouth","xo"):
+            pprint("running {0} code".format(results['asn_registry']))
+            pprint(response)
+            xxx
+
 
         else:
 
@@ -878,12 +1037,10 @@ class IPWhois():
 
                 else:
 
-                    match = pattern.finditer(response, net['end'])
-
+                    match = pattern.finditer(response, net['start'])
                 values = []
                 sub_section_end = None
                 for m in match:
-
                     if sub_section_end:
 
                         if field not in (
