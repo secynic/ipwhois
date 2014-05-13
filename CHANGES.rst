@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.8.2 (2014-05-12)
+------------------
+
+- Fixed multi-line field parsing (Issue #36).
+- Added unique_everseen() to ipwhois.utils to fix multi-line field order.
+- Re-added support for RIPE RWS now that their API is fixed.
+
 0.8.1 (2014-03-05)
 ------------------
 
