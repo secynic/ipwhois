@@ -37,7 +37,7 @@ import socket
 import dns.resolver
 import re
 import json
-from .utils import ipv4_is_defined, ipv6_is_defined
+from .utils import ipv4_is_defined, ipv6_is_defined, unique_everseen
 
 try:
     from urllib.request import (OpenerDirector,
@@ -90,17 +90,18 @@ NIC_WHOIS = {
             'showDetails=true&showARIN=true'
         ),
         'fields': {
-            'name': r'^(NetName):[^\S\n]+(?P<val>.+)$',
-            'description': r'^(OrgName|CustName):[^\S\n]+(?P<val>.+)$',
-            'country': r'^(Country):[^\S\n]+(?P<val>.+)$',
-            'state': r'^(StateProv):[^\S\n]+(?P<val>.+)$',
-            'city': r'^(City):[^\S\n]+(?P<val>.+)$',
-            'address': r'^(Address):[^\S\n]+(?P<val>.+)$',
-            'postal_code': r'^(PostalCode):[^\S\n]+(?P<val>.+)$',
-            'abuse_emails': r'^(OrgAbuseEmail):[^\S\n]+(?P<val>.+)$',
-            'tech_emails': r'^(OrgTechEmail):[^\S\n]+(?P<val>.+)$',
-            'created': r'^(RegDate):[^\S\n]+(?P<val>.+)$',
-            'updated': r'^(Updated):[^\S\n]+(?P<val>.+)$'
+            'name': r'(NetName):[^\S\n]+(?P<val>.+?)\n',
+            'description': r'(OrgName|CustName):[^\S\n]+(?P<val>.+?)'
+                    '(?=(\n\S):?)',
+            'country': r'(Country):[^\S\n]+(?P<val>.+?)\n',
+            'state': r'(StateProv):[^\S\n]+(?P<val>.+?)\n',
+            'city': r'(City):[^\S\n]+(?P<val>.+?)\n',
+            'address': r'(Address):[^\S\n]+(?P<val>.+?)(?=(\n\S):?)',
+            'postal_code': r'(PostalCode):[^\S\n]+(?P<val>.+?)\n',
+            'abuse_emails': r'(OrgAbuseEmail):[^\S\n]+(?P<val>.+?)\n',
+            'tech_emails': r'(OrgTechEmail):[^\S\n]+(?P<val>.+?)\n',
+            'created': r'(RegDate):[^\S\n]+(?P<val>.+?)\n',
+            'updated': r'(Updated):[^\S\n]+(?P<val>.+?)\n'
         },
         'dt_format': '%Y-%m-%d',
         'dt_rws_format': '%Y-%m-%dT%H:%M:%S%z'
@@ -109,18 +110,18 @@ NIC_WHOIS = {
         'server': 'whois.ripe.net',
         'url': 'http://rest.db.ripe.net/search.json?query-string={0}',
         'fields': {
-            'name': r'^(netname):[^\S\n]+(?P<val>.+)$',
-            'description': r'^(descr):[^\S\n]+(?P<val>.+)$',
-            'country': r'^(country):[^\S\n]+(?P<val>.+)$',
-            'address': r'^(address):[^\S\n]+(?P<val>.+)$',
+            'name': r'(netname):[^\S\n]+(?P<val>.+?)\n',
+            'description': r'(descr):[^\S\n]+(?P<val>.+?)(?=(\n\S):?)',
+            'country': r'(country):[^\S\n]+(?P<val>.+?)\n',
+            'address': r'(address):[^\S\n]+(?P<val>.+?)(?=(\n\S):?)',
             'abuse_emails': (
-                r'^(abuse-mailbox:[^\S\n]+(?P<val>.+))|((?!abuse-mailbox).+?:'
-                '.*[^\S\n]+(?P<val2>[\w\-\.]*abuse[\w\-\.]*@[\w\-\.]+\.[\w\-]'
-                '+)([^\S\n]+.*)*)$'
+                r'(abuse-mailbox:[^\S\n]+(?P<val>.+?))|((?!abuse-mailbox).+?:'
+                '.*?[^\S\n]+(?P<val2>[\w\-\.]*abuse[\w\-\.]*@[\w\-\.]+\.[\w\-]'
+                '+)([^\S\n]+.*?)*?)\n'
             ),
             'misc_emails': (
-                r'^(?!abuse-mailbox).+?:.*[^\S\n]+(?P<val>(?!abuse)[\w\-\.]+?@'
-                '[\w\-\.]+\.[\w\-]+)([^\S\n]+.*)*$'
+                r'(?!abuse-mailbox).+?:.*?[^\S\n]+(?P<val>(?!abuse)[\w\-\.]+?@'
+                '[\w\-\.]+\.[\w\-]+)([^\S\n]+.*?)*?\n'
             )
         }
     },
@@ -128,20 +129,20 @@ NIC_WHOIS = {
         'server': 'whois.apnic.net',
         'url': 'http://rdap.apnic.net/ip/{0}',
         'fields': {
-            'name': r'^(netname):[^\S\n]+(?P<val>.+)$',
-            'description': r'^(descr):[^\S\n]+(?P<val>.+)$',
-            'country': r'^(country):[^\S\n]+(?P<val>.+)$',
-            'address': r'^(address):[^\S\n]+(?P<val>.+)$',
+            'name': r'(netname):[^\S\n]+(?P<val>.+?)\n',
+            'description': r'(descr):[^\S\n]+(?P<val>.+?)(?=(\n\S):?)',
+            'country': r'(country):[^\S\n]+(?P<val>.+?)\n',
+            'address': r'(address):[^\S\n]+(?P<val>.+?)(?=(\n\S):?)',
             'abuse_emails': (
-                r'^(abuse-mailbox:[^\S\n]+(?P<val>.+))|((?!abuse-mailbox).+?:'
-                '.*[^\S\n]+(?P<val2>[\w\-\.]*abuse[\w\-\.]*@[\w\-\.]+\.[\w\-]'
-                '+)([^\S\n]+.*)*)$'
+                r'(abuse-mailbox:[^\S\n]+(?P<val>.+?))|((?!abuse-mailbox).+?:'
+                '.*?[^\S\n]+(?P<val2>[\w\-\.]*abuse[\w\-\.]*@[\w\-\.]+\.[\w\-]'
+                '+)([^\S\n]+.*?)*?)\n'
             ),
             'misc_emails': (
-                r'^(?!abuse-mailbox).+?:.*[^\S\n]+(?P<val>(?!abuse)[\w\-\.]+?@'
-                '[\w\-\.]+\.[\w\-]+)([^\S\n]+.*)*$'
+                r'(?!abuse-mailbox).+?:.*?[^\S\n]+(?P<val>(?!abuse)[\w\-\.]+?@'
+                '[\w\-\.]+\.[\w\-]+)([^\S\n]+.*?)*?\n'
             ),
-            'updated': r'^(changed):[^\S\n]+.*?(?P<val>[0-9]{8})$'
+            'updated': r'(changed):[^\S\n]+.*?(?P<val>[0-9]{8}).*?\n'
         },
         'dt_format': '%Y%m%d',
         'dt_rws_format': '%Y-%m-%dT%H:%M:%S%z'
@@ -150,19 +151,19 @@ NIC_WHOIS = {
         'server': 'whois.lacnic.net',
         'url': 'http://restfulwhoisv2.labs.lacnic.net/restfulwhois/ip/{0}',
         'fields': {
-            'description': r'^(owner):[^\S\n]+(?P<val>.+)$',
-            'country': r'^(country):[^\S\n]+(?P<val>.+)$',
+            'description': r'(owner):[^\S\n]+(?P<val>.+?)(?=(\n\S):?)',
+            'country': r'(country):[^\S\n]+(?P<val>.+?)\n',
             'abuse_emails': (
-                r'^(abuse-mailbox:[^\S\n]+(?P<val>.+))|((?!abuse-mailbox).+?:'
-                '.*[^\S\n]+(?P<val2>[\w\-\.]*abuse[\w\-\.]*@[\w\-\.]+\.[\w\-]'
-                '+)([^\S\n]+.*)*)$'
+                r'(abuse-mailbox:[^\S\n]+(?P<val>.+?))|((?!abuse-mailbox).+?:'
+                '.*?[^\S\n]+(?P<val2>[\w\-\.]*abuse[\w\-\.]*@[\w\-\.]+\.[\w\-]'
+                '+)([^\S\n]+.*?)*?)\n'
             ),
             'misc_emails': (
-                r'^(?!abuse-mailbox).+?:.*[^\S\n]+(?P<val>(?!abuse)[\w\-\.]+?@'
-                '[\w\-\.]+\.[\w\-]+)([^\S\n]+.*)*$'
+                r'(?!abuse-mailbox).+?:.*?[^\S\n]+(?P<val>(?!abuse)[\w\-\.]+?@'
+                '[\w\-\.]+\.[\w\-]+)([^\S\n]+.*?)*?\n'
             ),
-            'created': r'^(created):[^\S\n]+(?P<val>[0-9]{8}).*$',
-            'updated': r'^(changed):[^\S\n]+(?P<val>[0-9]{8}).*$'
+            'created': r'(created):[^\S\n]+(?P<val>[0-9]{8}).*?\n',
+            'updated': r'(changed):[^\S\n]+(?P<val>[0-9]{8}).*?\n'
         },
         'dt_format': '%Y%m%d',
         'dt_rws_format': '%Y%m%d'
@@ -171,18 +172,18 @@ NIC_WHOIS = {
         'server': 'whois.afrinic.net',
         'url': 'http://rest.db.ripe.net/search.json?query-string={0}',
         'fields': {
-            'name': r'^(netname):[^\S\n]+(?P<val>.+)$',
-            'description': r'^(descr):[^\S\n]+(?P<val>.+)$',
-            'country': r'^(country):[^\S\n]+(?P<val>.+)$',
-            'address': r'^(address):[^\S\n]+(?P<val>.+)$',
+            'name': r'(netname):[^\S\n]+(?P<val>.+?)\n',
+            'description': r'(descr):[^\S\n]+(?P<val>.+?)(?=(\n\S):?)',
+            'country': r'(country):[^\S\n]+(?P<val>.+?)\n',
+            'address': r'(address):[^\S\n]+(?P<val>.+?)(?=(\n\S):?)',
             'abuse_emails': (
-                r'^(abuse-mailbox:[^\S\n]+(?P<val>.+))|((?!abuse-mailbox).+?:'
-                '.*[^\S\n]+(?P<val2>[\w\-\.]*abuse[\w\-\.]*@[\w\-\.]+\.[\w\-]'
-                '+)([^\S\n]+.*)*)$'
+                r'(abuse-mailbox:[^\S\n]+(?P<val>.+?))|((?!abuse-mailbox).+?:'
+                '.*?[^\S\n]+(?P<val2>[\w\-\.]*abuse[\w\-\.]*@[\w\-\.]+\.[\w\-]'
+                '+)([^\S\n]+.*?)*?)\n'
             ),
             'misc_emails': (
-                r'^(?!abuse-mailbox).+?:.*[^\S\n]+(?P<val>(?!abuse)[\w\-\.]+?@'
-                '[\w\-\.]+\.[\w\-]+)([^\S\n]+.*)*$'
+                r'(?!abuse-mailbox).+?:.*?[^\S\n]+(?P<val>(?!abuse)[\w\-\.]+?@'
+                '[\w\-\.]+\.[\w\-]+)([^\S\n]+.*?)*?\n'
             )
         }
     }
@@ -869,7 +870,7 @@ class IPWhois():
 
                 pattern = re.compile(
                     str(NIC_WHOIS[results['asn_registry']]['fields'][field]),
-                    re.MULTILINE
+                    re.DOTALL
                 )
 
                 if section_end is not None:
@@ -921,7 +922,7 @@ class IPWhois():
 
                         else:
 
-                            values = list(set(values))
+                            values = unique_everseen(values)
                             value = '\n'.join(values)
 
                     except ValueError:
@@ -1140,9 +1141,9 @@ class IPWhois():
 
         nets = []
 
-        '''try:
+        try:
 
-            object_list = response['objects']
+            object_list = response['objects']['object']
 
         except KeyError:
 
@@ -1261,7 +1262,7 @@ class IPWhois():
             for net in nets:
 
                 net['abuse_emails'] = abuse
-                net['misc_emails'] = misc'''
+                net['misc_emails'] = misc
 
         return nets
 

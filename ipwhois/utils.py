@@ -29,6 +29,10 @@ except ImportError:
 from xml.dom.minidom import parseString
 from os import path
 import sys
+try:
+    from itertools import filterfalse
+except:
+    from itertools import ifilterfalse as filterfalse
 
 
 def get_countries():
@@ -224,3 +228,30 @@ def ipv6_is_defined(address):
         return True, 'Unique Local Unicast', 'RFC 4193'
 
     return False, '', ''
+
+
+def unique_everseen(iterable, key=None):
+    """
+    The generator to list unique elements, preserving the order. Remember all
+    elements ever seen. This was taken from the itertools recipes.
+
+    Args:
+        iterable: An iterable to process.
+        key: Optional function to run when checking elements (e.g., str.lower)
+
+    Returns:
+        Generator: Yields a generator object.
+    """
+
+    seen = set()
+    seen_add = seen.add
+    if key is None:
+        for element in filterfalse(seen.__contains__, iterable):
+            seen_add(element)
+            yield element
+    else:
+        for element in iterable:
+            k = key(element)
+            if k not in seen:
+                seen_add(k)
+                yield element

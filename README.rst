@@ -115,7 +115,7 @@ Python 2.6, 2.7::
     dnspython
     ipaddr
 
-Python 3.3::
+Python 3.3, 3.4::
 
     dnspython3
 
@@ -153,9 +153,3 @@ reliable. AFRINIC does not have a Whois-RWS service yet. We have to rely on the
 Ripe RWS service, which does not contain all of the data we need. The LACNIC
 RWS service is supported, but is in beta v2. This may result in availability
 or performance issues.
-
-*****NOTE*****
-
-RIPE RWS functionality is currently disabled until their API is fixed:
-
-https://github.com/RIPE-NCC/whois/issues/114
