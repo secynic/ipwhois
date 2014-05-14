@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.8.3 ()
+------------------
+
+- Fixed order on REST email fields
+- Fixed setup error for initial install when dependencies don't exist.
+
 0.8.2 (2014-05-12)
 ------------------
 

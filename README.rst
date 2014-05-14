@@ -6,8 +6,20 @@ ipwhois is a simple package for retrieving and parsing whois data for IPv4
 and IPv6 addresses. 
 
 The various NICs are pretty inconsistent with formatting Whois results and the 
-information contained within. I am still working through how to parse some of 
+information contained within. I am still working through how to parse some of
 these fields in to standard dictionary keys.
+
+Features
+========
+
+* Parses a majority of whois fields in to a standard dictionary
+* IPv4 and IPv6 support
+* Supports REST queries (useful if whois is blocked from your network)
+* Proxy support for REST queries
+* Recursive network parsing for IPs with parent/children networks listed
+* Python 2.6+ and 3.3+ supported
+* Useful set of utilities
+* BSD license
 
 Usage Examples
 ==============
@@ -115,7 +127,7 @@ Python 2.6, 2.7::
     dnspython
     ipaddr
 
-Python 3.3, 3.4::
+Python 3.3+::
 
     dnspython3
 
@@ -124,12 +136,12 @@ Installing
 
 Latest version from PyPi::
 
-	pip install ipwhois
+	pip install --upgrade ipwhois
 
 Latest version from GitHub::
 
 	pip install -e git+https://github.com/secynic/ipwhois@master#egg=ipwhois
-	
+
 Parsing
 =======
 

@@ -1108,7 +1108,8 @@ class IPWhois():
                             key = '%s_emails' % poc['@description'].lower()
 
                             net[key] = (
-                                '\n'.join(set(temp)) if len(temp) > 0 else None
+                                '\n'.join(unique_everseen(temp))
+                                if len(temp) > 0 else None
                             )
 
                 except (KeyError, WhoisLookupError):
@@ -1251,11 +1252,11 @@ class IPWhois():
         if len(ripe_abuse_emails) > 0 or len(ripe_misc_emails) > 0:
 
             abuse = (
-                '\n'.join(set(ripe_abuse_emails))
+                '\n'.join(unique_everseen(ripe_abuse_emails))
                 if len(ripe_abuse_emails) > 0 else None
             )
             misc = (
-                '\n'.join(set(ripe_misc_emails))
+                '\n'.join(unique_everseen(ripe_misc_emails))
                 if len(ripe_misc_emails) > 0 else None
             )
 
