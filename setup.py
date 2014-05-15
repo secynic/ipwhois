@@ -1,11 +1,10 @@
 # Filename: setup.py
 
 from distutils.core import setup
-from ipwhois import __version__
 import sys
 
 NAME = 'ipwhois'
-VERSION = __version__
+VERSION = "0.8.2"
 AUTHOR = "Philip Hane"
 AUTHOR_EMAIL = "secynic AT gmail DOT com"
 DESCRIPTION = "IP Whois Resolution and Parsing"
