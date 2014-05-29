@@ -1,11 +1,16 @@
 Changelog
 =========
 
-0.8.3 ()
+0.9.0 ()
 ------------------
 
 - Fixed order on REST email fields
 - Fixed setup error for initial install when dependencies don't exist.
+- Added RWhois support. *DEV PENDING IPWhois.lookup()*
+- Added server and port parameters to IPWhois.get_whois().
+- Added unique_addresses() to ipwhois.utils and unit tests.
+- Added some unit tests to test_lookup(). *DEV PENDING IPWhois.lookup()*
+- Replaced dict.copy() with copy.deepcopy(dict).
 
 0.8.2 (2014-05-12)
 ------------------

@@ -4,13 +4,14 @@ from distutils.core import setup
 import sys
 
 NAME = 'ipwhois'
-VERSION = '0.8.3'
+VERSION = '0.9.0'
 AUTHOR = "Philip Hane"
 AUTHOR_EMAIL = "secynic AT gmail DOT com"
 DESCRIPTION = "IP Whois Resolution and Parsing"
 KEYWORDS = [
     "Python",
     "WHOIS",
+    "RWhois",
     "ASN",
     "IP Address",
     "IP",

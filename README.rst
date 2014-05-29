@@ -3,11 +3,7 @@ ipwhois
 =======
 
 ipwhois is a simple package for retrieving and parsing whois data for IPv4 
-and IPv6 addresses. 
-
-The various NICs are pretty inconsistent with formatting Whois results and the 
-information contained within. I am still working through how to parse some of
-these fields in to standard dictionary keys.
+and IPv6 addresses.
 
 Features
 ========
@@ -118,6 +114,25 @@ Countries::
 	>>>> print(countries[results['nets'][0]['country']])
 
 	United States
+
+Unique IP Addresses::
+
+	>>>> from ipwhois.utils import unique_addresses
+	>>>> from pprint import pprint
+
+    >>>> input_data = (
+            'You can have IPs like 74.125.225.229, or 2001:4860:4860::8888'
+            'Put a port on the end 74.125.225.229:80 or for IPv6: '
+            '[2001:4860:4860::8888]:443 or even networks like '
+            '74.125.0.0/16 and 2001:4860::/32.'
+         )
+	>>>> results = unique_addresses(data=input_data, file_path=None)
+	>>>> pprint(results)
+
+	{'2001:4860:4860::8888': {'count': 2, 'ports': {'443': 1}},
+     '2001:4860::/32': {'count': 1, 'ports': {}},
+     '74.125.0.0/16': {'count': 1, 'ports': {}},
+     '74.125.225.229': {'count': 2, 'ports': {'80': 1}}}
 
 Dependencies
 ============

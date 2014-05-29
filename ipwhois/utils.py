@@ -23,16 +23,55 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 try:
-    import ipaddress
+    from ipaddress import (ip_address,
+                           ip_network,
+                           IPv4Address,
+                           IPv4Network,
+                           IPv6Address)
 except ImportError:
-    import ipaddr as ipaddress
+    from ipaddr import (IPAddress as ip_address,
+                        IPNetwork as ip_network,
+                        IPv4Address,
+                        IPv4Network,
+                        IPv6Address)
 from xml.dom.minidom import parseString
 from os import path
 import sys
+import re
+import copy
 try:
     from itertools import filterfalse
 except:
     from itertools import ifilterfalse as filterfalse
+
+IP_REGEX = (
+    r'(?P<ip>'
+    #IPv4
+    '(((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.)){3}'
+    '(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)'
+    #IPv6
+    '|\[?(((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:)'
+    '{6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|'
+    '2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]'
+    '{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d'
+    '\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|'
+    '((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|'
+    '2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]'
+    '{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)'
+    '(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(('
+    '(:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1'
+    '\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(('
+    '[0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4})'
+    '{0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]'
+    '?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:(('
+    '25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})'
+    ')|:)))(%.+)?))\]?'
+    #Optional IPv4 Port
+    '((:(6553[0-5]|655[0-2]\d|65[0-4]\d{2}|6[0-4]\d{3}|[1-5]\d{4}|[1-9]\d{0,3}'
+    #Optional CIDR block
+    '))|(\/(?:[012]\d?|3[012]?|[4-9])))?'
+    ')'
+)
 
 
 def get_countries():
@@ -106,10 +145,10 @@ def ipv4_is_defined(address):
     """
 
     #Initialize the IP address object.
-    query_ip = ipaddress.IPv4Address(str(address))
+    query_ip = IPv4Address(str(address))
 
     #This Network
-    if query_ip in ipaddress.IPv4Network('0.0.0.0/8'):
+    if query_ip in IPv4Network('0.0.0.0/8'):
 
         return True, 'This Network', 'RFC 1122, Section 3.2.1.3'
 
@@ -129,34 +168,34 @@ def ipv4_is_defined(address):
         return True, 'Link Local', 'RFC 3927'
 
     #IETF Protocol Assignments
-    elif query_ip in ipaddress.IPv4Network('192.0.0.0/24'):
+    elif query_ip in IPv4Network('192.0.0.0/24'):
 
         return True, 'IETF Protocol Assignments', 'RFC 5736'
 
     #TEST-NET-1
-    elif query_ip in ipaddress.IPv4Network('192.0.2.0/24'):
+    elif query_ip in IPv4Network('192.0.2.0/24'):
 
         return True, 'TEST-NET-1', 'RFC 5737'
 
     #6to4 Relay Anycast
-    elif query_ip in ipaddress.IPv4Network('192.88.99.0/24'):
+    elif query_ip in IPv4Network('192.88.99.0/24'):
 
         return True, '6to4 Relay Anycast', 'RFC 3068'
 
     #Network Interconnect Device Benchmark Testing
-    elif query_ip in ipaddress.IPv4Network('198.18.0.0/15'):
+    elif query_ip in IPv4Network('198.18.0.0/15'):
 
         return (True,
                 'Network Interconnect Device Benchmark Testing',
                 'RFC 2544')
 
     #TEST-NET-2
-    elif query_ip in ipaddress.IPv4Network('198.51.100.0/24'):
+    elif query_ip in IPv4Network('198.51.100.0/24'):
 
         return True, 'TEST-NET-2', 'RFC 5737'
 
     #TEST-NET-3
-    elif query_ip in ipaddress.IPv4Network('203.0.113.0/24'):
+    elif query_ip in IPv4Network('203.0.113.0/24'):
 
         return True, 'TEST-NET-3', 'RFC 5737'
 
@@ -166,7 +205,7 @@ def ipv4_is_defined(address):
         return True, 'Multicast', 'RFC 3171'
 
     #Limited Broadcast
-    elif query_ip in ipaddress.IPv4Network('255.255.255.255/32'):
+    elif query_ip in IPv4Network('255.255.255.255/32'):
 
         return True, 'Limited Broadcast', 'RFC 919, Section 7'
 
@@ -190,7 +229,7 @@ def ipv6_is_defined(address):
     """
 
     #Initialize the IP address object.
-    query_ip = ipaddress.IPv6Address(str(address))
+    query_ip = IPv6Address(str(address))
 
     #Multicast
     if query_ip.is_multicast:
@@ -245,13 +284,132 @@ def unique_everseen(iterable, key=None):
 
     seen = set()
     seen_add = seen.add
+
     if key is None:
+
         for element in filterfalse(seen.__contains__, iterable):
+
             seen_add(element)
             yield element
+
     else:
+
         for element in iterable:
+
             k = key(element)
+
             if k not in seen:
+
                 seen_add(k)
                 yield element
+
+
+def unique_addresses(data=None, file_path=None):
+    """
+    The function to search an input string and/or file, extracting and
+    counting IPv4/IPv6 addresses/networks. Summarizes ports with sub-counts.
+    If both a string and file_path are provided, it will process them both.
+
+    Args:
+        data: A string to process.
+        file_path: An optional file path to process.
+
+    Returns:
+        Dictionary: A dictionary with the ip addresses/networks as the keys
+            and the values as dictionaries containing the following keys:
+                count: Total number of times seen.
+                ports: Dictionary with the port numbers as the keys and the
+                    values as a count of the number of times seen for this ip.
+
+    Raises:
+        ValueError: Arguments provided are invalid.
+    """
+
+    if not data and not file_path:
+
+        raise ValueError('No data or file path provided.')
+
+    ret = {}
+    base = {
+        'count': 0,
+        'ports': {}
+    }
+
+    file_data = None
+    if file_path:
+
+        f = open(str(file_path), 'r')
+
+        #Read the file.
+        file_data = f.read()
+
+    pattern = re.compile(
+        str(IP_REGEX),
+        re.DOTALL
+    )
+
+    #Check if there is data.
+    for input_data in [data, file_data]:
+
+        if input_data:
+
+            #Search for IPs.
+            for match in pattern.finditer(input_data):
+
+                is_net = False
+                port = None
+                try:
+
+                    found = match.group('ip')
+
+                    if '.' in found and ':' in found:
+
+                        split = found.split(':')
+                        ip_or_net = split[0]
+                        port = split[1]
+
+                    elif '[' in found:
+
+                        split = found.split(']:')
+                        ip_or_net = split[0][1:]
+                        port = split[1]
+
+                    elif '/' in found:
+
+                        is_net = True
+                        ip_or_net = found
+
+                    else:
+
+                        ip_or_net = found
+
+                    if is_net:
+
+                        ip_obj = ip_network(ip_or_net)
+
+                    else:
+                        ip_obj = ip_address(ip_or_net)
+
+                    obj_str = ip_obj.__str__()
+
+                    if obj_str not in ret.keys():
+
+                        ret[obj_str] = copy.deepcopy(base)
+
+                    ret[obj_str]['count'] += 1
+
+                    if port:
+
+                        try:
+
+                            ret[obj_str]['ports'][str(port)] += 1
+
+                        except KeyError:
+
+                            ret[obj_str]['ports'][str(port)] = 1
+
+                except (KeyError, ValueError):
+
+                    continue
+
+    return ret

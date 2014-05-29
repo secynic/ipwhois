@@ -36,6 +36,7 @@ except ImportError:
 import socket
 import dns.resolver
 import re
+import copy
 import json
 from .utils import ipv4_is_defined, ipv6_is_defined, unique_everseen
 
@@ -189,6 +190,39 @@ NIC_WHOIS = {
     }
 }
 
+RWHOIS = {
+    'fields': {
+        'cidr': r'(network:IP-Network):(?P<val>.+?)\n',
+        'name': r'(network:ID):(?P<val>.+?)\n',
+        'description': (
+            r'(network:(Org-Name|Organization(;I)?)):(?P<val>.+?)\n'
+        ),
+        'country': r'(network:(Country|Country-Code)):(?P<val>.+?)\n',
+        'state': r'(network:State):(?P<val>.+?)\n',
+        'city': r'(network:City):(?P<val>.+?)\n',
+        'address': r'(network:Street-Address):(?P<val>.+?)\n',
+        'postal_code': r'(network:Postal-Code):(?P<val>.+?)\n',
+        'abuse_emails': (
+            r'(network:Abuse-Contact(;I)?):[^\S\n]+(?P<val>[\w\-\.]+?@'
+            '[\w\-\.]+\.[\w\-]+)([^\S\n]+.*?)*?\n'
+        ),
+        'tech_emails': (
+            r'(network:Tech-Contact(;I)?):[^\S\n]+(?P<val>[\w\-\.]+?@'
+            '[\w\-\.]+\.[\w\-]+)([^\S\n]+.*?)*?\n'
+        ),
+        'misc_emails': (
+            r'.+?:.*?[^\S\n]+(?P<val>[\w\-\.]+?@[\w\-\.]+\.[\w\-]+)'
+            '([^\S\n]+.*?)*?\n'
+        ),
+        'created': r'(network:Created):(?P<val>.+?)\n',
+        'updated': r'(network:Updated):(?P<val>.+?)\n'
+    }
+}
+
+BLACKLIST = [
+    'root.rwhois.net'
+]
+
 ASN_REFERRALS = {
     'whois://whois.ripe.net': 'ripencc',
     'whois://whois.apnic.net': 'apnic',
@@ -247,6 +281,12 @@ class WhoisLookupError(Exception):
 class HostLookupError(Exception):
     """
     An Exception for when the Host lookup failed.
+    """
+
+
+class BlacklistError(Exception):
+    """
+    An Exception for when the server is in a blacklist.
     """
 
 
@@ -492,15 +532,19 @@ class IPWhois():
                 'ASN lookup failed for %r.' % self.address_str
             )
 
-    def get_whois(self, asn_registry='arin', retry_count=3):
+    def get_whois(self, asn_registry='arin', retry_count=3, server=None,
+                  port=43):
         """
-        The function for retrieving whois information for an IP address via
-        port 43 (WHOIS).
+        The function for retrieving whois or rwhois information for an IP
+        address via any port. Defaults to port 43 (WHOIS).
 
         Args:
             asn_registry: The NIC to run the query against.
             retry_count: The number of times to retry in case socket errors,
                 timeouts, connection resets, etc. are encountered.
+            server: An optional server to connect to. If provided, asn_registry
+                will be ignored.
+            port: The network port to connect on.
 
         Returns:
             String: The raw whois data.
@@ -514,7 +558,16 @@ class IPWhois():
             #Create the connection for the whois query.
             conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             conn.settimeout(self.timeout)
-            conn.connect((NIC_WHOIS[asn_registry]['server'], 43))
+
+            if server in BLACKLIST:
+                raise BlacklistError(
+                    'The server %r is blacklisted.' % server
+                )
+
+            if server is None:
+                server = NIC_WHOIS[asn_registry]['server']
+
+            conn.connect((server, port))
 
             #Prep the query.
             query = self.address_str + '\r\n'
@@ -541,7 +594,11 @@ class IPWhois():
             if 'Query rate limit exceeded' in response:
 
                 sleep(1)
-                return self.get_whois(asn_registry, retry_count)
+                return self.get_whois(asn_registry, retry_count, port)
+
+            elif 'error 501' in response or 'error 230' in response:
+
+                raise ValueError
 
             return str(response)
 
@@ -549,7 +606,7 @@ class IPWhois():
 
             if retry_count > 0:
 
-                return self.get_whois(asn_registry, retry_count - 1)
+                return self.get_whois(asn_registry, retry_count - 1, port)
 
             else:
 
@@ -771,7 +828,7 @@ class IPWhois():
 
                 try:
 
-                    net = BASE_NET.copy()
+                    net = copy.deepcopy(BASE_NET)
                     net['cidr'] = ', '.join(
                         [ip_network(c.strip()).__str__()
                          for c in match.group(1).split(', ')]
@@ -810,7 +867,7 @@ class IPWhois():
 
                         temp.append(ip_network(addr.strip()).__str__())
 
-                    net = BASE_NET.copy()
+                    net = copy.deepcopy(BASE_NET)
                     net['cidr'] = ', '.join(temp)
                     net['start'] = match.start()
                     net['end'] = match.end()
@@ -847,7 +904,7 @@ class IPWhois():
 
                         cidr = ip_network(match.group(2).strip()).__str__()
 
-                    net = BASE_NET.copy()
+                    net = copy.deepcopy(BASE_NET)
                     net['cidr'] = cidr
                     net['start'] = match.start()
                     net['end'] = match.end()
@@ -978,7 +1035,7 @@ class IPWhois():
                 continue
 
             addrs = []
-            net = BASE_NET.copy()
+            net = copy.deepcopy(BASE_NET)
 
             try:
 
@@ -1153,7 +1210,7 @@ class IPWhois():
         ripe_abuse_emails = []
         ripe_misc_emails = []
 
-        net = BASE_NET.copy()
+        net = copy.deepcopy(BASE_NET)
 
         for n in object_list:
 
@@ -1283,7 +1340,7 @@ class IPWhois():
         """
 
         addrs = []
-        net = BASE_NET.copy()
+        net = copy.deepcopy(BASE_NET)
 
         try:
 
@@ -1442,7 +1499,7 @@ class IPWhois():
         """
 
         addrs = []
-        net = BASE_NET.copy()
+        net = copy.deepcopy(BASE_NET)
 
         try:
 
