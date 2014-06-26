@@ -719,7 +719,7 @@ class IPWhois():
             )
 
     def lookup(self, inc_raw=False, retry_count=3, get_referral=False,
-               extra_blacklist=[]):
+               extra_blacklist=None):
         """
         The function for retrieving and parsing whois information for an IP
         address via port 43 (WHOIS).
