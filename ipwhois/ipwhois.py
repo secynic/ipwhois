@@ -533,7 +533,7 @@ class IPWhois():
             )
 
     def get_whois(self, asn_registry='arin', retry_count=3, server=None,
-                  port=43):
+                  port=43, extra_blacklist=None):
         """
         The function for retrieving whois or rwhois information for an IP
         address via any port. Defaults to port 43 (WHOIS).
@@ -545,27 +545,32 @@ class IPWhois():
             server: An optional server to connect to. If provided, asn_registry
                 will be ignored.
             port: The network port to connect on.
+            extra_blacklist: A list of blacklisted whois servers in addition to
+                the global BLACKLIST.
 
         Returns:
             String: The raw whois data.
 
         Raises:
+            BlacklistError: If the whois server provided
             WhoisLookupError: The whois lookup failed.
         """
 
         try:
 
-            #Create the connection for the whois query.
-            conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            conn.settimeout(self.timeout)
+            extra_bl = extra_blacklist if extra_blacklist else []
 
-            if server in BLACKLIST:
+            if server in (BLACKLIST, extra_bl):
                 raise BlacklistError(
                     'The server %r is blacklisted.' % server
                 )
 
             if server is None:
                 server = NIC_WHOIS[asn_registry]['server']
+
+            #Create the connection for the whois query.
+            conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            conn.settimeout(self.timeout)
 
             conn.connect((server, port))
 
@@ -713,7 +718,8 @@ class IPWhois():
                 'Host lookup failed for %r.' % self.address_str
             )
 
-    def lookup(self, inc_raw=False, retry_count=3):
+    def lookup(self, inc_raw=False, retry_count=3, get_referral=False,
+               extra_blacklist=[]):
         """
         The function for retrieving and parsing whois information for an IP
         address via port 43 (WHOIS).
@@ -723,6 +729,10 @@ class IPWhois():
                 the returned dictionary.
             retry_count: The number of times to retry in case socket errors,
                 timeouts, connection resets, etc. are encountered.
+            get_referral: Boolean for whether to retrieve referral whois
+                information, if available.
+            extra_blacklist: A list of blacklisted whois servers in addition to
+                the global BLACKLIST.
 
         Returns:
             Dictionary: A dictionary containing the following keys:
@@ -738,6 +748,13 @@ class IPWhois():
                         listings, hence the need for a list object.
                     raw (String) - Raw whois results if the inc_raw parameter
                         is True.
+                    referral (Dictionary) - Dictionary containing referral
+                        whois information if get_referral is True and the
+                        server isn't blacklisted. Consists of fields listed
+                        in the RWHOIS dictionary. Additional referral server
+                        informaion is added in the server and port keys.
+                    raw_referral (String) - Raw referral whois results if the
+                        inc_raw parameter is True.
         """
 
         #Initialize the response.
@@ -803,11 +820,44 @@ class IPWhois():
         #Add the ASN information to the return dictionary.
         results.update(asn_data)
 
+        #The referral server and port. Only used if get_referral is True.
+        referral_server = None
+        referral_port = 0
+
         #Only fetch the response if we haven't already.
         if response is None or results['asn_registry'] is not 'arin':
 
             #Retrieve the whois data.
             response = self.get_whois(results['asn_registry'], retry_count)
+
+            if get_referral:
+
+                #Search for a referral server.
+                for match in re.finditer(
+                    r'^ReferralServer:[^\S\n]+(.+:[0-9]+)$',
+                    response,
+                    re.MULTILINE
+                ):
+
+                    try:
+
+                        temp = match.group(1)
+                        if 'rwhois://' not in temp:
+                            raise ValueError
+
+                        temp = temp.replace('rwhois://', '').split(':')
+
+                        if int(temp[1]) > 65535:
+                            raise ValueError
+
+                        referral_server = temp[0]
+                        referral_port = int(temp[1])
+
+                    except (ValueError, KeyError):
+
+                        continue
+
+                    break
 
         #If inc_raw parameter is True, add the response to return dictionary.
         if inc_raw:
