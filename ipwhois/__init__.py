@@ -25,4 +25,5 @@
 __version__ = '0.9.0'
 
 from .ipwhois import (IPWhois, IPDefinedError, ASNLookupError,
-                      ASNRegistryError, WhoisLookupError, HostLookupError)
+                      ASNRegistryError, WhoisLookupError, HostLookupError,
+                      BlacklistError)
