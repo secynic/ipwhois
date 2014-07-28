@@ -129,6 +129,22 @@ class TestIPWhois(unittest.TestCase):
             except Exception as e:
                 self.fail('Unexpected exception raised: %r' % e)
 
+        rwhois_ips = [
+            '38.113.116.218'  # COGNETCO
+        ]
+
+        for ip in rwhois_ips:
+
+            result = IPWhois(ip)
+            try:
+                self.assertIsInstance(result.lookup(get_referral=True), dict)
+            except (ASNLookupError, ASNRegistryError, WhoisLookupError):
+                pass
+            except AssertionError as e:
+                raise e
+            except Exception as e:
+                self.fail('Unexpected exception raised: %r' % e)
+
     def test_lookup_rws(self):
         try:
             from urllib.request import ProxyHandler, build_opener

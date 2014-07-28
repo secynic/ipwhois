@@ -3,11 +3,19 @@ ipwhois
 =======
 
 ipwhois is a simple package for retrieving and parsing whois data for IPv4 
-and IPv6 addresses. 
+and IPv6 addresses.
 
-The various NICs are pretty inconsistent with formatting Whois results and the 
-information contained within. I am still working through how to parse some of 
-these fields in to standard dictionary keys.
+Features
+========
+
+* Parses a majority of whois fields in to a standard dictionary
+* IPv4 and IPv6 support
+* Supports REST queries (useful if whois is blocked from your network)
+* Proxy support for REST queries
+* Recursive network parsing for IPs with parent/children networks listed
+* Python 2.6+ and 3.3+ supported
+* Useful set of utilities
+* BSD license
 
 Usage Examples
 ==============
@@ -34,14 +42,18 @@ Typical usage::
 	          'country': 'US',
 	          'created': '2007-03-13T00:00:00',
 	          'description': 'Google Inc.',
+	          'handle': 'NET-74-125-0-0-1',
 	          'misc_emails': None,
 	          'name': 'GOOGLE',
 	          'postal_code': '94043',
+	          'range': '74.125.0.0 - 74.125.255.255',
 	          'state': 'CA',
 	          'tech_emails': 'arin-contact@google.com',
 	          'updated': '2012-02-24T00:00:00'}],
 	'query': '74.125.225.229',
-	'raw': None
+	'raw': None,
+	'raw_referral': None,
+	'referral': None
 	}
 	
 REST (HTTP)::
@@ -66,9 +78,11 @@ REST (HTTP)::
 	          'country': 'US',
 	          'created': '2007-03-13T12:09:54-04:00',
 	          'description': 'Google Inc.',
+	          'handle': 'NET-74-125-0-0-1',
 	          'misc_emails': None,
 	          'name': 'GOOGLE',
 	          'postal_code': '94043',
+	          'range': '74.125.0.0 - 74.125.255.255',
 	          'state': 'CA',
 	          'tech_emails': 'arin-contact@google.com',
 	          'updated': '2012-02-24T09:44:34-05:00'}],
@@ -107,6 +121,26 @@ Countries::
 
 	United States
 
+Unique IP Addresses::
+
+	>>>> from ipwhois.utils import unique_addresses
+	>>>> from pprint import pprint
+
+	>>>> input_data = (
+            'You can have IPs like 74.125.225.229, or 2001:4860:4860::8888'
+            'Put a port at the end 74.125.225.229:80 or for IPv6: '
+            '[2001:4860:4860::8888]:443 or even networks like '
+            '74.125.0.0/16 and 2001:4860::/32.'
+	)
+
+	>>>> results = unique_addresses(data=input_data, file_path=None)
+	>>>> pprint(results)
+
+	{'2001:4860:4860::8888': {'count': 2, 'ports': {'443': 1}},
+	 '2001:4860::/32': {'count': 1, 'ports': {}},
+	 '74.125.0.0/16': {'count': 1, 'ports': {}},
+	 '74.125.225.229': {'count': 2, 'ports': {'80': 1}}}
+
 Dependencies
 ============
 
@@ -115,7 +149,7 @@ Python 2.6, 2.7::
     dnspython
     ipaddr
 
-Python 3.3, 3.4::
+Python 3.3+::
 
     dnspython3
 
@@ -124,18 +158,19 @@ Installing
 
 Latest version from PyPi::
 
-	pip install ipwhois
+	pip install --upgrade ipwhois
 
 Latest version from GitHub::
 
 	pip install -e git+https://github.com/secynic/ipwhois@master#egg=ipwhois
-	
+
 Parsing
 =======
 
-Parsing is currently limited to CIDR, country, name, description, state, city, 
-address, postal_code, abuse_emails, tech_emails, misc_emails, created and 
-updated fields. This is assuming that those fields are present.
+Parsing is currently limited to CIDR, country, name, handle, range,
+description, state, city, address, postal_code, abuse_emails, tech_emails,
+misc_emails, created and updated fields. This is assuming that those fields
+are present (for both whois and rwhois).
 
 Some IPs have parent networks listed. The parser attempts to recognize this, 
 and break the networks into individual dictionaries. If a single network has 
