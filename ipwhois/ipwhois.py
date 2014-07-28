@@ -92,6 +92,7 @@ NIC_WHOIS = {
         ),
         'fields': {
             'name': r'(NetName):[^\S\n]+(?P<val>.+?)\n',
+            'handle': r'(NetHandle):[^\S\n]+(?P<val>.+?)\n',
             'description': r'(OrgName|CustName):[^\S\n]+(?P<val>.+?)'
                     '(?=(\n\S):?)',
             'country': r'(Country):[^\S\n]+(?P<val>.+?)\n',
@@ -102,7 +103,7 @@ NIC_WHOIS = {
             'abuse_emails': r'(OrgAbuseEmail):[^\S\n]+(?P<val>.+?)\n',
             'tech_emails': r'(OrgTechEmail):[^\S\n]+(?P<val>.+?)\n',
             'created': r'(RegDate):[^\S\n]+(?P<val>.+?)\n',
-            'updated': r'(Updated):[^\S\n]+(?P<val>.+?)\n'
+            'updated': r'(Updated):[^\S\n]+(?P<val>.+?)\n',
         },
         'dt_format': '%Y-%m-%d',
         'dt_rws_format': '%Y-%m-%dT%H:%M:%S%z'
@@ -112,13 +113,14 @@ NIC_WHOIS = {
         'url': 'http://rest.db.ripe.net/search.json?query-string={0}',
         'fields': {
             'name': r'(netname):[^\S\n]+(?P<val>.+?)\n',
+            'handle': r'(nic-hdl):[^\S\n]+(?P<val>.+?)\n',
             'description': r'(descr):[^\S\n]+(?P<val>.+?)(?=(\n\S):?)',
             'country': r'(country):[^\S\n]+(?P<val>.+?)\n',
             'address': r'(address):[^\S\n]+(?P<val>.+?)(?=(\n\S):?)',
             'abuse_emails': (
-                r'(abuse-mailbox:[^\S\n]+(?P<val>.+?))|((?!abuse-mailbox).+?:'
-                '.*?[^\S\n]+(?P<val2>[\w\-\.]*abuse[\w\-\.]*@[\w\-\.]+\.[\w\-]'
-                '+)([^\S\n]+.*?)*?)\n'
+                r'(abuse-mailbox:[^\S\n]+(?P<val>.+?))\n|(((?!abuse-mailbox).+'
+                '?:.*?[^\S\n]+(?P<val2>[\w\-\.]*abuse[\w\-\.]*@[\w\-\.]+\.'
+                '[\w\-]+)([^\S\n]+.*?)*?)\n)'
             ),
             'misc_emails': (
                 r'(?!abuse-mailbox).+?:.*?[^\S\n]+(?P<val>(?!abuse)[\w\-\.]+?@'
@@ -131,13 +133,14 @@ NIC_WHOIS = {
         'url': 'http://rdap.apnic.net/ip/{0}',
         'fields': {
             'name': r'(netname):[^\S\n]+(?P<val>.+?)\n',
+            'handle': r'(nic-hdl):[^\S\n]+(?P<val>.+?)\n',
             'description': r'(descr):[^\S\n]+(?P<val>.+?)(?=(\n\S):?)',
             'country': r'(country):[^\S\n]+(?P<val>.+?)\n',
             'address': r'(address):[^\S\n]+(?P<val>.+?)(?=(\n\S):?)',
             'abuse_emails': (
-                r'(abuse-mailbox:[^\S\n]+(?P<val>.+?))|((?!abuse-mailbox).+?:'
-                '.*?[^\S\n]+(?P<val2>[\w\-\.]*abuse[\w\-\.]*@[\w\-\.]+\.[\w\-]'
-                '+)([^\S\n]+.*?)*?)\n'
+                r'(abuse-mailbox:[^\S\n]+(?P<val>.+?))\n|(((?!abuse-mailbox).+'
+                '?:.*?[^\S\n]+(?P<val2>[\w\-\.]*abuse[\w\-\.]*@[\w\-\.]+\.'
+                '[\w\-]+)([^\S\n]+.*?)*?)\n)'
             ),
             'misc_emails': (
                 r'(?!abuse-mailbox).+?:.*?[^\S\n]+(?P<val>(?!abuse)[\w\-\.]+?@'
@@ -152,12 +155,13 @@ NIC_WHOIS = {
         'server': 'whois.lacnic.net',
         'url': 'http://restfulwhoisv2.labs.lacnic.net/restfulwhois/ip/{0}',
         'fields': {
+            'handle': r'(nic-hdl):[^\S\n]+(?P<val>.+?)\n',
             'description': r'(owner):[^\S\n]+(?P<val>.+?)(?=(\n\S):?)',
             'country': r'(country):[^\S\n]+(?P<val>.+?)\n',
             'abuse_emails': (
-                r'(abuse-mailbox:[^\S\n]+(?P<val>.+?))|((?!abuse-mailbox).+?:'
-                '.*?[^\S\n]+(?P<val2>[\w\-\.]*abuse[\w\-\.]*@[\w\-\.]+\.[\w\-]'
-                '+)([^\S\n]+.*?)*?)\n'
+                r'(abuse-mailbox:[^\S\n]+(?P<val>.+?))\n|(((?!abuse-mailbox).+'
+                '?:.*?[^\S\n]+(?P<val2>[\w\-\.]*abuse[\w\-\.]*@[\w\-\.]+\.'
+                '[\w\-]+)([^\S\n]+.*?)*?)\n)'
             ),
             'misc_emails': (
                 r'(?!abuse-mailbox).+?:.*?[^\S\n]+(?P<val>(?!abuse)[\w\-\.]+?@'
@@ -174,13 +178,14 @@ NIC_WHOIS = {
         'url': 'http://rest.db.ripe.net/search.json?query-string={0}',
         'fields': {
             'name': r'(netname):[^\S\n]+(?P<val>.+?)\n',
+            'handle': r'(nic-hdl):[^\S\n]+(?P<val>.+?)\n',
             'description': r'(descr):[^\S\n]+(?P<val>.+?)(?=(\n\S):?)',
             'country': r'(country):[^\S\n]+(?P<val>.+?)\n',
             'address': r'(address):[^\S\n]+(?P<val>.+?)(?=(\n\S):?)',
             'abuse_emails': (
-                r'(abuse-mailbox:[^\S\n]+(?P<val>.+?))|((?!abuse-mailbox).+?:'
-                '.*?[^\S\n]+(?P<val2>[\w\-\.]*abuse[\w\-\.]*@[\w\-\.]+\.[\w\-]'
-                '+)([^\S\n]+.*?)*?)\n'
+                r'(abuse-mailbox:[^\S\n]+(?P<val>.+?))\n|(((?!abuse-mailbox).+'
+                '?:.*?[^\S\n]+(?P<val2>[\w\-\.]*abuse[\w\-\.]*@[\w\-\.]+\.'
+                '[\w\-]+)([^\S\n]+.*?)*?)\n)'
             ),
             'misc_emails': (
                 r'(?!abuse-mailbox).+?:.*?[^\S\n]+(?P<val>(?!abuse)[\w\-\.]+?@'
@@ -239,6 +244,8 @@ IPV6_DNS_ZONE = '{0}.origin6.asn.cymru.com'
 BASE_NET = {
     'cidr': None,
     'name': None,
+    'handle': None,
+    'range': None,
     'description': None,
     'country': None,
     'state': None,
@@ -552,7 +559,8 @@ class IPWhois():
             String: The raw whois data.
 
         Raises:
-            BlacklistError: If the whois server provided
+            BlacklistError: Raised if the whois server provided is in the
+                global BLACKLIST or extra_blacklist.
             WhoisLookupError: The whois lookup failed.
         """
 
@@ -718,6 +726,97 @@ class IPWhois():
                 'Host lookup failed for %r.' % self.address_str
             )
 
+    def _parse_fields(self, response, fields_dict, net_start=None,
+                      net_end=None, dt_format=None):
+        """
+        The function for parsing whois fields from a data input.
+
+        Args:
+            response: The response from the whois/rwhois server.
+            fields_dict: The dictionary of fields -> regex search values.
+            net_start: The starting point of the network (if parsing multiple
+                networks).
+            net_end: The ending point of the network (if parsing multiple
+                networks).
+            dt_format: The format of datetime fields if known.
+
+        Returns:
+            Dictionary: A dictionary of fields provided in fields_dict.
+        """
+
+        ret = {}
+
+        for field in fields_dict:
+
+            pattern = re.compile(
+                str(fields_dict[field]),
+                re.DOTALL
+            )
+
+            if net_start is not None:
+
+                match = pattern.finditer(response, net_end, net_start)
+
+            elif net_end is not None:
+
+                match = pattern.finditer(response, net_end)
+
+            else:
+
+                match = pattern.finditer(response)
+
+            values = []
+            sub_section_end = None
+            for m in match:
+
+                if sub_section_end:
+
+                    if field not in (
+                        'abuse_emails',
+                        'tech_emails',
+                        'misc_emails'
+                    ) and (sub_section_end != (m.start() - 1)):
+
+                        break
+
+                try:
+
+                    values.append(m.group('val').strip())
+
+                except AttributeError:
+
+                    values.append(m.group('val2').strip())
+
+                sub_section_end = m.end()
+
+            if len(values) > 0:
+
+                value = None
+                try:
+
+                    if field == 'country':
+
+                        value = values[0].upper()
+
+                    elif field in ['created', 'updated'] and dt_format:
+
+                        value = datetime.strptime(
+                            values[0],
+                            str(dt_format)).isoformat('T')
+
+                    else:
+
+                        values = unique_everseen(values)
+                        value = '\n'.join(values)
+
+                except ValueError:
+
+                    pass
+
+                ret[field] = value
+
+        return ret
+
     def lookup(self, inc_raw=False, retry_count=3, get_referral=False,
                extra_blacklist=None):
         """
@@ -757,7 +856,7 @@ class IPWhois():
                         inc_raw parameter is True.
         """
 
-        #Initialize the response.
+        #Initialize the whois response.
         response = None
 
         #Attempt to resolve ASN info via Cymru. DNS is faster, try that first.
@@ -814,7 +913,9 @@ class IPWhois():
         results = {
             'query': self.address_str,
             'nets': [],
-            'raw': None
+            'raw': None,
+            'referral': None,
+            'raw_referral': None
         }
 
         #Add the ASN information to the return dictionary.
@@ -828,7 +929,8 @@ class IPWhois():
         if response is None or results['asn_registry'] is not 'arin':
 
             #Retrieve the whois data.
-            response = self.get_whois(results['asn_registry'], retry_count)
+            response = self.get_whois(results['asn_registry'], retry_count,
+                                      extra_blacklist=extra_blacklist)
 
             if get_referral:
 
@@ -859,6 +961,24 @@ class IPWhois():
 
                     break
 
+        #Retrieve the referral whois data.
+        if get_referral and referral_server:
+
+            response_ref = self.get_whois(None, retry_count, referral_server,
+                                          referral_port, extra_blacklist)
+
+            if inc_raw:
+
+                results['raw_referral'] = response_ref
+
+            temp_rnet = self._parse_fields(
+                response_ref,
+                RWHOIS['fields']
+            )
+
+            #Add the networks to the return dictionary.
+            results['referral'] = temp_rnet
+
         #If inc_raw parameter is True, add the response to return dictionary.
         if inc_raw:
 
@@ -867,6 +987,18 @@ class IPWhois():
         nets = []
 
         if results['asn_registry'] == 'arin':
+
+            #Find the first NetRange value.
+            pattern = re.compile(
+                r'^NetRange:[^\S\n]+(.+)$',
+                re.MULTILINE
+            )
+            temp = pattern.search(response)
+            net_range = None
+            net_range_start = None
+            if temp is not None:
+                net_range = temp.group(1).strip()
+                net_range_start = temp.start()
 
             #Iterate through all of the networks found, storing the CIDR value
             #and the start and end positions.
@@ -879,6 +1011,19 @@ class IPWhois():
                 try:
 
                     net = copy.deepcopy(BASE_NET)
+
+                    if len(nets) > 0:
+                        temp = pattern.search(response, match.start())
+                        net_range = None
+                        net_range_start = None
+                        if temp is not None:
+                            net_range = temp.group(1).strip()
+                            net_range_start = temp.start()
+
+                    if net_range is not None:
+                        if net_range_start < match.start() or len(nets) > 0:
+                            net['range'] = net_range
+
                     net['cidr'] = ', '.join(
                         [ip_network(c.strip()).__str__()
                          for c in match.group(1).split(', ')]
@@ -903,6 +1048,9 @@ class IPWhois():
 
                 try:
 
+                    net = copy.deepcopy(BASE_NET)
+                    net['range'] = match.group(2).strip()
+
                     temp = []
                     for addr in match.group(2).strip().split(', '):
 
@@ -917,7 +1065,6 @@ class IPWhois():
 
                         temp.append(ip_network(addr.strip()).__str__())
 
-                    net = copy.deepcopy(BASE_NET)
                     net['cidr'] = ', '.join(temp)
                     net['start'] = match.start()
                     net['end'] = match.end()
@@ -939,6 +1086,9 @@ class IPWhois():
 
                 try:
 
+                    net = copy.deepcopy(BASE_NET)
+                    net['range'] = match.group(2)
+
                     if match.group(3) and match.group(4):
 
                         addrs = []
@@ -954,7 +1104,6 @@ class IPWhois():
 
                         cidr = ip_network(match.group(2).strip()).__str__()
 
-                    net = copy.deepcopy(BASE_NET)
                     net['cidr'] = cidr
                     net['start'] = match.start()
                     net['end'] = match.end()
@@ -973,71 +1122,24 @@ class IPWhois():
 
                 section_end = nets[index + 1]['start']
 
-            for field in NIC_WHOIS[results['asn_registry']]['fields']:
+            try:
 
-                pattern = re.compile(
-                    str(NIC_WHOIS[results['asn_registry']]['fields'][field]),
-                    re.DOTALL
-                )
+                dt_format = NIC_WHOIS[results['asn_registry']]['dt_format']
 
-                if section_end is not None:
+            except KeyError:
 
-                    match = pattern.finditer(response, net['end'], section_end)
+                dt_format = None
 
-                else:
+            temp_net = self._parse_fields(
+                response,
+                NIC_WHOIS[results['asn_registry']]['fields'],
+                section_end,
+                net['end'],
+                dt_format
+            )
 
-                    match = pattern.finditer(response, net['end'])
-
-                values = []
-                sub_section_end = None
-                for m in match:
-
-                    if sub_section_end:
-
-                        if field not in (
-                            'abuse_emails',
-                            'tech_emails',
-                            'misc_emails'
-                        ) and (sub_section_end != (m.start() - 1)):
-
-                            break
-
-                    try:
-
-                        values.append(m.group('val').strip())
-
-                    except AttributeError:
-
-                        values.append(m.group('val2').strip())
-
-                    sub_section_end = m.end()
-
-                if len(values) > 0:
-
-                    try:
-
-                        if field == 'country':
-
-                            value = values[0].upper()
-
-                        elif field in ['created', 'updated']:
-
-                            value = datetime.strptime(
-                                values[0],
-                                str(NIC_WHOIS[results['asn_registry']]
-                                    ['dt_format'])).isoformat('T')
-
-                        else:
-
-                            values = unique_everseen(values)
-                            value = '\n'.join(values)
-
-                    except ValueError:
-
-                        value = None
-                        pass
-
-                    net[field] = value
+            #Merge the net dictionaries.
+            net.update(temp_net)
 
             #The start and end values are no longer needed.
             del net['start'], net['end']
@@ -1097,6 +1199,9 @@ class IPWhois():
                     [i.__str__() for i in collapse_addresses(addrs)]
                 )
 
+                net['range'] = (n['startAddress']['$'].strip() + ' - ' +
+                                n['endAddress']['$'].strip())
+
             except (KeyError, ValueError, TypeError):
 
                 pass
@@ -1114,6 +1219,10 @@ class IPWhois():
                 except KeyError:
 
                     pass
+
+            if 'handle' in n:
+
+                net['handle'] = n['handle']['$'].strip()
 
             ref = None
             if 'customerRef' in n:
@@ -1298,6 +1407,7 @@ class IPWhois():
 
                         if attr['name'] in ('inetnum', 'inet6num'):
 
+                            net['range'] = str(attr['value']).strip()
                             ipr = str(attr['value']).strip()
                             ip_range = ipr.split(' - ')
 
@@ -1331,6 +1441,10 @@ class IPWhois():
                         elif attr['name'] == 'netname':
 
                             net['name'] = str(attr['value']).strip()
+
+                        elif attr['name'] == 'nic-hdl':
+
+                            net['handle'] = str(attr['value']).strip()
 
                         elif attr['name'] == 'descr':
 
@@ -1402,6 +1516,9 @@ class IPWhois():
                 [i.__str__() for i in collapse_addresses(addrs)]
             )
 
+            net['range'] = (response['startAddress'].strip() + ' - ' +
+                            response['endAddress'].strip())
+
         except (KeyError, ValueError, TypeError):
 
                 pass
@@ -1457,6 +1574,10 @@ class IPWhois():
         for en in entities:
 
             try:
+
+                if 'handle' in en:
+
+                    net['handle'] = en['handle']
 
                 temp = en['vcardArray'][1]
 
@@ -1561,6 +1682,9 @@ class IPWhois():
                 [i.__str__() for i in collapse_addresses(addrs)]
             )
 
+            net['range'] = (response['startAddress'].strip() + ' - ' +
+                            response['endAddress'].strip())
+
         except (KeyError, ValueError, TypeError):
 
                 pass
@@ -1630,6 +1754,10 @@ class IPWhois():
         for en in entities:
 
             try:
+
+                if 'handle' in en:
+
+                    net['handle'] = en['handle']
 
                 if en['roles'][0] == 'registrant':
 

@@ -42,14 +42,18 @@ Typical usage::
 	          'country': 'US',
 	          'created': '2007-03-13T00:00:00',
 	          'description': 'Google Inc.',
+	          'handle': 'NET-74-125-0-0-1',
 	          'misc_emails': None,
 	          'name': 'GOOGLE',
 	          'postal_code': '94043',
+	          'range': '74.125.0.0 - 74.125.255.255',
 	          'state': 'CA',
 	          'tech_emails': 'arin-contact@google.com',
 	          'updated': '2012-02-24T00:00:00'}],
 	'query': '74.125.225.229',
-	'raw': None
+	'raw': None,
+	'raw_referral': None,
+	'referral': None
 	}
 	
 REST (HTTP)::
@@ -74,9 +78,11 @@ REST (HTTP)::
 	          'country': 'US',
 	          'created': '2007-03-13T12:09:54-04:00',
 	          'description': 'Google Inc.',
+	          'handle': 'NET-74-125-0-0-1',
 	          'misc_emails': None,
 	          'name': 'GOOGLE',
 	          'postal_code': '94043',
+	          'range': '74.125.0.0 - 74.125.255.255',
 	          'state': 'CA',
 	          'tech_emails': 'arin-contact@google.com',
 	          'updated': '2012-02-24T09:44:34-05:00'}],
@@ -161,9 +167,10 @@ Latest version from GitHub::
 Parsing
 =======
 
-Parsing is currently limited to CIDR, country, name, description, state, city, 
-address, postal_code, abuse_emails, tech_emails, misc_emails, created and 
-updated fields. This is assuming that those fields are present.
+Parsing is currently limited to CIDR, country, name, handle, range,
+description, state, city, address, postal_code, abuse_emails, tech_emails,
+misc_emails, created and updated fields. This is assuming that those fields
+are present (for both whois and rwhois).
 
 Some IPs have parent networks listed. The parser attempts to recognize this, 
 and break the networks into individual dictionaries. If a single network has 

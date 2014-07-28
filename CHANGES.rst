@@ -1,16 +1,18 @@
 Changelog
 =========
 
-0.9.0 ()
+0.9.0 (2014-07-27)
 ------------------
 
 - Fixed order on REST email fields
 - Fixed setup error for initial install when dependencies don't exist.
-- Added RWhois support. *DEV PENDING IPWhois.lookup()*
+- Added RWhois support.
 - Added server and port parameters to IPWhois.get_whois().
 - Added unique_addresses() to ipwhois.utils and unit tests.
-- Added some unit tests to test_lookup(). *DEV PENDING IPWhois.lookup()*
+- Added some unit tests to test_lookup().
 - Replaced dict.copy() with copy.deepcopy(dict).
+- Fixed bug in abuse emails parsing.
+- Added handle and range values to returned nets dictionary.
 
 0.8.2 (2014-05-12)
 ------------------
