@@ -188,3 +188,10 @@ reliable. AFRINIC does not have a Whois-RWS service yet. We have to rely on the
 Ripe RWS service, which does not contain all of the data we need. The LACNIC
 RWS service is supported, but is in beta v2. This may result in availability
 or performance issues.
+
+Domains?
+========
+
+There are no plans for domain whois support in this project. It is under consideration as a new library in the future.
+
+Consider using Sven Slootweg's `python-whois <https://github.com/joepie91/python-whois>`_ for a library with domain support.
