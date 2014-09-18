@@ -34,12 +34,19 @@ except ImportError:
                         IPv4Address,
                         IPv4Network,
                         IPv6Address)
-from xml.dom.minidom import parseString
 from os import path
 import sys
 import re
 import copy
-try:
-    from itertools import filterfalse
-except:
-    from itertools import ifilterfalse as filterfalse
+
+
+def get_ipvoid():
+    """
+    The function to retrieve and parse ipvoid.com IP address reputation data.
+
+    Returns:
+        Dictionary: A dictionary with the reputation source as keys and the
+            data as a dictionary of the following:
+                status: The reputation status.
+                url: The URL for reputation details.
+    """
