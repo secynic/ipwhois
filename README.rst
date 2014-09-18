@@ -10,6 +10,7 @@ Features
 
 * Parses a majority of whois fields in to a standard dictionary
 * IPv4 and IPv6 support
+* Reputation lookups
 * Supports REST queries (useful if whois is blocked from your network)
 * Proxy support for REST queries
 * Recursive network parsing for IPs with parent/children networks listed
@@ -192,11 +193,15 @@ or performance issues.
 IP Reputation?
 ==============
 
-This feature is under development. Take a look at TekDefense's Automater for now: `TekDefense-Automater <https://github.com/1aN0rmus/TekDefense-Automater>`_
+This feature is under development. Take a look at TekDefense's Automater for
+now: `TekDefense-Automater <https://github.com/1aN0rmus/TekDefense-Automater>`_
 
 Domains?
 ========
 
-There are no plans for domain whois support in this project. It is under consideration as a new library in the future.
+There are no plans for domain whois support in this project. It is under
+consideration as a new library in the future.
 
-Consider using Sven Slootweg's `python-whois <https://github.com/joepie91/python-whois>`_ for a library with domain support.
+For now, consider using Sven Slootweg's
+`python-whois <https://github.com/joepie91/python-whois>`_ for a library with
+domain support.
