@@ -189,6 +189,11 @@ Ripe RWS service, which does not contain all of the data we need. The LACNIC
 RWS service is supported, but is in beta v2. This may result in availability
 or performance issues.
 
+IP Reputation?
+==============
+
+This feature is under development. Take a look at TekDefense's Automater for now: `TekDefense-Automater <https://github.com/1aN0rmus/TekDefense-Automater>`_
+
 Domains?
 ========
 
