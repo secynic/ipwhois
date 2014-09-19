@@ -40,9 +40,12 @@ import re
 import copy
 
 
-def get_ipvoid():
+def get_ipvoid(address):
     """
     The function to retrieve and parse ipvoid.com IP address reputation data.
+
+    Args:
+        address: An IPv4 address in string format.
 
     Returns:
         Dictionary: A dictionary with the reputation source as keys and the
