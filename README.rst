@@ -205,3 +205,10 @@ consideration as a new library in the future.
 For now, consider using Sven Slootweg's
 `python-whois <https://github.com/joepie91/python-whois>`_ for a library with
 domain support.
+
+Special Thanks
+==============
+
+Thank you JetBrains for the PyCharm open source support. It has contributed
+significantly, especially in the pkg/env management and code inspection
+domains.
