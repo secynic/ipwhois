@@ -2,15 +2,14 @@
 ipwhois
 =======
 
-ipwhois is a simple package for retrieving and parsing whois data for IPv4 
-and IPv6 addresses.
+ipwhois is a feature rich package focused on retrieving and parsing whois data
+for IPv4 and IPv6 addresses.
 
 Features
 ========
 
 * Parses a majority of whois fields in to a standard dictionary
 * IPv4 and IPv6 support
-* Reputation lookups
 * Supports REST queries (useful if whois is blocked from your network)
 * Proxy support for REST queries
 * Recursive network parsing for IPs with parent/children networks listed
