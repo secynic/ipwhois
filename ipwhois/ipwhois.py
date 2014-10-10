@@ -23,15 +23,16 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 try:
-    from ipaddress import (ip_address,
-                           ip_network,
-                           summarize_address_range,
-                           collapse_addresses)
-except ImportError:
     from ipaddr import (IPAddress as ip_address,
                         IPNetwork as ip_network,
                         summarize_address_range,
                         collapse_address_list as collapse_addresses)
+
+except ImportError:
+    from ipaddress import (ip_address,
+                           ip_network,
+                           summarize_address_range,
+                           collapse_addresses)
 
 import socket
 import dns.resolver
@@ -607,7 +608,8 @@ class IPWhois():
             if 'Query rate limit exceeded' in response:
 
                 sleep(1)
-                return self.get_whois(asn_registry, retry_count, port)
+                return self.get_whois(asn_registry, retry_count, server, port,
+                                      extra_blacklist)
 
             elif 'error 501' in response or 'error 230' in response:
 
@@ -619,7 +621,8 @@ class IPWhois():
 
             if retry_count > 0:
 
-                return self.get_whois(asn_registry, retry_count - 1, port)
+                return self.get_whois(asn_registry, retry_count - 1, server,
+                                      port, extra_blacklist)
 
             else:
 

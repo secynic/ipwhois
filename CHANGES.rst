@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.9.1 (TBD)
+-----------
+
+- Fixed ipaddress import conflicts with alternate ipaddress module.
+- Tuned import exception in ipwhois.utils.
+- Fixed retry handling in IPWhois.get_whois().
+
 0.9.0 (2014-07-27)
 ------------------
 

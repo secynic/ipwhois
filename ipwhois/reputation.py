@@ -23,17 +23,18 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 try:
-    from ipaddress import (ip_address,
-                           ip_network,
-                           IPv4Address,
-                           IPv4Network,
-                           IPv6Address)
-except ImportError:
     from ipaddr import (IPAddress as ip_address,
                         IPNetwork as ip_network,
                         IPv4Address,
                         IPv4Network,
                         IPv6Address)
+
+except ImportError:
+    from ipaddress import (ip_address,
+                           ip_network,
+                           IPv4Address,
+                           IPv4Network,
+                           IPv6Address)
 
 try:
     from urllib.request import (OpenerDirector,

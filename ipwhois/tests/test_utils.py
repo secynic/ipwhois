@@ -22,9 +22,9 @@ class TestFunctions(unittest.TestCase):
 
     def test_ipv4_is_defined(self):
         try:
-            from ipaddress import AddressValueError
-        except ImportError:
             from ipaddr import AddressValueError
+        except ImportError:
+            from ipaddress import AddressValueError
 
         self.assertRaises(ValueError, ipv4_is_defined, '192.168.0.256')
         self.assertRaises(AddressValueError, ipv4_is_defined, 1234)
@@ -34,9 +34,9 @@ class TestFunctions(unittest.TestCase):
 
     def test_ipv6_is_defined(self):
         try:
-            from ipaddress import AddressValueError
-        except ImportError:
             from ipaddr import AddressValueError
+        except ImportError:
+            from ipaddress import AddressValueError
 
         self.assertRaises(ValueError, ipv6_is_defined,
                           '2001:4860:4860::8888::1234')

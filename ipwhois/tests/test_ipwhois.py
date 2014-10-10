@@ -15,9 +15,9 @@ class TestIPWhois(unittest.TestCase):
 
     def test_ip_invalid(self):
         try:
-            from ipaddress import AddressValueError
-        except ImportError:
             from ipaddr import AddressValueError
+        except ImportError:
+            from ipaddress import AddressValueError
 
         self.assertRaises(ValueError, IPWhois, '192.168.0.256')
         self.assertRaises(AddressValueError, IPWhois, 1234)

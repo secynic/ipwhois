@@ -23,25 +23,29 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 try:
-    from ipaddress import (ip_address,
-                           ip_network,
-                           IPv4Address,
-                           IPv4Network,
-                           IPv6Address)
-except ImportError:
     from ipaddr import (IPAddress as ip_address,
                         IPNetwork as ip_network,
                         IPv4Address,
                         IPv4Network,
                         IPv6Address)
+
+except ImportError:
+    from ipaddress import (ip_address,
+                           ip_network,
+                           IPv4Address,
+                           IPv4Network,
+                           IPv6Address)
+
 from xml.dom.minidom import parseString
 from os import path
 import sys
 import re
 import copy
+
 try:
     from itertools import filterfalse
-except:
+
+except ImportError:
     from itertools import ifilterfalse as filterfalse
 
 IP_REGEX = (
