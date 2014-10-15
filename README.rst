@@ -2,8 +2,8 @@
 ipwhois
 =======
 
-ipwhois is a simple package for retrieving and parsing whois data for IPv4 
-and IPv6 addresses.
+ipwhois is a Python package focused on retrieving and parsing whois data
+for IPv4 and IPv6 addresses.
 
 Features
 ========
@@ -189,9 +189,25 @@ Ripe RWS service, which does not contain all of the data we need. The LACNIC
 RWS service is supported, but is in beta v2. This may result in availability
 or performance issues.
 
+IP Reputation?
+==============
+
+This feature is under consideration. Take a look at TekDefense's Automater for
+now: `TekDefense-Automater <https://github.com/1aN0rmus/TekDefense-Automater>`_
+
 Domains?
 ========
 
-There are no plans for domain whois support in this project. It is under consideration as a new library in the future.
+There are no plans for domain whois support in this project. It is under
+consideration as a new library in the future.
 
-Consider using Sven Slootweg's `python-whois <https://github.com/joepie91/python-whois>`_ for a library with domain support.
+For now, consider using Sven Slootweg's
+`python-whois <https://github.com/joepie91/python-whois>`_ for a library with
+domain support.
+
+Special Thanks
+==============
+
+Thank you JetBrains for the PyCharm open source support. It has contributed
+significantly, especially in the pkg/env management and code inspection
+domains.

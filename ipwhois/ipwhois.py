@@ -22,12 +22,14 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-try:
+import sys
+
+if sys.version_info >= (3, 3):
     from ipaddress import (ip_address,
-                           ip_network,
-                           summarize_address_range,
-                           collapse_addresses)
-except ImportError:
+                       ip_network,
+                       summarize_address_range,
+                       collapse_addresses)
+else:
     from ipaddr import (IPAddress as ip_address,
                         IPNetwork as ip_network,
                         summarize_address_range,
@@ -607,7 +609,8 @@ class IPWhois():
             if 'Query rate limit exceeded' in response:
 
                 sleep(1)
-                return self.get_whois(asn_registry, retry_count, port)
+                return self.get_whois(asn_registry, retry_count, server, port,
+                                      extra_blacklist)
 
             elif 'error 501' in response or 'error 230' in response:
 
@@ -619,7 +622,8 @@ class IPWhois():
 
             if retry_count > 0:
 
-                return self.get_whois(asn_registry, retry_count - 1, port)
+                return self.get_whois(asn_registry, retry_count - 1, server,
+                                      port, extra_blacklist)
 
             else:
 
@@ -818,7 +822,7 @@ class IPWhois():
         return ret
 
     def lookup(self, inc_raw=False, retry_count=3, get_referral=False,
-               extra_blacklist=None):
+               extra_blacklist=None, ignore_referral_errors=False):
         """
         The function for retrieving and parsing whois information for an IP
         address via port 43 (WHOIS).
@@ -832,6 +836,8 @@ class IPWhois():
                 information, if available.
             extra_blacklist: A list of blacklisted whois servers in addition to
                 the global BLACKLIST.
+            ignore_referral_errors: Boolean for whether to ignore and continue
+                when an exception is encountered on referral whois lookups.
 
         Returns:
             Dictionary: A dictionary containing the following keys:
@@ -964,20 +970,41 @@ class IPWhois():
         #Retrieve the referral whois data.
         if get_referral and referral_server:
 
-            response_ref = self.get_whois(None, retry_count, referral_server,
-                                          referral_port, extra_blacklist)
+            response_ref = None
 
-            if inc_raw:
+            if ignore_referral_errors:
 
-                results['raw_referral'] = response_ref
+                try:
 
-            temp_rnet = self._parse_fields(
-                response_ref,
-                RWHOIS['fields']
-            )
+                    response_ref = self.get_whois(None,
+                                                  retry_count,
+                                                  referral_server,
+                                                  referral_port,
+                                                  extra_blacklist)
 
-            #Add the networks to the return dictionary.
-            results['referral'] = temp_rnet
+                except (BlacklistError, WhoisLookupError):
+
+                    pass
+
+            else:
+
+                response_ref = self.get_whois(None, retry_count,
+                                              referral_server, referral_port,
+                                              extra_blacklist)
+
+            if response_ref:
+
+                if inc_raw:
+
+                    results['raw_referral'] = response_ref
+
+                temp_rnet = self._parse_fields(
+                    response_ref,
+                    RWHOIS['fields']
+                )
+
+                #Add the networks to the return dictionary.
+                results['referral'] = temp_rnet
 
         #If inc_raw parameter is True, add the response to return dictionary.
         if inc_raw:
@@ -1041,7 +1068,7 @@ class IPWhois():
             #Iterate through all of the networks found, storing the CIDR value
             #and the start and end positions.
             for match in re.finditer(
-                r'^(inetnum|inet6num):[^\S\n]+(.+?,[^\S\n].+|.+)$',
+                r'^(inetnum|inet6num|route):[^\S\n]+(.+?,[^\S\n].+|.+)$',
                 response,
                 re.MULTILINE
             ):
@@ -1079,7 +1106,8 @@ class IPWhois():
             #Iterate through all of the networks found, storing the CIDR value
             #and the start and end positions.
             for match in re.finditer(
-                r'^(inetnum|inet6num):[^\S\n]+((.+?)[^\S\n]-[^\S\n](.+)|.+)$',
+                r'^(inetnum|inet6num|route):[^\S\n]+((.+?)[^\S\n]-[^\S\n](.+)|'
+                    '.+)$',
                 response,
                 re.MULTILINE
             ):
