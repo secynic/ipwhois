@@ -2,7 +2,7 @@
 ipwhois
 =======
 
-ipwhois is a feature rich package focused on retrieving and parsing whois data
+ipwhois is a Python package focused on retrieving and parsing whois data
 for IPv4 and IPv6 addresses.
 
 Features
@@ -192,7 +192,7 @@ or performance issues.
 IP Reputation?
 ==============
 
-This feature is under development. Take a look at TekDefense's Automater for
+This feature is under consideration. Take a look at TekDefense's Automater for
 now: `TekDefense-Automater <https://github.com/1aN0rmus/TekDefense-Automater>`_
 
 Domains?

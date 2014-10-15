@@ -1,12 +1,14 @@
 Changelog
 =========
 
-0.9.1 (TBD)
------------
+0.9.1 (2014-10-14)
+------------------
 
+- Added ignore_referral_errors parameter to lookup().
 - Fixed ipaddress import conflicts with alternate ipaddress module.
 - Tuned import exception in ipwhois.utils.
-- Fixed retry handling in IPWhois.get_whois().
+- Fixed retry handling in get_whois().
+- Fixed CIDR regex parsing bug where some nets were excluded from the results.
 
 0.9.0 (2014-07-27)
 ------------------
