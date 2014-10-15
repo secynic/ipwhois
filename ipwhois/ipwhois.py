@@ -607,7 +607,7 @@ class IPWhois():
             if 'Query rate limit exceeded' in response:
 
                 sleep(1)
-                return self.get_whois(asn_registry, retry_count, port=port, extra_blacklist=extra_blacklist)
+                return self.get_whois(asn_registry, retry_count, port)
 
             elif 'error 501' in response or 'error 230' in response:
 
@@ -619,7 +619,7 @@ class IPWhois():
 
             if retry_count > 0:
 
-                return self.get_whois(asn_registry, retry_count - 1, port=port, extra_blacklist=extra_blacklist)
+                return self.get_whois(asn_registry, retry_count - 1, port)
 
             else:
 
