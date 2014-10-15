@@ -1,4 +1,5 @@
 import unittest
+import sys
 from ipwhois import (IPWhois, IPDefinedError, ASNLookupError, ASNRegistryError,
                      WhoisLookupError, HostLookupError)
 
@@ -14,10 +15,10 @@ class TestIPWhois(unittest.TestCase):
                 ))
 
     def test_ip_invalid(self):
-        try:
-            from ipaddr import AddressValueError
-        except ImportError:
+        if sys.version_info >= (3, 3):
             from ipaddress import AddressValueError
+        else:
+            from ipaddr import AddressValueError
 
         self.assertRaises(ValueError, IPWhois, '192.168.0.256')
         self.assertRaises(AddressValueError, IPWhois, 1234)

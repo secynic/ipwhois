@@ -22,23 +22,23 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-try:
+import sys
+
+if sys.version_info >= (3, 3):
+    from ipaddress import (ip_address,
+                           ip_network,
+                           IPv4Address,
+                           IPv4Network,
+                           IPv6Address)
+else:
     from ipaddr import (IPAddress as ip_address,
                         IPNetwork as ip_network,
                         IPv4Address,
                         IPv4Network,
                         IPv6Address)
 
-except ImportError:
-    from ipaddress import (ip_address,
-                           ip_network,
-                           IPv4Address,
-                           IPv4Network,
-                           IPv6Address)
-
 from xml.dom.minidom import parseString
 from os import path
-import sys
 import re
 import copy
 

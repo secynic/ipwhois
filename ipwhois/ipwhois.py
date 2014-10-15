@@ -22,17 +22,18 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-try:
+import sys
+
+if sys.version_info >= (3, 3):
+    from ipaddress import (ip_address,
+                       ip_network,
+                       summarize_address_range,
+                       collapse_addresses)
+else:
     from ipaddr import (IPAddress as ip_address,
                         IPNetwork as ip_network,
                         summarize_address_range,
                         collapse_address_list as collapse_addresses)
-
-except ImportError:
-    from ipaddress import (ip_address,
-                           ip_network,
-                           summarize_address_range,
-                           collapse_addresses)
 
 import socket
 import dns.resolver

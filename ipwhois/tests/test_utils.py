@@ -1,4 +1,5 @@
 import unittest
+import sys
 from ipwhois.utils import (get_countries,
                            ipv4_is_defined,
                            ipv6_is_defined,
@@ -21,10 +22,10 @@ class TestFunctions(unittest.TestCase):
         self.assertEqual(countries['US'], 'United States')
 
     def test_ipv4_is_defined(self):
-        try:
-            from ipaddr import AddressValueError
-        except ImportError:
+        if sys.version_info >= (3, 3):
             from ipaddress import AddressValueError
+        else:
+            from ipaddr import AddressValueError
 
         self.assertRaises(ValueError, ipv4_is_defined, '192.168.0.256')
         self.assertRaises(AddressValueError, ipv4_is_defined, 1234)
@@ -33,10 +34,10 @@ class TestFunctions(unittest.TestCase):
         self.assertEquals(ipv4_is_defined('74.125.225.229'), (False, '', ''))
 
     def test_ipv6_is_defined(self):
-        try:
-            from ipaddr import AddressValueError
-        except ImportError:
+        if sys.version_info >= (3, 3):
             from ipaddress import AddressValueError
+        else:
+            from ipaddr import AddressValueError
 
         self.assertRaises(ValueError, ipv6_is_defined,
                           '2001:4860:4860::8888::1234')
