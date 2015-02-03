@@ -2,9 +2,10 @@
 
 from distutils.core import setup
 import sys
+import io
 
 NAME = 'ipwhois'
-VERSION = '0.9.1'
+VERSION = '0.9.2'
 AUTHOR = "Philip Hane"
 AUTHOR_EMAIL = "secynic AT gmail DOT com"
 DESCRIPTION = "IP Whois Resolution and Parsing"
@@ -27,10 +28,12 @@ KEYWORDS = [
     "NIC"
 ]
 
-LONG_DESCRIPTION = '\n\n'.join([open('README.rst').read(),
-                                open('CHANGES.rst').read()])
+LONG_DESCRIPTION = '\n\n'.join([io.open('README.rst', 'r',
+                                        encoding='utf-8').read(),
+                                io.open('CHANGES.rst', 'r',
+                                        encoding='utf-8').read()])
 
-LICENSE = open('LICENSE.txt').read()
+LICENSE = io.open('CHANGES.rst', 'r', encoding='utf-8').read()
 
 URL = "https://github.com/secynic/ipwhois"
 DOWNLOAD_URL = "https://github.com/secynic/ipwhois/tarball/master"

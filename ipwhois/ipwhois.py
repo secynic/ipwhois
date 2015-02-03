@@ -1,4 +1,4 @@
-# Copyright (c) 2013, 2014 Philip Hane
+# Copyright (c) 2013, 2014, 2015 Philip Hane
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -1368,11 +1368,6 @@ class IPWhois():
         """
         The function for retrieving and parsing whois information for a RIPE
         IP address via HTTP (Whois-RWS).
-
-        ***
-        THIS FUNCTION IS TEMPORARILY BROKEN UNTIL RIPE FIXES THEIR API:
-        https://github.com/RIPE-NCC/whois/issues/114
-        ***
 
         Args:
             response: The dictionary containing whois information to parse.

@@ -1,4 +1,4 @@
-# Copyright (c) 2013, 2014 Philip Hane
+# Copyright (c) 2013, 2014, 2015 Philip Hane
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -41,6 +41,7 @@ from xml.dom.minidom import parseString
 from os import path
 import re
 import copy
+import io
 
 try:
     from itertools import filterfalse
@@ -101,7 +102,8 @@ def get_countries():
         data_dir = path.dirname(__file__)
 
     #Create the country codes file object.
-    f = open(str(data_dir) + '/data/iso_3166-1_list_en.xml', 'r')
+    f = io.open(str(data_dir) + '/data/iso_3166-1_list_en.xml', 'r',
+                encoding='ISO-8859-1')
 
     #Read the file.
     data = f.read()
