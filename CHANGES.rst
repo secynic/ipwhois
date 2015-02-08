@@ -5,7 +5,7 @@ Changelog
 ------------------
 
 - Added .csv support for country code source. You can no longer download
-  country code information from iso.org. *PENDING*
+  country code information from iso.org.
 - Added support for IPv4Address or IPv6Address as the address arg in IPWhois.
 - Fixed file open encoding bug. Moved from open to io.open.
 - Fixed parameter in IPWhois ip defined checks.

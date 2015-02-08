@@ -42,6 +42,7 @@ from os import path
 import re
 import copy
 import io
+import csv
 
 try:
     from itertools import filterfalse
@@ -79,10 +80,14 @@ IP_REGEX = (
 )
 
 
-def get_countries():
+def get_countries(is_legacy_xml=False):
     """
     The function to generate a dictionary containing ISO_3166-1 country codes
     to names.
+
+    Args:
+        is_legacy_xml: Boolean for whether to use the older country code
+            list (iso_3166-1_list_en.xml).
 
     Returns:
         Dictionary: A dictionary with the country codes as the keys and the
@@ -101,35 +106,56 @@ def get_countries():
 
         data_dir = path.dirname(__file__)
 
-    #Create the country codes file object.
-    f = io.open(str(data_dir) + '/data/iso_3166-1_list_en.xml', 'r',
-                encoding='ISO-8859-1')
+    if is_legacy_xml:
 
-    #Read the file.
-    data = f.read()
+        #Create the country codes file object.
+        f = io.open(str(data_dir) + '/data/iso_3166-1_list_en.xml', 'r',
+                    encoding='ISO-8859-1')
 
-    #Check if there is data.
-    if not data:
+        #Read the file.
+        data = f.read()
 
-        return {}
+        #Check if there is data.
+        if not data:
 
-    #Parse the data to get the DOM.
-    dom = parseString(data)
+            return {}
 
-    #Retrieve the country entries.
-    entries = dom.getElementsByTagName('ISO_3166-1_Entry')
+        #Parse the data to get the DOM.
+        dom = parseString(data)
 
-    #Iterate through the entries and add to the countries dictionary.
-    for entry in entries:
+        #Retrieve the country entries.
+        entries = dom.getElementsByTagName('ISO_3166-1_Entry')
 
-        #Retrieve the country code and name from the DOM.
-        code = entry.getElementsByTagName(
-            'ISO_3166-1_Alpha-2_Code_element')[0].firstChild.data
-        name = entry.getElementsByTagName(
-            'ISO_3166-1_Country_name')[0].firstChild.data
+        #Iterate through the entries and add to the countries dictionary.
+        for entry in entries:
 
-        #Add to the countries dictionary.
-        countries[code] = name.title()
+            #Retrieve the country code and name from the DOM.
+            code = entry.getElementsByTagName(
+                'ISO_3166-1_Alpha-2_Code_element')[0].firstChild.data
+            name = entry.getElementsByTagName(
+                'ISO_3166-1_Country_name')[0].firstChild.data
+
+            #Add to the countries dictionary.
+            countries[code] = name.title()
+
+    else:
+
+        #Create the country codes file object.
+        f = io.open(str(data_dir) + '/data/iso_3166-1.csv', 'r',
+                    encoding='utf-8')
+
+        #Create csv reader object.
+        csv_reader = csv.reader(f, delimiter=',', quotechar='"')
+
+        #Iterate through the rows and add to the countries dictionary.
+        for row in csv_reader:
+
+            #Retrieve the country code and name columns.
+            code = row[0]
+            name = row[1]
+
+            #Add to the countries dictionary.
+            countries[code] = name
 
     return countries
 
