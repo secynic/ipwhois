@@ -26,11 +26,15 @@ import sys
 
 if sys.version_info >= (3, 3):
     from ipaddress import (ip_address,
+                       IPv4Address,
+                       IPv6Address,
                        ip_network,
                        summarize_address_range,
-                       collapse_addresses)
+                       collapse_addresses,)
 else:
     from ipaddr import (IPAddress as ip_address,
+                        IPv4Address,
+                        IPv6Address,
                         IPNetwork as ip_network,
                         summarize_address_range,
                         collapse_address_list as collapse_addresses)
@@ -305,7 +309,8 @@ class IPWhois():
     addresses.
 
     Args:
-        address: An IPv4 or IPv6 address in string format.
+        address: An IPv4 or IPv6 address as a string, integer, IPv4Address, or
+            IPv6Address.
         timeout: The default timeout for socket connections in seconds.
         proxy_opener: The urllib.request.OpenerDirector request for proxy
             support or None.
@@ -317,8 +322,16 @@ class IPWhois():
 
     def __init__(self, address, timeout=5, proxy_opener=None):
 
-        #IPv4Address or IPv6Address, use ipaddress package exception handling.
-        self.address = ip_address(address)
+        #IPv4Address or IPv6Address
+        if isinstance(address, IPv4Address) or isinstance(
+                address, IPv6Address):
+
+            self.address = address
+
+        else:
+
+            #Use ipaddress package exception handling.
+            self.address = ip_address(address)
 
         #Default timeout for socket connections.
         self.timeout = timeout
@@ -342,7 +355,7 @@ class IPWhois():
         if self.version == 4:
 
             #Check if no ASN/whois resolution needs to occur.
-            is_defined = ipv4_is_defined(address)
+            is_defined = ipv4_is_defined(self.address_str)
 
             if is_defined[0]:
 
@@ -363,7 +376,7 @@ class IPWhois():
         else:
 
             #Check if no ASN/whois resolution needs to occur.
-            is_defined = ipv6_is_defined(address)
+            is_defined = ipv6_is_defined(self.address_str)
 
             if is_defined[0]:
 

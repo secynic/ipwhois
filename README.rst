@@ -189,6 +189,14 @@ Ripe RWS service, which does not contain all of the data we need. The LACNIC
 RWS service is supported, but is in beta v2. This may result in availability
 or performance issues.
 
+Country Codes
+=============
+
+The legacy country code listing (iso_3166-1_list_en.xml.xml) is no longer
+available as a free export from iso.org. Support has been added for
+iso_3166-1.csv. The .csv file will be the default in future releases, following
+further testing.
+
 IP Reputation?
 ==============
 
