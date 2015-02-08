@@ -30,7 +30,7 @@ if sys.version_info >= (3, 3):
                        IPv6Address,
                        ip_network,
                        summarize_address_range,
-                       collapse_addresses,)
+                       collapse_addresses)
 else:
     from ipaddr import (IPAddress as ip_address,
                         IPv4Address,
