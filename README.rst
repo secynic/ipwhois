@@ -194,8 +194,7 @@ Country Codes
 
 The legacy country code listing (iso_3166-1_list_en.xml) is no longer
 available as a free export from iso.org. Support has been added for
-iso_3166-1.csv. The .csv file will be the default in future releases, following
-further testing.
+iso_3166-1.csv, which is now the default.
 
 IP Reputation?
 ==============
