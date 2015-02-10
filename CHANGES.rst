@@ -1,8 +1,8 @@
 Changelog
 =========
 
-0.10.0 (TBD)
-------------------
+0.10.0 (2015-02-09)
+-------------------
 
 - Added .csv support for country code source. You can no longer download
   country code information from iso.org.
