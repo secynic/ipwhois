@@ -2,9 +2,10 @@
 
 from distutils.core import setup
 import sys
+import io
 
 NAME = 'ipwhois'
-VERSION = '0.9.1'
+VERSION = '0.10.0'
 AUTHOR = "Philip Hane"
 AUTHOR_EMAIL = "secynic AT gmail DOT com"
 DESCRIPTION = "IP Whois Resolution and Parsing"
@@ -27,17 +28,21 @@ KEYWORDS = [
     "NIC"
 ]
 
-LONG_DESCRIPTION = '\n\n'.join([open('README.rst').read(),
-                                open('CHANGES.rst').read()])
+LONG_DESCRIPTION = '\n\n'.join([io.open('README.rst', 'r',
+                                        encoding='utf-8').read(),
+                                io.open('CHANGES.rst', 'r',
+                                        encoding='utf-8').read()])
 
-LICENSE = open('LICENSE.txt').read()
+LICENSE = io.open('CHANGES.rst', 'r', encoding='utf-8').read()
 
 URL = "https://github.com/secynic/ipwhois"
 DOWNLOAD_URL = "https://github.com/secynic/ipwhois/tarball/master"
 CLASSIFIERS = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
     "Intended Audience :: Information Technology",
+    "Intended Audience :: Science/Research",
+    "Operating System :: OS Independent",
     "License :: OSI Approved :: BSD License",
     "Operating System :: OS Independent",
     "Programming Language :: Python",
@@ -53,7 +58,7 @@ CLASSIFIERS = [
 
 PACKAGES = ['ipwhois']
 
-PACKAGE_DATA = {'ipwhois': ['data/*.xml']}
+PACKAGE_DATA = {'ipwhois': ['data/*.xml', 'data/*.csv']}
 
 INSTALL_REQUIRES = []
 if sys.version_info >= (3,):

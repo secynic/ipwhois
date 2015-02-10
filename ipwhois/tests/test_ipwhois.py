@@ -15,17 +15,21 @@ class TestIPWhois(unittest.TestCase):
                 ))
 
     def test_ip_invalid(self):
-        if sys.version_info >= (3, 3):
-            from ipaddress import AddressValueError
-        else:
-            from ipaddr import AddressValueError
-
         self.assertRaises(ValueError, IPWhois, '192.168.0.256')
-        self.assertRaises(AddressValueError, IPWhois, 1234)
+        self.assertRaises(ValueError, IPWhois, 'fe::80::')
 
     def test_ip_defined(self):
+        if sys.version_info >= (3, 3):
+            from ipaddress import (IPv4Address,
+                                   IPv6Address)
+        else:
+            from ipaddr import (IPv4Address,
+                                IPv6Address)
+
         self.assertRaises(IPDefinedError, IPWhois, '192.168.0.1')
         self.assertRaises(IPDefinedError, IPWhois, 'fe80::')
+        self.assertRaises(IPDefinedError, IPWhois, IPv4Address('192.168.0.1'))
+        self.assertRaises(IPDefinedError, IPWhois, IPv6Address('fe80::'))
 
     def test_ip_version(self):
         result = IPWhois('74.125.225.229')

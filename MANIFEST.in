@@ -1,2 +1,2 @@
 include *.txt *.rst
-recursive-include ipwhois *.xml
+recursive-include ipwhois *.xml *.csv

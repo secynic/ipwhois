@@ -189,6 +189,18 @@ Ripe RWS service, which does not contain all of the data we need. The LACNIC
 RWS service is supported, but is in beta v2. This may result in availability
 or performance issues.
 
+Country Codes
+=============
+
+The legacy country code listing (iso_3166-1_list_en.xml) is no longer
+available as a free export from iso.org. Support has been added for
+iso_3166-1.csv, which is now the default.
+
+Use Legacy XML File::
+
+	>>>> from ipwhois.utils import get_countries
+	>>>> countries = get_countries(is_legacy_xml=True)
+
 IP Reputation?
 ==============
 
