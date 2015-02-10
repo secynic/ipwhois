@@ -33,7 +33,7 @@ LONG_DESCRIPTION = '\n\n'.join([io.open('README.rst', 'r',
                                 io.open('CHANGES.rst', 'r',
                                         encoding='utf-8').read()])
 
-LICENSE = io.open('CHANGES.rst', 'r', encoding='utf-8').read()
+LICENSE = io.open('LICENSE.txt', 'r', encoding='utf-8').read()
 
 URL = "https://github.com/secynic/ipwhois"
 DOWNLOAD_URL = "https://github.com/secynic/ipwhois/tarball/master"
