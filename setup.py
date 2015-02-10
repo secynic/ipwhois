@@ -8,7 +8,7 @@ NAME = 'ipwhois'
 VERSION = '0.10.1'
 AUTHOR = "Philip Hane"
 AUTHOR_EMAIL = "secynic AT gmail DOT com"
-DESCRIPTION = "IP Whois Resolution and Parsing"
+DESCRIPTION = "Retrieve and parse whois data for IPv4 and IPv6 addresses."
 KEYWORDS = [
     "Python",
     "WHOIS",
