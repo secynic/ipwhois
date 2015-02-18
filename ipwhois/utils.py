@@ -169,11 +169,11 @@ def ipv4_is_defined(address):
         address: An IPv4 address in string format.
 
     Returns:
-        Tuple: Boolean - True if the given address is defined, otherwise False
-               String - IETF assignment name if the given address is defined,
-                   otherwise ''
-               String - IETF assignment RFC if the given address is defined,
-                   otherwise ''
+        Tuple:
+
+        :Boolean: True if given address is defined, otherwise False
+        :String: IETF assignment name if given address is defined, otherwise ''
+        :String: IETF assignment RFC if given address is defined, otherwise ''
     """
 
     #Initialize the IP address object.
@@ -253,11 +253,11 @@ def ipv6_is_defined(address):
         address: An IPv6 address in string format.
 
     Returns:
-        Tuple: Boolean - True if the given address is defined, otherwise False
-               String - IETF assignment name if the given address is defined,
-                   otherwise ''
-               String - IETF assignment RFC if the given address is defined,
-                   otherwise ''
+        Tuple:
+
+        :Boolean: True if address is defined, otherwise False
+        :String: IETF assignment name if address is defined, otherwise ''
+        :String: IETF assignment RFC if address is defined, otherwise ''
     """
 
     #Initialize the IP address object.
@@ -347,11 +347,14 @@ def unique_addresses(data=None, file_path=None):
         file_path: An optional file path to process.
 
     Returns:
-        Dictionary: A dictionary with the ip addresses/networks as the keys
-            and the values as dictionaries containing the following keys:
-                count: Total number of times seen.
-                ports: Dictionary with the port numbers as the keys and the
-                    values as a count of the number of times seen for this ip.
+        Dictionary:
+
+        :ip address/network: Each address or network found is a dictionary
+            containing\:
+
+            :count: Total number of times seen (Integer)
+            :ports: Dictionary with port numbers as keys and the number of
+                times seen for this ip as values (Dictionary)
 
     Raises:
         ValueError: Arguments provided are invalid.

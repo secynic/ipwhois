@@ -853,26 +853,23 @@ class IPWhois():
                 when an exception is encountered on referral whois lookups.
 
         Returns:
-            Dictionary: A dictionary containing the following keys:
-                    query (String) - The IP address.
-                    asn (String) - The Autonomous System Number.
-                    asn_date (String) - The ASN Allocation date.
-                    asn_registry (String) - The assigned ASN registry.
-                    asn_cidr (String) - The assigned ASN CIDR.
-                    asn_country_code (String) - The assigned ASN country code.
-                    nets (List) - Dictionaries containing network information
-                        which consists of the fields listed in the NIC_WHOIS
-                        dictionary. Certain IPs have more granular network
-                        listings, hence the need for a list object.
-                    raw (String) - Raw whois results if the inc_raw parameter
-                        is True.
-                    referral (Dictionary) - Dictionary containing referral
-                        whois information if get_referral is True and the
-                        server isn't blacklisted. Consists of fields listed
-                        in the RWHOIS dictionary. Additional referral server
-                        informaion is added in the server and port keys.
-                    raw_referral (String) - Raw referral whois results if the
-                        inc_raw parameter is True.
+            Dictionary:
+
+            :query: The IP address (String)
+            :asn: The Autonomous System Number (String)
+            :asn_date: The ASN Allocation date (String)
+            :asn_registry: The assigned ASN registry (String)
+            :asn_cidr: The assigned ASN CIDR (String)
+            :asn_country_code: The assigned ASN country code (String)
+            :nets: Dictionaries containing network information which consists
+                of the fields listed in the NIC_WHOIS dictionary. (List)
+            :raw: Raw whois results if the inc_raw parameter is True. (String)
+            :referral: Dictionary of referral whois information if get_referral
+                is True and the server isn't blacklisted. Consists of fields
+                listed in the RWHOIS dictionary. Additional referral server
+                informaion is added in the server and port keys. (Dictionary)
+            :raw_referral: Raw referral whois results if the inc_raw parameter
+                is True. (String)
         """
 
         #Initialize the whois response.
@@ -1848,10 +1845,10 @@ class IPWhois():
         The function for retrieving and parsing whois information for an IP
         address via HTTP (Whois-RWS).
 
-        NOTE: This should be faster than IPWhois.lookup(), but may not be as
-            reliable. AFRINIC does not have a Whois-RWS service yet. We have
-            to rely on the Ripe RWS service, which does not contain all of the
-            data we need. LACNIC RWS is in beta v2.
+        **This should be faster than IPWhois.lookup(), but may not be as
+        reliable. AFRINIC does not have a Whois-RWS service yet. We have to
+        rely on the Ripe RWS service, which does not contain all of the data
+        we need. LACNIC RWS is in beta.**
 
         Args:
             inc_raw: Boolean for whether to include the raw whois results in
@@ -1860,19 +1857,18 @@ class IPWhois():
                 timeouts, connection resets, etc. are encountered.
 
         Returns:
-            Dictionary: A dictionary containing the following keys:
-                    query (String) - The IP address.
-                    asn (String) - The Autonomous System Number.
-                    asn_date (String) - The ASN Allocation date.
-                    asn_registry (String) - The assigned ASN registry.
-                    asn_cidr (String) - The assigned ASN CIDR.
-                    asn_country_code (String) - The assigned ASN country code.
-                    nets (List) - Dictionaries containing network information
-                        which consists of the fields listed in the NIC_WHOIS
-                        dictionary. Certain IPs have more granular network
-                        listings, hence the need for a list object.
-                    raw (Dictionary) - Whois results in Json format if the
-                        inc_raw parameter is True.
+            Dictionary:
+
+            :query: The IP address (String)
+            :asn: The Autonomous System Number (String)
+            :asn_date: The ASN Allocation date (String)
+            :asn_registry: The assigned ASN registry (String)
+            :asn_cidr: The assigned ASN CIDR (String)
+            :asn_country_code: The assigned ASN country code (String)
+            :nets: Dictionaries containing network information which consists
+                of the fields listed in the NIC_WHOIS dictionary. (List)
+            :raw: (Dictionary) - Whois results in Json format if the
+                inc_raw parameter is True.
         """
 
         #Initialize the response.
