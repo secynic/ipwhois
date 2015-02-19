@@ -283,10 +283,10 @@ REST (HTTP)
 ===========
 
 IPWhois.lookup_rws() should be faster than IPWhois.lookup(), but may not be as 
-reliable. AFRINIC does not have a Whois-RWS service yet. We have to rely on the
-Ripe RWS service, which does not contain all of the data we need. The LACNIC
-RWS service is supported, but is in beta. This may result in availability
-or performance issues.
+reliable. REST queries do not support referral whois lookups. AFRINIC does not
+have a Whois-RWS service yet; we have to rely on the Ripe RWS service, which
+does not contain all of the data we need. The LACNIC RWS service is supported,
+but is in beta. This may result in availability or performance issues.
 
 Country Codes
 =============
