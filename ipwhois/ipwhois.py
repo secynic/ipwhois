@@ -287,13 +287,13 @@ class ASNRegistryError(Exception):
 
 class WhoisLookupError(Exception):
     """
-    An Exception for when the Whois lookup failed.
+    An Exception for when the whois lookup failed.
     """
 
 
 class HostLookupError(Exception):
     """
-    An Exception for when the Host lookup failed.
+    An Exception for when the host lookup failed.
     """
 
 
