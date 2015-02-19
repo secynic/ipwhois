@@ -76,6 +76,68 @@ Typical usage
 	'raw_referral': None,
 	'referral': None
 	}
+
+Multiple networks listed and referral whois
+-------------------------------------------
+
+::
+
+    >>>> from ipwhois import IPWhois
+    >>>> from pprint import pprint
+
+    >>>> obj = IPWhois('38.113.198.252')
+    >>>> results = obj.lookup(get_referral=True)
+    >>>> pprint(results)
+
+    {
+    'asn': '174',
+    'asn_cidr': '38.0.0.0/8',
+    'asn_country_code': 'US',
+    'asn_date': '',
+    'asn_registry': 'arin',
+    'nets': [{'abuse_emails': 'abuse@cogentco.com',
+              'address': '1015 31st St NW',
+              'cidr': '38.0.0.0/8',
+              'city': 'Washington',
+              'country': 'US',
+              'created': '1991-04-16T00:00:00',
+              'description': 'PSINet, Inc.',
+              'handle': 'NET-38-0-0-0-1',
+              'misc_emails': None,
+              'name': 'COGENT-A',
+              'postal_code': '20007',
+              'range': '38.0.0.0 - 38.255.255.255',
+              'state': 'DC',
+              'tech_emails': 'ipalloc@cogentco.com',
+              'updated': '2011-05-20T00:00:00'},
+             {'abuse_emails': 'abuse@cogentco.com',
+              'address': '1015 31st St NW',
+              'cidr': '38.112.0.0/13',
+              'city': 'Washington',
+              'country': 'US',
+              'created': '2003-08-20T00:00:00',
+              'description': 'PSINet, Inc.',
+              'handle': 'NET-38-112-0-0-1',
+              'misc_emails': None,
+              'name': 'COGENT-NB-0002',
+              'postal_code': '20007',
+              'range': None,
+              'state': 'DC',
+              'tech_emails': 'ipalloc@cogentco.com',
+              'updated': '2004-03-11T00:00:00'}],
+    'query': '38.113.198.252',
+    'raw': None,
+    'raw_referral': None,
+    'referral': {'address': '1015 31st St NW',
+                 'cidr': '38.113.198.0/23',
+                 'city': 'Washington',
+                 'country': 'US',
+                 'description': 'Cogent communications - IPENG',
+                 'name': 'NET4-2671C60017',
+                 'postal_code': '20007',
+                 'state': 'DC',
+                 'updated': '2007-09-18 22:02:09'}
+    }
 	
 Whois lookup via HTTP (REST)
 ----------------------------
