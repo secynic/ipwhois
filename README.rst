@@ -10,6 +10,7 @@ Features
 
 * Parses a majority of whois fields in to a standard dictionary
 * IPv4 and IPv6 support
+* Referral whois support
 * Supports REST queries (useful if whois is blocked from your network)
 * Proxy support for REST queries
 * Recursive network parsing for IPs with parent/children networks listed
