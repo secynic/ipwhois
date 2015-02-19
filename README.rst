@@ -17,10 +17,31 @@ Features
 * Useful set of utilities
 * BSD license
 
+Links
+=====
+
+Documentation
+-------------
+
+https://secynic.github.io/ipwhois
+
+Github
+------
+
+https://github.com/secynic/ipwhois
+
+Pypi
+----
+
+https://pypi.python.org/pypi/ipwhois
+
 Usage Examples
 ==============
 
-Typical usage::
+Typical usage
+-------------
+
+::
 
 	>>>> from ipwhois import IPWhois
 	>>>> from pprint import pprint
@@ -56,7 +77,10 @@ Typical usage::
 	'referral': None
 	}
 	
-REST (HTTP)::
+Whois lookup via HTTP (REST)
+----------------------------
+
+::
 
 	>>>> from ipwhois import IPWhois
 	>>>> from pprint import pprint
@@ -90,7 +114,10 @@ REST (HTTP)::
 	'raw': None
 	}
 
-Proxy::
+Use a proxy
+-----------
+
+::
 
 	>>>> from urllib import request
 	>>>> from ipwhois import IPWhois
@@ -98,7 +125,10 @@ Proxy::
 	>>>> opener = request.build_opener(handler)
 	>>>> obj = IPWhois('74.125.225.229', proxy_opener = opener)
 
-Hostname::
+Retrieve host information for an IP address
+-------------------------------------------
+
+::
 
 	>>>> from ipwhois import IPWhois
 	>>>> from pprint import pprint
@@ -109,7 +139,10 @@ Hostname::
 	
 	('dfw06s26-in-f5.1e100.net', [], ['74.125.225.229'])
 		
-Countries::
+Retrieve the official country name for an ISO 3166-1 country code
+-----------------------------------------------------------------
+
+::
 
 	>>>> from ipwhois import IPWhois
 	>>>> from ipwhois.utils import get_countries
@@ -121,7 +154,10 @@ Countries::
 
 	United States
 
-Unique IP Addresses::
+Parse out IP addresses and ports from text or a file
+----------------------------------------------------
+
+::
 
 	>>>> from ipwhois.utils import unique_addresses
 	>>>> from pprint import pprint
@@ -186,7 +222,7 @@ REST (HTTP)
 IPWhois.lookup_rws() should be faster than IPWhois.lookup(), but may not be as 
 reliable. AFRINIC does not have a Whois-RWS service yet. We have to rely on the
 Ripe RWS service, which does not contain all of the data we need. The LACNIC
-RWS service is supported, but is in beta v2. This may result in availability
+RWS service is supported, but is in beta. This may result in availability
 or performance issues.
 
 Country Codes
@@ -201,14 +237,14 @@ Use Legacy XML File::
 	>>>> from ipwhois.utils import get_countries
 	>>>> countries = get_countries(is_legacy_xml=True)
 
-IP Reputation?
-==============
+IP Reputation Support?
+======================
 
 This feature is under consideration. Take a look at TekDefense's Automater for
 now: `TekDefense-Automater <https://github.com/1aN0rmus/TekDefense-Automater>`_
 
-Domains?
-========
+Domain Support?
+===============
 
 There are no plans for domain whois support in this project. It is under
 consideration as a new library in the future.
@@ -220,6 +256,4 @@ domain support.
 Special Thanks
 ==============
 
-Thank you JetBrains for the PyCharm open source support. It has contributed
-significantly, especially in the pkg/env management and code inspection
-domains.
+Thank you JetBrains for the PyCharm open source support.
