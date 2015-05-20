@@ -1,6 +1,16 @@
 Changelog
 =========
 
+0.10.2 (2015-05-19)
+-------------------
+
+- Fixed APNIC parsing for updated field.
+- Fixed datetime parsing and validation when Zulu (Z) is appended.
+- Added RIPE parsing for created and updated fields (whois and RWS).
+- Removed unnecessary parentheses in IPWhois class declaration.
+- Some documentation and comment tweaking to work with Sphinx.
+- Minor PEP 8 tweaks.
+
 0.10.1 (2015-02-09)
 -------------------
 

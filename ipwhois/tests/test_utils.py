@@ -18,12 +18,12 @@ class TestFunctions(unittest.TestCase):
 
     def test_get_countries(self):
 
-        #Legacy
+        # Legacy
         countries = get_countries(is_legacy_xml=True)
         self.assertIsInstance(countries, dict)
         self.assertEqual(countries['US'], 'United States')
 
-        #CSV
+        # CSV
         countries = get_countries(is_legacy_xml=False)
         self.assertIsInstance(countries, dict)
         self.assertEqual(countries['US'], 'United States')

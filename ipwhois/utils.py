@@ -52,10 +52,10 @@ except ImportError:
 
 IP_REGEX = (
     r'(?P<ip>'
-    #IPv4
+    # IPv4
     '(((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.)){3}'
     '(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)'
-    #IPv6
+    # IPv6
     '|\[?(((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:)'
     '{6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|'
     '2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]'
@@ -72,9 +72,9 @@ IP_REGEX = (
     '?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:(('
     '25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})'
     ')|:)))(%.+)?))\]?'
-    #Optional IPv4 Port
+    # Optional IPv4 Port
     '((:(6553[0-5]|655[0-2]\d|65[0-4]\d{2}|6[0-4]\d{3}|[1-5]\d{4}|[1-9]\d{0,3}'
-    #Optional CIDR block
+    # Optional CIDR block
     '))|(\/(?:[012]\d?|3[012]?|[4-9])))?'
     ')'
 )
@@ -94,10 +94,10 @@ def get_countries(is_legacy_xml=False):
             country names as the values.
     """
 
-    #Initialize the countries dictionary.
+    # Initialize the countries dictionary.
     countries = {}
 
-    #Set the data directory based on if the script is a frozen executable.
+    # Set the data directory based on if the script is a frozen executable.
     if sys.platform == 'win32' and getattr(sys, 'frozen', False):
 
         data_dir = path.dirname(sys.executable)
@@ -108,53 +108,53 @@ def get_countries(is_legacy_xml=False):
 
     if is_legacy_xml:
 
-        #Create the country codes file object.
+        # Create the country codes file object.
         f = io.open(str(data_dir) + '/data/iso_3166-1_list_en.xml', 'r',
                     encoding='ISO-8859-1')
 
-        #Read the file.
+        # Read the file.
         data = f.read()
 
-        #Check if there is data.
+        # Check if there is data.
         if not data:
 
             return {}
 
-        #Parse the data to get the DOM.
+        # Parse the data to get the DOM.
         dom = parseString(data)
 
-        #Retrieve the country entries.
+        # Retrieve the country entries.
         entries = dom.getElementsByTagName('ISO_3166-1_Entry')
 
-        #Iterate through the entries and add to the countries dictionary.
+        # Iterate through the entries and add to the countries dictionary.
         for entry in entries:
 
-            #Retrieve the country code and name from the DOM.
+            # Retrieve the country code and name from the DOM.
             code = entry.getElementsByTagName(
                 'ISO_3166-1_Alpha-2_Code_element')[0].firstChild.data
             name = entry.getElementsByTagName(
                 'ISO_3166-1_Country_name')[0].firstChild.data
 
-            #Add to the countries dictionary.
+            # Add to the countries dictionary.
             countries[code] = name.title()
 
     else:
 
-        #Create the country codes file object.
+        # Create the country codes file object.
         f = io.open(str(data_dir) + '/data/iso_3166-1.csv', 'r',
                     encoding='utf-8')
 
-        #Create csv reader object.
+        # Create csv reader object.
         csv_reader = csv.reader(f, delimiter=',', quotechar='"')
 
-        #Iterate through the rows and add to the countries dictionary.
+        # Iterate through the rows and add to the countries dictionary.
         for row in csv_reader:
 
-            #Retrieve the country code and name columns.
+            # Retrieve the country code and name columns.
             code = row[0]
             name = row[1]
 
-            #Add to the countries dictionary.
+            # Add to the countries dictionary.
             countries[code] = name
 
     return countries
@@ -176,67 +176,67 @@ def ipv4_is_defined(address):
         :String: IETF assignment RFC if given address is defined, otherwise ''
     """
 
-    #Initialize the IP address object.
+    # Initialize the IP address object.
     query_ip = IPv4Address(str(address))
 
-    #This Network
+    # This Network
     if query_ip in IPv4Network('0.0.0.0/8'):
 
         return True, 'This Network', 'RFC 1122, Section 3.2.1.3'
 
-    #Private-Use Networks
+    # Private-Use Networks
     elif query_ip.is_private:
 
         return True, 'Private-Use Networks', 'RFC 1918'
 
-    #Loopback
+    # Loopback
     elif query_ip.is_loopback:
 
         return True, 'Loopback', 'RFC 1122, Section 3.2.1.3'
 
-    #Link Local
+    # Link Local
     elif query_ip.is_link_local:
 
         return True, 'Link Local', 'RFC 3927'
 
-    #IETF Protocol Assignments
+    # IETF Protocol Assignments
     elif query_ip in IPv4Network('192.0.0.0/24'):
 
         return True, 'IETF Protocol Assignments', 'RFC 5736'
 
-    #TEST-NET-1
+    # TEST-NET-1
     elif query_ip in IPv4Network('192.0.2.0/24'):
 
         return True, 'TEST-NET-1', 'RFC 5737'
 
-    #6to4 Relay Anycast
+    # 6to4 Relay Anycast
     elif query_ip in IPv4Network('192.88.99.0/24'):
 
         return True, '6to4 Relay Anycast', 'RFC 3068'
 
-    #Network Interconnect Device Benchmark Testing
+    # Network Interconnect Device Benchmark Testing
     elif query_ip in IPv4Network('198.18.0.0/15'):
 
         return (True,
                 'Network Interconnect Device Benchmark Testing',
                 'RFC 2544')
 
-    #TEST-NET-2
+    # TEST-NET-2
     elif query_ip in IPv4Network('198.51.100.0/24'):
 
         return True, 'TEST-NET-2', 'RFC 5737'
 
-    #TEST-NET-3
+    # TEST-NET-3
     elif query_ip in IPv4Network('203.0.113.0/24'):
 
         return True, 'TEST-NET-3', 'RFC 5737'
 
-    #Multicast
+    # Multicast
     elif query_ip.is_multicast:
 
         return True, 'Multicast', 'RFC 3171'
 
-    #Limited Broadcast
+    # Limited Broadcast
     elif query_ip in IPv4Network('255.255.255.255/32'):
 
         return True, 'Limited Broadcast', 'RFC 919, Section 7'
@@ -260,40 +260,40 @@ def ipv6_is_defined(address):
         :String: IETF assignment RFC if address is defined, otherwise ''
     """
 
-    #Initialize the IP address object.
+    # Initialize the IP address object.
     query_ip = IPv6Address(str(address))
 
-    #Multicast
+    # Multicast
     if query_ip.is_multicast:
 
         return True, 'Multicast', 'RFC 4291, Section 2.7'
 
-    #Reserved
+    # Reserved
     elif query_ip.is_reserved:
 
         return True, 'Reserved', 'RFC 4291'
 
-    #Unspecified
+    # Unspecified
     elif query_ip.is_unspecified:
 
         return True, 'Unspecified', 'RFC 4291, Section 2.5.2'
 
-    #Loopback.
+    # Loopback.
     elif query_ip.is_loopback:
 
         return True, 'Loopback', 'RFC 4291, Section 2.5.3'
 
-    #Link-Local
+    # Link-Local
     elif query_ip.is_link_local:
 
         return True, 'Link-Local', 'RFC 4291, Section 2.5.6'
 
-    #Site-Local
+    # Site-Local
     elif query_ip.is_site_local:
 
         return True, 'Site-Local', 'RFC 4291, Section 2.5.7'
 
-    #Unique Local Unicast
+    # Unique Local Unicast
     elif query_ip.is_private:
 
         return True, 'Unique Local Unicast', 'RFC 4193'
@@ -375,7 +375,7 @@ def unique_addresses(data=None, file_path=None):
 
         f = open(str(file_path), 'r')
 
-        #Read the file.
+        # Read the file.
         file_data = f.read()
 
     pattern = re.compile(
@@ -383,12 +383,12 @@ def unique_addresses(data=None, file_path=None):
         re.DOTALL
     )
 
-    #Check if there is data.
+    # Check if there is data.
     for input_data in [data, file_data]:
 
         if input_data:
 
-            #Search for IPs.
+            # Search for IPs.
             for match in pattern.finditer(input_data):
 
                 is_net = False
