@@ -10,6 +10,7 @@ Features
 
 * Parses a majority of whois fields in to a standard dictionary
 * IPv4 and IPv6 support
+* Referral whois support
 * Supports REST queries (useful if whois is blocked from your network)
 * Proxy support for REST queries
 * Recursive network parsing for IPs with parent/children networks listed
@@ -17,10 +18,31 @@ Features
 * Useful set of utilities
 * BSD license
 
+Links
+=====
+
+Documentation
+-------------
+
+https://secynic.github.io/ipwhois
+
+Github
+------
+
+https://github.com/secynic/ipwhois
+
+Pypi
+----
+
+https://pypi.python.org/pypi/ipwhois
+
 Usage Examples
 ==============
 
-Typical usage::
+Typical usage
+-------------
+
+::
 
 	>>>> from ipwhois import IPWhois
 	>>>> from pprint import pprint
@@ -55,8 +77,73 @@ Typical usage::
 	'raw_referral': None,
 	'referral': None
 	}
+
+Multiple networks listed and referral whois
+-------------------------------------------
+
+::
+
+    >>>> from ipwhois import IPWhois
+    >>>> from pprint import pprint
+
+    >>>> obj = IPWhois('38.113.198.252')
+    >>>> results = obj.lookup(get_referral=True)
+    >>>> pprint(results)
+
+    {
+    'asn': '174',
+    'asn_cidr': '38.0.0.0/8',
+    'asn_country_code': 'US',
+    'asn_date': '',
+    'asn_registry': 'arin',
+    'nets': [{'abuse_emails': 'abuse@cogentco.com',
+              'address': '1015 31st St NW',
+              'cidr': '38.0.0.0/8',
+              'city': 'Washington',
+              'country': 'US',
+              'created': '1991-04-16T00:00:00',
+              'description': 'PSINet, Inc.',
+              'handle': 'NET-38-0-0-0-1',
+              'misc_emails': None,
+              'name': 'COGENT-A',
+              'postal_code': '20007',
+              'range': '38.0.0.0 - 38.255.255.255',
+              'state': 'DC',
+              'tech_emails': 'ipalloc@cogentco.com',
+              'updated': '2011-05-20T00:00:00'},
+             {'abuse_emails': 'abuse@cogentco.com',
+              'address': '1015 31st St NW',
+              'cidr': '38.112.0.0/13',
+              'city': 'Washington',
+              'country': 'US',
+              'created': '2003-08-20T00:00:00',
+              'description': 'PSINet, Inc.',
+              'handle': 'NET-38-112-0-0-1',
+              'misc_emails': None,
+              'name': 'COGENT-NB-0002',
+              'postal_code': '20007',
+              'range': None,
+              'state': 'DC',
+              'tech_emails': 'ipalloc@cogentco.com',
+              'updated': '2004-03-11T00:00:00'}],
+    'query': '38.113.198.252',
+    'raw': None,
+    'raw_referral': None,
+    'referral': {'address': '1015 31st St NW',
+                 'cidr': '38.113.198.0/23',
+                 'city': 'Washington',
+                 'country': 'US',
+                 'description': 'Cogent communications - IPENG',
+                 'name': 'NET4-2671C60017',
+                 'postal_code': '20007',
+                 'state': 'DC',
+                 'updated': '2007-09-18 22:02:09'}
+    }
 	
-REST (HTTP)::
+Whois lookup via HTTP (REST)
+----------------------------
+
+::
 
 	>>>> from ipwhois import IPWhois
 	>>>> from pprint import pprint
@@ -90,7 +177,10 @@ REST (HTTP)::
 	'raw': None
 	}
 
-Proxy::
+Use a proxy
+-----------
+
+::
 
 	>>>> from urllib import request
 	>>>> from ipwhois import IPWhois
@@ -98,7 +188,10 @@ Proxy::
 	>>>> opener = request.build_opener(handler)
 	>>>> obj = IPWhois('74.125.225.229', proxy_opener = opener)
 
-Hostname::
+Retrieve host information for an IP address
+-------------------------------------------
+
+::
 
 	>>>> from ipwhois import IPWhois
 	>>>> from pprint import pprint
@@ -109,7 +202,10 @@ Hostname::
 	
 	('dfw06s26-in-f5.1e100.net', [], ['74.125.225.229'])
 		
-Countries::
+Retrieve the official country name for an ISO 3166-1 country code
+-----------------------------------------------------------------
+
+::
 
 	>>>> from ipwhois import IPWhois
 	>>>> from ipwhois.utils import get_countries
@@ -121,7 +217,10 @@ Countries::
 
 	United States
 
-Unique IP Addresses::
+Parse out IP addresses and ports from text or a file
+----------------------------------------------------
+
+::
 
 	>>>> from ipwhois.utils import unique_addresses
 	>>>> from pprint import pprint
@@ -184,10 +283,10 @@ REST (HTTP)
 ===========
 
 IPWhois.lookup_rws() should be faster than IPWhois.lookup(), but may not be as 
-reliable. AFRINIC does not have a Whois-RWS service yet. We have to rely on the
-Ripe RWS service, which does not contain all of the data we need. The LACNIC
-RWS service is supported, but is in beta v2. This may result in availability
-or performance issues.
+reliable. REST queries do not support referral whois lookups. AFRINIC does not
+have a Whois-RWS service yet; we have to rely on the Ripe RWS service, which
+does not contain all of the data we need. The LACNIC RWS service is supported,
+but is in beta. This may result in availability or performance issues.
 
 Country Codes
 =============
@@ -201,14 +300,14 @@ Use Legacy XML File::
 	>>>> from ipwhois.utils import get_countries
 	>>>> countries = get_countries(is_legacy_xml=True)
 
-IP Reputation?
-==============
+IP Reputation Support?
+======================
 
 This feature is under consideration. Take a look at TekDefense's Automater for
 now: `TekDefense-Automater <https://github.com/1aN0rmus/TekDefense-Automater>`_
 
-Domains?
-========
+Domain Support?
+===============
 
 There are no plans for domain whois support in this project. It is under
 consideration as a new library in the future.
@@ -220,6 +319,4 @@ domain support.
 Special Thanks
 ==============
 
-Thank you JetBrains for the PyCharm open source support. It has contributed
-significantly, especially in the pkg/env management and code inspection
-domains.
+Thank you JetBrains for the PyCharm open source support.

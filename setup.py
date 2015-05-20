@@ -5,7 +5,7 @@ import sys
 import io
 
 NAME = 'ipwhois'
-VERSION = '0.10.1'
+VERSION = '0.10.2'
 AUTHOR = "Philip Hane"
 AUTHOR_EMAIL = "secynic AT gmail DOT com"
 DESCRIPTION = "Retrieve and parse whois data for IPv4 and IPv6 addresses."
