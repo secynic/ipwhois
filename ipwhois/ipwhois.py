@@ -482,7 +482,7 @@ class IPWhois:
         except ASNRegistryError:
 
             raise
-        
+
         except:
 
             raise ASNLookupError(
@@ -2094,6 +2094,9 @@ class IPWhois:
 
         # Add the networks to the return dictionary.
         results['nets'] = nets
-        results['persons'] = persons
+
+        # Only add persons entry if there are entries.
+        if persons:
+            results['persons'] = persons
 
         return results
