@@ -1,0 +1,411 @@
+{
+    "objects": {
+        "object": [
+            {
+                "attributes": {
+                    "attribute": [
+                        {
+                            "name": "inetnum",
+                            "value": "156.54.0.0 - 156.54.255.255"
+                        },
+                        {
+                            "name": "netname",
+                            "value": "NETSIEL"
+                        },
+                        {
+                            "name": "descr",
+                            "value": "Telecom Italia S.p.A."
+                        },
+                        {
+                            "name": "country",
+                            "value": "IT"
+                        },
+                        {
+                            "link": {
+                                "href": "http://rest.db.ripe.net/ripe/organisation/ORG-TIS3-RIPE",
+                                "type": "locator"
+                            },
+                            "name": "org",
+                            "referenced-type": "organisation",
+                            "value": "ORG-TIS3-RIPE"
+                        },
+                        {
+                            "link": {
+                                "href": "http://rest.db.ripe.net/ripe/person/CM2687-RIPE",
+                                "type": "locator"
+                            },
+                            "name": "admin-c",
+                            "referenced-type": "person",
+                            "value": "CM2687-RIPE"
+                        },
+                        {
+                            "link": {
+                                "href": "http://rest.db.ripe.net/ripe/person/CM2687-RIPE",
+                                "type": "locator"
+                            },
+                            "name": "tech-c",
+                            "referenced-type": "person",
+                            "value": "CM2687-RIPE"
+                        },
+                        {
+                            "name": "status",
+                            "value": "LEGACY"
+                        },
+                        {
+                            "name": "remarks",
+                            "value": "For information on \"status:\" attribute read https://www.ripe.net/data-tools/db/faq/faq-status-values-legacy-resources"
+                        },
+                        {
+                            "link": {
+                                "href": "http://rest.db.ripe.net/ripe/mntner/FULCOM-MNT-RIPE",
+                                "type": "locator"
+                            },
+                            "name": "mnt-by",
+                            "referenced-type": "mntner",
+                            "value": "FULCOM-MNT-RIPE"
+                        },
+                        {
+                            "name": "created",
+                            "value": "1970-01-01T00:00:00Z"
+                        },
+                        {
+                            "name": "last-modified",
+                            "value": "2015-05-05T02:15:34Z"
+                        },
+                        {
+                            "comment": "Filtered",
+                            "name": "source",
+                            "value": "RIPE"
+                        }
+                    ]
+                },
+                "link": {
+                    "href": "http://rest.db.ripe.net/ripe/inetnum/156.54.0.0 - 156.54.255.255",
+                    "type": "locator"
+                },
+                "primary-key": {
+                    "attribute": [
+                        {
+                            "name": "inetnum",
+                            "value": "156.54.0.0 - 156.54.255.255"
+                        }
+                    ]
+                },
+                "source": {
+                    "id": "ripe"
+                },
+                "tags": {
+                    "tag": [
+                        {
+                            "data": null,
+                            "id": "RIPE-REGISTRY-RESOURCE"
+                        }
+                    ]
+                },
+                "type": "inetnum"
+            },
+            {
+                "attributes": {
+                    "attribute": [
+                        {
+                            "name": "organisation",
+                            "value": "ORG-TIS3-RIPE"
+                        },
+                        {
+                            "name": "org-name",
+                            "value": "Telecom Italia S.p.A."
+                        },
+                        {
+                            "name": "org-type",
+                            "value": "LIR"
+                        },
+                        {
+                            "name": "address",
+                            "value": "Telecom Italia S.p.A."
+                        },
+                        {
+                            "name": "address",
+                            "value": "Vincenzo Broccoli"
+                        },
+                        {
+                            "name": "address",
+                            "value": "via Oriolo Romano, 257"
+                        },
+                        {
+                            "name": "address",
+                            "value": "00189"
+                        },
+                        {
+                            "name": "address",
+                            "value": "Roma"
+                        },
+                        {
+                            "name": "address",
+                            "value": "ITALY"
+                        },
+                        {
+                            "name": "phone",
+                            "value": "+393356339033"
+                        },
+                        {
+                            "name": "phone",
+                            "value": "+390636878022"
+                        },
+                        {
+                            "name": "fax-no",
+                            "value": "+390641862917"
+                        },
+                        {
+                            "name": "descr",
+                            "value": "abuse-ripe@telecomitalia.it"
+                        },
+                        {
+                            "link": {
+                                "href": "http://rest.db.ripe.net/ripe/mntner/FULCOM-MNT-RIPE",
+                                "type": "locator"
+                            },
+                            "name": "mnt-ref",
+                            "referenced-type": "mntner",
+                            "value": "FULCOM-MNT-RIPE"
+                        },
+                        {
+                            "link": {
+                                "href": "http://rest.db.ripe.net/ripe/mntner/RIPE-NCC-HM-MNT",
+                                "type": "locator"
+                            },
+                            "name": "mnt-ref",
+                            "referenced-type": "mntner",
+                            "value": "RIPE-NCC-HM-MNT"
+                        },
+                        {
+                            "link": {
+                                "href": "http://rest.db.ripe.net/ripe/mntner/RIPE-NCC-HM-MNT",
+                                "type": "locator"
+                            },
+                            "name": "mnt-by",
+                            "referenced-type": "mntner",
+                            "value": "RIPE-NCC-HM-MNT"
+                        },
+                        {
+                            "link": {
+                                "href": "http://rest.db.ripe.net/ripe/person/LM10202-RIPE",
+                                "type": "locator"
+                            },
+                            "name": "admin-c",
+                            "referenced-type": "person",
+                            "value": "LM10202-RIPE"
+                        },
+                        {
+                            "link": {
+                                "href": "http://rest.db.ripe.net/ripe/person/AP496-RIPE",
+                                "type": "locator"
+                            },
+                            "name": "admin-c",
+                            "referenced-type": "person",
+                            "value": "AP496-RIPE"
+                        },
+                        {
+                            "link": {
+                                "href": "http://rest.db.ripe.net/ripe/role/ITR2-RIPE",
+                                "type": "locator"
+                            },
+                            "name": "admin-c",
+                            "referenced-type": "role",
+                            "value": "ITR2-RIPE"
+                        },
+                        {
+                            "link": {
+                                "href": "http://rest.db.ripe.net/ripe/role/AT10542-RIPE",
+                                "type": "locator"
+                            },
+                            "name": "abuse-c",
+                            "referenced-type": "role",
+                            "value": "AT10542-RIPE"
+                        },
+                        {
+                            "name": "created",
+                            "value": "2004-04-17T11:31:13Z"
+                        },
+                        {
+                            "name": "last-modified",
+                            "value": "2015-03-05T10:39:50Z"
+                        },
+                        {
+                            "comment": "Filtered",
+                            "name": "source",
+                            "value": "RIPE"
+                        }
+                    ]
+                },
+                "link": {
+                    "href": "http://rest.db.ripe.net/ripe/organisation/ORG-TIS3-RIPE",
+                    "type": "locator"
+                },
+                "primary-key": {
+                    "attribute": [
+                        {
+                            "name": "organisation",
+                            "value": "ORG-TIS3-RIPE"
+                        }
+                    ]
+                },
+                "source": {
+                    "id": "ripe"
+                },
+                "type": "organisation"
+            },
+            {
+                "attributes": {
+                    "attribute": [
+                        {
+                            "name": "person",
+                            "value": "Cono Miragliotta"
+                        },
+                        {
+                            "name": "address",
+                            "value": "Via Saverio Dioguardi, 1"
+                        },
+                        {
+                            "name": "address",
+                            "value": "I-70124 Bari"
+                        },
+                        {
+                            "name": "address",
+                            "value": "Italy"
+                        },
+                        {
+                            "name": "phone",
+                            "value": "+39 80 5092610"
+                        },
+                        {
+                            "name": "fax-no",
+                            "value": "+39 80 5762250"
+                        },
+                        {
+                            "name": "nic-hdl",
+                            "value": "CM2687-RIPE"
+                        },
+                        {
+                            "name": "created",
+                            "value": "1970-01-01T00:00:00Z"
+                        },
+                        {
+                            "name": "last-modified",
+                            "value": "2001-09-21T23:11:10Z"
+                        },
+                        {
+                            "comment": "Filtered",
+                            "name": "source",
+                            "value": "RIPE"
+                        }
+                    ]
+                },
+                "link": {
+                    "href": "http://rest.db.ripe.net/ripe/person/CM2687-RIPE",
+                    "type": "locator"
+                },
+                "primary-key": {
+                    "attribute": [
+                        {
+                            "name": "nic-hdl",
+                            "value": "CM2687-RIPE"
+                        }
+                    ]
+                },
+                "source": {
+                    "id": "ripe"
+                },
+                "type": "person"
+            },
+            {
+                "attributes": {
+                    "attribute": [
+                        {
+                            "name": "route",
+                            "value": "156.54.0.0/16"
+                        },
+                        {
+                            "name": "descr",
+                            "value": "Netsiel S.p.a. network"
+                        },
+                        {
+                            "name": "descr",
+                            "value": "InterBusiness"
+                        },
+                        {
+                            "link": {
+                                "href": "http://rest.db.ripe.net/ripe/aut-num/AS3269",
+                                "type": "locator"
+                            },
+                            "name": "origin",
+                            "referenced-type": "aut-num",
+                            "value": "AS3269"
+                        },
+                        {
+                            "link": {
+                                "href": "http://rest.db.ripe.net/ripe/mntner/INTERB-MNT",
+                                "type": "locator"
+                            },
+                            "name": "mnt-by",
+                            "referenced-type": "mntner",
+                            "value": "INTERB-MNT"
+                        },
+                        {
+                            "name": "created",
+                            "value": "1970-01-01T00:00:00Z"
+                        },
+                        {
+                            "name": "last-modified",
+                            "value": "2001-09-22T09:32:13Z"
+                        },
+                        {
+                            "comment": "Filtered",
+                            "name": "source",
+                            "value": "RIPE"
+                        }
+                    ]
+                },
+                "link": {
+                    "href": "http://rest.db.ripe.net/ripe/route/156.54.0.0/16AS3269",
+                    "type": "locator"
+                },
+                "primary-key": {
+                    "attribute": [
+                        {
+                            "name": "route",
+                            "value": "156.54.0.0/16"
+                        },
+                        {
+                            "name": "origin",
+                            "value": "AS3269"
+                        }
+                    ]
+                },
+                "source": {
+                    "id": "ripe"
+                },
+                "type": "route"
+            }
+        ]
+    },
+    "parameters": {
+        "flags": {},
+        "inverse-lookup": {},
+        "query-strings": {
+            "query-string": [
+                {
+                    "value": "156.54.0.0"
+                }
+            ]
+        },
+        "sources": {},
+        "type-filters": {}
+    },
+    "service": {
+        "name": "search"
+    },
+    "terms-and-conditions": {
+        "href": "http://www.ripe.net/db/support/db-terms-conditions.pdf",
+        "type": "locator"
+    }
+}

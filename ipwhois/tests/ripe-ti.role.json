@@ -1,0 +1,79 @@
+{
+ "terms-and-conditions": {
+  "href": "http://www.ripe.net/db/support/db-terms-conditions.pdf",
+  "type": "locator"
+ },
+ "objects": {
+  "object": [
+   {
+    "attributes": {
+     "attribute": [
+      {
+       "name": "role",
+       "value": "Abuse Telecom Italia FULLCOM-MNT"
+      },
+      {
+       "name": "address",
+       "value": "via oriolo romano 257"
+      },
+      {
+       "name": "nic-hdl",
+       "value": "AT10542-RIPE"
+      },
+      {
+       "referenced-type": "role",
+       "link": {
+        "href": "http://rest.db.ripe.net/ripe/role/ITR2-RIPE",
+        "type": "locator"
+       },
+       "name": "admin-c",
+       "value": "ITR2-RIPE"
+      },
+      {
+       "name": "abuse-mailbox",
+       "value": "abuse-ripe@telecomitalia.it"
+      },
+      {
+       "referenced-type": "mntner",
+       "link": {
+        "href": "http://rest.db.ripe.net/ripe/mntner/FULCOM-MNT-RIPE",
+        "type": "locator"
+       },
+       "name": "mnt-by",
+       "value": "FULCOM-MNT-RIPE"
+      },
+      {
+       "name": "created",
+       "value": "2013-06-03T13:56:29Z"
+      },
+      {
+       "name": "last-modified",
+       "value": "2013-06-03T14:11:47Z"
+      },
+      {
+       "comment": "Filtered",
+       "name": "source",
+       "value": "RIPE"
+      }
+     ]
+    },
+    "link": {
+     "href": "http://rest.db.ripe.net/ripe/role/AT10542-RIPE",
+     "type": "locator"
+    },
+    "primary-key": {
+     "attribute": [
+      {
+       "name": "nic-hdl",
+       "value": "AT10542-RIPE"
+      }
+     ]
+    },
+    "type": "role",
+    "source": {
+     "id": "ripe"
+    }
+   }
+  ]
+ }
+}

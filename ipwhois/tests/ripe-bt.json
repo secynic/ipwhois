@@ -1,0 +1,525 @@
+{
+    "objects": {
+        "object": [
+            {
+                "attributes": {
+                    "attribute": [
+                        {
+                            "name": "inetnum",
+                            "value": "62.239.237.0 - 62.239.237.255"
+                        },
+                        {
+                            "name": "netname",
+                            "value": "BT-CORPORATE"
+                        },
+                        {
+                            "name": "descr",
+                            "value": "UDC"
+                        },
+                        {
+                            "name": "country",
+                            "value": "GB"
+                        },
+                        {
+                            "link": {
+                                "href": "http://rest.db.ripe.net/ripe/person/BCER1-RIPE",
+                                "type": "locator"
+                            },
+                            "name": "admin-c",
+                            "referenced-type": "person",
+                            "value": "BCER1-RIPE"
+                        },
+                        {
+                            "link": {
+                                "href": "http://rest.db.ripe.net/ripe/role/BTCR1-RIPE",
+                                "type": "locator"
+                            },
+                            "name": "admin-c",
+                            "referenced-type": "role",
+                            "value": "BTCR1-RIPE"
+                        },
+                        {
+                            "link": {
+                                "href": "http://rest.db.ripe.net/ripe/role/BTCR3-RIPE",
+                                "type": "locator"
+                            },
+                            "name": "tech-c",
+                            "referenced-type": "role",
+                            "value": "BTCR3-RIPE"
+                        },
+                        {
+                            "name": "status",
+                            "value": "ASSIGNED PA"
+                        },
+                        {
+                            "name": "remarks",
+                            "value": "Please send abuse notification to btcertcc@bt.com"
+                        },
+                        {
+                            "name": "remarks",
+                            "value": "INFRA-AW"
+                        },
+                        {
+                            "link": {
+                                "href": "http://rest.db.ripe.net/ripe/mntner/BTENT-MNT",
+                                "type": "locator"
+                            },
+                            "name": "mnt-by",
+                            "referenced-type": "mntner",
+                            "value": "BTENT-MNT"
+                        },
+                        {
+                            "link": {
+                                "href": "http://rest.db.ripe.net/ripe/mntner/BTENT-MNT",
+                                "type": "locator"
+                            },
+                            "name": "mnt-lower",
+                            "referenced-type": "mntner",
+                            "value": "BTENT-MNT"
+                        },
+                        {
+                            "name": "created",
+                            "value": "2008-08-14T14:54:30Z"
+                        },
+                        {
+                            "name": "last-modified",
+                            "value": "2008-08-14T14:54:30Z"
+                        },
+                        {
+                            "comment": "Filtered",
+                            "name": "source",
+                            "value": "RIPE"
+                        }
+                    ]
+                },
+                "link": {
+                    "href": "http://rest.db.ripe.net/ripe/inetnum/62.239.237.0 - 62.239.237.255",
+                    "type": "locator"
+                },
+                "primary-key": {
+                    "attribute": [
+                        {
+                            "name": "inetnum",
+                            "value": "62.239.237.0 - 62.239.237.255"
+                        }
+                    ]
+                },
+                "source": {
+                    "id": "ripe"
+                },
+                "tags": {
+                    "tag": [
+                        {
+                            "data": null,
+                            "id": "RIPE-USER-RESOURCE"
+                        }
+                    ]
+                },
+                "type": "inetnum"
+            },
+            {
+                "attributes": {
+                    "attribute": [
+                        {
+                            "name": "role",
+                            "value": "BT Corporate Registry"
+                        },
+                        {
+                            "name": "address",
+                            "value": "British Telecommunications"
+                        },
+                        {
+                            "name": "address",
+                            "value": "81 Newgate Street"
+                        },
+                        {
+                            "name": "address",
+                            "value": "London GB"
+                        },
+                        {
+                            "link": {
+                                "href": "http://rest.db.ripe.net/ripe/person/BCER1-RIPE",
+                                "type": "locator"
+                            },
+                            "name": "admin-c",
+                            "referenced-type": "person",
+                            "value": "BCER1-RIPE"
+                        },
+                        {
+                            "link": {
+                                "href": "http://rest.db.ripe.net/ripe/person/SAM62-RIPE",
+                                "type": "locator"
+                            },
+                            "name": "admin-c",
+                            "referenced-type": "person",
+                            "value": "SAM62-RIPE"
+                        },
+                        {
+                            "link": {
+                                "href": "http://rest.db.ripe.net/ripe/person/SW4727-RIPE",
+                                "type": "locator"
+                            },
+                            "name": "admin-c",
+                            "referenced-type": "person",
+                            "value": "SW4727-RIPE"
+                        },
+                        {
+                            "link": {
+                                "href": "http://rest.db.ripe.net/ripe/person/BCER1-RIPE",
+                                "type": "locator"
+                            },
+                            "name": "tech-c",
+                            "referenced-type": "person",
+                            "value": "BCER1-RIPE"
+                        },
+                        {
+                            "link": {
+                                "href": "http://rest.db.ripe.net/ripe/person/SAM62-RIPE",
+                                "type": "locator"
+                            },
+                            "name": "tech-c",
+                            "referenced-type": "person",
+                            "value": "SAM62-RIPE"
+                        },
+                        {
+                            "name": "nic-hdl",
+                            "value": "BTCR1-RIPE"
+                        },
+                        {
+                            "name": "abuse-mailbox",
+                            "value": "protect@bt.com"
+                        },
+                        {
+                            "link": {
+                                "href": "http://rest.db.ripe.net/ripe/mntner/BTENT-MNT",
+                                "type": "locator"
+                            },
+                            "name": "mnt-by",
+                            "referenced-type": "mntner",
+                            "value": "BTENT-MNT"
+                        },
+                        {
+                            "name": "created",
+                            "value": "2002-03-22T09:16:45Z"
+                        },
+                        {
+                            "name": "last-modified",
+                            "value": "2014-06-24T12:09:51Z"
+                        },
+                        {
+                            "comment": "Filtered",
+                            "name": "source",
+                            "value": "RIPE"
+                        }
+                    ]
+                },
+                "link": {
+                    "href": "http://rest.db.ripe.net/ripe/role/BTCR1-RIPE",
+                    "type": "locator"
+                },
+                "primary-key": {
+                    "attribute": [
+                        {
+                            "name": "nic-hdl",
+                            "value": "BTCR1-RIPE"
+                        }
+                    ]
+                },
+                "source": {
+                    "id": "ripe"
+                },
+                "type": "role"
+            },
+            {
+                "attributes": {
+                    "attribute": [
+                        {
+                            "name": "role",
+                            "value": "BT Corporate Registry"
+                        },
+                        {
+                            "name": "address",
+                            "value": "British Telecommunications"
+                        },
+                        {
+                            "name": "address",
+                            "value": "81 Newgate Street"
+                        },
+                        {
+                            "name": "address",
+                            "value": "London GB"
+                        },
+                        {
+                            "name": "remarks",
+                            "value": "central contact point for BT Corporate data networks"
+                        },
+                        {
+                            "link": {
+                                "href": "http://rest.db.ripe.net/ripe/person/BCER1-RIPE",
+                                "type": "locator"
+                            },
+                            "name": "admin-c",
+                            "referenced-type": "person",
+                            "value": "BCER1-RIPE"
+                        },
+                        {
+                            "link": {
+                                "href": "http://rest.db.ripe.net/ripe/person/SAM62-RIPE",
+                                "type": "locator"
+                            },
+                            "name": "admin-c",
+                            "referenced-type": "person",
+                            "value": "SAM62-RIPE"
+                        },
+                        {
+                            "link": {
+                                "href": "http://rest.db.ripe.net/ripe/person/LBH1-RIPE",
+                                "type": "locator"
+                            },
+                            "name": "admin-c",
+                            "referenced-type": "person",
+                            "value": "LBH1-RIPE"
+                        },
+                        {
+                            "link": {
+                                "href": "http://rest.db.ripe.net/ripe/person/SW4727-RIPE",
+                                "type": "locator"
+                            },
+                            "name": "admin-c",
+                            "referenced-type": "person",
+                            "value": "SW4727-RIPE"
+                        },
+                        {
+                            "link": {
+                                "href": "http://rest.db.ripe.net/ripe/person/BCER1-RIPE",
+                                "type": "locator"
+                            },
+                            "name": "tech-c",
+                            "referenced-type": "person",
+                            "value": "BCER1-RIPE"
+                        },
+                        {
+                            "name": "nic-hdl",
+                            "value": "BTCR3-RIPE"
+                        },
+                        {
+                            "name": "abuse-mailbox",
+                            "value": "protect@bt.com"
+                        },
+                        {
+                            "link": {
+                                "href": "http://rest.db.ripe.net/ripe/mntner/BTENT-MNT",
+                                "type": "locator"
+                            },
+                            "name": "mnt-by",
+                            "referenced-type": "mntner",
+                            "value": "BTENT-MNT"
+                        },
+                        {
+                            "name": "created",
+                            "value": "2002-03-22T09:22:53Z"
+                        },
+                        {
+                            "name": "last-modified",
+                            "value": "2013-03-28T10:21:53Z"
+                        },
+                        {
+                            "comment": "Filtered",
+                            "name": "source",
+                            "value": "RIPE"
+                        }
+                    ]
+                },
+                "link": {
+                    "href": "http://rest.db.ripe.net/ripe/role/BTCR3-RIPE",
+                    "type": "locator"
+                },
+                "primary-key": {
+                    "attribute": [
+                        {
+                            "name": "nic-hdl",
+                            "value": "BTCR3-RIPE"
+                        }
+                    ]
+                },
+                "source": {
+                    "id": "ripe"
+                },
+                "type": "role"
+            },
+            {
+                "attributes": {
+                    "attribute": [
+                        {
+                            "name": "person",
+                            "value": "BT Computer Emergency Response Team"
+                        },
+                        {
+                            "name": "address",
+                            "value": "PP L16"
+                        },
+                        {
+                            "name": "address",
+                            "value": "Pheonix House"
+                        },
+                        {
+                            "name": "address",
+                            "value": "202 Elder Gate"
+                        },
+                        {
+                            "name": "address",
+                            "value": "Milton Keynes"
+                        },
+                        {
+                            "name": "address",
+                            "value": "Buckinghamshire"
+                        },
+                        {
+                            "name": "address",
+                            "value": "MK9 1BE"
+                        },
+                        {
+                            "name": "phone",
+                            "value": "+44 1908 609 271"
+                        },
+                        {
+                            "name": "fax-no",
+                            "value": "+44 1908 230 343"
+                        },
+                        {
+                            "name": "nic-hdl",
+                            "value": "BCER1-RIPE"
+                        },
+                        {
+                            "name": "remarks",
+                            "value": "BT Security Computer Emergency Response Team"
+                        },
+                        {
+                            "link": {
+                                "href": "http://rest.db.ripe.net/ripe/mntner/BTENT-MNT",
+                                "type": "locator"
+                            },
+                            "name": "mnt-by",
+                            "referenced-type": "mntner",
+                            "value": "BTENT-MNT"
+                        },
+                        {
+                            "name": "created",
+                            "value": "2001-11-08T10:50:29Z"
+                        },
+                        {
+                            "name": "last-modified",
+                            "value": "2013-03-28T12:32:05Z"
+                        },
+                        {
+                            "comment": "Filtered",
+                            "name": "source",
+                            "value": "RIPE"
+                        }
+                    ]
+                },
+                "link": {
+                    "href": "http://rest.db.ripe.net/ripe/person/BCER1-RIPE",
+                    "type": "locator"
+                },
+                "primary-key": {
+                    "attribute": [
+                        {
+                            "name": "nic-hdl",
+                            "value": "BCER1-RIPE"
+                        }
+                    ]
+                },
+                "source": {
+                    "id": "ripe"
+                },
+                "type": "person"
+            },
+            {
+                "attributes": {
+                    "attribute": [
+                        {
+                            "name": "route",
+                            "value": "62.239.0.0/16"
+                        },
+                        {
+                            "name": "descr",
+                            "value": "BTL"
+                        },
+                        {
+                            "link": {
+                                "href": "http://rest.db.ripe.net/ripe/aut-num/AS2856",
+                                "type": "locator"
+                            },
+                            "name": "origin",
+                            "referenced-type": "aut-num",
+                            "value": "AS2856"
+                        },
+                        {
+                            "link": {
+                                "href": "http://rest.db.ripe.net/ripe/mntner/BTNET-MNT",
+                                "type": "locator"
+                            },
+                            "name": "mnt-by",
+                            "referenced-type": "mntner",
+                            "value": "BTNET-MNT"
+                        },
+                        {
+                            "name": "created",
+                            "value": "1970-01-01T00:00:00Z"
+                        },
+                        {
+                            "name": "last-modified",
+                            "value": "2002-12-04T12:37:05Z"
+                        },
+                        {
+                            "comment": "Filtered",
+                            "name": "source",
+                            "value": "RIPE"
+                        }
+                    ]
+                },
+                "link": {
+                    "href": "http://rest.db.ripe.net/ripe/route/62.239.0.0/16AS2856",
+                    "type": "locator"
+                },
+                "primary-key": {
+                    "attribute": [
+                        {
+                            "name": "route",
+                            "value": "62.239.0.0/16"
+                        },
+                        {
+                            "name": "origin",
+                            "value": "AS2856"
+                        }
+                    ]
+                },
+                "source": {
+                    "id": "ripe"
+                },
+                "type": "route"
+            }
+        ]
+    },
+    "parameters": {
+        "flags": {},
+        "inverse-lookup": {},
+        "query-strings": {
+            "query-string": [
+                {
+                    "value": "62.239.237.1"
+                }
+            ]
+        },
+        "sources": {},
+        "type-filters": {}
+    },
+    "service": {
+        "name": "search"
+    },
+    "terms-and-conditions": {
+        "href": "http://www.ripe.net/db/support/db-terms-conditions.pdf",
+        "type": "locator"
+    }
+}
