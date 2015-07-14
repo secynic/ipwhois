@@ -1,2 +1,5 @@
 simplejson
 nose
+dnspython3
+dnspython
+ipaddr
