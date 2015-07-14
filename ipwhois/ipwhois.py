@@ -1418,7 +1418,7 @@ class IPWhois:
 
             try:
 
-                if n['type'] == 'role':
+                if n['type'] == 'role' or n['type'] == 'organisation':
 
                     for attr in n['attributes']['attribute']:
 
