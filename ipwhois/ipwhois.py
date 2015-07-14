@@ -44,7 +44,9 @@ import dns.resolver
 import re
 import copy
 import json
+import logging
 from .utils import ipv4_is_defined, ipv6_is_defined, unique_everseen
+from .ripe import get_attribute
 
 try:
     from urllib.request import (OpenerDirector,
@@ -331,7 +333,7 @@ class IPWhois:
     """
 
     def __init__(self, address, timeout=5, proxy_opener=None):
-
+        self.log = logging.getLogger(self.__class__.__name__)
         # IPv4Address or IPv6Address
         if isinstance(address, IPv4Address) or isinstance(
                 address, IPv6Address):
@@ -471,7 +473,7 @@ class IPWhois:
         except ASNRegistryError:
 
             raise
-        
+
         except:
 
             raise ASNLookupError(
@@ -1414,12 +1416,18 @@ class IPWhois:
 
         net = copy.deepcopy(BASE_NET)
 
+        # Add fields for contacts: could a defaultdict could simplify the code? TODO
+        net['abuse-c'] = []
+        net['admin-c'] = []
+
         for n in object_list:
 
             try:
 
-                if n['type'] == 'role':
-
+                if n['type'] in ('role', 'organisation'):
+                    #
+                    # Some records set those informations into organisation.
+                    #
                     for attr in n['attributes']['attribute']:
 
                         if attr['name'] == 'abuse-mailbox':
@@ -1527,8 +1535,42 @@ class IPWhois:
 
                             net['updated'] = value
 
-            except KeyError:
+                elif n['type'] in ('person', 'role', 'route'):
+                    #
+                    # nic-hdl is in person, role or route. See ripe-database-query-reference-manual.
+                    #
+                    for attr in n['attributes']['attribute']:
 
+                        if attr['name'] == 'nic-hdl':
+
+                            net['handle'] = self._extract_link_or_value(attr)
+                #
+                # Parse *again* organisation looking for abuse-c and admin-c.
+                #
+                if n['type'] in ('organisation',):
+                    #
+                    # The following entries are in organisation. See ripe-database-query-reference-manual.
+                    #  - abuse-c, admin-c
+                    for attr in n['attributes']['attribute']:
+                        self.log
+                        if attr['name'] == 'abuse-c':
+                            ref = self._extract_link_or_value(attr)
+                            net['abuse-c'].append(ref)
+                            if ref.startswith('http'):
+                                entry = self.get_rws(ref)
+                                ripe_abuse_emails.append(get_attribute(entry, 'abuse-mailbox'))
+                        elif attr['name'] == 'admin-c':
+                            ref = self._extract_link_or_value(attr)
+                            net['admin-c'].append(ref)
+                            if ref.startswith('http'):
+                                entry = self.get_rws(ref)
+                                net['remarks'] = get_attribute(entry, 'remarks')
+                        else:
+                            self.log.info("Unchecked attribute: %r", attr['name'])
+
+            except KeyError as e:
+                # Beware! This exception may cloak parsing errors!
+                self.log.debug("Missing key %r", e)
                 pass
 
         nets.append(net)
@@ -1552,6 +1594,18 @@ class IPWhois:
                 net['misc_emails'] = misc
 
         return nets
+
+    def _extract_link_or_value(self, attr):
+        """
+        Get the href if provided. The value otherwise.
+        :param attr:
+        :return:
+        """
+        try:
+            return str(attr['link']['href']).strip()
+        except KeyError:
+            self.log.debug("Cannot retrieve link, taking value from: %r", attr)
+            return str(attr['value']).strip()
 
     def _lookup_rws_apnic(self, response=None):
         """
