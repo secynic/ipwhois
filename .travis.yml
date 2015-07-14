@@ -10,5 +10,5 @@ install:
   - pip install -r requirements.txt 
   - python setup.py -q install
 # command to run tests, e.g. python setup.py test
-script:  nosetests -v 
+script:  nosetests -v  -w ipwhois
 
