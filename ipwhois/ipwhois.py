@@ -1604,7 +1604,7 @@ class IPWhois:
         try:
             return str(attr['link']['href']).strip()
         except KeyError:
-            self.log.debug("Cannot retrieve abuse-c link. Taking value: %r", attr)
+            self.log.debug("Cannot retrieve link, taking value from: %r", attr)
             return str(attr['value']).strip()
 
     def _lookup_rws_apnic(self, response=None):

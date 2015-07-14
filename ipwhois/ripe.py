@@ -12,14 +12,16 @@ def get_attribute(entry, name):
     """
     try:
         d = entry['objects']['object']
-    except KeyError:
-        raise ValueError("Malformed error. Missing objects->object.")
+        if len(d) > 1:
+            raise ValueError("More than one object passed.")
+        d = d[0]['attributes']['attribute']
+    except KeyError as e:
+        raise ValueError("Malformed RIPE entry. Missing key %r", e.message)
 
-    if len(d) > 1:
-        raise ValueError("More than one object passed.")
-
+    # I didn't use a generator to be able to
+    #  raise a ValueError.
     ret = []
-    for a in d[0]['attributes']['attribute']:
+    for a in d:
         if 'name' not in a:
             raise ValueError("Malformed RIPE entry: missing name.")
 
@@ -27,17 +29,3 @@ def get_attribute(entry, name):
             ret.append(a['value'])
 
     return '\n'.join(ret)
-
-def resolve_abuse(iw, nets):
-    ripe_abuse_emails = []
-    # Resolve abuse-c entries and flatten the list.
-    nets_with_abuse_ref = [net_['abuse-c'] for net_ in nets if 'abuse-c' in net_]
-    nets_with_abuse_ref = [link_
-                           for n_ in nets_with_abuse_ref
-                           for link_ in n_
-                           if link_ and link_.startswith('http')]
-    for link in nets_with_abuse_ref:
-        abuse_c = iw.get_rws(link)
-        ripe_abuse_emails.append(get_attribute(abuse_c, 'abuse-mailbox'))
-
-    return ripe_abuse_emails
