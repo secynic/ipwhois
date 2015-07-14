@@ -275,6 +275,17 @@ BASE_NET = {
     'updated': None
 }
 
+BASE_PERSON = {
+    'person': None,
+    'address': None,
+    'phone': None,
+    'mnt-by': None,
+    'nic-hdl': None,
+    'created': None,
+    'last-modified': None,
+    'source': None
+}
+
 
 class IPDefinedError(Exception):
     """
@@ -471,7 +482,7 @@ class IPWhois:
         except ASNRegistryError:
 
             raise
-        
+
         except:
 
             raise ASNLookupError(
@@ -873,6 +884,8 @@ class IPWhois:
             :asn_country_code: The assigned ASN country code (String)
             :nets: Dictionaries containing network information which consists
                 of the fields listed in the NIC_WHOIS dictionary. (List)
+            :persons: Dictionaries containing information related to persons
+                e.g. admin-c, tech-c (List)
             :raw: Raw whois results if the inc_raw parameter is True. (String)
             :referral: Dictionary of referral whois information if get_referral
                 is True and the server isn't blacklisted. Consists of fields
@@ -939,6 +952,7 @@ class IPWhois:
         results = {
             'query': self.address_str,
             'nets': [],
+            'persons': [],
             'raw': None,
             'referral': None,
             'raw_referral': None
@@ -1032,6 +1046,8 @@ class IPWhois:
             results['raw'] = response
 
         nets = []
+
+        persons = []
 
         if results['asn_registry'] == 'arin':
 
@@ -1401,6 +1417,8 @@ class IPWhois:
 
         nets = []
 
+        persons = []
+
         try:
 
             object_list = response['objects']['object']
@@ -1416,9 +1434,12 @@ class IPWhois:
 
         for n in object_list:
 
+            person = copy.deepcopy(BASE_PERSON)
+
             try:
 
                 if n['type'] == 'role':
+
 
                     for attr in n['attributes']['attribute']:
 
@@ -1443,6 +1464,48 @@ class IPWhois:
                             else:
 
                                 net['address'] = str(attr['value']).strip()
+
+                elif n['type'] in ('person'):
+
+                    for attr in n['attributes']['attribute']:
+
+                        if attr['name'] in ('person'):
+
+                            person['person'] = str(attr['value']).strip()
+
+                        if attr['name'] in ('address'):
+
+                            if person['address'] is not None:
+
+                                person['address'] +=  '\n%s' % (str(attr['value']).strip())
+
+                            else:
+
+                                person['address'] = str(attr['value']).strip()
+
+                        if attr['name'] in ('phone'):
+
+                            person['phone'] = str(attr['value']).strip()
+
+                        if attr['name'] in ('mnt-by'):
+
+                            person['mnt-by'] = str(attr['value']).strip()
+
+                        if attr['name'] in ('nic-hdl'):
+
+                            person['nic-hdl'] = str(attr['value']).strip()
+
+                        if attr['name'] in ('created'):
+
+                            person['created'] = str(attr['value']).strip()
+
+                        if attr['name'] in ('last-modified'):
+
+                            person['last-modified'] = str(attr['value']).strip()
+
+                        if attr['name'] in ('source'):
+
+                            person['source'] = str(attr['value']).strip()
 
                 elif n['type'] in ('inetnum', 'inet6num'):
 
@@ -1531,6 +1594,10 @@ class IPWhois:
 
                 pass
 
+            # make sure to add all person records as long as they have data
+            if person['nic-hdl'] is not None:
+                persons.append(person)
+
         nets.append(net)
 
         # This is nasty. Since RIPE RWS doesn't provide a granular
@@ -1551,7 +1618,7 @@ class IPWhois:
                 net['abuse_emails'] = abuse
                 net['misc_emails'] = misc
 
-        return nets
+        return nets, persons
 
     def _lookup_rws_apnic(self, response=None):
         """
@@ -2011,7 +2078,7 @@ class IPWhois:
 
         if results['asn_registry'] in ('ripencc', 'afrinic'):
 
-            nets = self._lookup_rws_ripe(response)
+            nets, persons = self._lookup_rws_ripe(response)
 
         elif results['asn_registry'] == 'arin':
 
@@ -2027,5 +2094,9 @@ class IPWhois:
 
         # Add the networks to the return dictionary.
         results['nets'] = nets
+
+        # Only add persons entry if there are entries.
+        if persons:
+            results['persons'] = persons
 
         return results
