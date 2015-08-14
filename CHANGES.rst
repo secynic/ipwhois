@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.10.3 (2015-08-14)
+-------------------
+
+- Fixed LACNIC lookup_rws() queries, since they switched to RDAP. This is
+  temporary to get it working until the major library transition to RDAP and
+  new parsed formatting is complete.
+
 0.10.2 (2015-05-19)
 -------------------
 

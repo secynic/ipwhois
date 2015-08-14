@@ -169,7 +169,7 @@ NIC_WHOIS = {
     },
     'lacnic': {
         'server': 'whois.lacnic.net',
-        'url': 'http://restfulwhoisv2.labs.lacnic.net/restfulwhois/ip/{0}',
+        'url': 'http://rdap.lacnic.net/rdap/ip/{0}',
         'fields': {
             'handle': r'(nic-hdl):[^\S\n]+(?P<val>.+?)\n',
             'description': r'(owner):[^\S\n]+(?P<val>.+?)(?=(\n\S):?)',
@@ -187,7 +187,7 @@ NIC_WHOIS = {
             'updated': r'(changed):[^\S\n]+(?P<val>[0-9]{8}).*?\n'
         },
         'dt_format': '%Y%m%d',
-        'dt_rws_format': '%Y%m%d'
+        'dt_rws_format': '%Y-%m-%dT%H:%M:%SZ'
     },
     'afrinic': {
         'server': 'whois.afrinic.net',
@@ -1838,47 +1838,74 @@ class IPWhois:
 
                     net['handle'] = en['handle']
 
-                if en['roles'][0] == 'registrant':
+                temp = en['vcardArray'][1]
 
-                    temp = en['vcardArray'][1]
+                for t in temp:
 
-                    for t in temp:
+                    if 'administrative' in en['roles'] and t[0] == 'fn':
 
-                        if t[0] == 'fn':
+                        net['name'] = str(t[3]).strip()
 
-                            net['name'] = str(t[3]).strip()
+                    elif 'administrative' in en['roles'] and t[0] == 'adr':
 
-                        elif t[0] == 'org':
-
-                            net['description'] = str(t[3][0]).strip()
-
-                        elif t[0] == 'adr':
+                        try:
 
                             net['address'] = str(t[1]['label']).strip()
 
-                        elif t[0] == 'email':
+                        except KeyError:
 
-                            net['misc_emails'] = str(t[3]).strip()
+                            pass
 
-                elif en['roles'][0] == 'abuse':
+                    elif t[0] == 'email':
 
-                    temp = en['vcardArray'][1]
+                        key = None
 
-                    for t in temp:
+                        if (len(en['roles']) > 1 or
+                           en['roles'][0] == 'administrative'):
 
-                        if t[0] == 'email':
+                            key = 'misc_emails'
 
-                            net['abuse_emails'] = str(t[3]).strip()
+                        elif en['roles'][0] == 'abuse':
 
-                elif en['roles'][0] == 'tech':
+                            key = 'abuse_emails'
 
-                    temp = en['vcardArray'][1]
+                        elif en['roles'][0] == 'technical':
 
-                    for t in temp:
+                            key = 'tech_emails'
 
-                        if t[0] == 'email':
+                        if key is not None:
 
-                            net['tech_emails'] = str(t[3]).strip()
+                            if net[key] is not None:
+
+                                net[key] += '\n%s' % str(t[3]).strip()
+
+                            else:
+
+                                net[key] = str(t[3]).strip()
+
+            except (KeyError, IndexError):
+
+                pass
+
+        try:
+
+            remarks = response['remarks']
+
+            if not isinstance(remarks, list):
+
+                remarks = [remarks]
+
+        except KeyError:
+
+            remarks = []
+
+        for rem in remarks:
+
+            try:
+
+                if rem['title'] == 'description':
+
+                    net['description'] = str('\n'.join(rem['description']))
 
             except (KeyError, IndexError):
 
