@@ -12,5 +12,5 @@ install:
   - python setup.py -q install
 # command to run tests, e.g. python setup.py test
 script:
-  - nosetests -v  -w ipwhois --exclude-dir=ipwhois/tests/online
+  - nosetests -v  -w ipwhois
 
