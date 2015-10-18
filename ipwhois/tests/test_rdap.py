@@ -1,6 +1,7 @@
 import unittest
 import json
 import io
+from os import path
 from ipwhois.rdap import (RDAP, _RDAPEntity, InvalidEntityObject,
                           InvalidEntityContactObject, Net)
 
@@ -20,7 +21,9 @@ class TestRDAP(TestCommon):
 
     def test__RDAPLookup(self):
 
-        with io.open('rdap.json') as data_file:
+        data_dir = path.dirname(__file__)
+
+        with io.open(str(data_dir) + '/rdap.json', 'r') as data_file:
             data = json.load(data_file)
 
         for key, val in data.items():
@@ -52,7 +55,9 @@ class TestRDAPEntity(TestCommon):
         ent = _RDAPEntity({'abc': 'def'})
         self.assertRaises(InvalidEntityObject, ent.parse)
 
-        with io.open('entity.json') as data_file:
+        data_dir = path.dirname(__file__)
+
+        with io.open(str(data_dir) + '/entity.json', 'r') as data_file:
             data = json.load(data_file)
 
         ent = _RDAPEntity(data)
