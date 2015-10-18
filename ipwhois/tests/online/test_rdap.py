@@ -1,5 +1,7 @@
 import unittest
 import json
+import io
+from os import path
 from ipwhois.rdap import (RDAP, Net)
 
 
@@ -18,7 +20,9 @@ class TestRDAP(TestCommon):
 
     def test__RDAPLookup(self):
 
-        with open('./rdap.json') as data_file:
+        data_dir = path.abspath(path.join(path.dirname(__file__), '..'))
+
+        with io.open(str(data_dir) + '/rdap.json', 'r') as data_file:
             data = json.load(data_file)
 
         for key, val in data.items():
