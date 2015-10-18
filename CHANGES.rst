@@ -1,6 +1,16 @@
 Changelog
 =========
 
+0.11.0 (TBD)
+------------
+
+- Support for REST lookups replaced with RDAP.
+- Split code for a more structured system (net, whois, rdap, exceptions).
+- Split tests to match the new structure. [PARTIAL]
+- Performance enhancements for parsing.
+- Added logging. [PENDING]
+- Added examples directory. [PENDING]
+
 0.10.3 (2015-08-14)
 -------------------
 

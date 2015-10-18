@@ -23,6 +23,12 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import sys
+from xml.dom.minidom import parseString
+from os import path
+import re
+import copy
+import io
+import csv
 
 if sys.version_info >= (3, 3):
     from ipaddress import (ip_address,
@@ -37,18 +43,37 @@ else:
                         IPv4Network,
                         IPv6Address)
 
-from xml.dom.minidom import parseString
-from os import path
-import re
-import copy
-import io
-import csv
-
 try:
     from itertools import filterfalse
 
 except ImportError:
     from itertools import ifilterfalse as filterfalse
+
+IETF_RFC_REFERENCES = {
+    # IPv4
+    'RFC 1122, Section 3.2.1.3':
+    'http://tools.ietf.org/html/rfc1122#section-3.2.1.3',
+    'RFC 1918': 'http://tools.ietf.org/html/rfc1918',
+    'RFC 3927': 'http://tools.ietf.org/html/rfc3927',
+    'RFC 5736': 'http://tools.ietf.org/html/rfc5736',
+    'RFC 5737': 'http://tools.ietf.org/html/rfc5737',
+    'RFC 3068': 'http://tools.ietf.org/html/rfc3068',
+    'RFC 2544': 'http://tools.ietf.org/html/rfc2544',
+    'RFC 3171': 'http://tools.ietf.org/html/rfc3171',
+    'RFC 919, Section 7': 'http://tools.ietf.org/html/rfc919#section-7',
+    # IPv6
+    'RFC 4291, Section 2.7': 'http://tools.ietf.org/html/rfc4291#section-2.7',
+    'RFC 4291': 'http://tools.ietf.org/html/rfc4291',
+    'RFC 4291, Section 2.5.2':
+    'http://tools.ietf.org/html/rfc4291#section-2.5.2',
+    'RFC 4291, Section 2.5.3':
+    'http://tools.ietf.org/html/rfc4291#section-2.5.3',
+    'RFC 4291, Section 2.5.6':
+    'http://tools.ietf.org/html/rfc4291#section-2.5.6',
+    'RFC 4291, Section 2.5.7':
+    'http://tools.ietf.org/html/rfc4291#section-2.5.7',
+    'RFC 4193': 'https://tools.ietf.org/html/rfc4193'
+}
 
 IP_REGEX = (
     r'(?P<ip>'

@@ -5,7 +5,7 @@ import sys
 import io
 
 NAME = 'ipwhois'
-VERSION = '0.10.3'
+VERSION = '0.11.0'
 AUTHOR = "Philip Hane"
 AUTHOR_EMAIL = "secynic AT gmail DOT com"
 DESCRIPTION = "Retrieve and parse whois data for IPv4 and IPv6 addresses."
@@ -25,7 +25,9 @@ KEYWORDS = [
     "Apnic",
     "Lacnic",
     "Afrinic",
-    "NIC"
+    "NIC",
+    "RDAP",
+    "RIR"
 ]
 
 LONG_DESCRIPTION = '\n\n'.join([io.open('README.rst', 'r',

@@ -1,0 +1,113 @@
+{
+  "events": [
+    {
+      "eventAction": "last changed",
+      "eventDate": "2015-09-01T14:03:11-04:00"
+    },
+    {
+      "eventAction": "registration",
+      "eventDate": "2000-11-30T13:54:08-05:00"
+    }
+  ],
+  "handle": "ZG39-ARIN",
+  "links": [
+    {
+      "href": "https://rdap.arin.net/registry/entity/ZG39-ARIN",
+      "rel": "self",
+      "type": "application/rdap+json",
+      "value": "https://rdap.arin.net/registry/entity/ZG39-ARIN"
+    },
+    {
+      "href": "http://whois.arin.net/rest/poc/ZG39-ARIN",
+      "rel": "alternate",
+      "type": "application/xml",
+      "value": "https://rdap.arin.net/registry/entity/ZG39-ARIN"
+    }
+  ],
+  "notices": [
+    {
+      "description": [
+        "By using the ARIN RDAP/Whois service, you are agreeing to the RDAP/Whois Terms of Use"
+      ],
+      "links": [
+        {
+          "href": "https://www.arin.net/whois_tou.html",
+          "rel": "about",
+          "type": "text/html",
+          "value": "https://rdap.arin.net/registry/entity/ZG39-ARIN"
+        }
+      ],
+      "title": "Terms of Service"
+    }
+  ],
+  "objectClassName": "entity",
+  "port43": "whois.arin.net",
+  "rdapConformance": [
+    "rdap_level_0"
+  ],
+  "status": [
+    "validated"
+  ],
+  "vcardArray": [
+    "vcard",
+    [
+      [
+        "version",
+        {},
+        "text",
+        4
+      ],
+      [
+        "adr",
+        {
+          "label": "1600 Amphitheatre Parkway\nMountain View\nCA\n94043\nUNITED STATES"
+        },
+        "text",
+        [
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      ],
+      [
+        "fn",
+        {},
+        "text",
+        "Google Inc"
+      ],
+      [
+        "org",
+        {},
+        "text",
+        "Google Inc"
+      ],
+      [
+        "kind",
+        {},
+        "text",
+        "group"
+      ],
+      [
+        "email",
+        {},
+        "text",
+        "arin-contact@google.com"
+      ],
+      [
+        "tel",
+        {
+          "type": [
+            "work",
+            "voice"
+          ]
+        },
+        "text",
+        "+1-650-253-0000"
+      ]
+    ]
+  ]
+}

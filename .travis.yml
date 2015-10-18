@@ -11,5 +11,6 @@ install:
   - if [[ $TRAVIS_PYTHON_VERSION == 3* ]]; then pip install -r requirements/python3.txt --use-mirrors; fi
   - python setup.py -q install
 # command to run tests, e.g. python setup.py test
-script:  nosetests -v  -w ipwhois
+script:
+  - nosetests -v  -w ipwhois --exclude-dir=ipwhois/tests/online
 
