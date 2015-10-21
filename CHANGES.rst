@@ -8,6 +8,10 @@ Changelog
 - Split code for a more structured system (net, whois, rdap, exceptions).
 - Split tests to match the new structure. [PARTIAL]
 - Performance enhancements for parsing.
+- Added an optional bootstrap parameter for RDAP lookups, in order to replace
+  asn lookups. Will default to False. Afrinic is currently not supported, so
+  I would not use this for now. Consider this future functionality for when
+  arin adds afrinic support back in their RDAP bootstrap code.
 - Added logging. [PENDING]
 - Added examples directory. [PENDING]
 
