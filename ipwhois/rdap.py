@@ -27,6 +27,8 @@ from . import (Net, NetError, InvalidEntityContactObject, InvalidNetworkObject,
 from .utils import unique_everseen
 from .net import ip_address
 
+BOOTSTRAP_URL = 'http://rdap.arin.net/bootstrap'
+
 RIR_RDAP = {
     'arin': {
         'ip_url': 'http://rdap.arin.net/registry/ip/{0}',
@@ -623,7 +625,7 @@ class RDAP:
                            'ipwhois.net.Net')
 
     def lookup(self, inc_raw=False, retry_count=3, asn_data=None, depth=0,
-               excluded_entities=None, response=None):
+               excluded_entities=None, response=None, bootstrap=False):
         """
         The function for retrieving and parsing information for an IP
         address via HTTP (RDAP).
@@ -639,6 +641,8 @@ class RDAP:
                 referenced objects are found.
             excluded_entities: A list of entity handles to not perform lookups.
             response: Optional response object, this bypasses the RDAP lookup.
+            bootstrap: If True, performs lookups via ARIN bootstrap rather
+                than lookups based on ASN data.
 
         Returns:
             Dictionary:
@@ -668,14 +672,21 @@ class RDAP:
             'raw': None
         }
 
+        if bootstrap:
+
+            ip_url = '{0}/ip/{1}'.format(BOOTSTRAP_URL, self._net.address_str)
+
+        else:
+
+            ip_url = str(RIR_RDAP[asn_data['asn_registry']]['ip_url']).format(
+                self._net.address_str)
+
         # Only fetch the response if we haven't already.
         if response is None:
 
             # Retrieve the whois data.
             response = self._net.get_http_json(
-                str(RIR_RDAP[asn_data['asn_registry']]['ip_url']).format(
-                    self._net.address_str),
-                retry_count
+                ip_url, retry_count
             )
 
         if inc_raw:
@@ -715,13 +726,22 @@ class RDAP:
                         if ent not in (list(results['objects'].keys()) +
                                        list(new_objects.keys()) +
                                        excluded_entities):
+
+                            if bootstrap:
+
+                                entity_url = '{0}/entity/{1}'.format(
+                                    BOOTSTRAP_URL, ent)
+
+                            else:
+
+                                entity_url = str(RIR_RDAP[asn_data[
+                                    'asn_registry']]['entity_url']).format(ent)
+
                             try:
 
                                 # RDAP entity query
                                 response = self._net.get_http_json(
-                                    str(RIR_RDAP[asn_data['asn_registry']][
-                                        'entity_url']).format(ent),
-                                    retry_count
+                                    entity_url, retry_count
                                 )
 
                                 # Parse the entity

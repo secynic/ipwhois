@@ -2,6 +2,7 @@ import unittest
 import json
 import io
 from os import path
+from ipwhois.exceptions import HTTPLookupError
 from ipwhois.rdap import (RDAP, Net)
 
 
@@ -34,6 +35,10 @@ class TestRDAP(TestCommon):
 
                 self.assertIsInstance(obj.lookup(asn_data=val['asn_data'],
                                                  depth=0), dict)
+
+            except HTTPLookupError:
+
+                pass
 
             except AssertionError as e:
 

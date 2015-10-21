@@ -119,7 +119,7 @@ class IPWhois:
         return results
 
     def lookup_rdap(self, inc_raw=False, retry_count=3, depth=0,
-                    excluded_entities=None):
+                    excluded_entities=None, bootstrap=False):
         """
         The function for retrieving and parsing whois information for an IP
         address via HTTP (RDAP).
@@ -135,6 +135,9 @@ class IPWhois:
             depth: How many levels deep to run queries when additional
                 referenced objects are found.
             excluded_entities: A list of entity handles to not perform lookups.
+            bootstrap: If True, performs lookups via ARIN bootstrap rather
+                than lookups based on ASN data. ASN lookups are not performed
+                and no output for any of the asn* fields is provided.
 
         Returns:
             Dictionary:
@@ -159,17 +162,20 @@ class IPWhois:
         # Create the return dictionary.
         results = {}
 
-        # Retrieve the ASN information. ADD OPTION FOR ARIN BOOTSTRAP INSTEAD
-        # OF AN ASN LOOKUP - asn* keys will be None.
-        asn_data, response = self.net.lookup_asn(retry_count)
+        asn_data = None
+        response = None
+        if not bootstrap:
 
-        # Add the ASN information to the return dictionary.
-        results.update(asn_data)
+            # Retrieve the ASN information.
+            asn_data, response = self.net.lookup_asn(retry_count)
+
+            # Add the ASN information to the return dictionary.
+            results.update(asn_data)
 
         # Retrieve the RDAP data and parse.
         rdap = RDAP(self.net)
         rdap_data = rdap.lookup(inc_raw, retry_count, asn_data, depth,
-                                excluded_entities, response)
+                                excluded_entities, response, bootstrap)
 
         # Add the RDAP information to the return dictionary.
         results.update(rdap_data)
