@@ -1,11 +1,12 @@
 # Basic example showing how to use ipwhois with elasticsearch/kibana.
 #
-# Before running, download the GeoLite2 database GeoLite2-City.mmdb from:
+# For geolite2 data, download the GeoLite2 database GeoLite2-City.mmdb and
+# place in the data directory:
 # https://dev.maxmind.com/geoip/geoip2/geolite2/
 #
 # To-do:
 # - Add file/cli input option.
-# - Move to classes Create, Delete, Index, and Search.
+# - Move to functions Create, Delete, Index, and Search.
 # - Add kibana config export.
 # - Support more field parsing.
 
@@ -34,12 +35,55 @@ INPUT = [
     '2001:43f8:7b0::'
 ]
 
+# Common es mapping.
+DEFAULT_MAPPING = {
+    "date_detection": 1,
+    "_id": {
+        "index": "not_analyzed",
+        "store": True
+    },
+    "properties": {
+        "@version": {
+            "type": "string",
+            "index": "not_analyzed"
+        },
+        "updated": {
+            "type": "date",
+            "format": "yyyy-MM-dd'T'HH:mm:ssZ",
+            "ignore_malformed": "false"
+        }
+    },
+    "_all": {"enabled": "true"},
+    "dynamic_templates": [
+        {
+            "string_fields": {
+                "match": "*",
+                "match_mapping_type": "string",
+                "mapping": {
+                    "type": "multi_field",
+                    "fields": {
+                        "{name}": {
+                            "type": "string",
+                            "index": "not_analyzed"
+                        },
+                        "{name}.raw": {
+                            "type": "string",
+                            "index": "not_analyzed",
+                            "ignore_above": 256
+                        }
+                    }
+                }
+            }
+        }
+    ]
+}
+
 # Get the current working directory.
-cur_dir = path.dirname(__file__)
+CUR_DIR = path.dirname(__file__)
 
 # Load the geo json for mapping ISO country codes to lat/lon geo coords.
-with io.open(str(cur_dir) + '/geo_coord.json', 'r') as data_file:
-    geo_coord = json.load(data_file)
+with io.open(str(CUR_DIR) + '/data/GEO_COORD.json', 'r') as data_file:
+    GEO_COORD = json.load(data_file)
 
 # Get the ISO country code mappings.
 countries = get_countries()
@@ -69,7 +113,7 @@ es.indices.create(index='ipwhois', body={
                     "type": "standard",
                     "stopwords": "_none_"
                 },
-                "entities": {
+                "entity": {
                     "type": "standard",
                     "stopwords": "_none_"
                 }
@@ -78,29 +122,16 @@ es.indices.create(index='ipwhois', body={
     }
 })
 
-es.indices.put_mapping(index='ipwhois', doc_type='base', body={
+# base doc type mapping
+mapping = DEFAULT_MAPPING.copy()
+mapping.update({
     "properties": {
         "asn_date": {
             "type": "date",
             "format": "date",
             "ignore_malformed": "true"
-        }
-    }
-}, allow_no_indices=True)
-
-es.indices.put_mapping(index='ipwhois', doc_type='base', body={
-    "date_detection": 1,
-    "properties": {
-        "@version": {
-            "type": "string",
-            "index": "not_analyzed"
         },
         "network.events.timestamp": {
-            "type": "date",
-            "format": "yyyy-MM-dd'T'HH:mm:ssZ",
-            "ignore_malformed": "false"
-        },
-        "updated": {
             "type": "date",
             "format": "yyyy-MM-dd'T'HH:mm:ssZ",
             "ignore_malformed": "false"
@@ -124,30 +155,18 @@ es.indices.put_mapping(index='ipwhois', doc_type='base', body={
                 }
             }
         }
-    },
-    "_all": {"enabled": "true"},
-    "dynamic_templates": [{
-        "string_fields": {
-            "match": "*",
-            "match_mapping_type": "string",
-            "mapping": {
-                "type": "multi_field",
-                "fields": {
-                    "{name}": {
-                        "type": "string"
-                    },
-                    "{name}.raw": {
-                        "type": "string",
-                        "ignore_above": 256
-                    }
-                }
-            }
-        }
-    }]
-}, allow_no_indices=True)
+    }
+})
+es.indices.put_mapping(
+    index='ipwhois',
+    doc_type='base',
+    body=mapping,
+    allow_no_indices=True
+)
 
-es.indices.put_mapping(index='ipwhois', doc_type='entities', body={
-    "date_detection": 1,
+# entity doc type mapping
+mapping = DEFAULT_MAPPING.copy()
+mapping.update({
     "properties": {
         "contact": {
             "properties": {
@@ -159,45 +178,102 @@ es.indices.put_mapping(index='ipwhois', doc_type='entities', body={
                             "geohash": True
                         },
                         "value": {
-                            "type": "string"
+                            "type": "string",
                         }
                     }
                 }
             }
         }
-    },
-    "_all": {"enabled": "true"},
-    "dynamic_templates": [{
-        "string_fields": {
-            "match": "*",
-            "match_mapping_type": "string",
-            "mapping": {
-                "type": "multi_field",
-                "fields": {
-                    "{name}": {
-                        "type": "string",
-                    },
-                    "{name}.raw": {
-                        "type": "string",
-                        "ignore_above": 256
-                    }
-                }
-            }
-        }
-    }]
-}, allow_no_indices=True)
+    }
+})
+es.indices.put_mapping(
+    index='ipwhois',
+    doc_type='entity',
+    body=mapping,
+    allow_no_indices=True
+)
 
 # Iterate through the input, lookup each address, and store in elasticsearch
 for ip in INPUT:
+
+    try:
+        # Only update if older than 7 days.
+        tmp = es.search(
+            index='ipwhois',
+            doc_type='base',
+            body={
+                'query': {
+                    "bool": {
+                        "must": [{
+                            'range': {
+                                "updated": {
+                                    "gt": "now-7d"
+                                }
+                            }
+                        }, {
+                            'term': {
+                                'query': str(ip)
+                            }
+                        }]
+                    }
+                }
+            }
+        )
+
+        if len(tmp['hits']['hits']) > 0:
+
+            continue
+
+    # A generic exception is raised, unfortunately.
+    except Exception as e:
+        print(e)
+        pass
 
     # Perform the RDAP lookup for the input IP address retriving all entities
     # up to 1 level deep.
     result = IPWhois(ip)
     ret = result.lookup_rdap(depth=1)
 
-    tmp = ret['objects'].items()
+    tmp_objects = ret['objects'].items()
 
-    for ent_k, ent_v in tmp:
+    for ent_k, ent_v in tmp_objects:
+
+        try:
+
+            # Only update if older than 7 days.
+            es_tmp = es.search(
+                index='ipwhois',
+                doc_type='entity',
+                body={
+                    'query': {
+                        "bool": {
+                            "must": [
+                                {
+                                    'range': {
+                                        "updated": {
+                                            "gt": "now-7d"
+                                        }
+                                    }
+                                },
+                                {
+                                    'term': {
+                                        'handle': str(ent_k)
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            )
+
+            if len(es_tmp['hits']['hits']) > 0:
+
+                continue
+
+        # A generic exception is raised, unfortunately.
+        except Exception as e:
+            print(e)
+            pass
 
         ent = ent_v
 
@@ -226,7 +302,10 @@ for ip in INPUT:
         ent['updated'] = datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
 
         # Index the entity in elasticsearch.
-        es.index(index='ipwhois', doc_type='entities', body=ent)
+        es.index(index='ipwhois', doc_type='entity', body=ent)
+
+        # Refresh the index for searching duplicates.
+        es.indices.refresh(index="ipwhois")
 
     # Don't need the objects key since that data has been entered as the
     # entities doc_type.
@@ -237,10 +316,10 @@ for ip in INPUT:
         # Get the network ISO country code
         cc = ret['network']['country']
 
-        # Add the geo coordinates for the country, defined in geo_coord.json.
+        # Add the geo coordinates for the country, defined in GEO_COORD.json.
         ret['network']['country_geo'] = {
-            'lat': geo_coord[cc]['latitude'],
-            'lon': geo_coord[cc]['longitude']
+            'lat': GEO_COORD[cc]['latitude'],
+            'lon': GEO_COORD[cc]['longitude']
         }
 
         # Set the network country name.
@@ -256,8 +335,8 @@ for ip in INPUT:
         # I do not want to redistribute the GeoLite2 database, download
         # GeoLite2-City.mmdb from:
         # https://dev.maxmind.com/geoip/geoip2/geolite2/
-        mm_reader = geoip2.database.Reader(str(cur_dir) +
-                                           '/GeoLite2-City.mmdb')
+        mm_reader = geoip2.database.Reader(str(CUR_DIR) +
+                                           '/data/GeoLite2-City.mmdb')
 
         # Query the database.
         mm_response = mm_reader.city(ret['query'])
@@ -281,3 +360,6 @@ for ip in INPUT:
 
     # Index the base in elasticsearch.
     es.index(index='ipwhois', doc_type='base', body=ret)
+
+    # Refresh the index for searching duplicates.
+    es.indices.refresh(index="ipwhois")
