@@ -150,7 +150,7 @@ DEFAULT_MAPPING = {
 CUR_DIR = path.dirname(__file__)
 
 # Load the geo json for mapping ISO country codes to lat/lon geo coords.
-with io.open(str(CUR_DIR) + '/data/GEO_COORD.json', 'r') as data_file:
+with io.open(str(CUR_DIR) + '/data/geo_coord.json', 'r') as data_file:
     GEO_COORD = json.load(data_file)
 
 # Get the ISO country code mappings.
@@ -207,6 +207,11 @@ def create_index():
                 "format": "yyyy-MM-dd'T'HH:mm:ssZ",
                 "ignore_malformed": "false"
             },
+            "query": {
+                "type": "ip",
+                "store": True,
+                "ignore_malformed": True
+            },
             "query_geo": {
                 "type": "geo_point",
                 "lat_lon": True,
@@ -220,6 +225,11 @@ def create_index():
                         "geohash": True
                     },
                     "start_address": {
+                        "type": "ip",
+                        "store": True,
+                        "ignore_malformed": True
+                    },
+                    "end_address": {
                         "type": "ip",
                         "store": True,
                         "ignore_malformed": True
