@@ -106,10 +106,6 @@ args = parser.parse_args()
 # Common es mapping.
 DEFAULT_MAPPING = {
     "date_detection": 1,
-    "_id": {
-        "index": "not_analyzed",
-        "store": True
-    },
     "properties": {
         "@version": {
             "type": "string",
@@ -133,11 +129,6 @@ DEFAULT_MAPPING = {
                         "{name}": {
                             "type": "string",
                             "index": "not_analyzed"
-                        },
-                        "{name}.raw": {
-                            "type": "string",
-                            "index": "not_analyzed",
-                            "ignore_above": 256
                         }
                     }
                 }
@@ -202,7 +193,7 @@ def create_index():
                 "format": "date",
                 "ignore_malformed": "true"
             },
-            "network.events.timestamp": {
+            "network_events_timestamp": {
                 "type": "date",
                 "format": "yyyy-MM-dd'T'HH:mm:ssZ",
                 "ignore_malformed": "false"
