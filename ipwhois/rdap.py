@@ -26,6 +26,9 @@ from . import (Net, NetError, InvalidEntityContactObject, InvalidNetworkObject,
                InvalidEntityObject, HTTPLookupError)
 from .utils import unique_everseen
 from .net import ip_address
+import logging
+
+log = logging.getLogger(__name__)
 
 BOOTSTRAP_URL = 'http://rdap.arin.net/bootstrap'
 
@@ -489,6 +492,8 @@ class _RDAPNetwork(_RDAPCommon):
 
         except (KeyError, ValueError, TypeError):
 
+            log.debug('IP address data incomplete. Data parsed prior to '
+                      'exception: {0}'.format(self.vars))
             raise InvalidNetworkObject('IP address data is missing for RDAP '
                                        'network object.')
 
@@ -684,6 +689,9 @@ class RDAP:
         # Only fetch the response if we haven't already.
         if response is None:
 
+            log.debug('Response not given, perform RDAP lookup for {0}'.format(
+                ip_url))
+
             # Retrieve the whois data.
             response = self._net.get_http_json(
                 ip_url, retry_count
@@ -691,8 +699,11 @@ class RDAP:
 
         if inc_raw:
 
+            log.debug('Response provided, skip primary RDAP lookup')
+
             results['raw'] = response
 
+        log.debug('Parsing RDAP network object')
         result_net = _RDAPNetwork(response)
         result_net.parse()
         results['network'] = result_net.vars
@@ -700,6 +711,7 @@ class RDAP:
         results['objects'] = {}
 
         # Iterate through and parse the root level entities.
+        log.debug('Parsing RDAP root level entities')
         for ent in response['entities']:
 
             if ent['handle'] not in [results['entities'], excluded_entities]:
@@ -714,6 +726,11 @@ class RDAP:
         # Iterate through to the defined depth, retrieving and parsing all
         # unique entities.
         temp_objects = results['objects']
+
+        if depth > 0 and len(temp_objects) > 0:
+
+            log.debug('Parsing RDAP sub-entities to depth: {0}'.format(depth))
+
         while depth > 0 and len(temp_objects) > 0:
 
             new_objects = {}

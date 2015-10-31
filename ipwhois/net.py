@@ -26,6 +26,7 @@ import sys
 import socket
 import dns.resolver
 import json
+import logging
 from time import sleep
 
 # Import the dnspython3 rdtypes to fix the dynamic import problem when frozen.
@@ -56,6 +57,8 @@ except ImportError:
                          ProxyHandler,
                          build_opener,
                          Request)
+
+log = logging.getLogger(__name__)
 
 # POSSIBLY UPDATE TO USE RDAP
 ARIN = 'http://whois.arin.net/rest/nets;q={0}?showDetails=true&showARIN=true'
@@ -203,6 +206,7 @@ class Net:
 
             if result is None:
 
+                log.debug('ASN query for {0}'.format(self.dns_zone))
                 data = dns.resolver.query(self.dns_zone, 'TXT')
                 temp = str(data[0]).split('|')
 
@@ -266,6 +270,7 @@ class Net:
                 # Create the connection for the Cymru whois query.
                 conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 conn.settimeout(self.timeout)
+                log.debug('ASN query for {0}'.format(self.address_str))
                 conn.connect((CYMRU_WHOIS, 43))
 
                 # Query the Cymru whois server, and store the results.
@@ -307,10 +312,13 @@ class Net:
 
             return ret
 
-        except (socket.timeout, socket.error):
+        except (socket.timeout, socket.error) as e:
 
+            log.debug('ASN query socket error: {0}'.format(e))
             if retry_count > 0:
 
+                log.debug('ASN query retrying (count: {0})'.format(
+                    retry_count))
                 return self.get_asn_whois(retry_count - 1)
 
             else:
@@ -369,7 +377,8 @@ class Net:
             # Create the connection for the whois query.
             conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             conn.settimeout(self.timeout)
-
+            log.debug('WHOIS query for {0} at {1}:{2}'.format(
+                self.address_str, server, port))
             conn.connect((server, port))
 
             # Prep the query.
@@ -396,33 +405,38 @@ class Net:
 
             if 'Query rate limit exceeded' in response:
 
+                log.debug('WHOIS query rate limit exceeded. Waiting...')
                 sleep(1)
                 return self.get_whois(asn_registry, retry_count, server, port,
                                       extra_blacklist)
 
             elif 'error 501' in response or 'error 230' in response:
 
+                log.debug('WHOIS query error: {0}'.format(response))
                 raise ValueError
 
             return str(response)
 
-        except (socket.timeout, socket.error):
+        except (socket.timeout, socket.error) as e:
 
+            log.debug('WHOIS query socket error: {0}'.format(e))
             if retry_count > 0:
 
+                log.debug('WHOIS query retrying (count: {0})'.format(
+                    retry_count))
                 return self.get_whois(asn_registry, retry_count - 1, server,
                                       port, extra_blacklist)
 
             else:
 
                 raise WhoisLookupError(
-                    'Whois lookup failed for %r.' % self.address_str
+                    'WHOIS lookup failed for %r.' % self.address_str
                 )
 
         except:
 
             raise WhoisLookupError(
-                'Whois lookup failed for %r.' % self.address_str
+                'WHOIS lookup failed for %r.' % self.address_str
             )
 
     def get_http_json(self, url=None, retry_count=3):
@@ -444,6 +458,8 @@ class Net:
         try:
 
             # Create the connection for the whois query.
+            log.debug('HTTP query for {0} at {1}'.format(
+                self.address_str, url))
             conn = Request(url, headers={'Accept': 'application/rdap+json'})
             data = self.opener.open(conn, timeout=self.timeout)
             try:
@@ -453,9 +469,13 @@ class Net:
 
             return d
 
-        except (socket.timeout, socket.error):
+        except (socket.timeout, socket.error) as e:
 
+            log.debug('HTTP query socket error: {0}'.format(e))
             if retry_count > 0:
+
+                log.debug('HTTP query retrying (count: {0})'.format(
+                    retry_count))
 
                 return self.get_http_json(url, retry_count - 1)
 
@@ -490,6 +510,7 @@ class Net:
                 socket.setdefaulttimeout(self.timeout)
                 default_timeout_set = True
 
+            log.debug('Host query for {0}'.format(self.address_str))
             ret = socket.gethostbyaddr(self.address_str)
 
             if default_timeout_set:
@@ -498,9 +519,13 @@ class Net:
 
             return ret
 
-        except (socket.timeout, socket.error):
+        except (socket.timeout, socket.error) as e:
 
+            log.debug('Host query socket error: {0}'.format(e))
             if retry_count > 0:
+
+                log.debug('Host query retrying (count: {0})'.format(
+                    retry_count))
 
                 return self.get_host(retry_count - 1)
 
@@ -548,11 +573,13 @@ class Net:
 
             try:
 
+                log.debug('ASN DNS lookup failed, trying ASN WHOIS')
                 asn_data = self.get_asn_whois(retry_count)
 
             except (ASNLookupError, ASNRegistryError):
 
                 # Lets attempt to get the ASN registry information from ARIN.
+                log.debug('ASN WHOIS lookup failed, trying ASN via HTTP')
                 response = self.get_http_json(
                     str(ARIN).format(self.address_str),
                     retry_count
@@ -576,6 +603,7 @@ class Net:
 
                 except KeyError:
 
+                    log.debug('No networks found')
                     net_list = []
 
                 for n in net_list:
@@ -597,8 +625,10 @@ class Net:
                                 n['orgRef']['@handle'].lower()
                             )
 
-                    except KeyError:
+                    except KeyError as e:
 
+                        log.debug('Could not parse ASN registry via HTTP: {0}'
+                                  ''.format(e))
                         raise ASNRegistryError('ASN registry lookup failed.')
 
                     break

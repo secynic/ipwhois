@@ -23,6 +23,9 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 from . import Net
+import logging
+
+log = logging.getLogger(__name__)
 
 
 class IPWhois:
@@ -101,6 +104,7 @@ class IPWhois:
         results = {}
 
         # Retrieve the ASN information.
+        log.debug('ASN lookup for {0}'.format(self.address_str))
         asn_data, response = self.net.lookup_asn(retry_count)
 
         # Add the ASN information to the return dictionary.
@@ -108,6 +112,7 @@ class IPWhois:
 
         # Retrieve the whois data and parse.
         whois = Whois(self.net)
+        log.debug('WHOIS lookup for {0}'.format(self.address_str))
         whois_data = whois.lookup(
             inc_raw, retry_count, get_referral, extra_blacklist,
             ignore_referral_errors, response, asn_data
@@ -167,6 +172,7 @@ class IPWhois:
         if not bootstrap:
 
             # Retrieve the ASN information.
+            log.debug('ASN lookup for {0}'.format(self.address_str))
             asn_data, response = self.net.lookup_asn(retry_count)
 
             # Add the ASN information to the return dictionary.
@@ -174,6 +180,7 @@ class IPWhois:
 
         # Retrieve the RDAP data and parse.
         rdap = RDAP(self.net)
+        log.debug('RDAP lookup for {0}'.format(self.address_str))
         rdap_data = rdap.lookup(inc_raw, retry_count, asn_data, depth,
                                 excluded_entities, response, bootstrap)
 

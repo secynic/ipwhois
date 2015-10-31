@@ -1,7 +1,12 @@
 import unittest
-
+import logging
 from ipwhois import (IPWhois, ASNLookupError, ASNRegistryError,
                      WhoisLookupError, HTTPLookupError)
+
+LOG_FORMAT = ('[%(asctime)s] [%(levelname)s] [%(filename)s:%(lineno)s] '
+              '[%(funcName)s()] %(message)s')
+logging.basicConfig(level=logging.DEBUG, format=LOG_FORMAT)
+log = logging.getLogger(__name__)
 
 
 class TestCommon(unittest.TestCase):
@@ -34,6 +39,7 @@ class TestIPWhois(TestCommon):
 
         for ip in ips:
 
+            log.debug('Testing: {0}'.format(ip))
             result = IPWhois(ip)
 
             try:
@@ -82,6 +88,7 @@ class TestIPWhois(TestCommon):
 
         for ip in ips:
 
+            log.debug('Testing: {0}'.format(ip))
             result = IPWhois(ip)
 
             try:

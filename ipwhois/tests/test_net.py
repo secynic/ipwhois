@@ -1,7 +1,12 @@
 import unittest
 import sys
+import logging
 from ipwhois import (Net, IPDefinedError, ASNLookupError, ASNRegistryError,
                      WhoisLookupError, HTTPLookupError, HostLookupError)
+
+LOG_FORMAT = ('[%(asctime)s] [%(levelname)s] [%(filename)s:%(lineno)s] '
+              '[%(funcName)s()] %(message)s')
+logging.basicConfig(level=logging.DEBUG, format=LOG_FORMAT)
 
 
 class TestCommon(unittest.TestCase):

@@ -26,6 +26,7 @@ import sys
 import re
 import copy
 from datetime import datetime
+import logging
 from .utils import unique_everseen
 from . import (BlacklistError, WhoisLookupError, NetError)
 
@@ -39,6 +40,8 @@ else:
                         IPNetwork as ip_network,
                         summarize_address_range,
                         collapse_address_list as collapse_addresses)
+
+log = logging.getLogger(__name__)
 
 # Legacy base whois output dictionary. Migration to the RDAP format is limited.
 BASE_NET = {
@@ -289,8 +292,10 @@ class Whois:
                         values = unique_everseen(values)
                         value = '\n'.join(values)
 
-                except ValueError:
+                except ValueError as e:
 
+                    log.debug('Whois field parsing failed for {0}: {1}'.format(
+                        field, e))
                     pass
 
                 ret[field] = value
@@ -479,6 +484,9 @@ class Whois:
         # Only fetch the response if we haven't already.
         if response is None or asn_data['asn_registry'] is not 'arin':
 
+            log.debug('Response not given, perform WHOIS lookup for {0}'
+                      .format(self._net.address_str))
+
             # Retrieve the whois data.
             response = self._net.get_whois(asn_data['asn_registry'],
                                            retry_count,
@@ -516,6 +524,8 @@ class Whois:
         # Retrieve the referral whois data.
         if get_referral and referral_server:
 
+            log.debug('Perform referral WHOIS lookup')
+
             response_ref = None
 
             if ignore_referral_errors:
@@ -540,6 +550,8 @@ class Whois:
                 )
 
             if response_ref:
+
+                log.debug('Parsing referral WHOIS data')
 
                 if inc_raw:
 
@@ -576,6 +588,7 @@ class Whois:
 
         # Iterate through all of the network sections and parse out the
         # appropriate fields for each.
+        log.debug('Parsing WHOIS data')
         for index, net in enumerate(nets):
 
             section_end = None

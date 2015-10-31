@@ -2,8 +2,14 @@ import unittest
 import json
 import io
 from os import path
+import logging
 from ipwhois.rdap import (RDAP, _RDAPEntity, InvalidEntityObject,
                           InvalidEntityContactObject, Net)
+
+LOG_FORMAT = ('[%(asctime)s] [%(levelname)s] [%(filename)s:%(lineno)s] '
+              '[%(funcName)s()] %(message)s')
+logging.basicConfig(level=logging.DEBUG, format=LOG_FORMAT)
+log = logging.getLogger(__name__)
 
 
 class TestCommon(unittest.TestCase):
@@ -28,6 +34,7 @@ class TestRDAP(TestCommon):
 
         for key, val in data.items():
 
+            log.debug('Testing: {0}'.format(key))
             net = Net(key)
             obj = RDAP(net)
 

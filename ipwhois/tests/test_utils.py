@@ -1,9 +1,14 @@
 import unittest
 import sys
+import logging
 from ipwhois.utils import (get_countries,
                            ipv4_is_defined,
                            ipv6_is_defined,
                            unique_addresses)
+
+LOG_FORMAT = ('[%(asctime)s] [%(levelname)s] [%(filename)s:%(lineno)s] '
+              '[%(funcName)s()] %(message)s')
+logging.basicConfig(level=logging.DEBUG, format=LOG_FORMAT)
 
 
 class TestFunctions(unittest.TestCase):

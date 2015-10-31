@@ -29,6 +29,7 @@ import re
 import copy
 import io
 import csv
+import logging
 
 if sys.version_info >= (3, 3):
     from ipaddress import (ip_address,
@@ -48,6 +49,8 @@ try:
 
 except ImportError:
     from itertools import ifilterfalse as filterfalse
+
+log = logging.getLogger(__name__)
 
 IETF_RFC_REFERENCES = {
     # IPv4
@@ -133,6 +136,9 @@ def get_countries(is_legacy_xml=False):
 
     if is_legacy_xml:
 
+        log.debug('Opening country code legacy XML: {0}'.format(
+                str(data_dir) + '/data/iso_3166-1_list_en.xml'))
+
         # Create the country codes file object.
         f = io.open(str(data_dir) + '/data/iso_3166-1_list_en.xml', 'r',
                     encoding='ISO-8859-1')
@@ -164,6 +170,9 @@ def get_countries(is_legacy_xml=False):
             countries[code] = name.title()
 
     else:
+
+        log.debug('Opening country code CSV: {0}'.format(
+                str(data_dir) + '/data/iso_3166-1_list_en.xml'))
 
         # Create the country codes file object.
         f = io.open(str(data_dir) + '/data/iso_3166-1.csv', 'r',
@@ -398,6 +407,9 @@ def unique_addresses(data=None, file_path=None):
     file_data = None
     if file_path:
 
+        log.debug('Opening file for unique address analysis: {0}'.format(
+                str(file_path)))
+
         f = open(str(file_path), 'r')
 
         # Read the file.
@@ -409,6 +421,8 @@ def unique_addresses(data=None, file_path=None):
     )
 
     # Check if there is data.
+    log.debug('Analyzing input/file data'.format(
+                str(file_path)))
     for input_data in [data, file_data]:
 
         if input_data:
