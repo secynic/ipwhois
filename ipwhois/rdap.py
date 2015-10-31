@@ -281,7 +281,6 @@ class _RDAPCommon:
             'remarks': None,
             'notices': None,
             'links': None,
-            # https://tools.ietf.org/html/rfc7483#section-10.2.3
             'events': None,
             'raw': None
         }
@@ -633,7 +632,7 @@ class RDAP:
                excluded_entities=None, response=None, bootstrap=False):
         """
         The function for retrieving and parsing information for an IP
-        address via HTTP (RDAP).
+        address via RDAP (HTTP).
 
         Args:
             inc_raw: Boolean for whether to include the raw results in the
@@ -700,7 +699,6 @@ class RDAP:
         if inc_raw:
 
             log.debug('Response provided, skip primary RDAP lookup')
-
             results['raw'] = response
 
         log.debug('Parsing RDAP network object')

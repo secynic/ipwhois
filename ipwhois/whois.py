@@ -187,12 +187,11 @@ class Whois:
     https://www.arin.net/resources/rdap.html
 
     Args:
-        address: An IPv4 or IPv6 address in string format.
-        timeout: The default timeout for socket connections in seconds.
-        proxy_opener: The urllib.request.OpenerDirector request for proxy
-            support or None.
+        net: A ipwhois.net.Net object.
 
     Raises:
+        NetError: The parameter provided is not an instance of
+            ipwhois.net.Net
         IPDefinedError: The address provided is defined (does not need to be
             resolved).
     """
@@ -303,6 +302,15 @@ class Whois:
         return ret
 
     def _get_nets_arin(self, response):
+        """
+        The function for parsing network blocks from ARIN whois data.
+
+        Args:
+            response: The response from the ARIN whois server.
+
+        Returns:
+            List: A of dictionaries containing keys: cidr, start, end.
+        """
 
         nets = []
 
@@ -357,6 +365,15 @@ class Whois:
         return nets
 
     def _get_nets_lacnic(self, response):
+        """
+        The function for parsing network blocks from LACNIC whois data.
+
+        Args:
+            response: The response from the LACNIC whois server.
+
+        Returns:
+            List: A of dictionaries containing keys: cidr, start, end.
+        """
 
         nets = []
 
@@ -399,6 +416,15 @@ class Whois:
         return nets
 
     def _get_nets_other(self, response):
+        """
+        The function for parsing network blocks from generic whois data.
+
+        Args:
+            response: The response from the whois/rwhois server.
+
+        Returns:
+            List: A of dictionaries containing keys: cidr, start, end.
+        """
 
         nets = []
 
@@ -446,26 +472,41 @@ class Whois:
                get_referral=False, extra_blacklist=None,
                ignore_referral_errors=False, asn_data=None):
         """
-        The function for retrieving and parsing information for an IP
-        address via HTTP (RDAP).
+        The function for retrieving and parsing whois information for an IP
+        address via port 43 (WHOIS).
 
         Args:
             inc_raw: Boolean for whether to include the raw results in the
                 returned dictionary.
             retry_count: The number of times to retry in case socket errors,
                 timeouts, connection resets, etc. are encountered.
+            response: Optional response object, this bypasses the Whois lookup.
+            get_referral: Boolean for whether to retrieve referral whois
+                information, if available.
+            extra_blacklist: A list of blacklisted whois servers in addition to
+                the global BLACKLIST.
+            ignore_referral_errors: Boolean for whether to ignore and continue
+                when an exception is encountered on referral whois lookups.
+            asn_data: Optional ASN result object, this bypasses the ASN lookup.
 
         Returns:
             Dictionary:
 
             :query: The IP address (String)
-            :network: Dictionary of values returned by _RDAPNetwork. The raw
-                result is included for each entity if the inc_raw parameter is
-                True.
-            :entities: Dictionary of entities with the handles as keys, and the
-                dictionary returned by _RDAPEntity as the values. The raw
-                result is included for each entity if the inc_raw parameter is
-                True.
+            :asn: The Autonomous System Number (String)
+            :asn_date: The ASN Allocation date (String)
+            :asn_registry: The assigned ASN registry (String)
+            :asn_cidr: The assigned ASN CIDR (String)
+            :asn_country_code: The assigned ASN country code (String)
+            :nets: Dictionaries containing network information which consists
+                of the fields listed in the NIC_WHOIS dictionary. (List)
+            :raw: Raw whois results if the inc_raw parameter is True. (String)
+            :referral: Dictionary of referral whois information if get_referral
+                is True and the server isn't blacklisted. Consists of fields
+                listed in the RWHOIS dictionary. Additional referral server
+                informaion is added in the server and port keys. (Dictionary)
+            :raw_referral: Raw referral whois results if the inc_raw parameter
+                is True. (String)
         """
 
         # Create the return dictionary.

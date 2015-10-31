@@ -11,8 +11,8 @@ Features
 * Parses a majority of whois fields in to a standard dictionary
 * IPv4 and IPv6 support
 * Referral whois support
-* Supports REST queries (useful if whois is blocked from your network)
-* Proxy support for REST queries
+* Supports RDAP queries (recommended method, more detailed information)
+* Proxy support for RDAP queries
 * Recursive network parsing for IPs with parent/children networks listed
 * Python 2.6+ and 3.3+ supported
 * Useful set of utilities
@@ -46,11 +46,11 @@ Typical usage
 
 	>>>> from ipwhois import IPWhois
 	>>>> from pprint import pprint
-	
+
 	>>>> obj = IPWhois('74.125.225.229')
 	>>>> results = obj.lookup()
 	>>>> pprint(results)
-	
+
 	{
 	'asn': '15169',
 	'asn_cidr': '74.125.225.0/24',
@@ -139,7 +139,7 @@ Multiple networks listed and referral whois
                  'state': 'DC',
                  'updated': '2007-09-18 22:02:09'}
     }
-	
+
 Whois lookup via HTTP (REST)
 ----------------------------
 
@@ -147,11 +147,11 @@ Whois lookup via HTTP (REST)
 
 	>>>> from ipwhois import IPWhois
 	>>>> from pprint import pprint
-	
+
 	>>>> obj = IPWhois('74.125.225.229')
 	>>>> results = obj.lookup_rws()
 	>>>> pprint(results)
-	
+
 	{
 	'asn': '15169',
 	'asn_cidr': '74.125.225.0/24',
@@ -195,13 +195,13 @@ Retrieve host information for an IP address
 
 	>>>> from ipwhois import IPWhois
 	>>>> from pprint import pprint
-	
+
 	>>>> obj = IPWhois('74.125.225.229')
 	>>>> results = obj.get_host()
 	>>>> pprint(results)
-	
+
 	('dfw06s26-in-f5.1e100.net', [], ['74.125.225.229'])
-		
+
 Retrieve the official country name for an ISO 3166-1 country code
 -----------------------------------------------------------------
 
@@ -209,7 +209,7 @@ Retrieve the official country name for an ISO 3166-1 country code
 
 	>>>> from ipwhois import IPWhois
 	>>>> from ipwhois.utils import get_countries
-	
+
 	>>>> countries = get_countries()
 	>>>> obj = IPWhois('74.125.225.229')
 	>>>> results = obj.lookup(False)
@@ -263,30 +263,35 @@ Latest version from GitHub::
 
 	pip install -e git+https://github.com/secynic/ipwhois@master#egg=ipwhois
 
-Parsing
-=======
+RDAP (HTTP)
+===========
+
+IPWhois.lookup_rdap() is now the recommended lookup method. RDAP provides a
+far better data structure than legacy whois and REST lookups (previous
+implementation). RDAP queries allow for parsing of contact information and
+details for users, organizations, and groups. RDAP also provides more detailed
+network information.
+
+The bootstrap feature for AFRINIC is currently not
+supported by ARIN, but should be soon
+(https://github.com/arineng/rdap_bootstrap_server/issues/3). Once the support
+is added on the ARIN side, the ipwhois code will work without any changes.
+
+Legacy Whois Parsing
+====================
 
 Parsing is currently limited to CIDR, country, name, handle, range,
 description, state, city, address, postal_code, abuse_emails, tech_emails,
 misc_emails, created and updated fields. This is assuming that those fields
 are present (for both whois and rwhois).
 
-Some IPs have parent networks listed. The parser attempts to recognize this, 
-and break the networks into individual dictionaries. If a single network has 
+Some IPs have parent networks listed. The parser attempts to recognize this,
+and break the networks into individual dictionaries. If a single network has
 multiple CIDRs, they will be separated by ', '.
 
-Sometimes, you will see whois information with multiple consecutive same name 
-fields, e.g., Description: some text\\nDescription: more text. The parser will 
+Sometimes, you will see whois information with multiple consecutive same name
+fields, e.g., Description: some text\\nDescription: more text. The parser will
 recognize this and the returned result will have the values separated by '\\n'.
-
-REST (HTTP)
-===========
-
-IPWhois.lookup_rws() should be faster than IPWhois.lookup(), but may not be as 
-reliable. REST queries do not support referral whois lookups. AFRINIC does not
-have a Whois-RWS service yet; we have to rely on the Ripe RWS service, which
-does not contain all of the data we need. The LACNIC RWS service is supported,
-but is in beta. This may result in availability or performance issues.
 
 Country Codes
 =============
@@ -300,23 +305,30 @@ Use Legacy XML File::
 	>>>> from ipwhois.utils import get_countries
 	>>>> countries = get_countries(is_legacy_xml=True)
 
+Examples
+========
+
+An examples directory has been added here:
+
+https://github.com/secynic/ipwhois/tree/master/ipwhois/examples
+
 IP Reputation Support?
 ======================
 
-This feature is under consideration. Take a look at TekDefense's Automater for
-now: `TekDefense-Automater <https://github.com/1aN0rmus/TekDefense-Automater>`_
+This feature is under consideration. Take a look at TekDefense's Automater:
+
+`TekDefense-Automater <https://github.com/1aN0rmus/TekDefense-Automater>`_
 
 Domain Support?
 ===============
 
-There are no plans for domain whois support in this project. It is under
-consideration as a new library in the future.
+There are no plans for domain whois support in this project.
 
-For now, consider using Sven Slootweg's
+Look at Sven Slootweg's
 `python-whois <https://github.com/joepie91/python-whois>`_ for a library with
 domain support.
 
 Special Thanks
 ==============
 
-Thank you JetBrains for the PyCharm open source support.
+Thank you JetBrains for the PyCharm open source support!
