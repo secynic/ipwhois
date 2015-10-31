@@ -277,6 +277,28 @@ supported by ARIN, but should be soon
 (https://github.com/arineng/rdap_bootstrap_server/issues/3). Once the support
 is added on the ARIN side, the ipwhois code will work without any changes.
 
+Upgrading from 0.10 to 0.11
+---------------------------
+
+Considerable changes were made between v0.10.3 and v0.11.0. The new RDAP return
+format was introduced and split off from the legacy whois return format. Using
+RDAP lookup is the recommended method to maximize indexable values.
+
+RDAP return data is different in nearly every way from the legacy whois data.
+
+Here are the new standard keys for RDAP results::
+
+	:query: The IP address (String)
+	:network: Dictionary of values returned by _RDAPNetwork. The raw
+		result is included for each entity if the inc_raw parameter is
+		True.
+	:entities: List of entity keys referenced by the top level IP
+		address query.
+	:objects: Dictionary of objects with the handles as keys, and the
+		dictionary returned by _RDAPEntity, etc as the values. The raw
+		result is included for each object if the inc_raw parameter is
+		True.
+
 Legacy Whois Parsing
 ====================
 
