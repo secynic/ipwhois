@@ -26,6 +26,11 @@ Documentation
 
 https://secynic.github.io/ipwhois
 
+Examples
+--------
+
+https://github.com/secynic/ipwhois/tree/master/ipwhois/examples
+
 Github
 ------
 
@@ -326,13 +331,6 @@ Use Legacy XML File::
 
 	>>>> from ipwhois.utils import get_countries
 	>>>> countries = get_countries(is_legacy_xml=True)
-
-Examples
-========
-
-An examples directory has been added here:
-
-https://github.com/secynic/ipwhois/tree/master/ipwhois/examples
 
 IP Reputation Support?
 ======================
