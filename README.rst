@@ -52,15 +52,15 @@ Typical usage
 
 ::
 
-	>>>> from ipwhois import IPWhois
-	>>>> from pprint import pprint
+    >>>> from ipwhois import IPWhois
+    >>>> from pprint import pprint
 
-	>>>> obj = IPWhois('74.125.225.229')
-	>>>> results = obj.lookup_rdap(depth=1)
-	>>>> pprint(results)
+    >>>> obj = IPWhois('74.125.225.229')
+    >>>> results = obj.lookup_rdap(depth=1)
+    >>>> pprint(results)
 
-	{
-	'entities': ['GOGL'],
+    {
+    'entities': ['GOGL'],
     'network': {
         'country': None,
          'end_address': '74.125.255.255',
