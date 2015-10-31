@@ -6,12 +6,13 @@ Changelog
 
 - Support for REST lookups replaced with RDAP.
 - Split code for a more structured system (net, whois, rdap, exceptions).
-- Split tests to match the new structure. [PARTIAL]
+- Tests match the data new structure.
+- Split tests for online and offline testing.
 - Performance enhancements for parsing.
 - Added an optional bootstrap parameter for RDAP lookups, in order to replace
-  ASN lookups. Will default to False. Afrinic is currently not supported, so
-  I would not use this for now. Consider this future functionality for when
-  arin adds afrinic support back in their RDAP bootstrap code.
+  ASN lookups or both. Will default to False. Afrinic is currently not
+  supported, so I would not use this for now. ARIN acknowledged my issue
+  for this, and will be adding support back in for Afrinic bootstrap.
 - Added logging.
 - Added examples directory.
 
