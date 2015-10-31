@@ -44,8 +44,121 @@ https://pypi.python.org/pypi/ipwhois
 Usage Examples
 ==============
 
+RDAP (HTTP)
+-----------
+
 Typical usage
--------------
+^^^^^^^^^^^^^
+
+::
+
+	>>>> from ipwhois import IPWhois
+	>>>> from pprint import pprint
+
+	>>>> obj = IPWhois('74.125.225.229')
+	>>>> results = obj.lookup_rdap(depth=1)
+	>>>> pprint(results)
+
+	{
+	'entities': ['GOGL'],
+    'network': {
+        'country': None,
+         'end_address': '74.125.255.255',
+         'events': [{'action': 'last changed',
+                     'actor': None,
+                     'timestamp': '2012-02-24T09:44:34-05:00'},
+                    {'action': 'registration',
+                     'actor': None,
+                     'timestamp': '2007-03-13T12:09:54-04:00'}],
+         'handle': 'NET-74-125-0-0-1',
+         'ip_version': 'v4',
+         'links': ['https://rdap.arin.net/registry/ip/074.125.000.000',
+                   'http://whois.arin.net/rest/net/NET-74-125-0-0-1'],
+         'name': 'GOOGLE',
+         'notices': [{'description': 'By using the ARIN RDAP/Whois service, you are agreeing to the RDAP/Whois Terms of Use',
+                      'title': 'Terms of Service'}],
+         'parent_handle': 'NET-74-0-0-0-0',
+         'raw': None,
+         'remarks': None,
+         'start_address': '74.125.0.0',
+         'status': None,
+         'type': None
+    },
+    'objects': {
+        'GOGL': {'contact': {'address': [{
+            'type': None,
+            'value': '1600 Amphitheatre Parkway\nMountain View\nCA\n94043\nUNITED STATES'}],
+            'email': None,
+            'kind': 'org',
+            'name': 'Google Inc.',
+            'phone': None,
+            'role': None,
+            'title': None},
+            'entities': ['ZG39-ARIN'],
+            'events': [{'action': 'last changed',
+                      'actor': None,
+                      'timestamp': '2013-08-07T19:59:17-04:00'},
+                     {'action': 'registration',
+                      'actor': None,
+                      'timestamp': '2000-03-30T00:00:00-05:00'}],
+            'events_actor': None,
+            'handle': 'GOGL',
+            'links': ['https://rdap.arin.net/registry/entity/GOGL',
+                    'http://whois.arin.net/rest/org/GOGL'],
+            'notices': None,
+            'raw': None,
+            'remarks': None,
+            'roles': ['registrant'],
+            'status': None},
+        'ZG39-ARIN': {'contact': {'address': [{
+            'type': None,
+            'value': '1600 Amphitheatre Parkway\nMountain View\nCA\n94043\nUNITED STATES'}],
+            'email': [{'type': None,
+                      'value': 'arin-contact@google.com'}],
+            'kind': 'group',
+            'name': 'Google Inc',
+            'phone': [{'type': ['work',
+                               'voice'],
+                      'value': '+1-650-253-0000'}],
+            'role': None,
+            'title': None},
+            'entities': None,
+            'events': [{'action': 'last changed',
+                       'actor': None,
+                       'timestamp': '2015-09-01T14:03:11-04:00'},
+                      {'action': 'registration',
+                       'actor': None,
+                       'timestamp': '2000-11-30T13:54:08-05:00'}],
+            'events_actor': None,
+            'handle': 'ZG39-ARIN',
+            'links': ['https://rdap.arin.net/registry/entity/ZG39-ARIN',
+                     'http://whois.arin.net/rest/poc/ZG39-ARIN'],
+            'notices': [{'description': 'By using the ARIN RDAP/Whois service, you are agreeing to the RDAP/Whois Terms of Use',
+                        'title': 'Terms of Service'}],
+            'raw': None,
+            'remarks': None,
+            'roles': None,
+            'status': ['validated']}},
+    'query': '74.125.225.229',
+    'raw': None
+    }
+
+Use a proxy
+^^^^^^^^^^^
+
+::
+
+	>>>> from urllib import request
+	>>>> from ipwhois import IPWhois
+	>>>> handler = request.ProxyHandler({'http': 'http://192.168.0.1:80/'})
+	>>>> opener = request.build_opener(handler)
+	>>>> obj = IPWhois('74.125.225.229', proxy_opener = opener)
+
+Legacy Whois
+------------
+
+Typical usage
+^^^^^^^^^^^^^
 
 ::
 
@@ -84,7 +197,7 @@ Typical usage
 	}
 
 Multiple networks listed and referral whois
--------------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 ::
 
@@ -145,56 +258,11 @@ Multiple networks listed and referral whois
                  'updated': '2007-09-18 22:02:09'}
     }
 
-Whois lookup via HTTP (REST)
-----------------------------
-
-::
-
-	>>>> from ipwhois import IPWhois
-	>>>> from pprint import pprint
-
-	>>>> obj = IPWhois('74.125.225.229')
-	>>>> results = obj.lookup_rws()
-	>>>> pprint(results)
-
-	{
-	'asn': '15169',
-	'asn_cidr': '74.125.225.0/24',
-	'asn_country_code': 'US',
-	'asn_date': '2007-03-13',
-	'asn_registry': 'arin',
-	'nets': [{'abuse_emails': 'arin-contact@google.com',
-	          'address': '1600 Amphitheatre Parkway',
-	          'cidr': '74.125.0.0/16',
-	          'city': 'Mountain View',
-	          'country': 'US',
-	          'created': '2007-03-13T12:09:54-04:00',
-	          'description': 'Google Inc.',
-	          'handle': 'NET-74-125-0-0-1',
-	          'misc_emails': None,
-	          'name': 'GOOGLE',
-	          'postal_code': '94043',
-	          'range': '74.125.0.0 - 74.125.255.255',
-	          'state': 'CA',
-	          'tech_emails': 'arin-contact@google.com',
-	          'updated': '2012-02-24T09:44:34-05:00'}],
-	'query': '74.125.225.229',
-	'raw': None
-	}
-
-Use a proxy
------------
-
-::
-
-	>>>> from urllib import request
-	>>>> from ipwhois import IPWhois
-	>>>> handler = request.ProxyHandler({'http': 'http://192.168.0.1:80/'})
-	>>>> opener = request.build_opener(handler)
-	>>>> obj = IPWhois('74.125.225.229', proxy_opener = opener)
+Utilities
+---------
 
 Retrieve host information for an IP address
--------------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 ::
 
@@ -208,7 +276,7 @@ Retrieve host information for an IP address
 	('dfw06s26-in-f5.1e100.net', [], ['74.125.225.229'])
 
 Retrieve the official country name for an ISO 3166-1 country code
------------------------------------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 ::
 
@@ -223,7 +291,7 @@ Retrieve the official country name for an ISO 3166-1 country code
 	United States
 
 Parse out IP addresses and ports from text or a file
-----------------------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 ::
 
