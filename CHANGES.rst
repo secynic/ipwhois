@@ -1,6 +1,22 @@
 Changelog
 =========
 
+0.11.0 (2015-11-02)
+-------------------
+
+- Support for REST lookups replaced with RDAP.
+- Split code for a more structured system (net, whois, rdap, exceptions).
+- Tests match the data new structure.
+- Split tests for online and offline testing.
+- Performance enhancements for parsing.
+- Added an optional bootstrap parameter for RDAP lookups, in order to replace
+  ASN lookups or use both. Will default to False. Afrinic is currently not
+  supported, so I would not use this for now. ARIN acknowledged my issue
+  for this, and will be adding support back in for Afrinic bootstrap.
+- Added field_list parameter (inclusion list) for WHOIS lookups.
+- Added logging.
+- Added examples directory.
+
 0.10.3 (2015-08-14)
 -------------------
 
