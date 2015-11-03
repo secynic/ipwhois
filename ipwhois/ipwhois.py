@@ -59,7 +59,8 @@ class IPWhois:
         )
 
     def lookup(self, inc_raw=False, retry_count=3, get_referral=False,
-               extra_blacklist=None, ignore_referral_errors=False):
+               extra_blacklist=None, ignore_referral_errors=False,
+               field_list=None):
         """
         The function for retrieving and parsing whois information for an IP
         address via port 43 (WHOIS).
@@ -75,6 +76,9 @@ class IPWhois:
                 the global BLACKLIST.
             ignore_referral_errors: Boolean for whether to ignore and continue
                 when an exception is encountered on referral whois lookups.
+            field_list: If provided, a list of fields to parse:
+                ['name', 'handle', 'description', 'country', 'state', 'city',
+                'address', 'postal_code', 'emails', 'created', 'updated']
 
         Returns:
             Dictionary:
@@ -115,7 +119,7 @@ class IPWhois:
         log.debug('WHOIS lookup for {0}'.format(self.address_str))
         whois_data = whois.lookup(
             inc_raw, retry_count, get_referral, extra_blacklist,
-            ignore_referral_errors, response, asn_data
+            ignore_referral_errors, response, asn_data, field_list
         )
 
         # Add the RDAP information to the return dictionary.

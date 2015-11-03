@@ -698,7 +698,6 @@ class RDAP:
 
         if inc_raw:
 
-            log.debug('Response provided, skip primary RDAP lookup')
             results['raw'] = response
 
         log.debug('Parsing RDAP network object')

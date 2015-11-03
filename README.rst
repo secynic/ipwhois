@@ -5,6 +5,9 @@ ipwhois
 ipwhois is a Python package focused on retrieving and parsing whois data
 for IPv4 and IPv6 addresses.
 
+RDAP is now the recommended query method. Please see the
+`upgrade info <#upgrading-from-0-10-to-0-11>`_.
+
 Features
 ========
 
@@ -47,8 +50,8 @@ Usage Examples
 RDAP (HTTP)
 -----------
 
-Typical usage
-^^^^^^^^^^^^^
+Basic usage
+^^^^^^^^^^^
 
 ::
 
@@ -157,8 +160,8 @@ Use a proxy
 Legacy Whois
 ------------
 
-Typical usage
-^^^^^^^^^^^^^
+Basic usage
+^^^^^^^^^^^
 
 ::
 
@@ -359,6 +362,9 @@ RDAP lookup is the recommended method to maximize indexable values.
 
 RDAP return data is different in nearly every way from the legacy whois data.
 
+For information on raw RDAP responses, please see the RFC:
+https://tools.ietf.org/html/rfc7483
+
 Here are the new standard keys for RDAP results::
 
 	:query: The IP address (String)
@@ -371,6 +377,8 @@ Here are the new standard keys for RDAP results::
 		dictionary returned by _RDAPEntity, etc as the values. The raw
 		result is included for each object if the inc_raw parameter is
 		True.
+
+See the `example <#basic-usage>`_ for more detailed field information.
 
 Legacy Whois Parsing
 ====================

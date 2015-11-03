@@ -211,7 +211,7 @@ class Whois:
                            'ipwhois.net.Net')
 
     def _parse_fields(self, response, fields_dict, net_start=None,
-                      net_end=None, dt_format=None):
+                      net_end=None, dt_format=None, field_list=None):
         """
         The function for parsing whois fields from a data input.
 
@@ -223,6 +223,9 @@ class Whois:
             net_end: The ending point of the network (if parsing multiple
                 networks).
             dt_format: The format of datetime fields if known.
+            field_list: If provided, a list of fields to parse:
+                ['name', 'handle', 'description', 'country', 'state', 'city',
+                'address', 'postal_code', 'emails', 'created', 'updated']
 
         Returns:
             Dictionary: A dictionary of fields provided in fields_dict.
@@ -230,7 +233,16 @@ class Whois:
 
         ret = {}
 
-        for field, pattern in fields_dict.items():
+        if not field_list:
+
+            field_list = ['name', 'handle', 'description', 'country', 'state',
+                          'city', 'address', 'postal_code', 'emails',
+                          'created', 'updated']
+
+        generate = ((field, pattern) for (field, pattern) in
+                    fields_dict.items() if field in field_list)
+
+        for field, pattern in generate:
 
             pattern = re.compile(
                 str(pattern),
@@ -470,7 +482,8 @@ class Whois:
 
     def lookup(self, inc_raw=False, retry_count=3, response=None,
                get_referral=False, extra_blacklist=None,
-               ignore_referral_errors=False, asn_data=None):
+               ignore_referral_errors=False, asn_data=None,
+               field_list=None):
         """
         The function for retrieving and parsing whois information for an IP
         address via port 43 (WHOIS).
@@ -488,6 +501,9 @@ class Whois:
             ignore_referral_errors: Boolean for whether to ignore and continue
                 when an exception is encountered on referral whois lookups.
             asn_data: Optional ASN result object, this bypasses the ASN lookup.
+            field_list: If provided, a list of fields to parse:
+                ['name', 'handle', 'description', 'country', 'state', 'city',
+                'address', 'postal_code', 'emails', 'created', 'updated']
 
         Returns:
             Dictionary:
@@ -600,7 +616,8 @@ class Whois:
 
                 temp_rnet = self._parse_fields(
                     response_ref,
-                    RWHOIS['fields']
+                    RWHOIS['fields'],
+                    field_list=field_list
                 )
 
                 # Add the networks to the return dictionary.
@@ -650,7 +667,8 @@ class Whois:
                 RIR_WHOIS[asn_data['asn_registry']]['fields'],
                 section_end,
                 net['end'],
-                dt_format
+                dt_format,
+                field_list
             )
 
             # Merge the net dictionaries.
