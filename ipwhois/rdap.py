@@ -514,11 +514,17 @@ class _RDAPNetwork(_RDAPCommon):
                     ip_network(self.vars['start_address']).network_address,
                     ip_network(self.vars['end_address']).network_address))
 
+            except AttributeError:
+
+                tmp_addrs.extend(summarize_address_range(
+                    ip_network(self.vars['start_address']).ip,
+                    ip_network(self.vars['end_address']).ip))
+
             self.vars['cidr'] = ', '.join(
                 [i.__str__() for i in collapse_addresses(tmp_addrs)]
             )
 
-        except (KeyError, ValueError, TypeError) as e:
+        except (KeyError, ValueError, TypeError, AttributeError) as e:
 
             log.debug('CIDR calculation failed: {0}'.format(e))
             pass
