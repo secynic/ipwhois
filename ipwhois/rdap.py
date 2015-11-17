@@ -25,7 +25,8 @@
 from . import (Net, NetError, InvalidEntityContactObject, InvalidNetworkObject,
                InvalidEntityObject, HTTPLookupError)
 from .utils import unique_everseen
-from .net import ip_address
+from .net import (ip_address, ip_network, summarize_address_range,
+                  collapse_addresses)
 import logging
 
 log = logging.getLogger(__name__)
@@ -437,6 +438,7 @@ class _RDAPNetwork(_RDAPCommon):
         self.vars.update({
             'start_address': None,
             'end_address': None,
+            'cidr': None,
             'ip_version': None,
             'type': None,
             'name': None,
@@ -495,6 +497,31 @@ class _RDAPNetwork(_RDAPCommon):
                       'exception: {0}'.format(self.vars))
             raise InvalidNetworkObject('IP address data is missing for RDAP '
                                        'network object.')
+
+        try:
+
+            tmp_addrs = []
+
+            try:
+
+                tmp_addrs.extend(summarize_address_range(
+                    ip_address(self.vars['start_address']),
+                    ip_address(self.vars['end_address'])))
+
+            except (KeyError, ValueError, TypeError):
+
+                tmp_addrs.extend(summarize_address_range(
+                    ip_network(self.vars['start_address']).network_address,
+                    ip_network(self.vars['end_address']).network_address))
+
+            self.vars['cidr'] = ', '.join(
+                [i.__str__() for i in collapse_addresses(tmp_addrs)]
+            )
+
+        except (KeyError, ValueError, TypeError) as e:
+
+            log.debug('CIDR calculation failed: {0}'.format(e))
+            pass
 
         for v in ['name', 'type', 'country']:
 

@@ -1,6 +1,11 @@
 Changelog
 =========
 
+0.11.1 (TBD)
+------------
+
+- Added CIDR parsing for RDAP lookups.
+
 0.11.0 (2015-11-02)
 -------------------
 

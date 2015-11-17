@@ -41,11 +41,17 @@ from .utils import ipv4_is_defined, ipv6_is_defined
 if sys.version_info >= (3, 3):
     from ipaddress import (ip_address,
                            IPv4Address,
-                           IPv6Address)
+                           IPv6Address,
+                           ip_network,
+                           summarize_address_range,
+                           collapse_addresses)
 else:
     from ipaddr import (IPAddress as ip_address,
                         IPv4Address,
-                        IPv6Address)
+                        IPv6Address,
+                        IPNetwork as ip_network,
+                        summarize_address_range,
+                        collapse_address_list as collapse_addresses)
 
 try:
     from urllib.request import (OpenerDirector,
