@@ -349,11 +349,6 @@ implementation). RDAP queries allow for parsing of contact information and
 details for users, organizations, and groups. RDAP also provides more detailed
 network information.
 
-The bootstrap feature for AFRINIC is currently not
-supported by ARIN, but should be soon
-(https://github.com/arineng/rdap_bootstrap_server/issues/3). Once the support
-is added on the ARIN side, the ipwhois code will work without any changes.
-
 Upgrading from 0.10 to 0.11
 ---------------------------
 
