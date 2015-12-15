@@ -69,8 +69,6 @@ class TestFunctions(unittest.TestCase):
 
         self.assertEquals(ipv4_is_defined('0.0.0.0'),
                           (True, 'This Network', 'RFC 1122, Section 3.2.1.3'))
-        self.assertEquals(ipv4_is_defined('192.168.0.1'),
-                          (True, 'Private-Use Networks', 'RFC 1918'))
         self.assertEquals(ipv4_is_defined('127.0.0.0'),
                           (True, 'Loopback', 'RFC 1122, Section 3.2.1.3'))
         self.assertEquals(ipv4_is_defined('169.254.0.0'),
@@ -93,6 +91,8 @@ class TestFunctions(unittest.TestCase):
                           (True, 'Multicast', 'RFC 3171'))
         self.assertEquals(ipv4_is_defined('255.255.255.255'),
                           (True, 'Limited Broadcast', 'RFC 919, Section 7'))
+        self.assertEquals(ipv4_is_defined('192.168.0.1'),
+                          (True, 'Private-Use Networks', 'RFC 1918'))
 
     def test_ipv6_is_defined(self):
         if sys.version_info >= (3, 3):

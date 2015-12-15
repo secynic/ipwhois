@@ -283,11 +283,6 @@ def ipv4_is_defined(address):
 
         return True, 'This Network', 'RFC 1122, Section 3.2.1.3'
 
-    # Private-Use Networks
-    elif query_ip.is_private:
-
-        return True, 'Private-Use Networks', 'RFC 1918'
-
     # Loopback
     elif query_ip.is_loopback:
 
@@ -339,6 +334,11 @@ def ipv4_is_defined(address):
     elif query_ip in IPv4Network('255.255.255.255/32'):
 
         return True, 'Limited Broadcast', 'RFC 919, Section 7'
+
+    # Private-Use Networks
+    elif query_ip.is_private:
+
+        return True, 'Private-Use Networks', 'RFC 1918'
 
     return False, '', ''
 
