@@ -8,7 +8,18 @@ logging.basicConfig(level=logging.DEBUG, format=LOG_FORMAT)
 log = logging.getLogger(__name__)
 
 
-class TestIPWhois(unittest.TestCase):
+class TestCommon(unittest.TestCase):
+
+    if not hasattr(unittest.TestCase, 'assertIsInstance'):
+        def assertIsInstance(self, obj, cls, msg=None):
+            if not isinstance(obj, cls):
+                self.fail(self._formatMessage(
+                    msg,
+                    '%s is not an instance of %r' % (repr(obj), cls)
+                ))
+
+
+class TestIPWhois(TestCommon):
 
     def test_repr(self):
 
