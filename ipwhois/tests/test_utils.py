@@ -17,6 +17,8 @@ logging.basicConfig(level=logging.DEBUG, format=LOG_FORMAT)
 
 class TestFunctions(unittest.TestCase):
 
+    maxDiff = None
+
     if not hasattr(unittest.TestCase, 'assertIsInstance'):
         def assertIsInstance(self, obj, cls, msg=None):
             if not isinstance(obj, cls):

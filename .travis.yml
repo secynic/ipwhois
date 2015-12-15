@@ -9,8 +9,9 @@ python:
 # command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
 install:
   - if [[ $TRAVIS_PYTHON_VERSION == 2* ]]; then pip install -r requirements/python2.txt --use-mirrors; fi
+  - if [[ $TRAVIS_PYTHON_VERSION == 3.3* ]]; then pip install -r requirements/python3.txt --use-mirrors; fi
+  - if [[ $TRAVIS_PYTHON_VERSION == 3.4* ]]; then pip install -r requirements/python3.txt --use-mirrors; fi
   - if [[ $TRAVIS_PYTHON_VERSION == 3.5* ]]; then pip install -r requirements/python3.txt; fi
-  - if [[ $TRAVIS_PYTHON_VERSION == 3* ]]; then pip install -r requirements/python3.txt --use-mirrors; fi
   - python setup.py -q install
 # command to run tests, e.g. python setup.py test
 script:
