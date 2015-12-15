@@ -30,12 +30,12 @@ import logging
 from .utils import unique_everseen
 from . import (BlacklistError, WhoisLookupError, NetError)
 
-if sys.version_info >= (3, 3):
+if sys.version_info >= (3, 3):  # pragma: no cover
     from ipaddress import (ip_address,
                            ip_network,
                            summarize_address_range,
                            collapse_addresses)
-else:
+else:  # pragma: no cover
     from ipaddr import (IPAddress as ip_address,
                         IPNetwork as ip_network,
                         summarize_address_range,
@@ -277,9 +277,9 @@ class Whois:
 
                     values.append(m.group('val').strip())
 
-                except AttributeError:
+                except IndexError:
 
-                    values.append(m.group('val2').strip())
+                    pass
 
                 sub_section_end = m.end()
 
@@ -483,7 +483,7 @@ class Whois:
     def lookup(self, inc_raw=False, retry_count=3, response=None,
                get_referral=False, extra_blacklist=None,
                ignore_referral_errors=False, asn_data=None,
-               field_list=None):
+               field_list=None, is_offline=False):
         """
         The function for retrieving and parsing whois information for an IP
         address via port 43 (WHOIS).
@@ -504,6 +504,9 @@ class Whois:
             field_list: If provided, a list of fields to parse:
                 ['name', 'handle', 'description', 'country', 'state', 'city',
                 'address', 'postal_code', 'emails', 'created', 'updated']
+            is_offline: Boolean for whether to perform lookups offline. If
+                True, response and asn_data must be provided. Primarily used
+                for testing.
 
         Returns:
             Dictionary:
@@ -539,7 +542,8 @@ class Whois:
         referral_port = 0
 
         # Only fetch the response if we haven't already.
-        if response is None or asn_data['asn_registry'] is not 'arin':
+        if response is None or (not is_offline and
+                                asn_data['asn_registry'] is not 'arin'):
 
             log.debug('Response not given, perform WHOIS lookup for {0}'
                       .format(self._net.address_str))
@@ -561,18 +565,18 @@ class Whois:
                     try:
 
                         temp = match.group(1)
-                        if 'rwhois://' not in temp:
+                        if 'rwhois://' not in temp:  # pragma: no cover
                             raise ValueError
 
                         temp = temp.replace('rwhois://', '').split(':')
 
-                        if int(temp[1]) > 65535:
+                        if int(temp[1]) > 65535:  # pragma: no cover
                             raise ValueError
 
                         referral_server = temp[0]
                         referral_port = int(temp[1])
 
-                    except (ValueError, KeyError):
+                    except (ValueError, KeyError):  # pragma: no cover
 
                         continue
 

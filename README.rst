@@ -5,7 +5,7 @@ ipwhois
 ipwhois is a Python package focused on retrieving and parsing whois data
 for IPv4 and IPv6 addresses.
 
-RDAP is now the recommended query method. Please see the
+RDAP is the recommended query method as of v0.11.0. Please see the
 `upgrade info <#upgrading-from-0-10-to-0-11>`_.
 
 Features
@@ -20,6 +20,7 @@ Features
 * Python 2.6+ and 3.3+ supported
 * Useful set of utilities
 * BSD license
+* 100% core code coverage (See '# pragma: no cover' for exclusions)
 
 Links
 =====

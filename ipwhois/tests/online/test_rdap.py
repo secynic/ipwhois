@@ -54,3 +54,28 @@ class TestRDAP(TestCommon):
             except Exception as e:
 
                 self.fail('Unexpected exception raised: %r' % e)
+
+        for key, val in data.items():
+
+            log.debug('Testing bootstrap and raw: {0}'.format(key))
+            net = Net(key)
+            obj = RDAP(net)
+
+            try:
+
+                self.assertIsInstance(obj.lookup(asn_data=val['asn_data'],
+                                                 depth=3,
+                                                 bootstrap=True,
+                                                 inc_raw=True), dict)
+
+            except HTTPLookupError:
+
+                pass
+
+            except AssertionError as e:
+
+                raise e
+
+            except Exception as e:
+
+                self.fail('Unexpected exception raised: %r' % e)
