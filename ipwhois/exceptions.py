@@ -26,7 +26,7 @@
 class NetError(Exception):
     """
     An Exception for when a parameter provided is not an instance of
-    ipwhois.net.RDAPNet.
+    ipwhois.net.Net.
     """
 
 
