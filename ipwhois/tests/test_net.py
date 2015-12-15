@@ -28,11 +28,9 @@ class TestNet(TestCommon):
 
     def test_ip_defined(self):
         if sys.version_info >= (3, 3):
-            from ipaddress import (IPv4Address,
-                                   IPv6Address)
+            from ipaddress import (IPv4Address, IPv6Address)
         else:
-            from ipaddr import (IPv4Address,
-                                IPv6Address)
+            from ipaddr import (IPv4Address, IPv6Address)
 
         self.assertRaises(IPDefinedError, Net, '192.168.0.1')
         self.assertRaises(IPDefinedError, Net, 'fe80::')
@@ -51,11 +49,20 @@ class TestNet(TestCommon):
 
     def test_proxy_opener(self):
         try:
-            from urllib.request import OpenerDirector
+            from urllib.request import (OpenerDirector,
+                                        ProxyHandler,
+                                        build_opener)
         except ImportError:
-            from urllib2 import OpenerDirector
+            from urllib2 import (OpenerDirector,
+                                 ProxyHandler,
+                                 build_opener)
 
         result = Net('74.125.225.229')
+        self.assertIsInstance(result.opener, OpenerDirector)
+
+        handler = ProxyHandler()
+        opener = build_opener(handler)
+        result = Net(address='74.125.225.229', proxy_opener=opener)
         self.assertIsInstance(result.opener, OpenerDirector)
 
     def test_get_asn_dns(self):
@@ -69,6 +76,11 @@ class TestNet(TestCommon):
         except Exception as e:
             self.fail('Unexpected exception raised: %r' % e)
 
+        data = ['"15169 ', ' 74.125.225.0/24 ', ' US ', ' random ',
+                ' 2007-03-13"']
+        result = Net('74.125.225.229')
+        self.assertRaises(ASNRegistryError, result.get_asn_dns, data)
+
     def test_get_asn_whois(self):
         data = ('15169   | 74.125.225.229   | 74.125.225.0/24     | US | arin'
                 '     | 2007-03-13')
@@ -79,3 +91,8 @@ class TestNet(TestCommon):
             raise e
         except Exception as e:
             self.fail('Unexpected exception raised: %r' % e)
+
+        data = ('15169   | 74.125.225.229   | 74.125.225.0/24     | US | rdm'
+                '     | 2007-03-13')
+        result = Net('74.125.225.229')
+        self.assertRaises(ASNRegistryError, result.get_asn_whois, 3, data)

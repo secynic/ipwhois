@@ -118,8 +118,8 @@ class IPWhois:
         whois = Whois(self.net)
         log.debug('WHOIS lookup for {0}'.format(self.address_str))
         whois_data = whois.lookup(
-            inc_raw, retry_count, get_referral, extra_blacklist,
-            ignore_referral_errors, response, asn_data, field_list
+            inc_raw, retry_count, response, get_referral, extra_blacklist,
+            ignore_referral_errors, asn_data, field_list
         )
 
         # Add the RDAP information to the return dictionary.

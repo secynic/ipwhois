@@ -18,3 +18,6 @@ Library Structure
 
 .. automodule:: ipwhois.utils
    :members:
+
+.. automodule:: ipwhois.exceptions
+   :members:

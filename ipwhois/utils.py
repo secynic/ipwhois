@@ -31,23 +31,27 @@ import io
 import csv
 import logging
 
-if sys.version_info >= (3, 3):
+if sys.version_info >= (3, 3):  # pragma: no cover
     from ipaddress import (ip_address,
                            ip_network,
                            IPv4Address,
                            IPv4Network,
-                           IPv6Address)
-else:
+                           IPv6Address,
+                           summarize_address_range,
+                           collapse_addresses)
+else:  # pragma: no cover
     from ipaddr import (IPAddress as ip_address,
                         IPNetwork as ip_network,
                         IPv4Address,
                         IPv4Network,
-                        IPv6Address)
+                        IPv6Address,
+                        summarize_address_range,
+                        collapse_address_list as collapse_addresses)
 
-try:
+try:  # pragma: no cover
     from itertools import filterfalse
 
-except ImportError:
+except ImportError:  # pragma: no cover
     from itertools import ifilterfalse as filterfalse
 
 log = logging.getLogger(__name__)
@@ -108,6 +112,67 @@ IP_REGEX = (
 )
 
 
+def ipv4_lstrip_zeros(address):
+    """
+    The function to strip leading zeros in each octet of an IPv4 address.
+
+    Args:
+        address: An IPv4 address in string format.
+
+    Returns:
+        String: The modified IPv4 address string.
+    """
+
+    # Split  the octets.
+    obj = address.strip().split('.')
+
+    for x, y in enumerate(obj):
+
+        # Strip leading zeros. Split / here in case CIDR is attached.
+        obj[x] = y.split('/')[0].lstrip('0')
+        if obj[x] in ['', None]:
+            obj[x] = '0'
+
+    return '.'.join(obj)
+
+
+def calculate_cidr(start_address, end_address):
+    """
+    The function to calculate a CIDR range(s) from a start and end IP address.
+
+    Args:
+        start_address: The starting IP address in string format.
+        end_address: The ending IP address in string format.
+
+    Returns:
+        List: A list of calculated CIDR ranges.
+    """
+
+    tmp_addrs = []
+
+    try:
+
+        tmp_addrs.extend(summarize_address_range(
+            ip_address(start_address),
+            ip_address(end_address)))
+
+    except (KeyError, ValueError, TypeError):  # pragma: no cover
+
+        try:
+
+            tmp_addrs.extend(summarize_address_range(
+                ip_network(start_address).network_address,
+                ip_network(end_address).network_address))
+
+        except AttributeError:  # pragma: no cover
+
+            tmp_addrs.extend(summarize_address_range(
+                ip_network(start_address).ip,
+                ip_network(end_address).ip))
+
+    return [i.__str__() for i in collapse_addresses(tmp_addrs)]
+
+
 def get_countries(is_legacy_xml=False):
     """
     The function to generate a dictionary containing ISO_3166-1 country codes
@@ -128,7 +193,7 @@ def get_countries(is_legacy_xml=False):
     # Set the data directory based on if the script is a frozen executable.
     if sys.platform == 'win32' and getattr(sys, 'frozen', False):
 
-        data_dir = path.dirname(sys.executable)
+        data_dir = path.dirname(sys.executable)  # pragma: no cover
 
     else:
 
@@ -147,7 +212,7 @@ def get_countries(is_legacy_xml=False):
         data = f.read()
 
         # Check if there is data.
-        if not data:
+        if not data:  # pragma: no cover
 
             return {}
 
@@ -302,11 +367,6 @@ def ipv6_is_defined(address):
 
         return True, 'Multicast', 'RFC 4291, Section 2.7'
 
-    # Reserved
-    elif query_ip.is_reserved:
-
-        return True, 'Reserved', 'RFC 4291'
-
     # Unspecified
     elif query_ip.is_unspecified:
 
@@ -316,6 +376,11 @@ def ipv6_is_defined(address):
     elif query_ip.is_loopback:
 
         return True, 'Loopback', 'RFC 4291, Section 2.5.3'
+
+    # Reserved
+    elif query_ip.is_reserved:
+
+        return True, 'Reserved', 'RFC 4291'
 
     # Link-Local
     elif query_ip.is_link_local:

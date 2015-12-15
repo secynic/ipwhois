@@ -1,6 +1,6 @@
 import unittest
 import logging
-from ipwhois import (Net, ASNLookupError, ASNRegistryError,
+from ipwhois import (Net, ASNLookupError, ASNRegistryError, BlacklistError,
                      WhoisLookupError, HTTPLookupError, HostLookupError)
 
 LOG_FORMAT = ('[%(asctime)s] [%(levelname)s] [%(filename)s:%(lineno)s] '
@@ -43,6 +43,9 @@ class TestNet(TestCommon):
         except Exception as e:
             self.fail('Unexpected exception raised: %r' % e)
 
+        result = Net('74.125.225.229')
+        self.assertRaises(ASNLookupError, result.get_asn_whois, 3, 'a')
+
     def test_get_whois(self):
         result = Net('74.125.225.229')
         try:
@@ -53,6 +56,16 @@ class TestNet(TestCommon):
             raise e
         except Exception as e:
             self.fail('Unexpected exception raised: %r' % e)
+
+        self.assertRaises(WhoisLookupError, result.get_whois, **dict(
+            retry_count=0, server='arin.net'))
+
+        self.assertRaises(BlacklistError, result.get_whois, **dict(
+            server='whois.arin.net', extra_blacklist=['whois.arin.net']))
+
+        result = Net('74.125.225.229', 0)
+        self.assertRaises(WhoisLookupError, result.get_whois, **dict(
+            retry_count=1))
 
     def test_get_http_json(self):
         from ipwhois.rdap import RIR_RDAP
@@ -67,11 +80,39 @@ class TestNet(TestCommon):
         except Exception as e:
             self.fail('Unexpected exception raised: %r' % e)
 
+        self.assertRaises(HTTPLookupError, result.get_http_json, **dict(
+            url='http://255.255.255.255', retry_count=0))
+
+        result = Net('74.125.225.229', 0)
+        self.assertRaises(HTTPLookupError, result.get_http_json, **dict(
+            retry_count=1))
+
     def test_get_host(self):
+        ips = [
+            '74.125.225.229',  # ARIN
+            '2001:4860:4860::8888'
+        ]
+
+        for ip in ips:
+            result = Net(ip)
+            try:
+                self.assertIsInstance(result.get_host(0), tuple)
+            except HostLookupError:
+                pass
+            except AssertionError as e:
+                raise e
+            except Exception as e:
+                self.fail('Unexpected exception raised: %r' % e)
+
+        result = Net('74.125.225.229', 0)
+        self.assertRaises(HostLookupError, result.get_host, **dict(
+            retry_count=1))
+
+    def test_lookup_asn(self):
         result = Net('74.125.225.229')
         try:
-            self.assertIsInstance(result.get_host(), tuple)
-        except HostLookupError:
+            self.assertIsInstance(result.lookup_asn(), tuple)
+        except (HTTPLookupError, ASNRegistryError):
             pass
         except AssertionError as e:
             raise e

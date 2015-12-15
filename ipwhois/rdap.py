@@ -24,9 +24,8 @@
 
 from . import (Net, NetError, InvalidEntityContactObject, InvalidNetworkObject,
                InvalidEntityObject, HTTPLookupError)
-from .utils import unique_everseen
-from .net import (ip_address, ip_network, summarize_address_range,
-                  collapse_addresses)
+from .utils import ipv4_lstrip_zeros, calculate_cidr, unique_everseen
+from .net import ip_address
 import logging
 
 log = logging.getLogger(__name__)
@@ -163,7 +162,7 @@ class _RDAPContact:
 
             ret['type'] = val[1]['type']
 
-        except (KeyError, ValueError, TypeError):
+        except (IndexError, KeyError, ValueError, TypeError):
 
                 pass
 
@@ -324,18 +323,21 @@ class _RDAPCommon:
 
         for notices_dict in notices_json:
 
-            ret.append({
+            tmp = {
                 'title': notices_dict['title'],
-                'description': '\n'.join(notices_dict['description'])
-            })
+                'description': '\n'.join(notices_dict['description']),
+                'links': None
+            }
 
             try:
 
-                ret['links'] = self.summarize_links(notices_dict['links'])
+                tmp['links'] = self.summarize_links(notices_dict['links'])
 
             except (KeyError, ValueError, TypeError):
 
                 pass
+
+            ret.append(tmp)
 
         return ret
 
@@ -468,22 +470,13 @@ class _RDAPNetwork(_RDAPCommon):
             # the leading 0's.
             if self.vars['ip_version'] == 'v4':
 
-                obj = self.json['startAddress'].strip().split('.')
-                for x, y in enumerate(obj):
-                    obj[x] = y.split('/')[0].lstrip('0')
-                    if obj[x] in ['', None]:
-                        obj[x] = '0'
+                self.vars['start_address'] = ip_address(
+                    ipv4_lstrip_zeros(self.json['startAddress'])
+                ).__str__()
 
-                self.vars['start_address'] = ip_address('.'.join(obj)
-                                                        ).__str__()
-
-                obj = self.json['endAddress'].strip().split('.')
-                for x, y in enumerate(obj):
-                    obj[x] = y.split('/')[0].lstrip('0')
-                    if obj[x] in ['', None]:
-                        obj[x] = '0'
-
-                self.vars['end_address'] = ip_address('.'.join(obj)).__str__()
+                self.vars['end_address'] = ip_address(
+                    ipv4_lstrip_zeros(self.json['endAddress'])
+                ).__str__()
 
             # No bugs found for IPv6 yet, proceed as normal.
             else:
@@ -500,31 +493,12 @@ class _RDAPNetwork(_RDAPCommon):
 
         try:
 
-            tmp_addrs = []
+            self.vars['cidr'] = ', '.join(calculate_cidr(
+                self.vars['start_address'], self.vars['end_address']
+            ))
 
-            try:
-
-                tmp_addrs.extend(summarize_address_range(
-                    ip_address(self.vars['start_address']),
-                    ip_address(self.vars['end_address'])))
-
-            except (KeyError, ValueError, TypeError):
-
-                tmp_addrs.extend(summarize_address_range(
-                    ip_network(self.vars['start_address']).network_address,
-                    ip_network(self.vars['end_address']).network_address))
-
-            except AttributeError:
-
-                tmp_addrs.extend(summarize_address_range(
-                    ip_network(self.vars['start_address']).ip,
-                    ip_network(self.vars['end_address']).ip))
-
-            self.vars['cidr'] = ', '.join(
-                [i.__str__() for i in collapse_addresses(tmp_addrs)]
-            )
-
-        except (KeyError, ValueError, TypeError, AttributeError) as e:
+        except (KeyError, ValueError, TypeError, AttributeError) as \
+                e:  # pragma: no cover
 
             log.debug('CIDR calculation failed: {0}'.format(e))
             pass
