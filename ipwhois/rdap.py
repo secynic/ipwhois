@@ -716,16 +716,22 @@ class RDAP:
 
         # Iterate through and parse the root level entities.
         log.debug('Parsing RDAP root level entities')
-        for ent in response['entities']:
+        try:
 
-            if ent['handle'] not in [results['entities'], excluded_entities]:
+            for ent in response['entities']:
 
-                result_ent = _RDAPEntity(ent)
-                result_ent.parse()
+                if ent['handle'] not in [results['entities'], excluded_entities]:
 
-                results['objects'][ent['handle']] = result_ent.vars
+                    result_ent = _RDAPEntity(ent)
+                    result_ent.parse()
 
-                results['entities'].append(ent['handle'])
+                    results['objects'][ent['handle']] = result_ent.vars
+
+                    results['entities'].append(ent['handle'])
+
+        except KeyError:
+
+            pass
 
         # Iterate through to the defined depth, retrieving and parsing all
         # unique entities.
