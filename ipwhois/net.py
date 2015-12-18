@@ -38,21 +38,27 @@ from .exceptions import (IPDefinedError, ASNRegistryError, ASNLookupError,
 from .whois import RIR_WHOIS
 from .utils import ipv4_is_defined, ipv6_is_defined
 
-if sys.version_info >= (3, 3):
+if sys.version_info >= (3, 3):  # pragma: no cover
     from ipaddress import (ip_address,
                            IPv4Address,
-                           IPv6Address)
-else:
+                           IPv6Address,
+                           ip_network,
+                           summarize_address_range,
+                           collapse_addresses)
+else:  # pragma: no cover
     from ipaddr import (IPAddress as ip_address,
                         IPv4Address,
-                        IPv6Address)
+                        IPv6Address,
+                        IPNetwork as ip_network,
+                        summarize_address_range,
+                        collapse_address_list as collapse_addresses)
 
-try:
+try:  # pragma: no cover
     from urllib.request import (OpenerDirector,
                                 ProxyHandler,
                                 build_opener,
                                 Request)
-except ImportError:
+except ImportError:  # pragma: no cover
     from urllib2 import (OpenerDirector,
                          ProxyHandler,
                          build_opener,
@@ -312,7 +318,7 @@ class Net:
 
             return ret
 
-        except (socket.timeout, socket.error) as e:
+        except (socket.timeout, socket.error) as e:  # pragma: no cover
 
             log.debug('ASN query socket error: {0}'.format(e))
             if retry_count > 0:
@@ -366,7 +372,7 @@ class Net:
 
             extra_bl = extra_blacklist if extra_blacklist else []
 
-            if server in (BLACKLIST, extra_bl):
+            if any(server in srv for srv in (BLACKLIST, extra_bl)):
                 raise BlacklistError(
                     'The server %r is blacklisted.' % server
                 )
@@ -403,14 +409,15 @@ class Net:
 
             conn.close()
 
-            if 'Query rate limit exceeded' in response:
+            if 'Query rate limit exceeded' in response:  # pragma: no cover
 
                 log.debug('WHOIS query rate limit exceeded. Waiting...')
                 sleep(1)
                 return self.get_whois(asn_registry, retry_count, server, port,
                                       extra_blacklist)
 
-            elif 'error 501' in response or 'error 230' in response:
+            elif ('error 501' in response or 'error 230' in response
+                  ):  # pragma: no cover
 
                 log.debug('WHOIS query error: {0}'.format(response))
                 raise ValueError
@@ -433,7 +440,11 @@ class Net:
                     'WHOIS lookup failed for %r.' % self.address_str
                 )
 
-        except:
+        except BlacklistError:
+
+            raise
+
+        except:  # pragma: no cover
 
             raise WhoisLookupError(
                 'WHOIS lookup failed for %r.' % self.address_str
@@ -464,7 +475,7 @@ class Net:
             data = self.opener.open(conn, timeout=self.timeout)
             try:
                 d = json.loads(data.readall().decode())
-            except AttributeError:
+            except AttributeError:  # pragma: no cover
                 d = json.loads(data.read().decode('ascii', 'ignore'))
 
             return d
@@ -483,7 +494,7 @@ class Net:
 
                 raise HTTPLookupError('HTTP lookup failed for %r.' % url)
 
-        except:
+        except:  # pragma: no cover
 
             raise HTTPLookupError('HTTP lookup failed for %r.' % url)
 
@@ -513,7 +524,7 @@ class Net:
             log.debug('Host query for {0}'.format(self.address_str))
             ret = socket.gethostbyaddr(self.address_str)
 
-            if default_timeout_set:
+            if default_timeout_set:  # pragma: no cover
 
                 socket.setdefaulttimeout(None)
 
@@ -535,7 +546,7 @@ class Net:
                     'Host lookup failed for %r.' % self.address_str
                 )
 
-        except:
+        except:  # pragma: no cover
 
             raise HostLookupError(
                 'Host lookup failed for %r.' % self.address_str
@@ -559,6 +570,7 @@ class Net:
 
         Raises:
             ASNRegistryError: ASN registry does not match.
+            HTTPLookupError: The HTTP lookup failed.
         """
 
         # Initialize the response.
@@ -576,7 +588,7 @@ class Net:
                 log.debug('ASN DNS lookup failed, trying ASN WHOIS')
                 asn_data = self.get_asn_whois(retry_count)
 
-            except (ASNLookupError, ASNRegistryError):
+            except (ASNLookupError, ASNRegistryError):  # pragma: no cover
 
                 # Lets attempt to get the ASN registry information from ARIN.
                 log.debug('ASN WHOIS lookup failed, trying ASN via HTTP')

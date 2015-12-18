@@ -24,7 +24,7 @@
 
 from . import (Net, NetError, InvalidEntityContactObject, InvalidNetworkObject,
                InvalidEntityObject, HTTPLookupError)
-from .utils import unique_everseen
+from .utils import ipv4_lstrip_zeros, calculate_cidr, unique_everseen
 from .net import ip_address
 import logging
 
@@ -162,7 +162,7 @@ class _RDAPContact:
 
             ret['type'] = val[1]['type']
 
-        except (KeyError, ValueError, TypeError):
+        except (IndexError, KeyError, ValueError, TypeError):
 
                 pass
 
@@ -323,18 +323,21 @@ class _RDAPCommon:
 
         for notices_dict in notices_json:
 
-            ret.append({
+            tmp = {
                 'title': notices_dict['title'],
-                'description': '\n'.join(notices_dict['description'])
-            })
+                'description': '\n'.join(notices_dict['description']),
+                'links': None
+            }
 
             try:
 
-                ret['links'] = self.summarize_links(notices_dict['links'])
+                tmp['links'] = self.summarize_links(notices_dict['links'])
 
             except (KeyError, ValueError, TypeError):
 
                 pass
+
+            ret.append(tmp)
 
         return ret
 
@@ -437,6 +440,7 @@ class _RDAPNetwork(_RDAPCommon):
         self.vars.update({
             'start_address': None,
             'end_address': None,
+            'cidr': None,
             'ip_version': None,
             'type': None,
             'name': None,
@@ -466,22 +470,13 @@ class _RDAPNetwork(_RDAPCommon):
             # the leading 0's.
             if self.vars['ip_version'] == 'v4':
 
-                obj = self.json['startAddress'].strip().split('.')
-                for x, y in enumerate(obj):
-                    obj[x] = y.split('/')[0].lstrip('0')
-                    if obj[x] in ['', None]:
-                        obj[x] = '0'
+                self.vars['start_address'] = ip_address(
+                    ipv4_lstrip_zeros(self.json['startAddress'])
+                ).__str__()
 
-                self.vars['start_address'] = ip_address('.'.join(obj)
-                                                        ).__str__()
-
-                obj = self.json['endAddress'].strip().split('.')
-                for x, y in enumerate(obj):
-                    obj[x] = y.split('/')[0].lstrip('0')
-                    if obj[x] in ['', None]:
-                        obj[x] = '0'
-
-                self.vars['end_address'] = ip_address('.'.join(obj)).__str__()
+                self.vars['end_address'] = ip_address(
+                    ipv4_lstrip_zeros(self.json['endAddress'])
+                ).__str__()
 
             # No bugs found for IPv6 yet, proceed as normal.
             else:
@@ -495,6 +490,18 @@ class _RDAPNetwork(_RDAPCommon):
                       'exception: {0}'.format(self.vars))
             raise InvalidNetworkObject('IP address data is missing for RDAP '
                                        'network object.')
+
+        try:
+
+            self.vars['cidr'] = ', '.join(calculate_cidr(
+                self.vars['start_address'], self.vars['end_address']
+            ))
+
+        except (KeyError, ValueError, TypeError, AttributeError) as \
+                e:  # pragma: no cover
+
+            log.debug('CIDR calculation failed: {0}'.format(e))
+            pass
 
         for v in ['name', 'type', 'country']:
 
@@ -709,16 +716,22 @@ class RDAP:
 
         # Iterate through and parse the root level entities.
         log.debug('Parsing RDAP root level entities')
-        for ent in response['entities']:
+        try:
 
-            if ent['handle'] not in [results['entities'], excluded_entities]:
+            for ent in response['entities']:
 
-                result_ent = _RDAPEntity(ent)
-                result_ent.parse()
+                if ent['handle'] not in [results['entities'], excluded_entities]:
 
-                results['objects'][ent['handle']] = result_ent.vars
+                    result_ent = _RDAPEntity(ent)
+                    result_ent.parse()
 
-                results['entities'].append(ent['handle'])
+                    results['objects'][ent['handle']] = result_ent.vars
+
+                    results['entities'].append(ent['handle'])
+
+        except KeyError:
+
+            pass
 
         # Iterate through to the defined depth, retrieving and parsing all
         # unique entities.

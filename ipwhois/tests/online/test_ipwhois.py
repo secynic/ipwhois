@@ -59,13 +59,51 @@ class TestIPWhois(TestCommon):
 
             result = IPWhois(ip)
             try:
-                self.assertIsInstance(result.lookup(get_referral=True), dict)
+                self.assertIsInstance(result.lookup(
+                    get_referral=True,
+                    ignore_referral_errors=True,
+                    inc_raw=True), dict)
             except (ASNLookupError, ASNRegistryError, WhoisLookupError):
                 pass
             except AssertionError as e:
                 raise e
             except Exception as e:
                 self.fail('Unexpected exception raised: %r' % e)
+
+        for ip in rwhois_ips:
+
+            result = IPWhois(ip)
+            try:
+                self.assertIsInstance(result.lookup(
+                    get_referral=True,
+                    ignore_referral_errors=True,
+                    inc_raw=True,
+                    extra_blacklist=['rwhois.cogentco.com']), dict)
+            except (ASNLookupError, ASNRegistryError, WhoisLookupError):
+                pass
+            except AssertionError as e:
+                raise e
+            except Exception as e:
+                self.fail('Unexpected exception raised: %r' % e)
+
+            break
+
+        for ip in rwhois_ips:
+
+            result = IPWhois(ip)
+            try:
+                self.assertIsInstance(result.lookup(
+                    get_referral=True,
+                    ignore_referral_errors=False,
+                    inc_raw=False), dict)
+            except (ASNLookupError, ASNRegistryError, WhoisLookupError):
+                pass
+            except AssertionError as e:
+                raise e
+            except Exception as e:
+                self.fail('Unexpected exception raised: %r' % e)
+
+            break
 
     def test_lookup_rdap(self):
         try:

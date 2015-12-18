@@ -5,7 +5,7 @@ ipwhois
 ipwhois is a Python package focused on retrieving and parsing whois data
 for IPv4 and IPv6 addresses.
 
-RDAP is now the recommended query method. Please see the
+RDAP is the recommended query method as of v0.11.0. Please see the
 `upgrade info <#upgrading-from-0-10-to-0-11>`_.
 
 Features
@@ -20,6 +20,7 @@ Features
 * Python 2.6+ and 3.3+ supported
 * Useful set of utilities
 * BSD license
+* 100% core code coverage (See '# pragma: no cover' for exclusions)
 
 Links
 =====
@@ -347,11 +348,6 @@ far better data structure than legacy whois and REST lookups (previous
 implementation). RDAP queries allow for parsing of contact information and
 details for users, organizations, and groups. RDAP also provides more detailed
 network information.
-
-The bootstrap feature for AFRINIC is currently not
-supported by ARIN, but should be soon
-(https://github.com/arineng/rdap_bootstrap_server/issues/3). Once the support
-is added on the ARIN side, the ipwhois code will work without any changes.
 
 Upgrading from 0.10 to 0.11
 ---------------------------
