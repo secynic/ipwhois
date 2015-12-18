@@ -1,16 +1,17 @@
 Changelog
 =========
 
-0.11.1 (2015-12-21)
+0.11.1 (2015-12-17)
 -------------------
 
-- Re-added CIDR parsing for RDAP lookups.
+- Re-added CIDR calculation for RDAP lookups.
 - Improved tests - core code coverage now 100%. See '# pragma: no cover' for
   exclusions. A few bugs were identified in the process, detailed below.
 - Moved IP zero stripping from rdap._RDAPNetwork.parse() to new helper function
   utils.ipv4_lstrip_zeros().
 - Moved CIDR calculation from rdap._RDAPNetwork.parse() to new helper function
   utils.calculate_cidr().
+- Fixed utils.ipv4_is_defined() if statement ordering for RFC 1918 conflict.
 - Fixed utils.ipv6_is_defined() if statement ordering for Unspecified and
   Loopback (conflict with Reserved).
 - Added is_offline parameter to whois.Whois.lookup() primarily for testing.
@@ -20,6 +21,7 @@ Changelog
 - Fixed bug in ipwhois.IPWhois.lookup() where the argument order was mixed up,
   causing referral lookups to be skipped when get_referral=True.
 - Fixed bug in rdap._RDAPCommon.summarize_notices() output for links.
+- Fixed bug in root entity iteration exception handling in rdap.RDAP.lookup().
 
 0.11.0 (2015-11-02)
 -------------------
