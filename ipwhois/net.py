@@ -89,13 +89,15 @@ class Net:
         timeout: The default timeout for socket connections in seconds.
         proxy_opener: The urllib.request.OpenerDirector request for proxy
             support or None.
+        allow_permutations: allow Net() lookup_rdap class method to use methods
+            in addition to DNS if DNS lookups to cymru fail
 
     Raises:
         IPDefinedError: The address provided is defined (does not need to be
             resolved).
     """
 
-    def __init__(self, address, timeout=5, proxy_opener=None):
+    def __init__(self, address, timeout=5, proxy_opener=None, allow_permutations=True):
 
         # IPv4Address or IPv6Address
         if isinstance(address, IPv4Address) or isinstance(
@@ -239,6 +241,12 @@ class Net:
         except ASNRegistryError:
 
             raise
+
+        except (dns.resolver.NXDOMAIN, dns.resolver.NoNameservers, dns.resolver.NoAnswer, dns.exception.Timeout) as e:
+
+            raise ASNLookupError(
+                'ASN lookup failed (DNS %s) for %r.' % (e.__class__.__name__, self.address_str)
+            )
 
         except:
 
@@ -581,11 +589,14 @@ class Net:
 
             asn_data = self.get_asn_dns()
 
-        except (ASNLookupError, ASNRegistryError):
+        except (ASNLookupError, ASNRegistryError) as e:
+
+            if not self.allow_permutations:
+                raise
 
             try:
 
-                log.debug('ASN DNS lookup failed, trying ASN WHOIS')
+                log.debug('ASN DNS lookup failed: {}, trying ASN WHOIS'.format(e)
                 asn_data = self.get_asn_whois(retry_count)
 
             except (ASNLookupError, ASNRegistryError):  # pragma: no cover
