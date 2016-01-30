@@ -113,6 +113,9 @@ class Net:
         # Default timeout for socket connections.
         self.timeout = timeout
 
+        # allow other than DNS lookups for ASNs
+        self.allow_permutations = allow_permutations
+
         # Proxy opener.
         if isinstance(proxy_opener, OpenerDirector):
 
