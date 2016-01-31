@@ -39,11 +39,13 @@ class IPWhois:
         timeout: The default timeout for socket connections in seconds.
         proxy_opener: The urllib.request.OpenerDirector request for proxy
             support or None.
+        allow_permutations: allow Net() lookup_rdap class method to use methods
+            in addition to DNS if DNS lookups to cymru fail
     """
 
-    def __init__(self, address, timeout=5, proxy_opener=None):
+    def __init__(self, address, timeout=5, proxy_opener=None, allow_permutations=True):
 
-        self.net = Net(address, timeout, proxy_opener)
+        self.net = Net(address, timeout, proxy_opener, allow_permutations)
 
         self.address = self.net.address
         self.timeout = self.net.timeout
