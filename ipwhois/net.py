@@ -599,7 +599,7 @@ class Net:
 
             try:
 
-                log.debug('ASN DNS lookup failed: {}, trying ASN WHOIS'.format(e)
+                log.debug('ASN DNS lookup failed: {}, trying ASN WHOIS'.format(e))
                 asn_data = self.get_asn_whois(retry_count)
 
             except (ASNLookupError, ASNRegistryError):  # pragma: no cover
