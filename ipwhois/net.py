@@ -111,6 +111,10 @@ class Net:
         # Default timeout for socket connections.
         self.timeout = timeout
 
+        self.dns_resolver = dns.resolver.Resolver()
+        self.dns_resolver.timeout  = timeout
+        self.dns_resolver.lifetime = timeout
+
         # Proxy opener.
         if isinstance(proxy_opener, OpenerDirector):
 
@@ -213,7 +217,7 @@ class Net:
             if result is None:
 
                 log.debug('ASN query for {0}'.format(self.dns_zone))
-                data = dns.resolver.query(self.dns_zone, 'TXT')
+                data = self.dns_resolver.query(self.dns_zone, 'TXT')
                 temp = str(data[0]).split('|')
 
             else:
@@ -579,6 +583,8 @@ class Net:
         # Attempt to resolve ASN info via Cymru. DNS is faster, try that first.
         try:
 
+            self.dns_resolver.lifetime = self.resolver.timeout * (
+                retry_count and retry_count or 1)
             asn_data = self.get_asn_dns()
 
         except (ASNLookupError, ASNRegistryError):
