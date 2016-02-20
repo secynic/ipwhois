@@ -583,7 +583,7 @@ class Net:
         # Attempt to resolve ASN info via Cymru. DNS is faster, try that first.
         try:
 
-            self.dns_resolver.lifetime = self.resolver.timeout * (
+            self.dns_resolver.lifetime = self.dns_resolver.timeout * (
                 retry_count and retry_count or 1)
             asn_data = self.get_asn_dns()
 
