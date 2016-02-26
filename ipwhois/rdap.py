@@ -324,10 +324,26 @@ class _RDAPCommon:
         for notices_dict in notices_json:
 
             tmp = {
-                'title': notices_dict['title'],
-                'description': '\n'.join(notices_dict['description']),
+                'title': None,
+                'description': None,
                 'links': None
             }
+
+            try:
+
+                tmp['title'] = notices_dict['title']
+
+            except (KeyError, ValueError, TypeError):
+
+                pass
+
+            try:
+
+                tmp['description'] = '\n'.join(notices_dict['description'])
+
+            except (KeyError, ValueError, TypeError):
+
+                pass
 
             try:
 
@@ -337,7 +353,9 @@ class _RDAPCommon:
 
                 pass
 
-            ret.append(tmp)
+            if len(tmp.values()) > 1:
+
+                ret.append(tmp)
 
         return ret
 
