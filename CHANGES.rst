@@ -1,6 +1,16 @@
 Changelog
 =========
 
+0.11.2 (2016-02-25)
+-------------------
+
+- Added allow_permutations parameter (bool) to net.Net() and ipwhois.IPWhois()
+  to allow alternate ASN lookups if DNS lookups fail. (FirefighterBlu3)
+- Fixed ASN DNS resolver timeout/retry_count support. Retry count is used as a
+  multiplier of timeout, to determine a limetime interval. (FirefighterBlu3)
+- Added CONTRIBUTING.rst
+- Added tests
+
 0.11.1 (2015-12-17)
 -------------------
 

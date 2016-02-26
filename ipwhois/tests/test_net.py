@@ -81,6 +81,10 @@ class TestNet(TestCommon):
         result = Net('74.125.225.229')
         self.assertRaises(ASNRegistryError, result.get_asn_dns, data)
 
+        data = []
+        result = Net('74.125.225.229')
+        self.assertRaises(ASNLookupError, result.get_asn_dns, data)
+
     def test_get_asn_whois(self):
         data = ('15169   | 74.125.225.229   | 74.125.225.0/24     | US | arin'
                 '     | 2007-03-13')

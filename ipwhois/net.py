@@ -1,4 +1,4 @@
-# Copyright (c) 2013, 2014, 2015 Philip Hane
+# Copyright (c) 2013, 2014, 2015, 2016 Philip Hane
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -89,13 +89,16 @@ class Net:
         timeout: The default timeout for socket connections in seconds.
         proxy_opener: The urllib.request.OpenerDirector request for proxy
             support or None.
+        allow_permutations: Use additional methods if DNS lookups to Cymru
+            fail.
 
     Raises:
         IPDefinedError: The address provided is defined (does not need to be
             resolved).
     """
 
-    def __init__(self, address, timeout=5, proxy_opener=None):
+    def __init__(self, address, timeout=5, proxy_opener=None,
+                 allow_permutations=True):
 
         # IPv4Address or IPv6Address
         if isinstance(address, IPv4Address) or isinstance(
@@ -111,8 +114,11 @@ class Net:
         # Default timeout for socket connections.
         self.timeout = timeout
 
+        # Allow other than DNS lookups for ASNs.
+        self.allow_permutations = allow_permutations
+
         self.dns_resolver = dns.resolver.Resolver()
-        self.dns_resolver.timeout  = timeout
+        self.dns_resolver.timeout = timeout
         self.dns_resolver.lifetime = timeout
 
         # Proxy opener.
@@ -243,6 +249,14 @@ class Net:
         except ASNRegistryError:
 
             raise
+
+        except (dns.resolver.NXDOMAIN, dns.resolver.NoNameservers,
+                dns.resolver.NoAnswer, dns.exception.Timeout) as e:
+
+            raise ASNLookupError(
+                'ASN lookup failed (DNS %s) for %r.' % (
+                    e.__class__.__name__, self.address_str)
+            )
 
         except:
 
@@ -587,11 +601,17 @@ class Net:
                 retry_count and retry_count or 1)
             asn_data = self.get_asn_dns()
 
-        except (ASNLookupError, ASNRegistryError):
+        except (ASNLookupError, ASNRegistryError) as e:
+
+            if not self.allow_permutations:
+
+                raise ASNRegistryError('ASN registry lookup failed. '
+                                       'Permutations not allowed.')
 
             try:
 
-                log.debug('ASN DNS lookup failed, trying ASN WHOIS')
+                log.debug('ASN DNS lookup failed, trying ASN WHOIS: '
+                          '{0}'.format(e))
                 asn_data = self.get_asn_whois(retry_count)
 
             except (ASNLookupError, ASNRegistryError):  # pragma: no cover

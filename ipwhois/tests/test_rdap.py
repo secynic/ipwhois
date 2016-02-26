@@ -79,6 +79,47 @@ class TestRDAP(TestCommon):
 
             break
 
+        log.debug('Testing rdap.lookup response checks')
+        net = Net('74.125.225.229')
+        obj = RDAP(net)
+        self.assertIsInstance(obj.lookup(response={
+                                             'handle': 'test',
+                                             'ipVersion': 'v4',
+                                             'startAddress': '74.125.225.229',
+                                             'endAddress': '74.125.225.229'
+                                         },
+                                         asn_data=val['asn_data'],
+                                         depth=0), dict)
+
+        log.debug('Testing rdap.lookup entitiy checks')
+        net = Net('74.125.225.229')
+        obj = RDAP(net)
+        entity = [{"handle": "test", "roles": [
+            "administrative", "technical"], "entities": [
+            {"handle": "GOGL", "roles": ["administrative", "technical"]}]}]
+
+        self.assertIsInstance(obj.lookup(response={
+                                             'handle': 'test',
+                                             'ipVersion': 'v4',
+                                             'startAddress': '74.125.225.229',
+                                             'endAddress': '74.125.225.229',
+                                             'entities': entity
+                                         },
+                                         asn_data=val['asn_data'],
+                                         depth=1), dict)
+
+        self.assertIsInstance(obj.lookup(response={
+                                             'handle': 'test',
+                                             'ipVersion': 'v4',
+                                             'startAddress': '74.125.225.229',
+                                             'endAddress': '74.125.225.229',
+                                             'entities': entity
+                                         },
+                                         asn_data=val['asn_data'],
+                                         depth=1,
+                                         bootstrap=True,
+                                         inc_raw=True), dict)
+
 
 class TestRDAPContact(TestCommon):
 

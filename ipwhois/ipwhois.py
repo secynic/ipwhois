@@ -1,4 +1,4 @@
-# Copyright (c) 2013, 2014, 2015 Philip Hane
+# Copyright (c) 2013, 2014, 2015, 2016 Philip Hane
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -39,11 +39,14 @@ class IPWhois:
         timeout: The default timeout for socket connections in seconds.
         proxy_opener: The urllib.request.OpenerDirector request for proxy
             support or None.
+        allow_permutations: allow net.Net() to use additional methods if DNS
+            lookups to Cymru fail.
     """
 
-    def __init__(self, address, timeout=5, proxy_opener=None):
+    def __init__(self, address, timeout=5, proxy_opener=None,
+                 allow_permutations=True):
 
-        self.net = Net(address, timeout, proxy_opener)
+        self.net = Net(address, timeout, proxy_opener, allow_permutations)
 
         self.address = self.net.address
         self.timeout = self.net.timeout

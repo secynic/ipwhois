@@ -16,6 +16,11 @@ Project Info
 .. toctree::
    :maxdepth: 2
 
+   Contributing <CONTRIBUTING>
+
+.. toctree::
+   :maxdepth: 2
+
    LICENSE
 
 Code

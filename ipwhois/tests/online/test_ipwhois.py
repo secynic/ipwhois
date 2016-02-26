@@ -143,3 +143,7 @@ class TestIPWhois(TestCommon):
         opener = build_opener(handler)
         result = IPWhois('74.125.225.229', 0, opener)
         self.assertRaises(HTTPLookupError, result.lookup_rdap)
+
+        log.debug('Testing allow_permutations')
+        result = IPWhois('74.125.225.229', timeout=0, allow_permutations=False)
+        self.assertRaises(ASNRegistryError, result.lookup_rdap)

@@ -1,4 +1,4 @@
-# Copyright (c) 2013, 2014, 2015 Philip Hane
+# Copyright (c) 2013, 2014, 2015, 2016 Philip Hane
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -720,7 +720,8 @@ class RDAP:
 
             for ent in response['entities']:
 
-                if ent['handle'] not in [results['entities'], excluded_entities]:
+                if ent['handle'] not in [results['entities'],
+                                         excluded_entities]:
 
                     result_ent = _RDAPEntity(ent)
                     result_ent.parse()
@@ -755,14 +756,12 @@ class RDAP:
                                        excluded_entities):
 
                             if bootstrap:
-
                                 entity_url = '{0}/entity/{1}'.format(
                                     BOOTSTRAP_URL, ent)
-
                             else:
-
-                                entity_url = str(RIR_RDAP[asn_data[
-                                    'asn_registry']]['entity_url']).format(ent)
+                                tmp_reg = asn_data['asn_registry']
+                                entity_url = RIR_RDAP[tmp_reg]['entity_url']
+                                entity_url = str(entity_url).format(ent)
 
                             try:
 

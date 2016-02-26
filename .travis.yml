@@ -1,19 +1,15 @@
-# Build file
 language: python
 python:
-  - 3.5
-  - 3.4 
-  - 3.3 
-  - 2.7
   - 2.6
-# command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
+  - 2.7
+  - 3.3
+  - 3.4
+  - 3.5
 install:
   - if [[ $TRAVIS_PYTHON_VERSION == 2* ]]; then pip install -r requirements/python2.txt --use-mirrors; fi
   - if [[ $TRAVIS_PYTHON_VERSION == 3.3* ]]; then pip install -r requirements/python3.txt --use-mirrors; fi
   - if [[ $TRAVIS_PYTHON_VERSION == 3.4* ]]; then pip install -r requirements/python3.txt --use-mirrors; fi
   - if [[ $TRAVIS_PYTHON_VERSION == 3.5* ]]; then pip install -r requirements/python3.txt; fi
   - python setup.py -q install
-# command to run tests, e.g. python setup.py test
 script:
-  - nosetests -v  -w ipwhois
-
+  - nosetests -v -w ipwhois

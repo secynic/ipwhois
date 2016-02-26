@@ -118,3 +118,6 @@ class TestNet(TestCommon):
             raise e
         except Exception as e:
             self.fail('Unexpected exception raised: %r' % e)
+
+        result = Net('74.125.225.229', timeout=0, allow_permutations=False)
+        self.assertRaises(ASNRegistryError, result.lookup_asn)
