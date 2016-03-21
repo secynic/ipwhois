@@ -494,7 +494,7 @@ class Net:
             try:
                 d = json.loads(data.readall().decode())
             except AttributeError:  # pragma: no cover
-                d = json.loads(data.read().decode('ascii', 'ignore'))
+                d = json.loads(data.read().decode('utf-8'))
 
             return d
 
