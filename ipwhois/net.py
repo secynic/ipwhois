@@ -468,7 +468,8 @@ class Net:
                 'WHOIS lookup failed for %r.' % self.address_str
             )
 
-    def get_http_json(self, url=None, retry_count=3):
+    def get_http_json(self, url=None, retry_count=3,
+                      headers={'Accept': 'application/rdap+json'}):
         """
         The function for retrieving a json result via HTTP.
 
@@ -476,6 +477,8 @@ class Net:
             url: The URL to retrieve.
             retry_count: The number of times to retry in case socket errors,
                 timeouts, connection resets, etc. are encountered.
+            headers: The HTTP headers dictionary. The Accept header defaults
+                to 'application/rdap+json'.
 
         Returns:
             Dictionary: The data in json format.
@@ -489,12 +492,12 @@ class Net:
             # Create the connection for the whois query.
             log.debug('HTTP query for {0} at {1}'.format(
                 self.address_str, url))
-            conn = Request(url, headers={'Accept': 'application/rdap+json'})
+            conn = Request(url, headers=headers)
             data = self.opener.open(conn, timeout=self.timeout)
             try:
-                d = json.loads(data.readall().decode())
+                d = json.loads(data.readall().decode('utf-8', 'ignore'))
             except AttributeError:  # pragma: no cover
-                d = json.loads(data.read().decode('ascii', 'ignore'))
+                d = json.loads(data.read().decode('utf-8', 'ignore'))
 
             return d
 
@@ -506,7 +509,7 @@ class Net:
                 log.debug('HTTP query retrying (count: {0})'.format(
                     retry_count))
 
-                return self.get_http_json(url, retry_count - 1)
+                return self.get_http_json(url, retry_count - 1, headers)
 
             else:
 
@@ -620,7 +623,8 @@ class Net:
                 log.debug('ASN WHOIS lookup failed, trying ASN via HTTP')
                 response = self.get_http_json(
                     str(ARIN).format(self.address_str),
-                    retry_count
+                    retry_count,
+                    headers={'Accept': 'application/json'}
                 )
 
                 asn_data = {

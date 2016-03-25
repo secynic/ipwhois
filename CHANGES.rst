@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.12.0 (TBD)
+------------
+
+- Added headers parameter to ipwhois.Net.get_http_json() (issue #98).
+- Fixed ASN HTTP lookup (fallback) Accept headers (issue #98).
+- Fixed HTTP decoding, set to utf-8 (italomaia)
+
 0.11.2 (2016-02-25)
 -------------------
 
