@@ -61,9 +61,22 @@ class IPWhois:
             self.address_str, self.timeout, self.net.opener
         )
 
-    def lookup(self, inc_raw=False, retry_count=3, get_referral=False,
-               extra_blacklist=None, ignore_referral_errors=False,
-               field_list=None):
+    def lookup(self, *args, **kwargs):
+        """
+        Temporary wrapper for legacy whois lookups (moved to
+        IPWhois.lookup_whois()). This will be removed in a future
+        release (TBD).
+        """
+
+        from warnings import warn
+        warn("IPWhois.lookup() has been deprecated and will be removed. "
+             "You should now use IPWhois.lookup_whois() for legacy whois "
+             "lookups.")
+        return self.lookup_whois(*args, **kwargs)
+
+    def lookup_whois(self, inc_raw=False, retry_count=3, get_referral=False,
+                     extra_blacklist=None, ignore_referral_errors=False,
+                     field_list=None):
         """
         The function for retrieving and parsing whois information for an IP
         address via port 43 (WHOIS).
