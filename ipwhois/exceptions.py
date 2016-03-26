@@ -73,6 +73,13 @@ class HTTPLookupError(Exception):
     """
 
 
+class HTTPRateLimitError(Exception):
+    """
+    An Exception for when HTTP queries exceed the NIC's request limit and have
+    exhausted all retries.
+    """
+
+
 class InvalidEntityContactObject(Exception):
     """
     An Exception for when JSON output is not an RDAP entity contact information

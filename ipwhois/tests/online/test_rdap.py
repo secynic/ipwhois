@@ -3,7 +3,7 @@ import json
 import io
 from os import path
 import logging
-from ipwhois.exceptions import HTTPLookupError
+from ipwhois.exceptions import (HTTPLookupError, HTTPRateLimitError)
 from ipwhois.rdap import (RDAP, Net)
 
 LOG_FORMAT = ('[%(asctime)s] [%(levelname)s] [%(filename)s:%(lineno)s] '
@@ -43,7 +43,7 @@ class TestRDAP(TestCommon):
                 self.assertIsInstance(obj.lookup(asn_data=val['asn_data'],
                                                  depth=1), dict)
 
-            except HTTPLookupError:
+            except (HTTPLookupError, HTTPRateLimitError):
 
                 pass
 
@@ -68,7 +68,7 @@ class TestRDAP(TestCommon):
                                                  bootstrap=True,
                                                  inc_raw=True), dict)
 
-            except HTTPLookupError:
+            except (HTTPLookupError, HTTPRateLimitError):
 
                 pass
 

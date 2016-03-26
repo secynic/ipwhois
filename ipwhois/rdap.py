@@ -654,7 +654,8 @@ class RDAP:
                            'ipwhois.net.Net')
 
     def lookup(self, inc_raw=False, retry_count=3, asn_data=None, depth=0,
-               excluded_entities=None, response=None, bootstrap=False):
+               excluded_entities=None, response=None, bootstrap=False,
+               rate_limit_timeout=120):
         """
         The function for retrieving and parsing information for an IP
         address via RDAP (HTTP).
@@ -672,6 +673,8 @@ class RDAP:
             response: Optional response object, this bypasses the RDAP lookup.
             bootstrap: If True, performs lookups via ARIN bootstrap rather
                 than lookups based on ASN data.
+            rate_limit_timeout: The number of seconds to wait before retrying
+                when a rate limit notice is returned via rdap+json.
 
         Returns:
             Dictionary:
@@ -718,7 +721,7 @@ class RDAP:
 
             # Retrieve the whois data.
             response = self._net.get_http_json(
-                ip_url, retry_count
+                ip_url, retry_count, rate_limit_timeout=rate_limit_timeout
             )
 
         if inc_raw:
@@ -785,7 +788,8 @@ class RDAP:
 
                                 # RDAP entity query
                                 response = self._net.get_http_json(
-                                    entity_url, retry_count
+                                    entity_url, retry_count,
+                                    rate_limit_timeout=rate_limit_timeout
                                 )
 
                                 # Parse the entity

@@ -144,7 +144,8 @@ class IPWhois:
         return results
 
     def lookup_rdap(self, inc_raw=False, retry_count=3, depth=0,
-                    excluded_entities=None, bootstrap=False):
+                    excluded_entities=None, bootstrap=False,
+                    rate_limit_timeout=120):
         """
         The function for retrieving and parsing whois information for an IP
         address via HTTP (RDAP).
@@ -163,6 +164,8 @@ class IPWhois:
             bootstrap: If True, performs lookups via ARIN bootstrap rather
                 than lookups based on ASN data. ASN lookups are not performed
                 and no output for any of the asn* fields is provided.
+            rate_limit_timeout: The number of seconds to wait before retrying
+                when a rate limit notice is returned via rdap+json.
 
         Returns:
             Dictionary:
@@ -202,7 +205,8 @@ class IPWhois:
         rdap = RDAP(self.net)
         log.debug('RDAP lookup for {0}'.format(self.address_str))
         rdap_data = rdap.lookup(inc_raw, retry_count, asn_data, depth,
-                                excluded_entities, response, bootstrap)
+                                excluded_entities, response, bootstrap,
+                                rate_limit_timeout)
 
         # Add the RDAP information to the return dictionary.
         results.update(rdap_data)

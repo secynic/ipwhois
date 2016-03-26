@@ -34,7 +34,7 @@ import dns.rdtypes.ANY.TXT  # @UnusedImport
 
 from .exceptions import (IPDefinedError, ASNRegistryError, ASNLookupError,
                          BlacklistError, WhoisLookupError, HTTPLookupError,
-                         HostLookupError)
+                         HostLookupError, HTTPRateLimitError)
 from .whois import RIR_WHOIS
 from .utils import ipv4_is_defined, ipv6_is_defined
 
@@ -468,7 +468,7 @@ class Net:
                 'WHOIS lookup failed for %r.' % self.address_str
             )
 
-    def get_http_json(self, url=None, retry_count=3,
+    def get_http_json(self, url=None, retry_count=3, rate_limit_timeout=120,
                       headers={'Accept': 'application/rdap+json'}):
         """
         The function for retrieving a json result via HTTP.
@@ -477,6 +477,8 @@ class Net:
             url: The URL to retrieve.
             retry_count: The number of times to retry in case socket errors,
                 timeouts, connection resets, etc. are encountered.
+            rate_limit_timeout: The number of seconds to wait before retrying
+                when a rate limit notice is returned via rdap+json.
             headers: The HTTP headers dictionary. The Accept header defaults
                 to 'application/rdap+json'.
 
@@ -485,6 +487,8 @@ class Net:
 
         Raises:
             HTTPLookupError: The HTTP lookup failed.
+            HTTPRateLimitError: The HTTP request rate limited and retries
+                were exhausted.
         """
 
         try:
@@ -499,21 +503,47 @@ class Net:
             except AttributeError:  # pragma: no cover
                 d = json.loads(data.read().decode('utf-8', 'ignore'))
 
+            try:
+                for tmp in d['notices']:
+                    if tmp['title'] == 'Rate Limit Notice':
+                        log.debug(
+                            'RDAP query rate limit exceeded. Waiting {0} '
+                            'seconds...'.format(rate_limit_timeout))
+                        sleep(rate_limit_timeout)
+
+                        if retry_count > 0:
+                            return self.get_http_json(url,
+                                                      retry_count - 1,
+                                                      rate_limit_timeout,
+                                                      headers)
+                        else:
+                            raise HTTPRateLimitError(
+                                'HTTP lookup failed for %r. Rate limit '
+                                'exceeded, wait and try again (possibly a '
+                                'temporary block).' % url)
+
+            except IndexError:
+                pass
+
             return d
 
         except (socket.timeout, socket.error) as e:
-
             log.debug('HTTP query socket error: {0}'.format(e))
             if retry_count > 0:
 
                 log.debug('HTTP query retrying (count: {0})'.format(
                     retry_count))
 
-                return self.get_http_json(url, retry_count - 1, headers)
+                return self.get_http_json(url, retry_count - 1,
+                                          rate_limit_timeout, headers)
 
             else:
 
                 raise HTTPLookupError('HTTP lookup failed for %r.' % url)
+
+        except (HTTPLookupError, HTTPRateLimitError) as e:  # pragma: no cover
+
+            raise e
 
         except:  # pragma: no cover
 
