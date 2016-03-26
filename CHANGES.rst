@@ -9,6 +9,8 @@ Changelog
 - Fixed HTTP decoding, set to utf-8 (italomaia)
 - IPWhois.lookup() deprecated (#96), and will be removed in a future release
   (TBD). Use IPWhois.lookup_whois() instead.
+- Added rate_limit_timeout parameter to Net.get_http_json(),
+  IPWhois.lookup_rdap(), and RDAP.lookup(). New exception HTTPRateLimitError.
 
 0.11.2 (2016-02-25)
 -------------------
