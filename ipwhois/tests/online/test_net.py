@@ -1,7 +1,8 @@
 import unittest
 import logging
 from ipwhois import (Net, ASNLookupError, ASNRegistryError, BlacklistError,
-                     WhoisLookupError, HTTPLookupError, HostLookupError)
+                     WhoisLookupError, HTTPLookupError, HostLookupError,
+                     HTTPRateLimitError)
 
 LOG_FORMAT = ('[%(asctime)s] [%(levelname)s] [%(filename)s:%(lineno)s] '
               '[%(funcName)s()] %(message)s')
@@ -84,8 +85,29 @@ class TestNet(TestCommon):
             url='http://255.255.255.255', retry_count=0))
 
         result = Net('74.125.225.229', 0)
+        url = RIR_RDAP['arin']['ip_url'].format('74.125.225.229')
         self.assertRaises(HTTPLookupError, result.get_http_json, **dict(
-            retry_count=1))
+            url=url, retry_count=0))
+
+        # Uncommenting below will result in a flood of up to 20 requests
+        # to test rate limiting.
+        '''
+        url = RIR_RDAP['lacnic']['ip_url'].format('200.57.141.161')
+        result = Net('200.57.141.161')
+        count = 20
+        while count > 0:
+            count -= 1
+            try:
+                self.assertRaises(HTTPRateLimitError, result.get_http_json,
+                                  **dict(url=url, retry_count=0))
+                break
+
+            except AssertionError as e:
+                if count == 0:
+                    raise e
+                else:
+                    pass
+        '''
 
     def test_get_host(self):
         ips = [

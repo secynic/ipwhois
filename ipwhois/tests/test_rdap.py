@@ -187,3 +187,8 @@ class TestRDAPEntity(TestCommon):
         del tmp['vcardArray']
         ent = _RDAPEntity(tmp)
         ent.parse()
+
+        tmp = data
+        del tmp['notices'][0]['description']
+        ent = _RDAPEntity(tmp)
+        ent.parse()

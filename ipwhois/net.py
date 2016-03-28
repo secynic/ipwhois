@@ -57,12 +57,14 @@ try:  # pragma: no cover
     from urllib.request import (OpenerDirector,
                                 ProxyHandler,
                                 build_opener,
-                                Request)
+                                Request,
+                                URLError)
 except ImportError:  # pragma: no cover
     from urllib2 import (OpenerDirector,
                          ProxyHandler,
                          build_opener,
-                         Request)
+                         Request,
+                         URLError)
 
 log = logging.getLogger(__name__)
 
@@ -342,7 +344,7 @@ class Net:
             if retry_count > 0:
 
                 log.debug('ASN query retrying (count: {0})'.format(
-                    retry_count))
+                    str(retry_count)))
                 return self.get_asn_whois(retry_count - 1)
 
             else:
@@ -448,7 +450,7 @@ class Net:
             if retry_count > 0:
 
                 log.debug('WHOIS query retrying (count: {0})'.format(
-                    retry_count))
+                    str(retry_count)))
                 return self.get_whois(asn_registry, retry_count - 1, server,
                                       port, extra_blacklist)
 
@@ -469,7 +471,7 @@ class Net:
             )
 
     def get_http_json(self, url=None, retry_count=3, rate_limit_timeout=120,
-                      headers={'Accept': 'application/rdap+json'}):
+                      headers=None):
         """
         The function for retrieving a json result via HTTP.
 
@@ -491,6 +493,9 @@ class Net:
                 were exhausted.
         """
 
+        if headers is None:
+            headers = {'Accept': 'application/rdap+json'}
+
         try:
 
             # Create the connection for the whois query.
@@ -504,14 +509,17 @@ class Net:
                 d = json.loads(data.read().decode('utf-8', 'ignore'))
 
             try:
-                for tmp in d['notices']:
+                # Tests written but commented out. I do not want to send a
+                # flood of requests on every test.
+                for tmp in d['notices']:  # pragma: no cover
                     if tmp['title'] == 'Rate Limit Notice':
-                        log.debug(
-                            'RDAP query rate limit exceeded. Waiting {0} '
-                            'seconds...'.format(rate_limit_timeout))
-                        sleep(rate_limit_timeout)
+                        log.debug('RDAP query rate limit exceeded.')
 
                         if retry_count > 0:
+                            log.debug('Waiting {0} seconds...'.format(
+                                str(rate_limit_timeout)))
+
+                            sleep(rate_limit_timeout)
                             return self.get_http_json(url,
                                                       retry_count - 1,
                                                       rate_limit_timeout,
@@ -522,17 +530,27 @@ class Net:
                                 'exceeded, wait and try again (possibly a '
                                 'temporary block).' % url)
 
-            except IndexError:
+            except IndexError:  # pragma: no cover
+
                 pass
 
             return d
 
-        except (socket.timeout, socket.error) as e:
+        except (URLError, socket.timeout, socket.error) as e:
+
+            # Check needed for Python 2.6, also why URLError is caught.
+            try:
+                if not isinstance(e.reason, (socket.timeout, socket.error)):
+                    raise HTTPLookupError('HTTP lookup failed for %r.' % url)
+            except AttributeError:  # pragma: no cover
+
+                pass
+
             log.debug('HTTP query socket error: {0}'.format(e))
             if retry_count > 0:
 
                 log.debug('HTTP query retrying (count: {0})'.format(
-                    retry_count))
+                    str(retry_count)))
 
                 return self.get_http_json(url, retry_count - 1,
                                           rate_limit_timeout, headers)
@@ -587,7 +605,7 @@ class Net:
             if retry_count > 0:
 
                 log.debug('Host query retrying (count: {0})'.format(
-                    retry_count))
+                    str(retry_count)))
 
                 return self.get_host(retry_count - 1)
 
@@ -700,7 +718,7 @@ class Net:
                     except KeyError as e:
 
                         log.debug('Could not parse ASN registry via HTTP: {0}'
-                                  ''.format(e))
+                                  ''.format(str(e)))
                         raise ASNRegistryError('ASN registry lookup failed.')
 
                     break
