@@ -19,7 +19,7 @@ class TestCommon(unittest.TestCase):
             if not isinstance(obj, cls):
                 self.fail(self._formatMessage(
                     msg,
-                    '%s is not an instance of %r' % (repr(obj), cls)
+                    '{0} is not an instance of {1}'.format(obj, cls)
                 ))
 
 
@@ -53,7 +53,7 @@ class TestRDAP(TestCommon):
 
             except Exception as e:
 
-                self.fail('Unexpected exception raised: %r' % e)
+                self.fail('Unexpected exception raised: {0}'.format(e))
 
         for key, val in data.items():
 
@@ -78,4 +78,4 @@ class TestRDAP(TestCommon):
 
             except Exception as e:
 
-                self.fail('Unexpected exception raised: %r' % e)
+                self.fail('Unexpected exception raised: {0}'.format(e))

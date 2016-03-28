@@ -22,7 +22,7 @@ class TestFunctions(unittest.TestCase):
             if not isinstance(obj, cls):
                 self.fail(self._formatMessage(
                     msg,
-                    '%s is not an instance of %r' % (repr(obj), cls)
+                    '{0} is not an instance of {1}'.format(obj, cls)
                 ))
 
     def __init__(self, *args, **kwargs):

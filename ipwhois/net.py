@@ -147,8 +147,8 @@ class Net:
             if is_defined[0]:
 
                 raise IPDefinedError(
-                    'IPv4 address %r is already defined as %r via '
-                    '%r.' % (
+                    'IPv4 address {0} is already defined as {1} via '
+                    '{2}.'.format(
                         self.address_str, is_defined[1], is_defined[2]
                     )
                 )
@@ -168,8 +168,8 @@ class Net:
             if is_defined[0]:
 
                 raise IPDefinedError(
-                    'IPv6 address %r is already defined as %r via '
-                    '%r.' % (
+                    'IPv6 address {0} is already defined as {1} via '
+                    '{2}.'.format(
                         self.address_str, is_defined[1], is_defined[2]
                     )
                 )
@@ -238,7 +238,8 @@ class Net:
             if ret['asn_registry'] not in RIR_WHOIS.keys():
 
                 raise ASNRegistryError(
-                    'ASN registry %r is not known.' % ret['asn_registry']
+                    'ASN registry {0} is not known.'.format(
+                        ret['asn_registry'])
                 )
 
             ret['asn'] = temp[0].strip(' "\n')
@@ -256,14 +257,14 @@ class Net:
                 dns.resolver.NoAnswer, dns.exception.Timeout) as e:
 
             raise ASNLookupError(
-                'ASN lookup failed (DNS %s) for %r.' % (
+                'ASN lookup failed (DNS {0}) for {1}.'.format(
                     e.__class__.__name__, self.address_str)
             )
 
         except:
 
             raise ASNLookupError(
-                'ASN lookup failed for %r.' % self.address_str
+                'ASN lookup failed for {0}.'.format(self.address_str)
             )
 
     def get_asn_whois(self, retry_count=3, result=None):
@@ -301,7 +302,8 @@ class Net:
 
                 # Query the Cymru whois server, and store the results.
                 conn.send((
-                    ' -r -a -c -p -f -o %s%s' % (self.address_str, '\r\n')
+                    ' -r -a -c -p -f -o {0}{1}'.format(
+                        self.address_str, '\r\n')
                 ).encode())
 
                 data = ''
@@ -328,7 +330,8 @@ class Net:
             if ret['asn_registry'] not in RIR_WHOIS.keys():
 
                 raise ASNRegistryError(
-                    'ASN registry %r is not known.' % ret['asn_registry']
+                    'ASN registry {0} is not known.'.format(
+                        ret['asn_registry'])
                 )
 
             ret['asn'] = temp[0].strip(' \n')
@@ -350,7 +353,7 @@ class Net:
             else:
 
                 raise ASNLookupError(
-                    'ASN lookup failed for %r.' % self.address_str
+                    'ASN lookup failed for {0}.'.format(self.address_str)
                 )
 
         except ASNRegistryError:
@@ -360,7 +363,7 @@ class Net:
         except:
 
             raise ASNLookupError(
-                'ASN lookup failed for %r.' % self.address_str
+                'ASN lookup failed for {0}.'.format(self.address_str)
             )
 
     def get_whois(self, asn_registry='arin', retry_count=3, server=None,
@@ -394,7 +397,7 @@ class Net:
 
             if any(server in srv for srv in (BLACKLIST, extra_bl)):
                 raise BlacklistError(
-                    'The server %r is blacklisted.' % server
+                    'The server {0} is blacklisted.'.format(server)
                 )
 
             if server is None:
@@ -411,7 +414,7 @@ class Net:
             query = self.address_str + '\r\n'
             if asn_registry == 'arin':
 
-                query = 'n + %s' % query
+                query = 'n + {0}'.format(query)
 
             # Query the whois server, and store the results.
             conn.send(query.encode())
@@ -457,7 +460,7 @@ class Net:
             else:
 
                 raise WhoisLookupError(
-                    'WHOIS lookup failed for %r.' % self.address_str
+                    'WHOIS lookup failed for {0}.'.format(self.address_str)
                 )
 
         except BlacklistError:
@@ -467,7 +470,7 @@ class Net:
         except:  # pragma: no cover
 
             raise WhoisLookupError(
-                'WHOIS lookup failed for %r.' % self.address_str
+                'WHOIS lookup failed for {0}.'.format(self.address_str)
             )
 
     def get_http_json(self, url=None, retry_count=3, rate_limit_timeout=120,
@@ -526,9 +529,9 @@ class Net:
                                                       headers)
                         else:
                             raise HTTPRateLimitError(
-                                'HTTP lookup failed for %r. Rate limit '
+                                'HTTP lookup failed for {0}. Rate limit '
                                 'exceeded, wait and try again (possibly a '
-                                'temporary block).' % url)
+                                'temporary block).'.format(url))
 
             except IndexError:  # pragma: no cover
 
@@ -541,7 +544,8 @@ class Net:
             # Check needed for Python 2.6, also why URLError is caught.
             try:
                 if not isinstance(e.reason, (socket.timeout, socket.error)):
-                    raise HTTPLookupError('HTTP lookup failed for %r.' % url)
+                    raise HTTPLookupError('HTTP lookup failed for {0}.'.format(
+                        url))
             except AttributeError:  # pragma: no cover
 
                 pass
@@ -557,7 +561,8 @@ class Net:
 
             else:
 
-                raise HTTPLookupError('HTTP lookup failed for %r.' % url)
+                raise HTTPLookupError('HTTP lookup failed for {0}.'.format(
+                    url))
 
         except (HTTPLookupError, HTTPRateLimitError) as e:  # pragma: no cover
 
@@ -565,7 +570,7 @@ class Net:
 
         except:  # pragma: no cover
 
-            raise HTTPLookupError('HTTP lookup failed for %r.' % url)
+            raise HTTPLookupError('HTTP lookup failed for {0}.'.format(url))
 
     def get_host(self, retry_count=3):
         """
@@ -612,13 +617,13 @@ class Net:
             else:
 
                 raise HostLookupError(
-                    'Host lookup failed for %r.' % self.address_str
+                    'Host lookup failed for {0}.'.format(self.address_str)
                 )
 
         except:  # pragma: no cover
 
             raise HostLookupError(
-                'Host lookup failed for %r.' % self.address_str
+                'Host lookup failed for {0}.'.format(self.address_str)
             )
 
     def lookup_asn(self, retry_count=3):

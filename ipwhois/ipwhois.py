@@ -57,8 +57,8 @@ class IPWhois:
 
     def __repr__(self):
 
-        return 'IPWhois(%r, %r, %r)' % (
-            self.address_str, self.timeout, self.net.opener
+        return 'IPWhois({0}, {1}, {2})'.format(
+            self.address_str, str(self.timeout), repr(self.net.opener)
         )
 
     def lookup(self, *args, **kwargs):

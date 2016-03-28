@@ -12,6 +12,7 @@ Changelog
 - Added rate_limit_timeout parameter to Net.get_http_json(),
   IPWhois.lookup_rdap(), and RDAP.lookup(). New exception HTTPRateLimitError.
 - Fixed socket exception handling in Net.get_http_json() for Python 2.6.
+- Replaced remaining % with str.format (issue #95).
 
 0.11.2 (2016-02-25)
 -------------------

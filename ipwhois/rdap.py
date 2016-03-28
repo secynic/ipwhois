@@ -27,6 +27,7 @@ from . import (Net, NetError, InvalidEntityContactObject, InvalidNetworkObject,
 from .utils import ipv4_lstrip_zeros, calculate_cidr, unique_everseen
 from .net import ip_address
 import logging
+import json
 
 log = logging.getLogger(__name__)
 
@@ -505,7 +506,7 @@ class _RDAPNetwork(_RDAPCommon):
         except (KeyError, ValueError, TypeError):
 
             log.debug('IP address data incomplete. Data parsed prior to '
-                      'exception: {0}'.format(self.vars))
+                      'exception: {0}'.format(json.dumps(self.vars)))
             raise InvalidNetworkObject('IP address data is missing for RDAP '
                                        'network object.')
 
@@ -761,7 +762,8 @@ class RDAP:
 
         if depth > 0 and len(temp_objects) > 0:
 
-            log.debug('Parsing RDAP sub-entities to depth: {0}'.format(depth))
+            log.debug('Parsing RDAP sub-entities to depth: {0}'.format(str(
+                depth)))
 
         while depth > 0 and len(temp_objects) > 0:
 

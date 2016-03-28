@@ -16,7 +16,7 @@ class TestCommon(unittest.TestCase):
             if not isinstance(obj, cls):
                 self.fail(self._formatMessage(
                     msg,
-                    '%s is not an instance of %r' % (repr(obj), cls)
+                    '{0} is not an instance of {1}'.format(obj, cls)
                 ))
 
 
@@ -74,7 +74,7 @@ class TestNet(TestCommon):
         except AssertionError as e:
             raise e
         except Exception as e:
-            self.fail('Unexpected exception raised: %r' % e)
+            self.fail('Unexpected exception raised: {0}'.format(e))
 
         data = ['"15169 ', ' 74.125.225.0/24 ', ' US ', ' random ',
                 ' 2007-03-13"']
@@ -94,7 +94,7 @@ class TestNet(TestCommon):
         except AssertionError as e:
             raise e
         except Exception as e:
-            self.fail('Unexpected exception raised: %r' % e)
+            self.fail('Unexpected exception raised: {0}'.format(e))
 
         data = ('15169   | 74.125.225.229   | 74.125.225.0/24     | US | rdm'
                 '     | 2007-03-13')

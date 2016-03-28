@@ -16,7 +16,7 @@ class TestCommon(unittest.TestCase):
             if not isinstance(obj, cls):
                 self.fail(self._formatMessage(
                     msg,
-                    '%s is not an instance of %r' % (repr(obj), cls)
+                    '{0} is not an instance of {1}'.format(obj, cls)
                 ))
 
 
@@ -31,7 +31,7 @@ class TestNet(TestCommon):
         except AssertionError as e:
             raise e
         except Exception as e:
-            self.fail('Unexpected exception raised: %r' % e)
+            self.fail('Unexpected exception raised: {0}'.format(e))
 
     def test_get_asn_whois(self):
         result = Net('74.125.225.229')
@@ -42,7 +42,7 @@ class TestNet(TestCommon):
         except AssertionError as e:
             raise e
         except Exception as e:
-            self.fail('Unexpected exception raised: %r' % e)
+            self.fail('Unexpected exception raised: {0}'.format(e))
 
         result = Net('74.125.225.229')
         self.assertRaises(ASNLookupError, result.get_asn_whois, 3, 'a')
@@ -56,7 +56,7 @@ class TestNet(TestCommon):
         except AssertionError as e:
             raise e
         except Exception as e:
-            self.fail('Unexpected exception raised: %r' % e)
+            self.fail('Unexpected exception raised: {0}'.format(e))
 
         self.assertRaises(WhoisLookupError, result.get_whois, **dict(
             retry_count=0, server='arin.net'))
@@ -79,7 +79,7 @@ class TestNet(TestCommon):
         except AssertionError as e:
             raise e
         except Exception as e:
-            self.fail('Unexpected exception raised: %r' % e)
+            self.fail('Unexpected exception raised: {0}'.format(e))
 
         self.assertRaises(HTTPLookupError, result.get_http_json, **dict(
             url='http://255.255.255.255', retry_count=0))
@@ -124,7 +124,7 @@ class TestNet(TestCommon):
             except AssertionError as e:
                 raise e
             except Exception as e:
-                self.fail('Unexpected exception raised: %r' % e)
+                self.fail('Unexpected exception raised: {0}'.format(e))
 
         result = Net('74.125.225.229', 0)
         self.assertRaises(HostLookupError, result.get_host, **dict(
@@ -139,7 +139,7 @@ class TestNet(TestCommon):
         except AssertionError as e:
             raise e
         except Exception as e:
-            self.fail('Unexpected exception raised: %r' % e)
+            self.fail('Unexpected exception raised: {0}'.format(e))
 
         result = Net('74.125.225.229', timeout=0, allow_permutations=False)
         self.assertRaises(ASNRegistryError, result.lookup_asn)

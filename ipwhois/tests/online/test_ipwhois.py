@@ -16,7 +16,7 @@ class TestCommon(unittest.TestCase):
             if not isinstance(obj, cls):
                 self.fail(self._formatMessage(
                     msg,
-                    '%s is not an instance of %r' % (repr(obj), cls)
+                    '{0} is not an instance of {1}'.format(obj, cls)
                 ))
 
 
@@ -49,7 +49,7 @@ class TestIPWhois(TestCommon):
             except AssertionError as e:
                 raise e
             except Exception as e:
-                self.fail('Unexpected exception raised: %r' % e)
+                self.fail('Unexpected exception raised: {0}'.format(e))
 
         rwhois_ips = [
             '38.113.116.218'  # COGNETCO
@@ -68,7 +68,7 @@ class TestIPWhois(TestCommon):
             except AssertionError as e:
                 raise e
             except Exception as e:
-                self.fail('Unexpected exception raised: %r' % e)
+                self.fail('Unexpected exception raised: {0}'.format(e))
 
         for ip in rwhois_ips:
 
@@ -84,7 +84,7 @@ class TestIPWhois(TestCommon):
             except AssertionError as e:
                 raise e
             except Exception as e:
-                self.fail('Unexpected exception raised: %r' % e)
+                self.fail('Unexpected exception raised: {0}'.format(e))
 
             break
 
@@ -101,7 +101,7 @@ class TestIPWhois(TestCommon):
             except AssertionError as e:
                 raise e
             except Exception as e:
-                self.fail('Unexpected exception raised: %r' % e)
+                self.fail('Unexpected exception raised: {0}'.format(e))
 
             break
 
@@ -137,7 +137,7 @@ class TestIPWhois(TestCommon):
             except AssertionError as e:
                 raise e
             except Exception as e:
-                self.fail('Unexpected exception raised: %r' % e)
+                self.fail('Unexpected exception raised: {0}'.format(e))
 
         handler = ProxyHandler({'http': 'http://0.0.0.0:80/'})
         opener = build_opener(handler)
