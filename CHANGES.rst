@@ -16,7 +16,8 @@ Changelog
   ASN dns lookup fails. Allow permutations must be enabled. Defaults to all
   ['whois', 'http'] (issue #93).
 - Fixed socket exception handling in Net.get_http_json() for Python 2.6.
-- Fixed assertIsInstance for Python 2.6 tests (issue #100).
+- Fixed assertIsInstance for Python 2.6 tests (issue #100). Implemented
+  unittest._formatMessage and unittest.util.safe_repr for Python 2.6.
 - Moved TestCommon to tests\\__init__.py to avoid duplicate code.
 - Replaced remaining % with str.format (issue #95).
 
