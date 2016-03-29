@@ -73,113 +73,185 @@ Basic usage
     'asn_date': '2007-03-13',
     'asn_registry': 'arin',
     'entities': [u'GOGL'],
-    'network': {'cidr': '74.125.0.0/16',
-             'country': None,
-             'end_address': '74.125.255.255',
-             'events': [{'action': u'last changed',
-                         'actor': None,
-                         'timestamp': u'2012-02-24T09:44:34-05:00'},
-                        {'action': u'registration',
-                         'actor': None,
-                         'timestamp': u'2007-03-13T12:09:54-04:00'}],
-             'handle': u'NET-74-125-0-0-1',
-             'ip_version': u'v4',
-             'links': [u'https://rdap.arin.net/registry/ip/074.125.000.000',
-                       u'https://whois.arin.net/rest/net/NET-74-125-0-0-1'],
-             'name': u'GOOGLE',
-             'notices': [{'description': u'By using the ARIN RDAP/Whois service, you are agreeing to the RDAP/Whois Terms of Use',
-                          'links': [u'https://www.arin.net/whois_tou.html'],
-                          'title': u'Terms of Service'}],
-             'parent_handle': u'NET-74-0-0-0-0',
-             'raw': None,
-             'remarks': None,
-             'start_address': '74.125.0.0',
-             'status': None,
-             'type': None},
-    'objects': {u'ABUSE5250-ARIN': {'contact': {'address': [{'type': None,
-                                                          'value': u'1600 Amphitheatre Parkway\nMountain View\nCA\n94043\nUNITED STATES'}],
-                                             'email': [{'type': None,
-                                                        'value': u'network-abuse@google.com'}],
-                                             'kind': u'group',
-                                             'name': u'Abuse',
-                                             'phone': [{'type': [u'work',
-                                                                 u'voice'],
-                                                        'value': u'+1-650-253-0000'}],
-                                             'role': None,
-                                             'title': None},
-                                 'entities': None,
-                                 'events': [{'action': u'last changed',
-                                             'actor': None,
-                                             'timestamp': u'2015-11-06T15:36:35-05:00'},
-                                            {'action': u'registration',
-                                             'actor': None,
-                                             'timestamp': u'2015-11-06T15:36:35-05:00'}],
-                                 'events_actor': None,
-                                 'handle': u'ABUSE5250-ARIN',
-                                 'links': [u'https://rdap.arin.net/registry/entity/ABUSE5250-ARIN',
-                                           u'https://whois.arin.net/rest/poc/ABUSE5250-ARIN'],
-                                 'notices': [{'description': u'By using the ARIN RDAP/Whois service, you are agreeing to the RDAP/Whois Terms of Use',
-                                              'links': [u'https://www.arin.net/whois_tou.html'],
-                                              'title': u'Terms of Service'}],
-                                 'raw': None,
-                                 'remarks': [{'description': u'Please note that the recommended way to file abuse complaints are located in the following links.\r\n\r\nTo report abuse and illegal activity: https://www.google.com/intl/en_US/goodtoknow/online-safety/reporting-abuse/ \r\n\r\nFor legal requests: http://support.google.com/legal \r\n\r\nRegards,\r\nThe Google Team',
-                                              'links': None,
-                                              'title': u'Registration Comments'}],
-                                 'roles': None,
-                                 'status': [u'validated']},
-             u'GOGL': {'contact': {'address': [{'type': None,
-                                                'value': u'1600 Amphitheatre Parkway\nMountain View\nCA\n94043\nUNITED STATES'}],
-                                   'email': None,
-                                   'kind': u'org',
-                                   'name': u'Google Inc.',
-                                   'phone': None,
-                                   'role': None,
-                                   'title': None},
-                       'entities': [u'ABUSE5250-ARIN', u'ZG39-ARIN'],
-                       'events': [{'action': u'last changed',
-                                   'actor': None,
-                                   'timestamp': u'2015-11-06T15:45:54-05:00'},
-                                  {'action': u'registration',
-                                   'actor': None,
-                                   'timestamp': u'2000-03-30T00:00:00-05:00'}],
-                       'events_actor': None,
-                       'handle': u'GOGL',
-                       'links': [u'https://rdap.arin.net/registry/entity/GOGL',
-                                 u'https://whois.arin.net/rest/org/GOGL'],
-                       'notices': None,
-                       'raw': None,
-                       'remarks': None,
-                       'roles': [u'registrant'],
-                       'status': None},
-             u'ZG39-ARIN': {'contact': {'address': [{'type': None,
-                                                     'value': u'1600 Amphitheatre Parkway\nMountain View\nCA\n94043\nUNITED STATES'}],
-                                        'email': [{'type': None,
-                                                   'value': u'arin-contact@google.com'}],
-                                        'kind': u'group',
-                                        'name': u'Google Inc',
-                                        'phone': [{'type': [u'work',
-                                                            u'voice'],
-                                                   'value': u'+1-650-253-0000'}],
-                                        'role': None,
-                                        'title': None},
-                            'entities': None,
-                            'events': [{'action': u'last changed',
-                                        'actor': None,
-                                        'timestamp': u'2015-09-01T14:03:11-04:00'},
-                                       {'action': u'registration',
-                                        'actor': None,
-                                        'timestamp': u'2000-11-30T13:54:08-05:00'}],
-                            'events_actor': None,
-                            'handle': u'ZG39-ARIN',
-                            'links': [u'https://rdap.arin.net/registry/entity/ZG39-ARIN',
-                                      u'https://whois.arin.net/rest/poc/ZG39-ARIN'],
-                            'notices': [{'description': u'By using the ARIN RDAP/Whois service, you are agreeing to the RDAP/Whois Terms of Use',
-                                         'links': [u'https://www.arin.net/whois_tou.html'],
-                                         'title': u'Terms of Service'}],
-                            'raw': None,
-                            'remarks': None,
-                            'roles': None,
-                            'status': [u'validated']}},
+    'network': {
+        'cidr': '74.125.0.0/16',
+        'country': None,
+        'end_address': '74.125.255.255',
+        'events': [{
+                'action': u'last changed',
+                'actor': None,
+                'timestamp': u'2012-02-24T09:44:34-05:00'
+            },
+            {
+                'action': u'registration',
+                'actor': None,
+                'timestamp': u'2007-03-13T12:09:54-04:00'
+            }
+        ],
+        'handle': u'NET-74-125-0-0-1',
+        'ip_version': u'v4',
+        'links': [
+            u'https://rdap.arin.net/registry/ip/074.125.000.000',
+            u'https://whois.arin.net/rest/net/NET-74-125-0-0-1'
+        ],
+        'name': u'GOOGLE',
+        'notices': [{
+            'description': u'By using the ARIN RDAP/Whois service, you are
+                agreeing to the RDAP/Whois Terms of Use',
+            'links': [u'https://www.arin.net/whois_tou.html'],
+            'title': u'Terms of Service'
+        }],
+        'parent_handle': u'NET-74-0-0-0-0',
+        'raw': None,
+        'remarks': None,
+        'start_address': '74.125.0.0',
+        'status': None,
+        'type': None
+    },
+    'objects': {
+        u'ABUSE5250-ARIN': {
+            'contact': {
+                'address': [{
+                    'type': None,
+                    'value': u'1600 Amphitheatre Parkway\nMountain View\nCA\n
+                        94043\nUNITED STATES'
+                }],
+                'email': [{
+                    'type': None,
+                    'value': u'network-abuse@google.com'
+                }],
+                'kind': u'group',
+                'name': u'Abuse',
+                'phone': [{
+                    'type': [u'work', u'voice'],
+                    'value': u'+1-650-253-0000'
+                }],
+                'role': None,
+                'title': None
+            },
+            'entities': None,
+            'events': [{
+                'action': u'last changed',
+                'actor': None,
+                'timestamp': u'2015-11-06T15:36:35-05:00'
+            },
+            {
+                'action': u'registration',
+                'actor': None,
+                'timestamp': u'2015-11-06T15:36:35-05:00'
+            }],
+            'events_actor': None,
+            'handle': u'ABUSE5250-ARIN',
+            'links': [
+                u'https://rdap.arin.net/registry/entity/ABUSE5250-ARIN',
+                u'https://whois.arin.net/rest/poc/ABUSE5250-ARIN'
+            ],
+            'notices': [{
+                'description': u'By using the ARIN RDAP/Whois service, you are
+                    agreeing to the RDAP/Whois Terms of Use',
+                'links': [u'https://www.arin.net/whois_tou.html'],
+                'title': u'Terms of Service'}],
+            'raw': None,
+            'remarks': [{
+                'description': u'Please note that the recommended way to file
+                    abuse complaints are located in the following links.\r\n\r
+                    \nToreport abuse and illegal activity:
+                    https://www.google.com/intl/en_US/goodtoknow/online-safety
+                    /reporting-abuse/ \r\n\r\nFor legal requests:
+                    http://support.google.com/legal \r\n\r\n
+                    Regards,\r\nThe Google Team',
+                'links': None,
+                'title': u'Registration Comments'
+            }],
+            'roles': None,
+            'status': [u'validated']
+        },
+        u'GOGL': {
+            'contact': {
+                'address': [{
+                    'type': None,
+                    'value': u'1600 Amphitheatre Parkway\nMountain View\nCA\n
+                        94043\nUNITED STATES'
+                }],
+                'email': None,
+                'kind': u'org',
+                'name': u'Google Inc.',
+                'phone': None,
+                'role': None,
+                'title': None
+            },
+            'entities': [u'ABUSE5250-ARIN', u'ZG39-ARIN'],
+            'events': [{
+                'action': u'last changed',
+                'actor': None,
+                'timestamp': u'2015-11-06T15:45:54-05:00'
+            },
+            {
+                'action': u'registration',
+                'actor': None,
+                'timestamp': u'2000-03-30T00:00:00-05:00'
+            }],
+            'events_actor': None,
+            'handle': u'GOGL',
+            'links': [
+                u'https://rdap.arin.net/registry/entity/GOGL',
+                u'https://whois.arin.net/rest/org/GOGL'
+            ],
+            'notices': None,
+            'raw': None,
+            'remarks': None,
+            'roles': [u'registrant'],
+            'status': None
+        },
+        u'ZG39-ARIN': {
+            'contact': {
+                'address': [{
+                    'type': None,
+                    'value': u'1600 Amphitheatre Parkway\nMountain View\nCA\n
+                        94043\nUNITED STATES'
+                }],
+                'email': [{
+                    'type': None,
+                    'value': u'arin-contact@google.com'
+                }],
+                'kind': u'group',
+                'name': u'Google Inc',
+                'phone': [{
+                    'type': [u'work', u'voice'],
+                    'value': u'+1-650-253-0000'
+                }],
+                'role': None,
+                'title': None
+            },
+            'entities': None,
+            'events': [{
+                'action': u'last changed',
+                'actor': None,
+                'timestamp': u'2015-09-01T14:03:11-04:00'
+            },
+            {
+                'action': u'registration',
+                'actor': None,
+                'timestamp': u'2000-11-30T13:54:08-05:00'
+            }],
+            'events_actor': None,
+            'handle': u'ZG39-ARIN',
+            'links': [
+                u'https://rdap.arin.net/registry/entity/ZG39-ARIN',
+                u'https://whois.arin.net/rest/poc/ZG39-ARIN'
+            ],
+            'notices': [{
+                'description': u'By using the ARIN RDAP/Whois service, you are
+                    agreeing to the RDAP/Whois Terms of Use',
+                'links': [u'https://www.arin.net/whois_tou.html'],
+                'title': u'Terms of Service'
+            }],
+            'raw': None,
+            'remarks': None,
+            'roles': None,
+            'status': [u'validated']
+        }
+    },
     'query': '74.125.225.229',
     'raw': None
     }
