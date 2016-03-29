@@ -8,6 +8,9 @@ for IPv4 and IPv6 addresses.
 RDAP is the recommended query method as of v0.11.0. Please see the
 `upgrade info <#upgrading-from-0-10-to-0-11>`_.
 
+IPWhois.lookup() is deprecated as of v0.12.0 and will be removed. Legacy whois
+lookups were moved to IPWhois.lookup_whois().
+
 Features
 ========
 
@@ -64,85 +67,119 @@ Basic usage
     >>>> pprint(results)
 
     {
-    'entities': ['GOGL'],
-    'network': {
-        'country': None,
-         'end_address': '74.125.255.255',
-         'events': [{'action': 'last changed',
-                     'actor': None,
-                     'timestamp': '2012-02-24T09:44:34-05:00'},
-                    {'action': 'registration',
-                     'actor': None,
-                     'timestamp': '2007-03-13T12:09:54-04:00'}],
-         'handle': 'NET-74-125-0-0-1',
-         'ip_version': 'v4',
-         'links': ['https://rdap.arin.net/registry/ip/074.125.000.000',
-                   'http://whois.arin.net/rest/net/NET-74-125-0-0-1'],
-         'name': 'GOOGLE',
-         'notices': [{'description': 'By using the ARIN RDAP/Whois service, you are agreeing to the RDAP/Whois Terms of Use',
-                      'title': 'Terms of Service'}],
-         'parent_handle': 'NET-74-0-0-0-0',
-         'raw': None,
-         'remarks': None,
-         'start_address': '74.125.0.0',
-         'status': None,
-         'type': None
-    },
-    'objects': {
-        'GOGL': {'contact': {'address': [{
-            'type': None,
-            'value': '1600 Amphitheatre Parkway\nMountain View\nCA\n94043\nUNITED STATES'}],
-            'email': None,
-            'kind': 'org',
-            'name': 'Google Inc.',
-            'phone': None,
-            'role': None,
-            'title': None},
-            'entities': ['ZG39-ARIN'],
-            'events': [{'action': 'last changed',
-                      'actor': None,
-                      'timestamp': '2013-08-07T19:59:17-04:00'},
-                     {'action': 'registration',
-                      'actor': None,
-                      'timestamp': '2000-03-30T00:00:00-05:00'}],
-            'events_actor': None,
-            'handle': 'GOGL',
-            'links': ['https://rdap.arin.net/registry/entity/GOGL',
-                    'http://whois.arin.net/rest/org/GOGL'],
-            'notices': None,
-            'raw': None,
-            'remarks': None,
-            'roles': ['registrant'],
-            'status': None},
-        'ZG39-ARIN': {'contact': {'address': [{
-            'type': None,
-            'value': '1600 Amphitheatre Parkway\nMountain View\nCA\n94043\nUNITED STATES'}],
-            'email': [{'type': None,
-                      'value': 'arin-contact@google.com'}],
-            'kind': 'group',
-            'name': 'Google Inc',
-            'phone': [{'type': ['work',
-                               'voice'],
-                      'value': '+1-650-253-0000'}],
-            'role': None,
-            'title': None},
-            'entities': None,
-            'events': [{'action': 'last changed',
-                       'actor': None,
-                       'timestamp': '2015-09-01T14:03:11-04:00'},
-                      {'action': 'registration',
-                       'actor': None,
-                       'timestamp': '2000-11-30T13:54:08-05:00'}],
-            'events_actor': None,
-            'handle': 'ZG39-ARIN',
-            'links': ['https://rdap.arin.net/registry/entity/ZG39-ARIN',
-                     'http://whois.arin.net/rest/poc/ZG39-ARIN'],
-            'notices': [{'description': 'By using the ARIN RDAP/Whois service, you are agreeing to the RDAP/Whois Terms of Use',
-                        'title': 'Terms of Service'}],
-            'raw': None,
-            'remarks': None,
-            'roles': None,
-            'status': ['validated']}},
+    'asn': '15169',
+    'asn_cidr': '74.125.225.0/24',
+    'asn_country_code': 'US',
+    'asn_date': '2007-03-13',
+    'asn_registry': 'arin',
+    'entities': [u'GOGL'],
+    'network': {'cidr': '74.125.0.0/16',
+             'country': None,
+             'end_address': '74.125.255.255',
+             'events': [{'action': u'last changed',
+                         'actor': None,
+                         'timestamp': u'2012-02-24T09:44:34-05:00'},
+                        {'action': u'registration',
+                         'actor': None,
+                         'timestamp': u'2007-03-13T12:09:54-04:00'}],
+             'handle': u'NET-74-125-0-0-1',
+             'ip_version': u'v4',
+             'links': [u'https://rdap.arin.net/registry/ip/074.125.000.000',
+                       u'https://whois.arin.net/rest/net/NET-74-125-0-0-1'],
+             'name': u'GOOGLE',
+             'notices': [{'description': u'By using the ARIN RDAP/Whois service, you are agreeing to the RDAP/Whois Terms of Use',
+                          'links': [u'https://www.arin.net/whois_tou.html'],
+                          'title': u'Terms of Service'}],
+             'parent_handle': u'NET-74-0-0-0-0',
+             'raw': None,
+             'remarks': None,
+             'start_address': '74.125.0.0',
+             'status': None,
+             'type': None},
+    'objects': {u'ABUSE5250-ARIN': {'contact': {'address': [{'type': None,
+                                                          'value': u'1600 Amphitheatre Parkway\nMountain View\nCA\n94043\nUNITED STATES'}],
+                                             'email': [{'type': None,
+                                                        'value': u'network-abuse@google.com'}],
+                                             'kind': u'group',
+                                             'name': u'Abuse',
+                                             'phone': [{'type': [u'work',
+                                                                 u'voice'],
+                                                        'value': u'+1-650-253-0000'}],
+                                             'role': None,
+                                             'title': None},
+                                 'entities': None,
+                                 'events': [{'action': u'last changed',
+                                             'actor': None,
+                                             'timestamp': u'2015-11-06T15:36:35-05:00'},
+                                            {'action': u'registration',
+                                             'actor': None,
+                                             'timestamp': u'2015-11-06T15:36:35-05:00'}],
+                                 'events_actor': None,
+                                 'handle': u'ABUSE5250-ARIN',
+                                 'links': [u'https://rdap.arin.net/registry/entity/ABUSE5250-ARIN',
+                                           u'https://whois.arin.net/rest/poc/ABUSE5250-ARIN'],
+                                 'notices': [{'description': u'By using the ARIN RDAP/Whois service, you are agreeing to the RDAP/Whois Terms of Use',
+                                              'links': [u'https://www.arin.net/whois_tou.html'],
+                                              'title': u'Terms of Service'}],
+                                 'raw': None,
+                                 'remarks': [{'description': u'Please note that the recommended way to file abuse complaints are located in the following links.\r\n\r\nTo report abuse and illegal activity: https://www.google.com/intl/en_US/goodtoknow/online-safety/reporting-abuse/ \r\n\r\nFor legal requests: http://support.google.com/legal \r\n\r\nRegards,\r\nThe Google Team',
+                                              'links': None,
+                                              'title': u'Registration Comments'}],
+                                 'roles': None,
+                                 'status': [u'validated']},
+             u'GOGL': {'contact': {'address': [{'type': None,
+                                                'value': u'1600 Amphitheatre Parkway\nMountain View\nCA\n94043\nUNITED STATES'}],
+                                   'email': None,
+                                   'kind': u'org',
+                                   'name': u'Google Inc.',
+                                   'phone': None,
+                                   'role': None,
+                                   'title': None},
+                       'entities': [u'ABUSE5250-ARIN', u'ZG39-ARIN'],
+                       'events': [{'action': u'last changed',
+                                   'actor': None,
+                                   'timestamp': u'2015-11-06T15:45:54-05:00'},
+                                  {'action': u'registration',
+                                   'actor': None,
+                                   'timestamp': u'2000-03-30T00:00:00-05:00'}],
+                       'events_actor': None,
+                       'handle': u'GOGL',
+                       'links': [u'https://rdap.arin.net/registry/entity/GOGL',
+                                 u'https://whois.arin.net/rest/org/GOGL'],
+                       'notices': None,
+                       'raw': None,
+                       'remarks': None,
+                       'roles': [u'registrant'],
+                       'status': None},
+             u'ZG39-ARIN': {'contact': {'address': [{'type': None,
+                                                     'value': u'1600 Amphitheatre Parkway\nMountain View\nCA\n94043\nUNITED STATES'}],
+                                        'email': [{'type': None,
+                                                   'value': u'arin-contact@google.com'}],
+                                        'kind': u'group',
+                                        'name': u'Google Inc',
+                                        'phone': [{'type': [u'work',
+                                                            u'voice'],
+                                                   'value': u'+1-650-253-0000'}],
+                                        'role': None,
+                                        'title': None},
+                            'entities': None,
+                            'events': [{'action': u'last changed',
+                                        'actor': None,
+                                        'timestamp': u'2015-09-01T14:03:11-04:00'},
+                                       {'action': u'registration',
+                                        'actor': None,
+                                        'timestamp': u'2000-11-30T13:54:08-05:00'}],
+                            'events_actor': None,
+                            'handle': u'ZG39-ARIN',
+                            'links': [u'https://rdap.arin.net/registry/entity/ZG39-ARIN',
+                                      u'https://whois.arin.net/rest/poc/ZG39-ARIN'],
+                            'notices': [{'description': u'By using the ARIN RDAP/Whois service, you are agreeing to the RDAP/Whois Terms of Use',
+                                         'links': [u'https://www.arin.net/whois_tou.html'],
+                                         'title': u'Terms of Service'}],
+                            'raw': None,
+                            'remarks': None,
+                            'roles': None,
+                            'status': [u'validated']}},
     'query': '74.125.225.229',
     'raw': None
     }
@@ -158,6 +195,15 @@ Use a proxy
 	>>>> opener = request.build_opener(handler)
 	>>>> obj = IPWhois('74.125.225.229', proxy_opener = opener)
 
+Tweaking queries for your network
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+::
+
+	>>>> from ipwhois import IPWhois
+	>>>> obj = IPWhois('74.125.225.229', timeout=10)
+	>>>> results = obj.lookup_rdap(retry_count=5, rate_limit_timeout=60)
+
 Legacy Whois
 ------------
 
@@ -170,7 +216,7 @@ Basic usage
 	>>>> from pprint import pprint
 
 	>>>> obj = IPWhois('74.125.225.229')
-	>>>> results = obj.lookup()
+	>>>> results = obj.lookup_whois()
 	>>>> pprint(results)
 
 	{
@@ -209,7 +255,7 @@ Multiple networks listed and referral whois
     >>>> from pprint import pprint
 
     >>>> obj = IPWhois('38.113.198.252')
-    >>>> results = obj.lookup(get_referral=True)
+    >>>> results = obj.lookup_whois(get_referral=True)
     >>>> pprint(results)
 
     {
@@ -289,7 +335,7 @@ Retrieve the official country name for an ISO 3166-1 country code
 
 	>>>> countries = get_countries()
 	>>>> obj = IPWhois('74.125.225.229')
-	>>>> results = obj.lookup(False)
+	>>>> results = obj.lookup_whois(False)
 	>>>> print(countries[results['nets'][0]['country']])
 
 	United States
@@ -378,6 +424,9 @@ See the `example <#basic-usage>`_ for more detailed field information.
 
 Legacy Whois Parsing
 ====================
+
+IPWhois.lookup() is deprecated as of v0.12.0 and will be removed. Legacy whois
+lookups were moved to IPWhois.lookup_whois().
 
 Parsing is currently limited to CIDR, country, name, handle, range,
 description, state, city, address, postal_code, abuse_emails, tech_emails,
