@@ -1,5 +1,5 @@
-import unittest
 import logging
+from ipwhois.tests import TestCommon
 from ipwhois import (Net, ASNLookupError, ASNRegistryError, BlacklistError,
                      WhoisLookupError, HTTPLookupError, HostLookupError,
                      HTTPRateLimitError)
@@ -7,17 +7,6 @@ from ipwhois import (Net, ASNLookupError, ASNRegistryError, BlacklistError,
 LOG_FORMAT = ('[%(asctime)s] [%(levelname)s] [%(filename)s:%(lineno)s] '
               '[%(funcName)s()] %(message)s')
 logging.basicConfig(level=logging.DEBUG, format=LOG_FORMAT)
-
-
-class TestCommon(unittest.TestCase):
-
-    if not hasattr(unittest.TestCase, 'assertIsInstance'):
-        def assertIsInstance(self, obj, cls, msg=None):
-            if not isinstance(obj, cls):
-                self.fail(self._formatMessage(
-                    msg,
-                    '{0} is not an instance of {1}'.format(obj, cls)
-                ))
 
 
 class TestNet(TestCommon):
@@ -143,3 +132,8 @@ class TestNet(TestCommon):
 
         result = Net('74.125.225.229', timeout=0, allow_permutations=False)
         self.assertRaises(ASNRegistryError, result.lookup_asn)
+
+        result = Net('74.125.225.229', timeout=0, allow_permutations=True)
+        self.assertRaises(HTTPLookupError, result.lookup_asn, **dict(
+            asn_alts=['http']
+        ))

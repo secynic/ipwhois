@@ -1,23 +1,12 @@
-import unittest
 import sys
 import logging
+from ipwhois.tests import TestCommon
 from ipwhois import (Net, IPDefinedError, ASNLookupError, ASNRegistryError,
                      WhoisLookupError, HTTPLookupError, HostLookupError)
 
 LOG_FORMAT = ('[%(asctime)s] [%(levelname)s] [%(filename)s:%(lineno)s] '
               '[%(funcName)s()] %(message)s')
 logging.basicConfig(level=logging.DEBUG, format=LOG_FORMAT)
-
-
-class TestCommon(unittest.TestCase):
-
-    if not hasattr(unittest.TestCase, 'assertIsInstance'):
-        def assertIsInstance(self, obj, cls, msg=None):
-            if not isinstance(obj, cls):
-                self.fail(self._formatMessage(
-                    msg,
-                    '{0} is not an instance of {1}'.format(obj, cls)
-                ))
 
 
 class TestNet(TestCommon):

@@ -6,12 +6,18 @@ Changelog
 
 - Added headers parameter to ipwhois.Net.get_http_json() (issue #98).
 - Fixed ASN HTTP lookup (fallback) Accept headers (issue #98).
-- Fixed HTTP decoding, set to utf-8 (italomaia)
-- IPWhois.lookup() deprecated (#96), and will be removed in a future release
-  (TBD). Use IPWhois.lookup_whois() instead.
-- Added rate_limit_timeout parameter to Net.get_http_json(),
+- Fixed HTTP decoding, set to utf-8 (italomaia - issue #97)
+- IPWhois.lookup() deprecated (issue #96), and will be removed in a future
+  release (TBD). Use IPWhois.lookup_whois() instead.
+- Added rate_limit_timeout parameter (issue #99) to Net.get_http_json(),
   IPWhois.lookup_rdap(), and RDAP.lookup(). New exception HTTPRateLimitError.
+- Added new parameter asn_alts to Net.lookup_asn(), IPWhois.lookup_rdap() and
+  IPWhois.lookup(). Takes an array of lookup types to attempt if the
+  ASN dns lookup fails. Allow permutations must be enabled. Defaults to all
+  ['whois', 'http'] (issue #93).
 - Fixed socket exception handling in Net.get_http_json() for Python 2.6.
+- Fixed assertIsInstance for Python 2.6 tests (issue #100).
+- Moved TestCommon to tests\\__init__.py to avoid duplicate code.
 - Replaced remaining % with str.format (issue #95).
 
 0.11.2 (2016-02-25)

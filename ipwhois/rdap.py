@@ -667,7 +667,7 @@ class RDAP:
             retry_count: The number of times to retry in case socket errors,
                 timeouts, connection resets, etc. are encountered.
             asn_data: Result dictionary from ipwhois.net.Net.lookup_asn().
-                May be optional in the future when utilizing RDAP bootstrap.
+                Optional if the bootstrap parameter is True.
             depth: How many levels deep to run queries when additional
                 referenced objects are found.
             excluded_entities: A list of entity handles to not perform lookups.

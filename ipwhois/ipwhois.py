@@ -76,7 +76,7 @@ class IPWhois:
 
     def lookup_whois(self, inc_raw=False, retry_count=3, get_referral=False,
                      extra_blacklist=None, ignore_referral_errors=False,
-                     field_list=None):
+                     field_list=None, asn_alts=None):
         """
         The function for retrieving and parsing whois information for an IP
         address via port 43 (WHOIS).
@@ -95,6 +95,9 @@ class IPWhois:
             field_list: If provided, a list of fields to parse:
                 ['name', 'handle', 'description', 'country', 'state', 'city',
                 'address', 'postal_code', 'emails', 'created', 'updated']
+            asn_alts: Array of additional lookup types to attempt if the
+                ASN dns lookup fails. Allow permutations must be enabled.
+                Defaults to all ['whois', 'http'].
 
         Returns:
             Dictionary:
@@ -125,7 +128,7 @@ class IPWhois:
 
         # Retrieve the ASN information.
         log.debug('ASN lookup for {0}'.format(self.address_str))
-        asn_data, response = self.net.lookup_asn(retry_count)
+        asn_data, response = self.net.lookup_asn(retry_count, asn_alts)
 
         # Add the ASN information to the return dictionary.
         results.update(asn_data)
@@ -145,7 +148,7 @@ class IPWhois:
 
     def lookup_rdap(self, inc_raw=False, retry_count=3, depth=0,
                     excluded_entities=None, bootstrap=False,
-                    rate_limit_timeout=120):
+                    rate_limit_timeout=120, asn_alts=None):
         """
         The function for retrieving and parsing whois information for an IP
         address via HTTP (RDAP).
@@ -166,6 +169,9 @@ class IPWhois:
                 and no output for any of the asn* fields is provided.
             rate_limit_timeout: The number of seconds to wait before retrying
                 when a rate limit notice is returned via rdap+json.
+            asn_alts: Array of additional lookup types to attempt if the
+                ASN dns lookup fails. Allow permutations must be enabled.
+                Defaults to all ['whois', 'http'].
 
         Returns:
             Dictionary:
@@ -196,7 +202,7 @@ class IPWhois:
 
             # Retrieve the ASN information.
             log.debug('ASN lookup for {0}'.format(self.address_str))
-            asn_data, response = self.net.lookup_asn(retry_count)
+            asn_data, response = self.net.lookup_asn(retry_count, asn_alts)
 
             # Add the ASN information to the return dictionary.
             results.update(asn_data)

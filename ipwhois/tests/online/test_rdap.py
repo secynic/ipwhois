@@ -1,8 +1,8 @@
-import unittest
 import json
 import io
 from os import path
 import logging
+from ipwhois.tests import TestCommon
 from ipwhois.exceptions import (HTTPLookupError, HTTPRateLimitError)
 from ipwhois.rdap import (RDAP, Net)
 
@@ -10,17 +10,6 @@ LOG_FORMAT = ('[%(asctime)s] [%(levelname)s] [%(filename)s:%(lineno)s] '
               '[%(funcName)s()] %(message)s')
 logging.basicConfig(level=logging.DEBUG, format=LOG_FORMAT)
 log = logging.getLogger(__name__)
-
-
-class TestCommon(unittest.TestCase):
-
-    if not hasattr(unittest.TestCase, 'assertIsInstance'):
-        def assertIsInstance(self, obj, cls, msg=None):
-            if not isinstance(obj, cls):
-                self.fail(self._formatMessage(
-                    msg,
-                    '{0} is not an instance of {1}'.format(obj, cls)
-                ))
 
 
 class TestRDAP(TestCommon):
