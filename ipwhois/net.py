@@ -34,7 +34,7 @@ import dns.rdtypes.ANY.TXT  # @UnusedImport
 
 from .exceptions import (IPDefinedError, ASNRegistryError, ASNLookupError,
                          BlacklistError, WhoisLookupError, HTTPLookupError,
-                         HostLookupError)
+                         HostLookupError, HTTPRateLimitError)
 from .whois import RIR_WHOIS
 from .utils import ipv4_is_defined, ipv6_is_defined
 
@@ -57,12 +57,14 @@ try:  # pragma: no cover
     from urllib.request import (OpenerDirector,
                                 ProxyHandler,
                                 build_opener,
-                                Request)
+                                Request,
+                                URLError)
 except ImportError:  # pragma: no cover
     from urllib2 import (OpenerDirector,
                          ProxyHandler,
                          build_opener,
-                         Request)
+                         Request,
+                         URLError)
 
 log = logging.getLogger(__name__)
 
@@ -145,8 +147,8 @@ class Net:
             if is_defined[0]:
 
                 raise IPDefinedError(
-                    'IPv4 address %r is already defined as %r via '
-                    '%r.' % (
+                    'IPv4 address {0} is already defined as {1} via '
+                    '{2}.'.format(
                         self.address_str, is_defined[1], is_defined[2]
                     )
                 )
@@ -166,8 +168,8 @@ class Net:
             if is_defined[0]:
 
                 raise IPDefinedError(
-                    'IPv6 address %r is already defined as %r via '
-                    '%r.' % (
+                    'IPv6 address {0} is already defined as {1} via '
+                    '{2}.'.format(
                         self.address_str, is_defined[1], is_defined[2]
                     )
                 )
@@ -236,7 +238,8 @@ class Net:
             if ret['asn_registry'] not in RIR_WHOIS.keys():
 
                 raise ASNRegistryError(
-                    'ASN registry %r is not known.' % ret['asn_registry']
+                    'ASN registry {0} is not known.'.format(
+                        ret['asn_registry'])
                 )
 
             ret['asn'] = temp[0].strip(' "\n')
@@ -254,14 +257,14 @@ class Net:
                 dns.resolver.NoAnswer, dns.exception.Timeout) as e:
 
             raise ASNLookupError(
-                'ASN lookup failed (DNS %s) for %r.' % (
+                'ASN lookup failed (DNS {0}) for {1}.'.format(
                     e.__class__.__name__, self.address_str)
             )
 
         except:
 
             raise ASNLookupError(
-                'ASN lookup failed for %r.' % self.address_str
+                'ASN lookup failed for {0}.'.format(self.address_str)
             )
 
     def get_asn_whois(self, retry_count=3, result=None):
@@ -299,7 +302,8 @@ class Net:
 
                 # Query the Cymru whois server, and store the results.
                 conn.send((
-                    ' -r -a -c -p -f -o %s%s' % (self.address_str, '\r\n')
+                    ' -r -a -c -p -f -o {0}{1}'.format(
+                        self.address_str, '\r\n')
                 ).encode())
 
                 data = ''
@@ -326,7 +330,8 @@ class Net:
             if ret['asn_registry'] not in RIR_WHOIS.keys():
 
                 raise ASNRegistryError(
-                    'ASN registry %r is not known.' % ret['asn_registry']
+                    'ASN registry {0} is not known.'.format(
+                        ret['asn_registry'])
                 )
 
             ret['asn'] = temp[0].strip(' \n')
@@ -342,13 +347,13 @@ class Net:
             if retry_count > 0:
 
                 log.debug('ASN query retrying (count: {0})'.format(
-                    retry_count))
+                    str(retry_count)))
                 return self.get_asn_whois(retry_count - 1)
 
             else:
 
                 raise ASNLookupError(
-                    'ASN lookup failed for %r.' % self.address_str
+                    'ASN lookup failed for {0}.'.format(self.address_str)
                 )
 
         except ASNRegistryError:
@@ -358,7 +363,7 @@ class Net:
         except:
 
             raise ASNLookupError(
-                'ASN lookup failed for %r.' % self.address_str
+                'ASN lookup failed for {0}.'.format(self.address_str)
             )
 
     def get_whois(self, asn_registry='arin', retry_count=3, server=None,
@@ -392,7 +397,7 @@ class Net:
 
             if any(server in srv for srv in (BLACKLIST, extra_bl)):
                 raise BlacklistError(
-                    'The server %r is blacklisted.' % server
+                    'The server {0} is blacklisted.'.format(server)
                 )
 
             if server is None:
@@ -409,7 +414,7 @@ class Net:
             query = self.address_str + '\r\n'
             if asn_registry == 'arin':
 
-                query = 'n + %s' % query
+                query = 'n + {0}'.format(query)
 
             # Query the whois server, and store the results.
             conn.send(query.encode())
@@ -448,14 +453,14 @@ class Net:
             if retry_count > 0:
 
                 log.debug('WHOIS query retrying (count: {0})'.format(
-                    retry_count))
+                    str(retry_count)))
                 return self.get_whois(asn_registry, retry_count - 1, server,
                                       port, extra_blacklist)
 
             else:
 
                 raise WhoisLookupError(
-                    'WHOIS lookup failed for %r.' % self.address_str
+                    'WHOIS lookup failed for {0}.'.format(self.address_str)
                 )
 
         except BlacklistError:
@@ -465,10 +470,11 @@ class Net:
         except:  # pragma: no cover
 
             raise WhoisLookupError(
-                'WHOIS lookup failed for %r.' % self.address_str
+                'WHOIS lookup failed for {0}.'.format(self.address_str)
             )
 
-    def get_http_json(self, url=None, retry_count=3):
+    def get_http_json(self, url=None, retry_count=3, rate_limit_timeout=120,
+                      headers=None):
         """
         The function for retrieving a json result via HTTP.
 
@@ -476,45 +482,95 @@ class Net:
             url: The URL to retrieve.
             retry_count: The number of times to retry in case socket errors,
                 timeouts, connection resets, etc. are encountered.
+            rate_limit_timeout: The number of seconds to wait before retrying
+                when a rate limit notice is returned via rdap+json.
+            headers: The HTTP headers dictionary. The Accept header defaults
+                to 'application/rdap+json'.
 
         Returns:
             Dictionary: The data in json format.
 
         Raises:
             HTTPLookupError: The HTTP lookup failed.
+            HTTPRateLimitError: The HTTP request rate limited and retries
+                were exhausted.
         """
+
+        if headers is None:
+            headers = {'Accept': 'application/rdap+json'}
 
         try:
 
             # Create the connection for the whois query.
             log.debug('HTTP query for {0} at {1}'.format(
                 self.address_str, url))
-            conn = Request(url, headers={'Accept': 'application/rdap+json'})
+            conn = Request(url, headers=headers)
             data = self.opener.open(conn, timeout=self.timeout)
             try:
-                d = json.loads(data.readall().decode())
+                d = json.loads(data.readall().decode('utf-8', 'ignore'))
             except AttributeError:  # pragma: no cover
-                d = json.loads(data.read().decode('ascii', 'ignore'))
+                d = json.loads(data.read().decode('utf-8', 'ignore'))
+
+            try:
+                # Tests written but commented out. I do not want to send a
+                # flood of requests on every test.
+                for tmp in d['notices']:  # pragma: no cover
+                    if tmp['title'] == 'Rate Limit Notice':
+                        log.debug('RDAP query rate limit exceeded.')
+
+                        if retry_count > 0:
+                            log.debug('Waiting {0} seconds...'.format(
+                                str(rate_limit_timeout)))
+
+                            sleep(rate_limit_timeout)
+                            return self.get_http_json(url,
+                                                      retry_count - 1,
+                                                      rate_limit_timeout,
+                                                      headers)
+                        else:
+                            raise HTTPRateLimitError(
+                                'HTTP lookup failed for {0}. Rate limit '
+                                'exceeded, wait and try again (possibly a '
+                                'temporary block).'.format(url))
+
+            except IndexError:  # pragma: no cover
+
+                pass
 
             return d
 
-        except (socket.timeout, socket.error) as e:
+        except (URLError, socket.timeout, socket.error) as e:
+
+            # Check needed for Python 2.6, also why URLError is caught.
+            try:
+                if not isinstance(e.reason, (socket.timeout, socket.error)):
+                    raise HTTPLookupError('HTTP lookup failed for {0}.'
+                                          ''.format(url))
+            except AttributeError:  # pragma: no cover
+
+                pass
 
             log.debug('HTTP query socket error: {0}'.format(e))
             if retry_count > 0:
 
                 log.debug('HTTP query retrying (count: {0})'.format(
-                    retry_count))
+                    str(retry_count)))
 
-                return self.get_http_json(url, retry_count - 1)
+                return self.get_http_json(url, retry_count - 1,
+                                          rate_limit_timeout, headers)
 
             else:
 
-                raise HTTPLookupError('HTTP lookup failed for %r.' % url)
+                raise HTTPLookupError('HTTP lookup failed for {0}.'.format(
+                    url))
+
+        except (HTTPLookupError, HTTPRateLimitError) as e:  # pragma: no cover
+
+            raise e
 
         except:  # pragma: no cover
 
-            raise HTTPLookupError('HTTP lookup failed for %r.' % url)
+            raise HTTPLookupError('HTTP lookup failed for {0}.'.format(url))
 
     def get_host(self, retry_count=3):
         """
@@ -554,23 +610,23 @@ class Net:
             if retry_count > 0:
 
                 log.debug('Host query retrying (count: {0})'.format(
-                    retry_count))
+                    str(retry_count)))
 
                 return self.get_host(retry_count - 1)
 
             else:
 
                 raise HostLookupError(
-                    'Host lookup failed for %r.' % self.address_str
+                    'Host lookup failed for {0}.'.format(self.address_str)
                 )
 
         except:  # pragma: no cover
 
             raise HostLookupError(
-                'Host lookup failed for %r.' % self.address_str
+                'Host lookup failed for {0}.'.format(self.address_str)
             )
 
-    def lookup_asn(self, retry_count=3):
+    def lookup_asn(self, retry_count=3, asn_alts=None):
         """
         The wrapper function for retrieving and parsing ASN information for an
         IP address.
@@ -578,6 +634,9 @@ class Net:
         Args:
             retry_count: The number of times to retry in case socket errors,
                 timeouts, connection resets, etc. are encountered.
+            asn_alts: Array of additional lookup types to attempt if the
+                ASN dns lookup fails. Allow permutations must be enabled.
+                Defaults to all ['whois', 'http'].
 
         Returns:
             Tuple:
@@ -590,6 +649,8 @@ class Net:
             ASNRegistryError: ASN registry does not match.
             HTTPLookupError: The HTTP lookup failed.
         """
+
+        lookups = asn_alts if asn_alts is not None else ['whois', 'http']
 
         # Initialize the response.
         response = None
@@ -609,66 +670,81 @@ class Net:
                                        'Permutations not allowed.')
 
             try:
+                if 'whois' in lookups:
 
-                log.debug('ASN DNS lookup failed, trying ASN WHOIS: '
-                          '{0}'.format(e))
-                asn_data = self.get_asn_whois(retry_count)
+                    log.debug('ASN DNS lookup failed, trying ASN WHOIS: '
+                              '{0}'.format(e))
+                    asn_data = self.get_asn_whois(retry_count)
+
+                else:
+
+                    raise ASNLookupError
 
             except (ASNLookupError, ASNRegistryError):  # pragma: no cover
 
-                # Lets attempt to get the ASN registry information from ARIN.
-                log.debug('ASN WHOIS lookup failed, trying ASN via HTTP')
-                response = self.get_http_json(
-                    str(ARIN).format(self.address_str),
-                    retry_count
-                )
+                if 'http' in lookups:
 
-                asn_data = {
-                    'asn_registry': None,
-                    'asn': None,
-                    'asn_cidr': None,
-                    'asn_country_code': None,
-                    'asn_date': None
-                }
+                    # Lets attempt to get the ASN registry information from
+                    # ARIN.
+                    log.debug('ASN WHOIS lookup failed, trying ASN via HTTP')
+                    response = self.get_http_json(
+                        str(ARIN).format(self.address_str),
+                        retry_count,
+                        headers={'Accept': 'application/json'}
+                    )
 
-                try:
-
-                    net_list = response['nets']['net']
-
-                    if not isinstance(net_list, list):
-
-                        net_list = [net_list]
-
-                except KeyError:
-
-                    log.debug('No networks found')
-                    net_list = []
-
-                for n in net_list:
+                    asn_data = {
+                        'asn_registry': None,
+                        'asn': None,
+                        'asn_cidr': None,
+                        'asn_country_code': None,
+                        'asn_date': None
+                    }
 
                     try:
 
-                        if n['orgRef']['@handle'] in ('ARIN', 'VR-ARIN'):
+                        net_list = response['nets']['net']
 
-                            asn_data['asn_registry'] = 'arin'
+                        if not isinstance(net_list, list):
 
-                        elif n['orgRef']['@handle'] == 'RIPE':
+                            net_list = [net_list]
 
-                            asn_data['asn_registry'] = 'ripencc'
+                    except KeyError:
 
-                        else:
+                        log.debug('No networks found')
+                        net_list = []
 
-                            test = RIR_WHOIS[n['orgRef']['@handle'].lower()]
-                            asn_data['asn_registry'] = (
-                                n['orgRef']['@handle'].lower()
-                            )
+                    for n in net_list:
 
-                    except KeyError as e:
+                        try:
 
-                        log.debug('Could not parse ASN registry via HTTP: {0}'
-                                  ''.format(e))
-                        raise ASNRegistryError('ASN registry lookup failed.')
+                            if n['orgRef']['@handle'] in ('ARIN', 'VR-ARIN'):
 
-                    break
+                                asn_data['asn_registry'] = 'arin'
+
+                            elif n['orgRef']['@handle'] == 'RIPE':
+
+                                asn_data['asn_registry'] = 'ripencc'
+
+                            else:
+
+                                test = RIR_WHOIS[n['orgRef'][('@handle'
+                                                              )].lower()]
+                                asn_data['asn_registry'] = (
+                                    n['orgRef']['@handle'].lower()
+                                )
+
+                        except KeyError as e:
+
+                            log.debug('Could not parse ASN registry via HTTP: '
+                                      '{0}'.format(str(e)))
+                            raise ASNRegistryError('ASN registry lookup failed'
+                                                   '.')
+
+                        break
+
+                else:
+
+                    raise ASNRegistryError('ASN registry lookup failed.')
 
         return asn_data, response

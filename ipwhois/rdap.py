@@ -27,6 +27,7 @@ from . import (Net, NetError, InvalidEntityContactObject, InvalidNetworkObject,
 from .utils import ipv4_lstrip_zeros, calculate_cidr, unique_everseen
 from .net import ip_address
 import logging
+import json
 
 log = logging.getLogger(__name__)
 
@@ -505,7 +506,7 @@ class _RDAPNetwork(_RDAPCommon):
         except (KeyError, ValueError, TypeError):
 
             log.debug('IP address data incomplete. Data parsed prior to '
-                      'exception: {0}'.format(self.vars))
+                      'exception: {0}'.format(json.dumps(self.vars)))
             raise InvalidNetworkObject('IP address data is missing for RDAP '
                                        'network object.')
 
@@ -654,7 +655,8 @@ class RDAP:
                            'ipwhois.net.Net')
 
     def lookup(self, inc_raw=False, retry_count=3, asn_data=None, depth=0,
-               excluded_entities=None, response=None, bootstrap=False):
+               excluded_entities=None, response=None, bootstrap=False,
+               rate_limit_timeout=120):
         """
         The function for retrieving and parsing information for an IP
         address via RDAP (HTTP).
@@ -665,13 +667,15 @@ class RDAP:
             retry_count: The number of times to retry in case socket errors,
                 timeouts, connection resets, etc. are encountered.
             asn_data: Result dictionary from ipwhois.net.Net.lookup_asn().
-                May be optional in the future when utilizing RDAP bootstrap.
+                Optional if the bootstrap parameter is True.
             depth: How many levels deep to run queries when additional
                 referenced objects are found.
             excluded_entities: A list of entity handles to not perform lookups.
             response: Optional response object, this bypasses the RDAP lookup.
             bootstrap: If True, performs lookups via ARIN bootstrap rather
                 than lookups based on ASN data.
+            rate_limit_timeout: The number of seconds to wait before retrying
+                when a rate limit notice is returned via rdap+json.
 
         Returns:
             Dictionary:
@@ -718,7 +722,7 @@ class RDAP:
 
             # Retrieve the whois data.
             response = self._net.get_http_json(
-                ip_url, retry_count
+                ip_url, retry_count, rate_limit_timeout=rate_limit_timeout
             )
 
         if inc_raw:
@@ -758,7 +762,8 @@ class RDAP:
 
         if depth > 0 and len(temp_objects) > 0:
 
-            log.debug('Parsing RDAP sub-entities to depth: {0}'.format(depth))
+            log.debug('Parsing RDAP sub-entities to depth: {0}'.format(str(
+                depth)))
 
         while depth > 0 and len(temp_objects) > 0:
 
@@ -785,7 +790,8 @@ class RDAP:
 
                                 # RDAP entity query
                                 response = self._net.get_http_json(
-                                    entity_url, retry_count
+                                    entity_url, retry_count,
+                                    rate_limit_timeout=rate_limit_timeout
                                 )
 
                                 # Parse the entity

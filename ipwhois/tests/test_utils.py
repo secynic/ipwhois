@@ -1,7 +1,7 @@
-import unittest
 import sys
 from os import path
 import logging
+from ipwhois.tests import TestCommon
 from ipwhois.utils import (ipv4_lstrip_zeros,
                            calculate_cidr,
                            get_countries,
@@ -15,18 +15,10 @@ LOG_FORMAT = ('[%(asctime)s] [%(levelname)s] [%(filename)s:%(lineno)s] '
 logging.basicConfig(level=logging.DEBUG, format=LOG_FORMAT)
 
 
-class TestFunctions(unittest.TestCase):
-
-    if not hasattr(unittest.TestCase, 'assertIsInstance'):
-        def assertIsInstance(self, obj, cls, msg=None):
-            if not isinstance(obj, cls):
-                self.fail(self._formatMessage(
-                    msg,
-                    '%s is not an instance of %r' % (repr(obj), cls)
-                ))
+class TestFunctions(TestCommon):
 
     def __init__(self, *args, **kwargs):
-        unittest.TestCase.__init__(self, *args, **kwargs)
+        TestCommon.__init__(self, *args, **kwargs)
 
         self.maxDiff = None
 

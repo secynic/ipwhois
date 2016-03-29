@@ -1,26 +1,15 @@
-import unittest
 import json
 import io
 from os import path
 import logging
-from ipwhois.exceptions import HTTPLookupError
+from ipwhois.tests import TestCommon
+from ipwhois.exceptions import (HTTPLookupError, HTTPRateLimitError)
 from ipwhois.rdap import (RDAP, Net)
 
 LOG_FORMAT = ('[%(asctime)s] [%(levelname)s] [%(filename)s:%(lineno)s] '
               '[%(funcName)s()] %(message)s')
 logging.basicConfig(level=logging.DEBUG, format=LOG_FORMAT)
 log = logging.getLogger(__name__)
-
-
-class TestCommon(unittest.TestCase):
-
-    if not hasattr(unittest.TestCase, 'assertIsInstance'):
-        def assertIsInstance(self, obj, cls, msg=None):
-            if not isinstance(obj, cls):
-                self.fail(self._formatMessage(
-                    msg,
-                    '%s is not an instance of %r' % (repr(obj), cls)
-                ))
 
 
 class TestRDAP(TestCommon):
@@ -43,7 +32,7 @@ class TestRDAP(TestCommon):
                 self.assertIsInstance(obj.lookup(asn_data=val['asn_data'],
                                                  depth=1), dict)
 
-            except HTTPLookupError:
+            except (HTTPLookupError, HTTPRateLimitError):
 
                 pass
 
@@ -53,7 +42,7 @@ class TestRDAP(TestCommon):
 
             except Exception as e:
 
-                self.fail('Unexpected exception raised: %r' % e)
+                self.fail('Unexpected exception raised: {0}'.format(e))
 
         for key, val in data.items():
 
@@ -68,7 +57,7 @@ class TestRDAP(TestCommon):
                                                  bootstrap=True,
                                                  inc_raw=True), dict)
 
-            except HTTPLookupError:
+            except (HTTPLookupError, HTTPRateLimitError):
 
                 pass
 
@@ -78,4 +67,4 @@ class TestRDAP(TestCommon):
 
             except Exception as e:
 
-                self.fail('Unexpected exception raised: %r' % e)
+                self.fail('Unexpected exception raised: {0}'.format(e))

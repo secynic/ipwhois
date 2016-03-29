@@ -1,5 +1,5 @@
-import unittest
 import logging
+from ipwhois.tests import TestCommon
 from ipwhois import (IPWhois, ASNLookupError, ASNRegistryError,
                      WhoisLookupError, HTTPLookupError)
 
@@ -7,17 +7,6 @@ LOG_FORMAT = ('[%(asctime)s] [%(levelname)s] [%(filename)s:%(lineno)s] '
               '[%(funcName)s()] %(message)s')
 logging.basicConfig(level=logging.DEBUG, format=LOG_FORMAT)
 log = logging.getLogger(__name__)
-
-
-class TestCommon(unittest.TestCase):
-
-    if not hasattr(unittest.TestCase, 'assertIsInstance'):
-        def assertIsInstance(self, obj, cls, msg=None):
-            if not isinstance(obj, cls):
-                self.fail(self._formatMessage(
-                    msg,
-                    '%s is not an instance of %r' % (repr(obj), cls)
-                ))
 
 
 class TestIPWhois(TestCommon):
@@ -49,7 +38,7 @@ class TestIPWhois(TestCommon):
             except AssertionError as e:
                 raise e
             except Exception as e:
-                self.fail('Unexpected exception raised: %r' % e)
+                self.fail('Unexpected exception raised: {0}'.format(e))
 
         rwhois_ips = [
             '38.113.116.218'  # COGNETCO
@@ -68,7 +57,7 @@ class TestIPWhois(TestCommon):
             except AssertionError as e:
                 raise e
             except Exception as e:
-                self.fail('Unexpected exception raised: %r' % e)
+                self.fail('Unexpected exception raised: {0}'.format(e))
 
         for ip in rwhois_ips:
 
@@ -84,7 +73,7 @@ class TestIPWhois(TestCommon):
             except AssertionError as e:
                 raise e
             except Exception as e:
-                self.fail('Unexpected exception raised: %r' % e)
+                self.fail('Unexpected exception raised: {0}'.format(e))
 
             break
 
@@ -101,7 +90,7 @@ class TestIPWhois(TestCommon):
             except AssertionError as e:
                 raise e
             except Exception as e:
-                self.fail('Unexpected exception raised: %r' % e)
+                self.fail('Unexpected exception raised: {0}'.format(e))
 
             break
 
@@ -137,7 +126,7 @@ class TestIPWhois(TestCommon):
             except AssertionError as e:
                 raise e
             except Exception as e:
-                self.fail('Unexpected exception raised: %r' % e)
+                self.fail('Unexpected exception raised: {0}'.format(e))
 
         handler = ProxyHandler({'http': 'http://0.0.0.0:80/'})
         opener = build_opener(handler)

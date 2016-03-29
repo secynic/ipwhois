@@ -1,8 +1,8 @@
-import unittest
 import json
 import io
 from os import path
 import logging
+from ipwhois.tests import TestCommon
 from ipwhois.rdap import (RDAP, _RDAPEntity, _RDAPContact, _RDAPNetwork, Net,
                           InvalidEntityObject, InvalidEntityContactObject,
                           InvalidNetworkObject, NetError)
@@ -11,17 +11,6 @@ LOG_FORMAT = ('[%(asctime)s] [%(levelname)s] [%(filename)s:%(lineno)s] '
               '[%(funcName)s()] %(message)s')
 logging.basicConfig(level=logging.DEBUG, format=LOG_FORMAT)
 log = logging.getLogger(__name__)
-
-
-class TestCommon(unittest.TestCase):
-
-    if not hasattr(unittest.TestCase, 'assertIsInstance'):
-        def assertIsInstance(self, obj, cls, msg=None):
-            if not isinstance(obj, cls):
-                self.fail(self._formatMessage(
-                    msg,
-                    '%s is not an instance of %r' % (repr(obj), cls)
-                ))
 
 
 class TestRDAP(TestCommon):
@@ -51,7 +40,7 @@ class TestRDAP(TestCommon):
 
             except Exception as e:
 
-                self.fail('Unexpected exception raised: %r' % e)
+                self.fail('Unexpected exception raised: {0}'.format(e))
 
             self.assertRaises(NetError, RDAP, 'a')
 
@@ -75,7 +64,7 @@ class TestRDAP(TestCommon):
 
             except Exception as e:
 
-                self.fail('Unexpected exception raised: %r' % e)
+                self.fail('Unexpected exception raised: {0}'.format(e))
 
             break
 
@@ -185,5 +174,10 @@ class TestRDAPEntity(TestCommon):
 
         tmp = data
         del tmp['vcardArray']
+        ent = _RDAPEntity(tmp)
+        ent.parse()
+
+        tmp = data
+        del tmp['notices'][0]['description']
         ent = _RDAPEntity(tmp)
         ent.parse()

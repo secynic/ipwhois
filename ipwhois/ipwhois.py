@@ -57,13 +57,26 @@ class IPWhois:
 
     def __repr__(self):
 
-        return 'IPWhois(%r, %r, %r)' % (
-            self.address_str, self.timeout, self.net.opener
+        return 'IPWhois({0}, {1}, {2})'.format(
+            self.address_str, str(self.timeout), repr(self.net.opener)
         )
 
-    def lookup(self, inc_raw=False, retry_count=3, get_referral=False,
-               extra_blacklist=None, ignore_referral_errors=False,
-               field_list=None):
+    def lookup(self, *args, **kwargs):
+        """
+        Temporary wrapper for legacy whois lookups (moved to
+        IPWhois.lookup_whois()). This will be removed in a future
+        release (TBD).
+        """
+
+        from warnings import warn
+        warn("IPWhois.lookup() has been deprecated and will be removed. "
+             "You should now use IPWhois.lookup_whois() for legacy whois "
+             "lookups.")
+        return self.lookup_whois(*args, **kwargs)
+
+    def lookup_whois(self, inc_raw=False, retry_count=3, get_referral=False,
+                     extra_blacklist=None, ignore_referral_errors=False,
+                     field_list=None, asn_alts=None):
         """
         The function for retrieving and parsing whois information for an IP
         address via port 43 (WHOIS).
@@ -82,6 +95,9 @@ class IPWhois:
             field_list: If provided, a list of fields to parse:
                 ['name', 'handle', 'description', 'country', 'state', 'city',
                 'address', 'postal_code', 'emails', 'created', 'updated']
+            asn_alts: Array of additional lookup types to attempt if the
+                ASN dns lookup fails. Allow permutations must be enabled.
+                Defaults to all ['whois', 'http'].
 
         Returns:
             Dictionary:
@@ -112,7 +128,7 @@ class IPWhois:
 
         # Retrieve the ASN information.
         log.debug('ASN lookup for {0}'.format(self.address_str))
-        asn_data, response = self.net.lookup_asn(retry_count)
+        asn_data, response = self.net.lookup_asn(retry_count, asn_alts)
 
         # Add the ASN information to the return dictionary.
         results.update(asn_data)
@@ -131,7 +147,8 @@ class IPWhois:
         return results
 
     def lookup_rdap(self, inc_raw=False, retry_count=3, depth=0,
-                    excluded_entities=None, bootstrap=False):
+                    excluded_entities=None, bootstrap=False,
+                    rate_limit_timeout=120, asn_alts=None):
         """
         The function for retrieving and parsing whois information for an IP
         address via HTTP (RDAP).
@@ -150,6 +167,11 @@ class IPWhois:
             bootstrap: If True, performs lookups via ARIN bootstrap rather
                 than lookups based on ASN data. ASN lookups are not performed
                 and no output for any of the asn* fields is provided.
+            rate_limit_timeout: The number of seconds to wait before retrying
+                when a rate limit notice is returned via rdap+json.
+            asn_alts: Array of additional lookup types to attempt if the
+                ASN dns lookup fails. Allow permutations must be enabled.
+                Defaults to all ['whois', 'http'].
 
         Returns:
             Dictionary:
@@ -180,7 +202,7 @@ class IPWhois:
 
             # Retrieve the ASN information.
             log.debug('ASN lookup for {0}'.format(self.address_str))
-            asn_data, response = self.net.lookup_asn(retry_count)
+            asn_data, response = self.net.lookup_asn(retry_count, asn_alts)
 
             # Add the ASN information to the return dictionary.
             results.update(asn_data)
@@ -189,7 +211,8 @@ class IPWhois:
         rdap = RDAP(self.net)
         log.debug('RDAP lookup for {0}'.format(self.address_str))
         rdap_data = rdap.lookup(inc_raw, retry_count, asn_data, depth,
-                                excluded_entities, response, bootstrap)
+                                excluded_entities, response, bootstrap,
+                                rate_limit_timeout)
 
         # Add the RDAP information to the return dictionary.
         results.update(rdap_data)

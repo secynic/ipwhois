@@ -1,23 +1,12 @@
-import unittest
 import sys
 import logging
+from ipwhois.tests import TestCommon
 from ipwhois import (Net, IPDefinedError, ASNLookupError, ASNRegistryError,
                      WhoisLookupError, HTTPLookupError, HostLookupError)
 
 LOG_FORMAT = ('[%(asctime)s] [%(levelname)s] [%(filename)s:%(lineno)s] '
               '[%(funcName)s()] %(message)s')
 logging.basicConfig(level=logging.DEBUG, format=LOG_FORMAT)
-
-
-class TestCommon(unittest.TestCase):
-
-    if not hasattr(unittest.TestCase, 'assertIsInstance'):
-        def assertIsInstance(self, obj, cls, msg=None):
-            if not isinstance(obj, cls):
-                self.fail(self._formatMessage(
-                    msg,
-                    '%s is not an instance of %r' % (repr(obj), cls)
-                ))
 
 
 class TestNet(TestCommon):
@@ -74,7 +63,7 @@ class TestNet(TestCommon):
         except AssertionError as e:
             raise e
         except Exception as e:
-            self.fail('Unexpected exception raised: %r' % e)
+            self.fail('Unexpected exception raised: {0}'.format(e))
 
         data = ['"15169 ', ' 74.125.225.0/24 ', ' US ', ' random ',
                 ' 2007-03-13"']
@@ -94,7 +83,7 @@ class TestNet(TestCommon):
         except AssertionError as e:
             raise e
         except Exception as e:
-            self.fail('Unexpected exception raised: %r' % e)
+            self.fail('Unexpected exception raised: {0}'.format(e))
 
         data = ('15169   | 74.125.225.229   | 74.125.225.0/24     | US | rdm'
                 '     | 2007-03-13')

@@ -1,8 +1,8 @@
-import unittest
 import json
 import io
 from os import path
 import logging
+from ipwhois.tests import TestCommon
 from ipwhois.exceptions import WhoisLookupError
 from ipwhois.net import Net
 from ipwhois.whois import Whois
@@ -11,17 +11,6 @@ LOG_FORMAT = ('[%(asctime)s] [%(levelname)s] [%(filename)s:%(lineno)s] '
               '[%(funcName)s()] %(message)s')
 logging.basicConfig(level=logging.DEBUG, format=LOG_FORMAT)
 log = logging.getLogger(__name__)
-
-
-class TestCommon(unittest.TestCase):
-
-    if not hasattr(unittest.TestCase, 'assertIsInstance'):
-        def assertIsInstance(self, obj, cls, msg=None):
-            if not isinstance(obj, cls):
-                self.fail(self._formatMessage(
-                    msg,
-                    '%s is not an instance of %r' % (repr(obj), cls)
-                ))
 
 
 class TestWhois(TestCommon):
@@ -54,4 +43,4 @@ class TestWhois(TestCommon):
 
             except Exception as e:
 
-                self.fail('Unexpected exception raised: %r' % e)
+                self.fail('Unexpected exception raised: {0}'.format(e))
