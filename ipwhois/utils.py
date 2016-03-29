@@ -445,12 +445,10 @@ def unique_addresses(data=None, file_path=None):
         data: A string to process.
         file_path: An optional file path to process.
 
-
     Returns:
         Dictionary:
 
-        :ip address/network: Each address or network found is a dictionary
-            containing\:
+        :ip address/network: Each address or network found is a dictionary w/\:
 
             :count: Total number of times seen (Integer)
             :ports: Dictionary with port numbers as keys and the number of
