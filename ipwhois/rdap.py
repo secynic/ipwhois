@@ -607,6 +607,15 @@ class _RDAPEntity(_RDAPCommon):
 
             pass
 
+        try:
+
+            self.vars['events_actor'] = self.summarize_events(
+                self.json['asEventActor'])
+
+        except (KeyError, ValueError, TypeError):
+
+            pass
+
         self.vars['entities'] = []
         try:
 
