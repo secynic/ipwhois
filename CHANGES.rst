@@ -1,6 +1,14 @@
 Changelog
 =========
 
+0.13.0 (TBD)
+------------
+
+- Added events_actor parsing for RDAP results.
+- Added example for caching data via Redis (#81)
+- Added normalization (human-readable field information) in hr.py (#47)
+- README word wrap fix (#102)
+
 0.12.0 (2016-03-28)
 -------------------
 

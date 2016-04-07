@@ -43,7 +43,7 @@ else:  # pragma: no cover
 
 log = logging.getLogger(__name__)
 
-# Legacy base whois output dictionary. Migration to the RDAP format is limited.
+# Legacy base whois output dictionary.
 BASE_NET = {
     'cidr': None,
     'name': None,
@@ -183,8 +183,7 @@ ASN_REFERRALS = {
 
 class Whois:
     """
-    The class for parsing via RDAP:
-    https://www.arin.net/resources/rdap.html
+    The class for parsing via whois
 
     Args:
         net: A ipwhois.net.Net object.
