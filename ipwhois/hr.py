@@ -142,7 +142,7 @@ HR_RDAP = {
         },
         'name': {
             '_short': 'Name',
-            '_name': 'Network Name',
+            '_name': 'RIR Network Name',
             '_description': 'The identifier assigned to the network '
                             'registration for an IP address.'
         },
@@ -241,7 +241,7 @@ HR_RDAP = {
                 '_short': 'Timestamp',
                 '_name': 'Event Timestamp',
                 '_description': 'The date an event occured in ISO 8601 '
-                'format.'
+                                'format.'
             }
         },
         'handle': {
@@ -261,6 +261,79 @@ HR_RDAP = {
             '_name': 'Object Status',
             '_description': 'List indicating the state of a registered '
                             'object.'
+        }
+    }
+}
+
+HR_WHOIS = {
+    'nets': {
+        '_short': 'Network',
+        '_name': 'RIR Network',
+        '_description': 'The assigned network for an IP address. May be a '
+                        'parent or child network.',
+        'cidr': {
+            '_short': 'CIDR Blocks',
+            '_name': 'Classless Inter-Domain Routing Blocks',
+            '_description': 'Network routing blocks an IP address belongs to.'
+        },
+        'city': {
+            '_short': 'City',
+            '_name': 'City',
+            '_description': 'The city registered with a whois network.'
+        },
+        'country': {
+            '_short': 'Country Code',
+            '_name': 'Country Code',
+            '_description': 'Country code registered for the network in '
+                            'ISO 3166-1 format.'
+        },
+        'created': {
+            '_short': 'Created',
+            '_name': 'Created Timestamp',
+            '_description': 'The date the network was created in ISO 8601 '
+                            'format.'
+        },
+        'description': {
+            '_short': 'Description',
+            '_name': 'Description',
+            '_description': 'The description for the network.'
+        },
+        'emails': {
+            '_short': 'Emails',
+            '_name': 'Email Addresses',
+            '_description': 'The contact email addresses.'
+        },
+        'handle': {
+            '_short': 'Handle',
+            '_name': 'RIR Network Handle',
+            '_description': 'Unique identifier for a registered network.'
+        },
+        'name': {
+            '_short': 'Name',
+            '_name': 'RIR Network Name',
+            '_description': 'The identifier assigned to the network '
+                            'registration for an IP address.'
+        },
+        'postal_code': {
+            '_short': 'Postal',
+            '_name': 'Postal Code',
+            '_description': 'The postal code registered with a whois network.'
+        },
+        'range': {
+            '_short': 'Ranges',
+            '_name': 'CIDR Block Ranges',
+            '_description': 'Network routing blocks an IP address belongs to.'
+        },
+        'state': {
+            '_short': 'State',
+            '_name': 'State',
+            '_description': 'The state registered with a whois network.'
+        },
+        'updated': {
+            '_short': 'Updated',
+            '_name': 'Updated Timestamp',
+            '_description': 'The date the network was updated in ISO 8601 '
+                            'format.'
         }
     }
 }
