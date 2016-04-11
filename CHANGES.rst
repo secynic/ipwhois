@@ -8,6 +8,9 @@ Changelog
 - Added example for caching data via Redis (#81)
 - Added normalization (human-readable field information) in hr.py (#47)
 - README word wrap fix (#102)
+- Fixed bug in exception handling for ASN HTTP lookups.
+- Fixed bug in IPWhois.lookup_rdap() that caused ASN HTTP lookup responses to
+  be used in place of RDAP responses.
 
 0.12.0 (2016-03-28)
 -------------------

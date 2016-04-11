@@ -533,7 +533,7 @@ class Net:
                                 'exceeded, wait and try again (possibly a '
                                 'temporary block).'.format(url))
 
-            except IndexError:  # pragma: no cover
+            except (KeyError, IndexError):  # pragma: no cover
 
                 pass
 
