@@ -202,7 +202,7 @@ class IPWhois:
 
             # Retrieve the ASN information.
             log.debug('ASN lookup for {0}'.format(self.address_str))
-            asn_data, response = self.net.lookup_asn(retry_count, asn_alts)
+            asn_data, asn_response = self.net.lookup_asn(retry_count, asn_alts)
 
             # Add the ASN information to the return dictionary.
             results.update(asn_data)
