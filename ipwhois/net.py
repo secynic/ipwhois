@@ -366,6 +366,126 @@ class Net:
                 'ASN lookup failed for {0}.'.format(self.address_str)
             )
 
+    def get_asn_http(self, retry_count=3, result=None):
+        """
+        The function for retrieving ASN information for an IP address from
+        Arin via port 80 (HTTP). Currently limited to fetching asn_registry
+        through a Arin whois (REST) lookup. The other values are returned as
+        None to keep a consistent dict output. This should be used as a last
+        chance fallback call behind ASN DNS & ASN Whois lookups.
+
+        Args:
+            retry_count: The number of times to retry in case socket errors,
+                timeouts, connection resets, etc. are encountered.
+            result: Optional result object. This bypasses the ASN lookup.
+
+        Returns:
+            Dictionary: A dictionary containing the following keys:
+                    asn (String) - None, can't retrieve with this method.
+                    asn_date (String) - None, can't retrieve with this method.
+                    asn_registry (String) - The assigned ASN registry.
+                    asn_cidr (String) - None, can't retrieve with this method.
+                    asn_country_code (String) - None, can't retrieve with this
+                        method.
+
+        Raises:
+            ASNRegistryError: The ASN registry is not known.
+            ASNLookupError: The ASN lookup failed.
+        """
+
+        try:
+
+            if result is None:
+
+                # Lets attempt to get the ASN registry information from
+                # ARIN.
+                log.debug('ASN query for {0}'.format(self.address_str))
+                response = self.get_http_json(
+                    str(ARIN).format(self.address_str),
+                    retry_count,
+                    headers={'Accept': 'application/json'}
+                )
+
+            else:
+
+                response = result
+
+            asn_data = {
+                'asn_registry': None,
+                'asn': None,
+                'asn_cidr': None,
+                'asn_country_code': None,
+                'asn_date': None
+            }
+
+            try:
+
+                net_list = response['nets']['net']
+
+                if not isinstance(net_list, list):
+                    net_list = [net_list]
+
+            except KeyError:
+
+                log.debug('No networks found')
+                net_list = []
+
+            for n in net_list:
+
+                try:
+                    # TODO: User parameter for org handle -> RIR dict.
+                    if n['orgRef']['@handle'] in ('ARIN', 'VR-ARIN',
+                                                  'DNIC'):
+
+                        asn_data['asn_registry'] = 'arin'
+
+                    elif n['orgRef']['@handle'] == 'RIPE':
+
+                        asn_data['asn_registry'] = 'ripencc'
+
+                    else:
+
+                        test = RIR_WHOIS[n['orgRef'][('@handle'
+                                                      )].lower()]
+                        asn_data['asn_registry'] = (
+                            n['orgRef']['@handle'].lower()
+                        )
+
+                except KeyError as e:
+
+                    log.debug('Could not parse ASN registry via HTTP: '
+                              '{0}'.format(str(e)))
+                    raise ASNRegistryError('ASN registry lookup failed.')
+
+                break
+
+            return asn_data
+
+        except (socket.timeout, socket.error) as e:  # pragma: no cover
+
+            log.debug('ASN query socket error: {0}'.format(e))
+            if retry_count > 0:
+
+                log.debug('ASN query retrying (count: {0})'.format(
+                    str(retry_count)))
+                return self.get_asn_http(retry_count - 1)
+
+            else:
+
+                raise ASNLookupError(
+                    'ASN lookup failed for {0}.'.format(self.address_str)
+                )
+
+        except ASNRegistryError:
+
+            raise
+
+        except:
+
+            raise ASNLookupError(
+                'ASN lookup failed for {0}.'.format(self.address_str)
+            )
+
     def get_whois(self, asn_registry='arin', retry_count=3, server=None,
                   port=43, extra_blacklist=None):
         """
@@ -687,61 +807,17 @@ class Net:
                     # Lets attempt to get the ASN registry information from
                     # ARIN.
                     log.debug('ASN WHOIS lookup failed, trying ASN via HTTP')
-                    response = self.get_http_json(
-                        str(ARIN).format(self.address_str),
-                        retry_count,
-                        headers={'Accept': 'application/json'}
-                    )
-
-                    asn_data = {
-                        'asn_registry': None,
-                        'asn': None,
-                        'asn_cidr': None,
-                        'asn_country_code': None,
-                        'asn_date': None
-                    }
-
                     try:
 
-                        net_list = response['nets']['net']
+                        asn_data = self.get_asn_http(retry_count)
 
-                        if not isinstance(net_list, list):
+                    except ASNRegistryError:
 
-                            net_list = [net_list]
+                        raise ASNRegistryError('ASN registry lookup failed.')
 
-                    except KeyError:
+                    except ASNLookupError:
 
-                        log.debug('No networks found')
-                        net_list = []
-
-                    for n in net_list:
-
-                        try:
-
-                            if n['orgRef']['@handle'] in ('ARIN', 'VR-ARIN'):
-
-                                asn_data['asn_registry'] = 'arin'
-
-                            elif n['orgRef']['@handle'] == 'RIPE':
-
-                                asn_data['asn_registry'] = 'ripencc'
-
-                            else:
-
-                                test = RIR_WHOIS[n['orgRef'][('@handle'
-                                                              )].lower()]
-                                asn_data['asn_registry'] = (
-                                    n['orgRef']['@handle'].lower()
-                                )
-
-                        except KeyError as e:
-
-                            log.debug('Could not parse ASN registry via HTTP: '
-                                      '{0}'.format(str(e)))
-                            raise ASNRegistryError('ASN registry lookup failed'
-                                                   '.')
-
-                        break
+                        raise HTTPLookupError('ASN HTTP lookup failed.')
 
                 else:
 
