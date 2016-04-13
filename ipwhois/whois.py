@@ -485,7 +485,7 @@ class Whois:
                field_list=None, is_offline=False):
         """
         The function for retrieving and parsing whois information for an IP
-        address via port 43 (WHOIS).
+        address via port 43/tcp (WHOIS).
 
         Args:
             inc_raw: Boolean for whether to include the raw results in the
