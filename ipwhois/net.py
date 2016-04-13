@@ -270,7 +270,7 @@ class Net:
     def get_asn_whois(self, retry_count=3, result=None):
         """
         The function for retrieving ASN information for an IP address from
-        Cymru via port 43 (WHOIS).
+        Cymru via port 43/tcp (WHOIS).
 
         Args:
             retry_count: The number of times to retry in case socket errors,
@@ -490,7 +490,7 @@ class Net:
                   port=43, extra_blacklist=None):
         """
         The function for retrieving whois or rwhois information for an IP
-        address via any port. Defaults to port 43 (WHOIS).
+        address via any port. Defaults to port 43/tcp (WHOIS).
 
         Args:
             asn_registry: The NIC to run the query against.
