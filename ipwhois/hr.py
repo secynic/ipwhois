@@ -244,7 +244,7 @@ HR_RDAP = {
             '_description': 'List of object names referenced by an RIR object.'
         },
         'events': HR_RDAP_COMMON['events'],
-        'event_actor': {
+        'events_actor': {
             '_short': 'Events',
             '_name': 'Events w/o Actor',
             '_description': 'An event for an RIR object with no event actor.',
@@ -265,6 +265,7 @@ HR_RDAP = {
             '_name': 'RIR Object Handle',
             '_description': 'Unique identifier for a registered object.'
         },
+        'links': HR_RDAP_COMMON['links'],
         'notices': HR_RDAP_COMMON['notices'],
         'remarks': HR_RDAP_COMMON['remarks'],
         'roles': {
