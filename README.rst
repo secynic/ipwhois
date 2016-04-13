@@ -48,6 +48,47 @@ Pypi
 
 https://pypi.python.org/pypi/ipwhois
 
+Dependencies
+============
+
+Python 2.6, 2.7::
+
+    dnspython
+    ipaddr
+
+Python 3.3+::
+
+    dnspython3
+
+Installing
+==========
+
+Latest version from PyPi::
+
+	pip install --upgrade ipwhois
+
+Latest version from GitHub::
+
+	pip install -e git+https://github.com/secynic/ipwhois@master#egg=ipwhois
+
+Firewall Ports
+==============
+
+ipwhois needs some outbound firewall ports opened from your host/server.
+
+:ASN (DNS): 53/tcp
+:ASN (Whois): 43/tcp
+:ASN (HTTP):
+    80/tcp
+
+    443/tcp (Pending)
+:RDAP (HTTP):
+    80/tcp
+
+    443/tcp (Pending)
+:Legacy Whois: 43/tcp
+:Get Host: 43/tcp
+
 Usage Examples
 ==============
 
@@ -431,29 +472,6 @@ Parse out IP addresses and ports from text or a file
 	 '2001:4860::/32': {'count': 1, 'ports': {}},
 	 '74.125.0.0/16': {'count': 1, 'ports': {}},
 	 '74.125.225.229': {'count': 2, 'ports': {'80': 1}}}
-
-Dependencies
-============
-
-Python 2.6, 2.7::
-
-    dnspython
-    ipaddr
-
-Python 3.3+::
-
-    dnspython3
-
-Installing
-==========
-
-Latest version from PyPi::
-
-	pip install --upgrade ipwhois
-
-Latest version from GitHub::
-
-	pip install -e git+https://github.com/secynic/ipwhois@master#egg=ipwhois
 
 RDAP (HTTP)
 ===========
