@@ -55,8 +55,8 @@ HR_ASN = {
 
 HR_RDAP_COMMON = {
     'events': {
-        '_short': 'Event',
-        '_name': 'Event',
+        '_short': 'Events',
+        '_name': 'Events',
         '_description': 'An event for an RIR object.',
         'action': {
             '_short': 'Action',
@@ -75,9 +75,14 @@ HR_RDAP_COMMON = {
             '_description': 'The identifier for an event initiator.'
         }
     },
+    'links': {
+        '_short': 'Links',
+        '_name': 'Links',
+        '_description': 'HTTP/HTTPS links provided for an RIR object.'
+    },
     'notices': {
-        '_short': 'Notice',
-        '_name': 'Notice',
+        '_short': 'Notices',
+        '_name': 'Notices',
         '_description': 'A notice for an RIR object.',
         'description': {
             '_short': 'Description',
@@ -88,11 +93,16 @@ HR_RDAP_COMMON = {
             '_short': 'Title',
             '_name': 'Notice Title',
             '_description': 'The title/header for a notice.'
+        },
+        'links': {
+            '_short': 'Links',
+            '_name': 'Notice Links',
+            '_description': 'HTTP/HTTPS links provided for an RIR object.'
         }
     },
     'remarks': {
-        '_short': 'Remark',
-        '_name': 'Remark',
+        '_short': 'Remarks',
+        '_name': 'Remarks',
         '_description': 'A remark for an RIR object.',
         'description': {
             '_short': 'Description',
@@ -103,6 +113,11 @@ HR_RDAP_COMMON = {
             '_short': 'Title',
             '_name': 'Remark Title',
             '_description': 'The title/header for a remark.'
+        },
+        'links': {
+            '_short': 'Links',
+            '_name': 'Remark Links',
+            '_description': 'HTTP/HTTPS links provided for an RIR object.'
         }
     }
 }
@@ -140,6 +155,7 @@ HR_RDAP = {
             '_description': 'The IP protocol version (v4 or v6) of an IP '
                             'address.'
         },
+        'links': HR_RDAP_COMMON['links'],
         'name': {
             '_short': 'Name',
             '_name': 'RIR Network Name',
@@ -177,8 +193,8 @@ HR_RDAP = {
         '_description': 'List of object names referenced by an RIR network.'
     },
     'objects': {
-        '_short': 'Object',
-        '_name': 'RIR Object',
+        '_short': 'Objects',
+        '_name': 'RIR Objects',
         '_description': 'The objects (entities) referenced by an RIR network.',
         'contact': {
             '_short': 'Contact',
@@ -229,8 +245,8 @@ HR_RDAP = {
         },
         'events': HR_RDAP_COMMON['events'],
         'event_actor': {
-            '_short': 'Event',
-            '_name': 'Event w/o Actor',
+            '_short': 'Events',
+            '_name': 'Events w/o Actor',
             '_description': 'An event for an RIR object with no event actor.',
             'action': {
                 '_short': 'Action',
