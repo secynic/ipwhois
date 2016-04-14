@@ -301,7 +301,7 @@ class IPWhoisLookup:
             output += generate_output(
                 line='0',
                 short=HR_ASN[key]['_short'] if hr else key,
-                name=HR_ASN[key]['_name'] if hr else None,
+                name=HR_ASN[key]['_name'] if (hr and show_name) else None,
                 value=(json_data[key] if (
                     len(json_data[key]) > 0 and
                     json_data[key] != 'NA') else 'None'),
@@ -315,7 +315,7 @@ class IPWhoisLookup:
 
         output = ''
         short = HR_RDAP['entities']['_short'] if hr else 'entities'
-        name = HR_RDAP['entities']['_name'] if hr else None
+        name = HR_RDAP['entities']['_name'] if (hr and show_name) else None
 
         output += generate_output(
             line='0',
@@ -346,7 +346,7 @@ class IPWhoisLookup:
         output = generate_output(
             line=line,
             short=HR_RDAP[source][key]['_short'] if hr else key,
-            name=HR_RDAP[source][key]['_name'] if hr else None,
+            name=HR_RDAP[source][key]['_name'] if (hr and show_name) else None,
             is_parent=False if (val is None or
                                 len(val) == 0) else True,
             value='None' if (val is None or
@@ -386,7 +386,7 @@ class IPWhoisLookup:
                     short=HR_RDAP_COMMON[key]['action'][
                         '_short'] if hr else 'action',
                     name=HR_RDAP_COMMON[key]['action'][
-                        '_name'] if hr else None,
+                        '_name'] if (hr and show_name) else None,
                     value=action,
                     colorize=colorize
                 )
@@ -396,7 +396,7 @@ class IPWhoisLookup:
                     short=HR_RDAP_COMMON[key]['timestamp'][
                         '_short'] if hr else 'timestamp',
                     name=HR_RDAP_COMMON[key]['timestamp'][
-                        '_name'] if hr else None,
+                        '_name'] if (hr and show_name) else None,
                     value=timestamp,
                     colorize=colorize
                 )
@@ -406,7 +406,7 @@ class IPWhoisLookup:
                     short=HR_RDAP_COMMON[key]['actor'][
                         '_short'] if hr else 'actor',
                     name=HR_RDAP_COMMON[key]['actor'][
-                        '_name'] if hr else None,
+                        '_name'] if (hr and show_name) else None,
                     value=actor,
                     colorize=colorize
                 )
@@ -421,7 +421,7 @@ class IPWhoisLookup:
         output = generate_output(
             line=line,
             short=HR_RDAP[source][key]['_short'] if hr else key,
-            name=HR_RDAP[source][key]['_name'] if hr else None,
+            name=HR_RDAP[source][key]['_name'] if (hr and show_name) else None,
             is_parent=False if (val is None or
                                 len(val) == 0) else True,
             value='None' if (val is None or
@@ -445,7 +445,7 @@ class IPWhoisLookup:
         output = generate_output(
             line=line,
             short=HR_RDAP[source][key]['_short'] if hr else key,
-            name=HR_RDAP[source][key]['_name'] if hr else None,
+            name=HR_RDAP[source][key]['_name'] if (hr and show_name) else None,
             is_parent=False if (val is None or
                                 len(val) == 0) else True,
             value='None' if (val is None or
@@ -473,7 +473,8 @@ class IPWhoisLookup:
                     line=str(int(line)+1),
                     short=HR_RDAP_COMMON[key]['title']['_short'] if hr else (
                         'title'),
-                    name=HR_RDAP_COMMON[key]['title']['_name'] if hr else None,
+                    name=HR_RDAP_COMMON[key]['title']['_name'] if (
+                        hr and show_name) else None,
                     value=title,
                     colorize=colorize
                 )
@@ -483,7 +484,7 @@ class IPWhoisLookup:
                     short=HR_RDAP_COMMON[key]['description'][
                         '_short'] if hr else 'description',
                     name=HR_RDAP_COMMON[key]['description'][
-                        '_name'] if hr else None,
+                        '_name'] if (hr and show_name) else None,
                     value=description.replace(
                         '\n',
                         '\n{0}'.format(generate_output(line='3'))
@@ -513,7 +514,7 @@ class IPWhoisLookup:
         output = generate_output(
             line='0',
             short=HR_RDAP['network']['_short'] if hr else 'network',
-            name=HR_RDAP['network']['_name'] if hr else None,
+            name=HR_RDAP['network']['_name'] if (hr and show_name) else None,
             is_parent=True,
             colorize=colorize
         )
@@ -525,7 +526,8 @@ class IPWhoisLookup:
                 output += generate_output(
                     line='1',
                     short=HR_RDAP_COMMON['links']['_short'] if hr else 'links',
-                    name=HR_RDAP_COMMON['links']['_name'] if hr else None,
+                    name=HR_RDAP_COMMON['links']['_name'] if (
+                        hr and show_name) else None,
                     is_parent=False if (val is None or
                                         len(val) == 0) else True,
                     value='None' if (val is None or
@@ -571,7 +573,8 @@ class IPWhoisLookup:
                 output += generate_output(
                     line='1',
                     short=HR_RDAP['network'][key]['_short'] if hr else key,
-                    name=HR_RDAP['network'][key]['_name'] if hr else None,
+                    name=HR_RDAP['network'][key]['_name'] if (
+                        hr and show_name) else None,
                     value=val,
                     colorize=colorize
                 )
@@ -587,7 +590,7 @@ class IPWhoisLookup:
         output = generate_output(
             line='0',
             short=HR_RDAP['objects']['_short'] if hr else 'objects',
-            name=HR_RDAP['objects']['_name'] if hr else None,
+            name=HR_RDAP['objects']['_name'] if (hr and show_name) else None,
             is_parent=True,
             colorize=colorize
         )
@@ -651,7 +654,8 @@ class IPWhoisLookup:
                     output += generate_output(
                         line='2',
                         short=HR_RDAP['objects'][key]['_short'] if hr else key,
-                        name=HR_RDAP['objects'][key]['_name'] if hr else None,
+                        name=HR_RDAP['objects'][key]['_name'] if (
+                            hr and show_name) else None,
                         value=val,
                         colorize=colorize
                     )
@@ -663,19 +667,28 @@ class IPWhoisLookup:
         # Perform the RDAP lookup
         ret = self.obj.lookup_rdap(**kwargs)
 
+        # Header
         output = self.generate_output_header()
+
+        # ASN
         output += self.generate_output_asn(
             json_data=ret, hr=hr, show_name=show_name, colorize=colorize
         )
         output += self.generate_output_newline(colorize=colorize)
+
+        # Entities
         output += self.generate_output_entities(
             json_data=ret, hr=hr, show_name=show_name, colorize=colorize
         )
         output += self.generate_output_newline(colorize=colorize)
+
+        # Network
         output += self.generate_output_network(
             json_data=ret, hr=hr, show_name=show_name, colorize=colorize
         )
         output += self.generate_output_newline(colorize=colorize)
+
+        # Objects
         output += self.generate_output_objects(
             json_data=ret, hr=hr, show_name=show_name, colorize=colorize
         )
