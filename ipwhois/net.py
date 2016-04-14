@@ -425,7 +425,7 @@ class Net:
                 if not isinstance(net_list, list):
                     net_list = [net_list]
 
-            except KeyError:
+            except (KeyError, TypeError):
 
                 log.debug('No networks found')
                 net_list = []
