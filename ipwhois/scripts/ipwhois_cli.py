@@ -595,7 +595,10 @@ class IPWhoisLookup:
         count = 0
         for obj_name, obj in json_data['objects'].items():
             if count > 0:
-                output += self.generate_output_newline('1')
+                output += self.generate_output_newline(
+                    line='1',
+                    colorize=colorize
+                )
             count += 1
 
             output += generate_output(
@@ -664,19 +667,19 @@ class IPWhoisLookup:
         output += self.generate_output_asn(
             json_data=ret, hr=hr, show_name=show_name, colorize=colorize
         )
-        output += self.generate_output_newline()
+        output += self.generate_output_newline(colorize=colorize)
         output += self.generate_output_entities(
             json_data=ret, hr=hr, show_name=show_name, colorize=colorize
         )
-        output += self.generate_output_newline()
+        output += self.generate_output_newline(colorize=colorize)
         output += self.generate_output_network(
             json_data=ret, hr=hr, show_name=show_name, colorize=colorize
         )
-        output += self.generate_output_newline()
+        output += self.generate_output_newline(colorize=colorize)
         output += self.generate_output_objects(
             json_data=ret, hr=hr, show_name=show_name, colorize=colorize
         )
-        output += self.generate_output_newline()
+        output += self.generate_output_newline(colorize=colorize)
 
         return output
 
@@ -702,7 +705,3 @@ if args.addr:
         rate_limit_timeout=args.rate_limit_timeout,
         asn_alts=args.asn_alts[0]
     ))
-
-if not args.addr:
-
-    print('Nothing done. --addr required.')
