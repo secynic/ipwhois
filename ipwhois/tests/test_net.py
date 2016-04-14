@@ -89,3 +89,54 @@ class TestNet(TestCommon):
                 '     | 2007-03-13')
         result = Net('74.125.225.229')
         self.assertRaises(ASNRegistryError, result.get_asn_whois, 3, data)
+
+    def test_get_asn_http(self):
+        data = {
+            "nets": {
+                "net": {
+                    "orgRef": {
+                        "@handle": "APNIC"
+                    }
+                }
+            }
+        }
+        result = Net('1.2.3.4')
+        try:
+            self.assertIsInstance(result.get_asn_http(result=data), dict)
+        except AssertionError as e:
+            raise e
+        except Exception as e:
+            self.fail('Unexpected exception raised: {0}'.format(e))
+
+        data['nets']['net']['orgRef']['@handle'] = 'RIPE'
+        try:
+            self.assertIsInstance(result.get_asn_http(result=data), dict)
+        except AssertionError as e:
+            raise e
+        except Exception as e:
+            self.fail('Unexpected exception raised: {0}'.format(e))
+
+        data['nets']['net']['orgRef']['@handle'] = 'DNIC'
+        try:
+            self.assertIsInstance(result.get_asn_http(result=data), dict)
+        except AssertionError as e:
+            raise e
+        except Exception as e:
+            self.fail('Unexpected exception raised: {0}'.format(e))
+
+        data['nets']['net']['orgRef']['@handle'] = 'INVALID'
+        try:
+            self.assertRaises(ASNRegistryError, result.get_asn_http,
+                              result=data)
+        except AssertionError as e:
+            raise e
+        except Exception as e:
+            self.fail('Unexpected exception raised: {0}'.format(e))
+
+        data = ''
+        try:
+            self.assertIsInstance(result.get_asn_http(result=data), dict)
+        except AssertionError as e:
+            raise e
+        except Exception as e:
+            self.fail('Unexpected exception raised: {0}'.format(e))
