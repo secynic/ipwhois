@@ -12,7 +12,7 @@ Changelog
 - Fixed bug in IPWhois.lookup_rdap() that caused ASN HTTP lookup responses to
   be used in place of RDAP responses.
 - Added new function Net.get_asn_http() and migrated code from
-  Net.lookup_asn().
+  Net.lookup_asn() + new tests.
 - Fixed bug in ASN HTTP fallback lookups for DNIC (#108).
 
 0.12.0 (2016-03-28)
