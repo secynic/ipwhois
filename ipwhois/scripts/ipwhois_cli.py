@@ -293,8 +293,11 @@ class IPWhoisCLI:
         if json_data is None:
             json_data = {}
 
-        keys = {'asn', 'asn_cidr', 'asn_country_code', 'asn_date',
-                'asn_registry'}.intersection(json_data)
+        # Python 2.6 doesn't support set literal expressions, use explicit
+        # set() instead.
+        keys = set(['asn', 'asn_cidr', 'asn_country_code', 'asn_date',
+                    'asn_registry']).intersection(json_data)
+
         output = ''
 
         for key in keys:
