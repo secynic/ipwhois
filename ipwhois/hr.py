@@ -245,7 +245,7 @@ HR_RDAP = {
         },
         'events': HR_RDAP_COMMON['events'],
         'events_actor': {
-            '_short': 'Events',
+            '_short': 'Events Misc',
             '_name': 'Events w/o Actor',
             '_description': 'An event for an RIR object with no event actor.',
             'action': {
