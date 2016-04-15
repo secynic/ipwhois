@@ -55,7 +55,7 @@ COLOR_DEPTH = {
     '3': ANSI['cyan']
 }
 
-# Line formatting
+# Line formatting, keys ending in C are colorized versions.
 LINES = {
     '1': '>> ',
     '2': '>> >>> ',
@@ -207,10 +207,11 @@ def generate_output(line='0', short=None, name=None, value=None,
                     is_parent=False, colorize=True):
 
     # TODO: so ugly
-    output = '{0}{1}{2}{3}{4}{5}{6}\n'.format(
+    output = '{0}{1}{2}{3}{4}{5}{6}{7}\n'.format(
         LINES['{0}{1}'.format(line, 'C' if colorize else '')] if (
             line in LINES.keys()) else '',
         COLOR_DEPTH[line] if (colorize and line in COLOR_DEPTH) else '',
+        ANSI['b'],
         short if short is not None else (
             name if (name is not None) else ''
         ),
@@ -224,7 +225,7 @@ def generate_output(line='0', short=None, name=None, value=None,
     return output
 
 
-class IPWhoisLookup:
+class IPWhoisCLI:
 
     def __init__(
         self,
@@ -649,6 +650,88 @@ class IPWhoisLookup:
                         colorize=colorize
                     )
 
+                elif key == 'contact':
+
+                    output += generate_output(
+                        line='2',
+                        short=HR_RDAP['objects']['contact'][
+                            '_short'] if hr else 'contact',
+                        name=HR_RDAP['objects']['contact']['_name'] if (
+                            hr and show_name) else None,
+                        is_parent=False if (val is None or
+                                            len(val) == 0) else True,
+                        value='None' if (val is None or
+                                         len(val) == 0) else None,
+                        colorize=colorize
+                    )
+
+                    if val is not None:
+
+                        for k, v in val.items():
+
+                            if k in ['phone', 'address', 'email']:
+
+                                output += generate_output(
+                                    line='3',
+                                    short=HR_RDAP['objects']['contact'][k][
+                                        '_short'] if hr else k,
+                                    name=HR_RDAP['objects']['contact'][k][
+                                        '_name'] if (
+                                        hr and show_name) else None,
+                                    is_parent=False if (
+                                        val is None or
+                                        len(val) == 0
+                                    ) else True,
+                                    value='None' if (val is None or
+                                                     len(val) == 0) else None,
+                                    colorize=colorize
+                                )
+
+                                if v is not None:
+                                    for item in v:
+                                        i_type = ', '.join(item['type']) if (
+                                            isinstance(item['type'], list)
+                                        ) else item['type']
+
+                                        i_type = i_type if (
+                                            i_type is not None and
+                                            len(i_type) > 0) else ''
+
+                                        i_value = item['value'].replace(
+                                            '\n',
+                                            '\n{0}'.format(
+                                                generate_output(
+                                                    line='4',
+                                                    is_parent=True,
+                                                    colorize=colorize
+                                                ).replace('\n', ''))
+                                        )
+
+                                        tmp_out = '{0}{1}{2}'.format(
+                                            i_type,
+                                            ': ' if i_type != '' else '',
+                                            i_value
+                                        )
+
+                                        output += generate_output(
+                                            line='4',
+                                            value=tmp_out,
+                                            colorize=colorize
+                                        )
+
+                            else:
+
+                                output += generate_output(
+                                    line='3',
+                                    short=HR_RDAP['objects']['contact'][k][
+                                        '_short'] if hr else k,
+                                    name=HR_RDAP['objects']['contact'][k][
+                                        '_name'] if (
+                                        hr and show_name) else None,
+                                    value=v,
+                                    colorize=colorize
+                                )
+
                 elif key not in ['raw']:
 
                     output += generate_output(
@@ -698,7 +781,7 @@ class IPWhoisLookup:
 
 if args.addr:
 
-    results = IPWhoisLookup(
+    results = IPWhoisCLI(
         args.addr[0],
         args.timeout,
         args.proxy_http[0],
