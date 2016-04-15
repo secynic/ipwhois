@@ -358,6 +358,7 @@ class IPWhoisCLI:
                 short=HR_ASN[key]['_short'] if hr else key,
                 name=HR_ASN[key]['_name'] if (hr and show_name) else None,
                 value=(json_data[key] if (
+                    json_data[key] is not None and
                     len(json_data[key]) > 0 and
                     json_data[key] != 'NA') else 'None'),
                 colorize=colorize
