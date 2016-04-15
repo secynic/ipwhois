@@ -288,6 +288,11 @@ HR_WHOIS = {
         '_name': 'RIR Network',
         '_description': 'The assigned network for an IP address. May be a '
                         'parent or child network.',
+        'address': {
+            '_short': 'Address',
+            '_name': 'Postal Address',
+            '_description': 'The contact postal address.'
+        },
         'cidr': {
             '_short': 'CIDR Blocks',
             '_name': 'Classless Inter-Domain Routing Blocks',
@@ -352,5 +357,10 @@ HR_WHOIS = {
             '_description': 'The date the network was updated in ISO 8601 '
                             'format.'
         }
+    },
+    'referral': {
+        '_short': 'Referral',
+        '_name': 'Referral Whois',
+        '_description': 'The referral whois data if referenced and enabled.',
     }
 }
