@@ -78,6 +78,12 @@ LINES = {
 parser = argparse.ArgumentParser(
     description='ipwhois CLI interface'
 )
+parser.add_argument(
+    '--whois',
+    action='store_true',
+    help='Retrieve whois data via legacy Whois (port 43) instead of RDAP '
+         '(default).'
+)
 
 # Output options
 group = parser.add_argument_group('Output options')
@@ -198,12 +204,6 @@ group.add_argument(
 # Legacy Whois
 group = parser.add_argument_group('Legacy Whois settings')
 group.add_argument(
-    '--whois',
-    action='store_true',
-    help='Retrieve whois data via legacy Whois (port 43) instead of RDAP '
-         '(default).'
-)
-group.add_argument(
     '--get_referral',
     action='store_true',
     help='If --whois, retrieve referral whois information, if available.'
@@ -319,11 +319,12 @@ class IPWhoisCLI:
                            proxy_opener=self.opener,
                            allow_permutations=self.allow_permutations)
 
-    def generate_output_header(self):
+    def generate_output_header(self, query_type='RDAP'):
 
-        output = '\n{0}{1}RDAP whois query for {2}:{3}\n\n'.format(
+        output = '\n{0}{1}{2} query for {3}:{4}\n\n'.format(
             ANSI['ul'],
             ANSI['b'],
+            query_type,
             self.obj.address_str,
             ANSI['end']
         )
@@ -804,7 +805,7 @@ class IPWhoisCLI:
         ret = self.obj.lookup_rdap(**kwargs)
 
         # Header
-        output = self.generate_output_header()
+        output = self.generate_output_header(query_type='RDAP')
 
         # ASN
         output += self.generate_output_asn(
@@ -832,6 +833,153 @@ class IPWhoisCLI:
 
         return output
 
+    def generate_output_whois_nets(self, json_data=None, hr=True,
+                                   show_name=False, colorize=True):
+
+        if json_data is None:
+            json_data = {}
+
+        output = generate_output(
+            line='0',
+            short=HR_WHOIS['nets']['_short'] if hr else 'nets',
+            name=HR_WHOIS['nets']['_name'] if (hr and show_name) else None,
+            is_parent=True,
+            colorize=colorize
+        )
+
+        count = 0
+        for net in json_data['nets']:
+            if count > 0:
+                output += self.generate_output_newline(
+                    line='1',
+                    colorize=colorize
+                )
+            count += 1
+
+            output += generate_output(
+                line='1',
+                short=net['handle'],
+                is_parent=True,
+                colorize=colorize
+            )
+
+            for key, val in net.items():
+
+                if val and '\n' in val:
+
+                    output += generate_output(
+                        line='2',
+                        short=HR_WHOIS['nets'][key]['_short'] if hr else key,
+                        name=HR_WHOIS['nets'][key]['_name'] if (
+                            hr and show_name) else None,
+                        is_parent=False if (val is None or
+                                            len(val) == 0) else True,
+                        value='None' if (val is None or
+                                         len(val) == 0) else None,
+                        colorize=colorize
+                    )
+
+                    for v in val.split('\n'):
+                        output += generate_output(
+                            line='3',
+                            value=v,
+                            colorize=colorize
+                        )
+
+                else:
+
+                    output += generate_output(
+                        line='2',
+                        short=HR_WHOIS['nets'][key]['_short'] if hr else key,
+                        name=HR_WHOIS['nets'][key]['_name'] if (
+                            hr and show_name) else None,
+                        value=val,
+                        colorize=colorize
+                    )
+
+        return output
+
+    def generate_output_whois_referral(self, json_data=None, hr=True,
+                                       show_name=False, colorize=True):
+
+        if json_data is None:
+            json_data = {}
+
+        output = generate_output(
+            line='0',
+            short=HR_WHOIS['referral']['_short'] if hr else 'referral',
+            name=HR_WHOIS['referral']['_name'] if (hr and show_name) else None,
+            is_parent=False if json_data['referral'] is None else True,
+            value='None' if json_data['referral'] is None else None,
+            colorize=colorize
+        )
+
+        if json_data['referral']:
+
+            for key, val in json_data['referral'].items():
+
+                if val and '\n' in val:
+
+                    output += generate_output(
+                        line='1',
+                        short=HR_WHOIS['nets'][key]['_short'] if hr else key,
+                        name=HR_WHOIS['nets'][key]['_name'] if (
+                            hr and show_name) else None,
+                        is_parent=False if (val is None or
+                                            len(val) == 0) else True,
+                        value='None' if (val is None or
+                                         len(val) == 0) else None,
+                        colorize=colorize
+                    )
+
+                    for v in val.split('\n'):
+                        output += generate_output(
+                            line='2',
+                            value=v,
+                            colorize=colorize
+                        )
+
+                else:
+
+                    output += generate_output(
+                        line='1',
+                        short=HR_WHOIS['nets'][key]['_short'] if hr else key,
+                        name=HR_WHOIS['nets'][key]['_name'] if (
+                            hr and show_name) else None,
+                        value=val,
+                        colorize=colorize
+                    )
+
+        return output
+
+    def lookup_whois(self, hr=True, show_name=False, colorize=True, **kwargs):
+
+        # Perform the RDAP lookup
+        ret = self.obj.lookup_whois(**kwargs)
+
+        # Header
+        output = self.generate_output_header(query_type='Legacy Whois')
+
+        # ASN
+        output += self.generate_output_asn(
+            json_data=ret, hr=hr, show_name=show_name, colorize=colorize
+        )
+        output += self.generate_output_newline(colorize=colorize)
+
+        # Network
+        output += self.generate_output_whois_nets(
+            json_data=ret, hr=hr, show_name=show_name, colorize=colorize
+        )
+        output += self.generate_output_newline(colorize=colorize)
+
+        # Referral
+        output += self.generate_output_whois_referral(
+            json_data=ret, hr=hr, show_name=show_name, colorize=colorize
+        )
+        output += self.generate_output_newline(colorize=colorize)
+
+        return output
+
 if args.addr:
 
     results = IPWhoisCLI(
@@ -844,7 +992,18 @@ if args.addr:
 
     if args.whois:
 
-        print('Legacy whois pending')
+        print(results.lookup_whois(
+            hr=args.hr,
+            show_name=args.show_name,
+            colorize=args.colorize,
+            inc_raw=args.inc_raw,
+            retry_count=args.retry_count,
+            get_referral=args.get_referral,
+            extra_blacklist=args.extra_blacklist[0],
+            ignore_referral_errors=args.ignore_referral_errors,
+            field_list=args.field_list[0],
+            asn_alts=args.asn_alts[0]
+        ))
 
     else:
 
