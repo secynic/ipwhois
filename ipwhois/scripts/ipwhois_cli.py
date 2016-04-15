@@ -78,45 +78,37 @@ LINES = {
 parser = argparse.ArgumentParser(
     description='ipwhois CLI interface'
 )
-parser.add_argument(
+
+# Output options
+group = parser.add_argument_group('Output options')
+group.add_argument(
     '--hr',
     action='store_true',
     help='If set, returns results with human readable key translations.'
 )
-parser.add_argument(
+group.add_argument(
     '--show_name',
     action='store_true',
     help='If this and --hr are set, the key name is shown in parentheses after'
          'its short value'
 )
-parser.add_argument(
+group.add_argument(
     '--colorize',
     action='store_true',
     help='If set, colorizes the output using ANSI. Should work in most '
          'platform consoles.'
 )
-parser.add_argument(
-    '--addr',
-    type=str,
-    nargs=1,
-    metavar='"IP"',
-    help='An IPv4 or IPv6 address as a string.',
-    required=True
-)
-parser.add_argument(
-    '--whois',
-    action='store_true',
-    help='Retrieve whois data via legacy Whois (port 43) instead of RDAP '
-         '(default).'
-)
-parser.add_argument(
+
+# IPWhois settings (common)
+group = parser.add_argument_group('IPWhois settings')
+group.add_argument(
     '--timeout',
     type=int,
     default=5,
     metavar='TIMEOUT',
     help='The default timeout for socket connections in seconds.'
 )
-parser.add_argument(
+group.add_argument(
     '--proxy_http',
     type=str,
     nargs=1,
@@ -126,7 +118,7 @@ parser.add_argument(
          'can be passed like "http://user:pass@192.168.0.1:80"',
     required=False
 )
-parser.add_argument(
+group.add_argument(
     '--proxy_https',
     type=str,
     nargs=1,
@@ -136,17 +128,20 @@ parser.add_argument(
          'can be passed like "https://user:pass@192.168.0.1:443"',
     required=False
 )
-parser.add_argument(
+group.add_argument(
     '--allow_permutations',
     action='store_true',
     help='Use additional methods if DNS lookups to Cymru fail.'
 )
-parser.add_argument(
+
+# Common (RDAP & Legacy Whois)
+group = parser.add_argument_group('Common settings (RDAP & Legacy Whois)')
+group.add_argument(
     '--inc_raw',
     action='store_true',
     help='Include the raw whois results in the output.'
 )
-parser.add_argument(
+group.add_argument(
     '--retry_count',
     type=int,
     default=3,
@@ -154,38 +149,7 @@ parser.add_argument(
     help='The number of times to retry in case socket errors, timeouts, '
          'connection resets, etc. are encountered.'
 )
-parser.add_argument(
-    '--depth',
-    type=int,
-    default=0,
-    metavar='COLOR_DEPTH',
-    help='How many levels deep to run RDAP queries when additional referenced '
-         'objects are found.'
-)
-parser.add_argument(
-    '--excluded_entities',
-    type=str,
-    nargs=1,
-    default=[None],
-    metavar='"EXCLUDED_ENTITIES"',
-    help='A comma delimited list of entity handles to not perform lookups.'
-)
-parser.add_argument(
-    '--bootstrap',
-    action='store_true',
-    help='If True, performs lookups via ARIN bootstrap rather than lookups '
-         'based on ASN data. ASN lookups are not performed and no output for '
-         'any of the asn* fields is provided.'
-)
-parser.add_argument(
-    '--rate_limit_timeout',
-    type=int,
-    default=120,
-    metavar='RATE_LIMIT_TIMEOUT',
-    help='The number of seconds to wait before retrying when a rate limit '
-         'notice is returned via rdap+json.'
-)
-parser.add_argument(
+group.add_argument(
     '--asn_alts',
     type=str,
     nargs=1,
@@ -194,6 +158,92 @@ parser.add_argument(
     help='A comma delimited list of additional lookup types to attempt if the '
          'ASN dns lookup fails. Allow permutations must be enabled. '
          'Defaults to all: "whois,http"'
+)
+
+# RDAP
+group = parser.add_argument_group('RDAP settings')
+group.add_argument(
+    '--depth',
+    type=int,
+    default=0,
+    metavar='COLOR_DEPTH',
+    help='If not --whois, how many levels deep to run RDAP queries when '
+         'additional referenced objects are found.'
+)
+group.add_argument(
+    '--excluded_entities',
+    type=str,
+    nargs=1,
+    default=[None],
+    metavar='"EXCLUDED_ENTITIES"',
+    help='If not --whois, a comma delimited list of entity handles to not '
+         'perform lookups.'
+)
+group.add_argument(
+    '--bootstrap',
+    action='store_true',
+    help='If not --whois, performs lookups via ARIN bootstrap rather than '
+         'lookups based on ASN data. ASN lookups are not performed and no '
+         'output for any of the asn* fields is provided.'
+)
+group.add_argument(
+    '--rate_limit_timeout',
+    type=int,
+    default=120,
+    metavar='RATE_LIMIT_TIMEOUT',
+    help='If not --whois, the number of seconds to wait before retrying when '
+         'a rate limit notice is returned via rdap+json.'
+)
+
+# Legacy Whois
+group = parser.add_argument_group('Legacy Whois settings')
+group.add_argument(
+    '--whois',
+    action='store_true',
+    help='Retrieve whois data via legacy Whois (port 43) instead of RDAP '
+         '(default).'
+)
+group.add_argument(
+    '--get_referral',
+    action='store_true',
+    help='If --whois, retrieve referral whois information, if available.'
+)
+group.add_argument(
+    '--extra_blacklist',
+    type=str,
+    nargs=1,
+    default=[None],
+    metavar='"EXTRA_BLACKLIST"',
+    help='If --whois, A list of blacklisted whois servers in addition to the '
+         'global BLACKLIST.'
+)
+group.add_argument(
+    '--ignore_referral_errors',
+    action='store_true',
+    help='If --whois, ignore and continue when an exception is encountered on '
+         'referral whois lookups.'
+)
+group.add_argument(
+    '--field_list',
+    type=str,
+    nargs=1,
+    default=[None],
+    metavar='"FIELD_LIST"',
+    help='If --whois, a list of fields to parse: '
+         '[\'name\', \'handle\', \'description\', \'country\', \'state\', '
+         '\'city\', \'address\', \'postal_code\', \'emails\', \'created\', '
+         '\'updated\']'
+)
+
+# Input (required)
+group = parser.add_argument_group('Input (Required)')
+group.add_argument(
+    '--addr',
+    type=str,
+    nargs=1,
+    metavar='"IP"',
+    help='An IPv4 or IPv6 address as a string.',
+    required=True
 )
 
 # Get the args
@@ -792,15 +842,21 @@ if args.addr:
         args.allow_permutations
     )
 
-    print(results.lookup_rdap(
-        hr=args.hr,
-        show_name=args.show_name,
-        colorize=args.colorize,
-        inc_raw=args.inc_raw,
-        retry_count=args.retry_count,
-        depth=args.depth,
-        excluded_entities=args.excluded_entities[0],
-        bootstrap=args.bootstrap,
-        rate_limit_timeout=args.rate_limit_timeout,
-        asn_alts=args.asn_alts[0]
-    ))
+    if args.whois:
+
+        print('Legacy whois pending')
+
+    else:
+
+        print(results.lookup_rdap(
+            hr=args.hr,
+            show_name=args.show_name,
+            colorize=args.colorize,
+            inc_raw=args.inc_raw,
+            retry_count=args.retry_count,
+            depth=args.depth,
+            excluded_entities=args.excluded_entities[0],
+            bootstrap=args.bootstrap,
+            rate_limit_timeout=args.rate_limit_timeout,
+            asn_alts=args.asn_alts[0]
+        ))
