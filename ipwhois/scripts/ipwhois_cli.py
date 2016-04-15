@@ -764,7 +764,7 @@ class IPWhoisCLI:
                                         tmp_out = '{0}{1}{2}'.format(
                                             i_type,
                                             ': ' if i_type != '' else '',
-                                            i_value
+                                            i_value.encode('utf-8')
                                         )
 
                                         output += generate_output(
