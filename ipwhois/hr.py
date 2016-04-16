@@ -75,6 +75,11 @@ HR_RDAP_COMMON = {
             '_description': 'The identifier for an event initiator.'
         }
     },
+    'handle': {
+        '_short': 'Handle',
+        '_name': 'RIR Handle',
+        '_description': 'Unique identifier for a registered object.'
+    },
     'links': {
         '_short': 'Links',
         '_name': 'Links',
@@ -119,6 +124,11 @@ HR_RDAP_COMMON = {
             '_name': 'Remark Links',
             '_description': 'HTTP/HTTPS links provided for an RIR object.'
         }
+    },
+    'status': {
+        '_short': 'Status',
+        '_name': 'Object Status',
+        '_description': 'List indicating the state of a registered object.'
     }
 }
 
@@ -144,11 +154,7 @@ HR_RDAP = {
             '_description': 'The last IP address in a network block.'
         },
         'events': HR_RDAP_COMMON['events'],
-        'handle': {
-            '_short': 'Handle',
-            '_name': 'RIR Handle',
-            '_description': 'Unique identifier for a registered network.'
-        },
+        'handle': HR_RDAP_COMMON['handle'],
         'ip_version': {
             '_short': 'IP Version',
             '_name': 'IP Protocol Version',
@@ -175,12 +181,7 @@ HR_RDAP = {
             '_name': 'Starting IP Address',
             '_description': 'The first IP address in a network block.'
         },
-        'status': {
-            '_short': 'Status',
-            '_name': 'Network Status',
-            '_description': 'List indicating the state of a registered '
-                            'network.'
-        },
+        'status': HR_RDAP_COMMON['status'],
         'type': {
             '_short': 'Type',
             '_name': 'RIR Network Type',
@@ -260,11 +261,7 @@ HR_RDAP = {
                                 'format.'
             }
         },
-        'handle': {
-            '_short': 'Handle',
-            '_name': 'RIR Object Handle',
-            '_description': 'Unique identifier for a registered object.'
-        },
+        'handle': HR_RDAP_COMMON['handle'],
         'links': HR_RDAP_COMMON['links'],
         'notices': HR_RDAP_COMMON['notices'],
         'remarks': HR_RDAP_COMMON['remarks'],
@@ -273,12 +270,7 @@ HR_RDAP = {
             '_name': 'Roles',
             '_description': 'List of roles assigned to a registered object.'
         },
-        'status': {
-            '_short': 'Status',
-            '_name': 'Object Status',
-            '_description': 'List indicating the state of a registered '
-                            'object.'
-        }
+        'status': HR_RDAP_COMMON['status'],
     }
 }
 
