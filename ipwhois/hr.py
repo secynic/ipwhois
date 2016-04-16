@@ -62,7 +62,7 @@ HR_RDAP_COMMON = {
     'events': {
         '_short': 'Events',
         '_name': 'Events',
-        '_description': 'An event for an RIR object.',
+        '_description': 'Events for an RIR object.',
         'action': {
             '_short': 'Action',
             '_name': 'Event Action (Reason)',
@@ -93,7 +93,7 @@ HR_RDAP_COMMON = {
     'notices': {
         '_short': 'Notices',
         '_name': 'Notices',
-        '_description': 'A notice for an RIR object.',
+        '_description': 'Notices for an RIR object.',
         'description': {
             '_short': 'Description',
             '_name': 'Notice Description',
@@ -107,13 +107,13 @@ HR_RDAP_COMMON = {
         'links': {
             '_short': 'Links',
             '_name': 'Notice Links',
-            '_description': 'HTTP/HTTPS links provided for an RIR object.'
+            '_description': 'HTTP/HTTPS links provided for a notice.'
         }
     },
     'remarks': {
         '_short': 'Remarks',
         '_name': 'Remarks',
-        '_description': 'A remark for an RIR object.',
+        '_description': 'Remarks for an RIR object.',
         'description': {
             '_short': 'Description',
             '_name': 'Remark Description',
@@ -127,7 +127,7 @@ HR_RDAP_COMMON = {
         'links': {
             '_short': 'Links',
             '_name': 'Remark Links',
-            '_description': 'HTTP/HTTPS links provided for an RIR object.'
+            '_description': 'HTTP/HTTPS links provided for a remark.'
         }
     },
     'status': {
