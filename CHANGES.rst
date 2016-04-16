@@ -15,7 +15,9 @@ Changelog
   Net.lookup_asn() + new tests.
 - Fixed bug in ASN HTTP fallback lookups for DNIC (#108).
 - Fixed _RDAPCommon.summarize_notices() None check - changed len() to all().
-- Added CLI (ipwhois_cli.py). Installed to your environments Scripts dir
+- Added CLI (ipwhois_cli.py) - #46. Installed to your environments Scripts dir.
+  This is a wrapper for ipwhois.py (IPWhois). Utils CLI will be in a future
+  release.
 
 0.12.0 (2016-03-28)
 -------------------
