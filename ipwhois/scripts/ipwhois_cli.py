@@ -577,28 +577,17 @@ class IPWhoisCLI:
 
         for key, val in json_data['network'].items():
 
-            if key == 'links':
+            if key in ['links', 'status']:
 
-                output += generate_output(
+                output += self.generate_output_list(
+                    source='network',
+                    key=key,
+                    val=val,
                     line='1',
-                    short=HR_RDAP_COMMON['links']['_short'] if hr else 'links',
-                    name=HR_RDAP_COMMON['links']['_name'] if (
-                        hr and show_name) else None,
-                    is_parent=False if (val is None or
-                                        len(val) == 0) else True,
-                    value='None' if (val is None or
-                                     len(val) == 0) else None,
+                    hr=hr,
+                    show_name=show_name,
                     colorize=colorize
                 )
-
-                if val is not None:
-
-                    for link in val:
-                        output += generate_output(
-                            line='2',
-                            value=link,
-                            colorize=colorize
-                        )
 
             elif key in ['notices', 'remarks']:
 
@@ -669,7 +658,7 @@ class IPWhoisCLI:
 
             for key, val in obj.items():
 
-                if key in ['links', 'entities', 'roles']:
+                if key in ['links', 'entities', 'roles', 'status']:
 
                     output += self.generate_output_list(
                         source='objects',
