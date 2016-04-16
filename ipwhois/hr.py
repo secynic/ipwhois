@@ -54,6 +54,11 @@ HR_ASN = {
 }
 
 HR_RDAP_COMMON = {
+    'entities': {
+        '_short': 'Entities',
+        '_name': 'RIR Object Entities',
+        '_description': 'List of object names referenced by an RIR object.'
+    },
     'events': {
         '_short': 'Events',
         '_name': 'Events',
@@ -188,11 +193,7 @@ HR_RDAP = {
             '_description': 'The RIR classification of a registered network.'
         }
     },
-    'entities': {
-        '_short': 'Entities',
-        '_name': 'RIR Entities',
-        '_description': 'List of object names referenced by an RIR network.'
-    },
+    'entities': HR_RDAP_COMMON['entities'],
     'objects': {
         '_short': 'Objects',
         '_name': 'RIR Objects',
@@ -239,11 +240,7 @@ HR_RDAP = {
                 '_description': 'The contact\'s position or job title.'
             }
         },
-        'entities': {
-            '_short': 'Entities',
-            '_name': 'RIR Object Entities',
-            '_description': 'List of object names referenced by an RIR object.'
-        },
+        'entities': HR_RDAP_COMMON['entities'],
         'events': HR_RDAP_COMMON['events'],
         'events_actor': {
             '_short': 'Events Misc',
