@@ -26,7 +26,7 @@ Features
 * BSD license
 * 100% core code coverage (See '# pragma: no cover' for exclusions)
 * Human readable field translations
-* Full CLI for IPWhois with optional human readable and ANSI console colors.
+* Full CLI for IPWhois with optional human readable and ANSI console output.
 
 Links
 =====
@@ -54,7 +54,7 @@ https://pypi.python.org/pypi/ipwhois
 Changes
 -------
 
-https://github.com/secynic/ipwhois/blob/master/CHANGES.rst
+https://secynic.github.io/ipwhois/CHANGES.html
 
 Dependencies
 ============
@@ -110,7 +110,7 @@ details for users, organizations, and groups. RDAP also provides more detailed
 network information.
 
 RDAP documentation:
-https://github.com/secynic/ipwhois/blob/master/RDAP.rst
+https://secynic.github.io/ipwhois/RDAP.html
 
 Legacy Whois
 ------------
@@ -119,13 +119,13 @@ IPWhois.lookup() is deprecated as of v0.12.0 and will be removed. Legacy whois
 lookups were moved to IPWhois.lookup_whois().
 
 Legacy Whois documentation:
-https://github.com/secynic/ipwhois/blob/master/WHOIS.rst
+https://secynic.github.io/ipwhois/WHOIS.html
 
 Utilities
 ---------
 
 Utilities documentation:
-https://github.com/secynic/ipwhois/blob/master/UTILS.rst
+https://secynic.github.io/ipwhois/UTILS.html
 
 IP Reputation Support
 =====================
