@@ -16,30 +16,27 @@ Project Info
 .. toctree::
    :maxdepth: 2
 
+   RDAP API (Recommended) <RDAP>
+
+.. toctree::
+   :maxdepth: 2
+
+   Legacy API Whois <WHOIS>
+
+.. toctree::
+   :maxdepth: 2
+
+   Utilities API <UTILS>
+
+.. toctree::
+   :maxdepth: 2
+
    Contributing <CONTRIBUTING>
 
 .. toctree::
    :maxdepth: 2
 
    LICENSE
-
-API
-===
-
-.. toctree::
-   :maxdepth: 2
-
-   RDAP (Recommended) <RDAP>
-
-.. toctree::
-   :maxdepth: 2
-
-   Legacy Whois <WHOIS>
-
-.. toctree::
-   :maxdepth: 2
-
-   Utilities <UTILS>
 
 Code
 ====
