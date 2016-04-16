@@ -31,6 +31,11 @@ Project Info
 .. toctree::
    :maxdepth: 2
 
+   CLI <CLI>
+
+.. toctree::
+   :maxdepth: 2
+
    Contributing <CONTRIBUTING>
 
 .. toctree::

@@ -26,7 +26,7 @@ Features
 * BSD license
 * 100% core code coverage (See '# pragma: no cover' for exclusions)
 * Human readable field translations
-* Full CLI for IPWhois with optional human readable and ANSI console output.
+* Full CLI for IPWhois with optional ANSI colored console output.
 
 Links
 =====
@@ -126,6 +126,12 @@ Utilities
 
 Utilities documentation:
 https://secynic.github.io/ipwhois/UTILS.html
+
+Scripts
+-------
+
+CLI documentation:
+https://secynic.github.io/ipwhois/CLI.html
 
 IP Reputation Support
 =====================
