@@ -112,6 +112,8 @@ network information.
 RDAP documentation:
 https://secynic.github.io/ipwhois/RDAP.html
 
+https://github.com/secynic/ipwhois/blob/master/RDAP.rst
+
 Legacy Whois
 ------------
 
@@ -121,17 +123,23 @@ lookups were moved to IPWhois.lookup_whois().
 Legacy Whois documentation:
 https://secynic.github.io/ipwhois/WHOIS.html
 
+https://github.com/secynic/ipwhois/blob/master/WHOIS.rst
+
 Utilities
 ---------
 
 Utilities documentation:
 https://secynic.github.io/ipwhois/UTILS.html
 
+https://github.com/secynic/ipwhois/blob/master/UTILS.rst
+
 Scripts
 -------
 
 CLI documentation:
 https://secynic.github.io/ipwhois/CLI.html
+
+https://github.com/secynic/ipwhois/blob/master/CLI.rst
 
 IP Reputation Support
 =====================
