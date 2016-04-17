@@ -100,11 +100,10 @@ class IPWhois:
                 Defaults to all ['whois', 'http'].
             extra_org_map: Dictionary mapping org handles to RIRs. This is for
                 limited cases where ARIN REST (ASN fallback HTTP lookup) does
-                not show an RIR as the org handle e.g., DNIC (which is now
-                built in, but would look like:
-                extra_org_map={'DNIC': 'ARIN'} ). Valid RIR values are (note
-                the case-sensitive - this is meant to match the REST result):
-                'ARIN', 'RIPE', 'apnic', 'lacnic', 'afrinic'
+                not show an RIR as the org handle e.g., DNIC (which is now the
+                built in ORG_MAP) e.g., {'DNIC': 'arin'}. Valid RIR values are
+                (note the case-sensitive - this is meant to match the REST
+                result): 'ARIN', 'RIPE', 'apnic', 'lacnic', 'afrinic'
 
         Returns:
             Dictionary:
@@ -182,11 +181,10 @@ class IPWhois:
                 Defaults to all ['whois', 'http'].
             extra_org_map: Dictionary mapping org handles to RIRs. This is for
                 limited cases where ARIN REST (ASN fallback HTTP lookup) does
-                not show an RIR as the org handle e.g., DNIC (which is now
-                built in, but would look like:
-                extra_org_map={'DNIC': 'ARIN'} ). Valid RIR values are (note
-                the case-sensitive - this is meant to match the REST result):
-                'ARIN', 'RIPE', 'apnic', 'lacnic', 'afrinic'
+                not show an RIR as the org handle e.g., DNIC (which is now the
+                built in ORG_MAP) e.g., {'DNIC': 'arin'}. Valid RIR values are
+                (note the case-sensitive - this is meant to match the REST
+                result): 'ARIN', 'RIPE', 'apnic', 'lacnic', 'afrinic'
 
         Returns:
             Dictionary:

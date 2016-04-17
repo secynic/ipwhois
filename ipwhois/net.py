@@ -81,6 +81,16 @@ BLACKLIST = [
     'root.rwhois.net'
 ]
 
+ORG_MAP = {
+    'ARIN': 'arin',
+    'VR-ARIN': 'arin',
+    'RIPE': 'ripencc',
+    'APNIC': 'apnic',
+    'LACNIC': 'lacnic',
+    'AFRINIC': 'afrinic',
+    'DNIC': 'arin'
+}
+
 
 class Net:
     """
@@ -380,11 +390,10 @@ class Net:
             result: Optional result object. This bypasses the ASN lookup.
             extra_org_map: Dictionary mapping org handles to RIRs. This is for
                 limited cases where ARIN REST (ASN fallback HTTP lookup) does
-                not show an RIR as the org handle e.g., DNIC (which is now
-                built in, but would look like:
-                extra_org_map={'DNIC': 'ARIN'} ). Valid RIR values are (note
-                the case-sensitive - this is meant to match the REST result):
-                'ARIN', 'RIPE', 'apnic', 'lacnic', 'afrinic'
+                not show an RIR as the org handle e.g., DNIC (which is now the
+                built in ORG_MAP) e.g., {'DNIC': 'arin'}. Valid RIR values are
+                (note the case-sensitive - this is meant to match the REST
+                result): 'ARIN', 'RIPE', 'apnic', 'lacnic', 'afrinic'
 
         Returns:
             Dictionary: A dictionary containing the following keys:
@@ -399,6 +408,16 @@ class Net:
             ASNRegistryError: The ASN registry is not known.
             ASNLookupError: The ASN lookup failed.
         """
+
+        # Set the org_map. Map the orgRef handle to an RIR.
+        org_map = ORG_MAP.copy()
+        try:
+
+            org_map.update(extra_org_map)
+
+        except (TypeError, ValueError, IndexError, KeyError):
+
+            pass
 
         try:
 
@@ -440,23 +459,10 @@ class Net:
             for n in net_list:
 
                 try:
-                    # TODO: User parameter for org handle -> RIR dict.
-                    if n['orgRef']['@handle'] in ('ARIN', 'VR-ARIN',
-                                                  'DNIC'):
 
-                        asn_data['asn_registry'] = 'arin'
-
-                    elif n['orgRef']['@handle'] == 'RIPE':
-
-                        asn_data['asn_registry'] = 'ripencc'
-
-                    else:
-
-                        test = RIR_WHOIS[n['orgRef'][('@handle'
-                                                      )].lower()]
-                        asn_data['asn_registry'] = (
-                            n['orgRef']['@handle'].lower()
-                        )
+                    asn_data['asn_registry'] = (
+                        org_map[n['orgRef']['@handle'].upper()]
+                    )
 
                 except KeyError as e:
 
@@ -766,11 +772,10 @@ class Net:
                 Defaults to all ['whois', 'http'].
             extra_org_map: Dictionary mapping org handles to RIRs. This is for
                 limited cases where ARIN REST (ASN fallback HTTP lookup) does
-                not show an RIR as the org handle e.g., DNIC (which is now
-                built in, but would look like:
-                extra_org_map={'DNIC': 'ARIN'} ). Valid RIR values are (note
-                the case-sensitive - this is meant to match the REST result):
-                'ARIN', 'RIPE', 'apnic', 'lacnic', 'afrinic'
+                not show an RIR as the org handle e.g., DNIC (which is now the
+                built in ORG_MAP) e.g., {'DNIC': 'arin'}. Valid RIR values are
+                (note the case-sensitive - this is meant to match the REST
+                result): 'ARIN', 'RIPE', 'apnic', 'lacnic', 'afrinic'
 
         Returns:
             Tuple:
@@ -823,9 +828,7 @@ class Net:
                     log.debug('ASN WHOIS lookup failed, trying ASN via HTTP')
                     try:
 
-                        asn_data = self.get_asn_http(
-                            retry_count, extra_org_map=extra_org_map
-                        )
+                        asn_data = self.get_asn_http(retry_count)
 
                     except ASNRegistryError:
 
