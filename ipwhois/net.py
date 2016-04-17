@@ -366,7 +366,7 @@ class Net:
                 'ASN lookup failed for {0}.'.format(self.address_str)
             )
 
-    def get_asn_http(self, retry_count=3, result=None):
+    def get_asn_http(self, retry_count=3, result=None, extra_org_map=None):
         """
         The function for retrieving ASN information for an IP address from
         Arin via port 80 (HTTP). Currently limited to fetching asn_registry
@@ -378,6 +378,13 @@ class Net:
             retry_count: The number of times to retry in case socket errors,
                 timeouts, connection resets, etc. are encountered.
             result: Optional result object. This bypasses the ASN lookup.
+            extra_org_map: Dictionary mapping org handles to RIRs. This is for
+                limited cases where ARIN REST (ASN fallback HTTP lookup) does
+                not show an RIR as the org handle e.g., DNIC (which is now
+                built in, but would look like:
+                extra_org_map={'DNIC': 'ARIN'} ). Valid RIR values are (note
+                the case-sensitive - this is meant to match the REST result):
+                'ARIN', 'RIPE', 'apnic', 'lacnic', 'afrinic'
 
         Returns:
             Dictionary: A dictionary containing the following keys:
@@ -746,7 +753,7 @@ class Net:
                 'Host lookup failed for {0}.'.format(self.address_str)
             )
 
-    def lookup_asn(self, retry_count=3, asn_alts=None):
+    def lookup_asn(self, retry_count=3, asn_alts=None, extra_org_map=None):
         """
         The wrapper function for retrieving and parsing ASN information for an
         IP address.
@@ -757,6 +764,13 @@ class Net:
             asn_alts: Array of additional lookup types to attempt if the
                 ASN dns lookup fails. Allow permutations must be enabled.
                 Defaults to all ['whois', 'http'].
+            extra_org_map: Dictionary mapping org handles to RIRs. This is for
+                limited cases where ARIN REST (ASN fallback HTTP lookup) does
+                not show an RIR as the org handle e.g., DNIC (which is now
+                built in, but would look like:
+                extra_org_map={'DNIC': 'ARIN'} ). Valid RIR values are (note
+                the case-sensitive - this is meant to match the REST result):
+                'ARIN', 'RIPE', 'apnic', 'lacnic', 'afrinic'
 
         Returns:
             Tuple:
@@ -809,7 +823,9 @@ class Net:
                     log.debug('ASN WHOIS lookup failed, trying ASN via HTTP')
                     try:
 
-                        asn_data = self.get_asn_http(retry_count)
+                        asn_data = self.get_asn_http(
+                            retry_count, extra_org_map=extra_org_map
+                        )
 
                     except ASNRegistryError:
 
