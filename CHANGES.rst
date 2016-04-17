@@ -18,7 +18,7 @@ Changelog
 - Added CLI (ipwhois_cli.py) - #46. Installed to your environments Scripts dir.
   This is a wrapper for ipwhois.py (IPWhois). Utils CLI will be in a future
   release.
-- Docmentation split up and added more detail (#81).
+- Documentation split up and added more detail (#81).
 
 0.12.0 (2016-03-28)
 -------------------
