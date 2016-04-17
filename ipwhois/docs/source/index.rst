@@ -21,7 +21,7 @@ Project Info
 .. toctree::
    :maxdepth: 2
 
-   Legacy API Whois <WHOIS>
+   Legacy Whois API <WHOIS>
 
 .. toctree::
    :maxdepth: 2
