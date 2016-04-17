@@ -21,3 +21,6 @@ Library Structure
 
 .. automodule:: ipwhois.exceptions
    :members:
+
+.. automodule:: ipwhois.hr
+   :members:

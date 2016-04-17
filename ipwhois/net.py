@@ -81,6 +81,16 @@ BLACKLIST = [
     'root.rwhois.net'
 ]
 
+ORG_MAP = {
+    'ARIN': 'arin',
+    'VR-ARIN': 'arin',
+    'RIPE': 'ripencc',
+    'APNIC': 'apnic',
+    'LACNIC': 'lacnic',
+    'AFRINIC': 'afrinic',
+    'DNIC': 'arin'
+}
+
 
 class Net:
     """
@@ -366,7 +376,7 @@ class Net:
                 'ASN lookup failed for {0}.'.format(self.address_str)
             )
 
-    def get_asn_http(self, retry_count=3, result=None):
+    def get_asn_http(self, retry_count=3, result=None, extra_org_map=None):
         """
         The function for retrieving ASN information for an IP address from
         Arin via port 80 (HTTP). Currently limited to fetching asn_registry
@@ -378,6 +388,12 @@ class Net:
             retry_count: The number of times to retry in case socket errors,
                 timeouts, connection resets, etc. are encountered.
             result: Optional result object. This bypasses the ASN lookup.
+            extra_org_map: Dictionary mapping org handles to RIRs. This is for
+                limited cases where ARIN REST (ASN fallback HTTP lookup) does
+                not show an RIR as the org handle e.g., DNIC (which is now the
+                built in ORG_MAP) e.g., {'DNIC': 'arin'}. Valid RIR values are
+                (note the case-sensitive - this is meant to match the REST
+                result): 'ARIN', 'RIPE', 'apnic', 'lacnic', 'afrinic'
 
         Returns:
             Dictionary: A dictionary containing the following keys:
@@ -392,6 +408,16 @@ class Net:
             ASNRegistryError: The ASN registry is not known.
             ASNLookupError: The ASN lookup failed.
         """
+
+        # Set the org_map. Map the orgRef handle to an RIR.
+        org_map = ORG_MAP.copy()
+        try:
+
+            org_map.update(extra_org_map)
+
+        except (TypeError, ValueError, IndexError, KeyError):
+
+            pass
 
         try:
 
@@ -433,23 +459,10 @@ class Net:
             for n in net_list:
 
                 try:
-                    # TODO: User parameter for org handle -> RIR dict.
-                    if n['orgRef']['@handle'] in ('ARIN', 'VR-ARIN',
-                                                  'DNIC'):
 
-                        asn_data['asn_registry'] = 'arin'
-
-                    elif n['orgRef']['@handle'] == 'RIPE':
-
-                        asn_data['asn_registry'] = 'ripencc'
-
-                    else:
-
-                        test = RIR_WHOIS[n['orgRef'][('@handle'
-                                                      )].lower()]
-                        asn_data['asn_registry'] = (
-                            n['orgRef']['@handle'].lower()
-                        )
+                    asn_data['asn_registry'] = (
+                        org_map[n['orgRef']['@handle'].upper()]
+                    )
 
                 except KeyError as e:
 
@@ -746,7 +759,7 @@ class Net:
                 'Host lookup failed for {0}.'.format(self.address_str)
             )
 
-    def lookup_asn(self, retry_count=3, asn_alts=None):
+    def lookup_asn(self, retry_count=3, asn_alts=None, extra_org_map=None):
         """
         The wrapper function for retrieving and parsing ASN information for an
         IP address.
@@ -757,6 +770,12 @@ class Net:
             asn_alts: Array of additional lookup types to attempt if the
                 ASN dns lookup fails. Allow permutations must be enabled.
                 Defaults to all ['whois', 'http'].
+            extra_org_map: Dictionary mapping org handles to RIRs. This is for
+                limited cases where ARIN REST (ASN fallback HTTP lookup) does
+                not show an RIR as the org handle e.g., DNIC (which is now the
+                built in ORG_MAP) e.g., {'DNIC': 'arin'}. Valid RIR values are
+                (note the case-sensitive - this is meant to match the REST
+                result): 'ARIN', 'RIPE', 'apnic', 'lacnic', 'afrinic'
 
         Returns:
             Tuple:
