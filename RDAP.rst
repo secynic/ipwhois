@@ -11,7 +11,48 @@ network information.
 Input
 =====
 
-TODO
+Arguments supported by IPWhois.lookup_rdap().
+
++--------------------+--------+-----------------------------------------------+
+| **Key**            |**Type**| **Description**                               |
++--------------------+--------+-----------------------------------------------+
+| inc_raw            | Bool   | Boolean for whether to include the raw whois  |
+|                    |        | results in the returned dictionary.           |
++--------------------+--------+-----------------------------------------------+
+| retry_count        | Int    | The number of times to retry in case socket   |
+|                    |        | errors, timeouts, connection resets, etc. are |
+|                    |        | encountered.                                  |
++--------------------+--------+-----------------------------------------------+
+| depth              | Int    | How many levels deep to run queries when      |
+|                    |        | additional referenced objects are found.      |
++--------------------+--------+-----------------------------------------------+
+| excluded_entities  | List   | A list of entity handles to not perform       |
+|                    |        | lookups.                                      |
++--------------------+--------+-----------------------------------------------+
+| bootstrap          | Bool   | If True, performs lookups via ARIN bootstrap  |
+|                    |        | rather than lookups based on ASN data. ASN    |
+|                    |        | lookups are not performed and no output for   |
+|                    |        | any of the asn* fields is provided.           |
++--------------------+--------+-----------------------------------------------+
+| rate_limit_timeout | Int    | The number of seconds to wait before retrying |
+|                    |        | when a rate limit notice isreturned via       |
+|                    |        | rdap+json.                                    |
++--------------------+--------+-----------------------------------------------+
+| asn_alts           | List   | Array of additional lookup types to attempt if|
+|                    |        | the ASN dns lookup fails. Allow permutations  |
+|                    |        | must be enabled. Defaults to all              |
+|                    |        | ['whois', 'http'].                            |
++--------------------+--------+-----------------------------------------------+
+| extra_org_map      | Dict   | Dictionary mapping org handles to RIRs.       |
+|                    |        | This is for limited cases where ARIN REST     |
+|                    |        | (ASN fallback HTTP lookup) does not show an   |
+|                    |        | RIR as the org handle e.g., DNIC (which       |
+|                    |        | is now built in, but would look like:         |
+|                    |        | extra_org_map={'DNIC': 'ARIN'} ). Valid RIR   |
+|                    |        | values are (note the case-sensitive - this is |
+|                    |        | meant to match the REST result):              |
+|                    |        | 'ARIN', 'RIPE', 'apnic', 'lacnic', 'afrinic'  |
++--------------------+--------+-----------------------------------------------+
 
 Output
 ======
