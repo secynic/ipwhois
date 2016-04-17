@@ -20,7 +20,50 @@ recognize this and the returned result will have the values separated by '\\n'.
 Input
 =====
 
-TODO
+Arguments supported by IPWhois.lookup_whois().
+
++------------------------+--------+-------------------------------------------+
+| **Key**                |**Type**| **Description**                           |
++------------------------+--------+-------------------------------------------+
+| inc_raw                | Bool   | Boolean for whether to include the raw    |
+|                        |        | whois results in the returned dictionary. |
++------------------------+--------+-------------------------------------------+
+| retry_count            | Int    | The number of times to retry in case      |
+|                        |        | socket errors, timeouts, connection       |
+|                        |        | resets, etc. are encountered.             |
++------------------------+--------+-------------------------------------------+
+| get_referral           | Bool   | Boolean for whether to retrieve           |
+|                        |        | referral whois information, if available. |
++------------------------+--------+-------------------------------------------+
+| extra_blacklist        | List   | A list of blacklisted whois servers in    |
+|                        |        | addition to the global BLACKLIST.         |
++------------------------+--------+-------------------------------------------+
+| ignore_referral_errors | Bool   | Boolean for whether to ignore and         |
+|                        |        | continue when an exception is encountered |
+|                        |        | on referral whois lookups.                |
++------------------------+--------+-------------------------------------------+
+| field_list             | List   | If provided, a list of fields to parse:   |
+|                        |        | ['name', 'handle', 'description',         |
+|                        |        | 'country', 'state', 'city', 'address',    |
+|                        |        | 'postal_code', 'emails', 'created',       |
+|                        |        | 'updated']                                |
++------------------------+--------+-------------------------------------------+
+| asn_alts               | List   | Array of additional lookup types to       |
+|                        |        | attempt if the ASN dns lookup fails.      |
+|                        |        | Allow permutations must be enabled.       |
+|                        |        | Defaults to all ['whois', 'http'].        |
++------------------------+--------+-------------------------------------------+
+| extra_org_map          | Dict   | Dictionary mapping org handles to RIRs.   |
+|                        |        | This is for limited cases where ARIN      |
+|                        |        | REST (ASN fallback HTTP lookup) does not  |
+|                        |        | show an RIR as the org handle e.g., DNIC  |
+|                        |        | (which is now built in, but would look    |
+|                        |        | like: extra_org_map={'DNIC': 'ARIN'} ).   |
+|                        |        | Valid RIR values are (note the            |
+|                        |        | case-sensitive - this is meant to match   |
+|                        |        | the REST result):  'ARIN', 'RIPE',        |
+|                        |        | 'apnic', 'lacnic', 'afrinic'              |
++------------------------+--------+-------------------------------------------+
 
 Output
 ======
