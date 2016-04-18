@@ -25,6 +25,7 @@
 # CLI python script interface for ipwhois lookups and utilities.
 
 import argparse
+import json
 from os import path
 from ipwhois import IPWhois
 from ipwhois.hr import (HR_ASN, HR_RDAP, HR_RDAP_COMMON, HR_WHOIS)
@@ -118,7 +119,7 @@ group.add_argument(
     '--proxy_http',
     type=str,
     nargs=1,
-    default=[None],
+    default='',
     metavar='"PROXY_HTTP"',
     help='The proxy HTTP address passed to request.ProxyHandler. User auth'
          'can be passed like "http://user:pass@192.168.0.1:80"',
@@ -128,16 +129,18 @@ group.add_argument(
     '--proxy_https',
     type=str,
     nargs=1,
-    default=[None],
+    default='',
     metavar='"PROXY_HTTPS"',
     help='The proxy HTTPS address passed to request.ProxyHandler. User auth'
          'can be passed like "https://user:pass@192.168.0.1:443"',
     required=False
 )
 group.add_argument(
-    '--allow_permutations',
+    '--disallow_permutations',
     action='store_true',
-    help='Use additional methods if DNS lookups to Cymru fail.'
+    help='Disable additional methods if DNS lookups to Cymru fail. This is the'
+         ' opposite of the ipwhois allow_permutations, in order to enable '
+         'allow_permutations by default in the CLI.'
 )
 
 # Common (RDAP & Legacy Whois)
@@ -159,11 +162,24 @@ group.add_argument(
     '--asn_alts',
     type=str,
     nargs=1,
-    default=[None],
+    default='whois,http',
     metavar='"ASN_ALTS"',
     help='A comma delimited list of additional lookup types to attempt if the '
          'ASN dns lookup fails. Allow permutations must be enabled. '
          'Defaults to all: "whois,http"'
+)
+group.add_argument(
+    '--extra_org_map',
+    type=json.loads,
+    nargs=1,
+    default='{"DNIC": "arin"}',
+    metavar='"ASN_ALTS"',
+    help='Dictionary mapping org handles to RIRs. This is for limited cases '
+         'where ARIN REST (ASN fallback HTTP lookup) does not show an RIR as '
+         'the org handle e.g., DNIC (which is now the built in ORG_MAP) e.g., '
+         '{\\"DNIC\\": \\"arin\\"}. Valid RIR values are (note the '
+         'case-sensitive - this is meant to match the REST result): '
+         '\'ARIN\', \'RIPE\', \'apnic\', \'lacnic\', \'afrinic\''
 )
 
 # RDAP
@@ -180,7 +196,7 @@ group.add_argument(
     '--excluded_entities',
     type=str,
     nargs=1,
-    default=[None],
+    default=None,
     metavar='"EXCLUDED_ENTITIES"',
     help='If not --whois, a comma delimited list of entity handles to not '
          'perform lookups.'
@@ -212,7 +228,7 @@ group.add_argument(
     '--extra_blacklist',
     type=str,
     nargs=1,
-    default=[None],
+    default='',
     metavar='"EXTRA_BLACKLIST"',
     help='If --whois, A list of blacklisted whois servers in addition to the '
          'global BLACKLIST.'
@@ -227,7 +243,7 @@ group.add_argument(
     '--field_list',
     type=str,
     nargs=1,
-    default=[None],
+    default='',
     metavar='"FIELD_LIST"',
     help='If --whois, a list of fields to parse: '
          '[\'name\', \'handle\', \'description\', \'country\', \'state\', '
@@ -973,11 +989,13 @@ class IPWhoisCLI:
 if args.addr:
 
     results = IPWhoisCLI(
-        args.addr[0],
-        args.timeout,
-        args.proxy_http[0],
-        args.proxy_https[0],
-        args.allow_permutations
+        addr=args.addr[0],
+        timeout=args.timeout,
+        proxy_http=args.proxy_http[0] if (
+            args.proxy_http and len(args.proxy_http[0]) > 0) else None,
+        proxy_https=args.proxy_https[0] if (
+            args.proxy_https and len(args.proxy_https[0]) > 0) else None,
+        allow_permutations=(not args.disallow_permutations)
     )
 
     if args.whois:
@@ -989,10 +1007,17 @@ if args.addr:
             inc_raw=args.inc_raw,
             retry_count=args.retry_count,
             get_referral=args.get_referral,
-            extra_blacklist=args.extra_blacklist[0],
+            extra_blacklist=args.extra_blacklist[0].split(',') if (
+                args.extra_blacklist and
+                len(args.extra_blacklist[0]) > 0) else None,
             ignore_referral_errors=args.ignore_referral_errors,
-            field_list=args.field_list[0],
-            asn_alts=args.asn_alts[0]
+            field_list=args.field_list[0].split(',') if (
+                args.field_list and
+                len(args.field_list[0]) > 0) else None,
+            asn_alts=args.asn_alts[0].split(',') if (
+                args.asn_alts and
+                len(args.asn_alts[0]) > 0) else None,
+            extra_org_map=args.extra_org_map
         ))
 
     else:
@@ -1004,8 +1029,13 @@ if args.addr:
             inc_raw=args.inc_raw,
             retry_count=args.retry_count,
             depth=args.depth,
-            excluded_entities=args.excluded_entities[0],
+            excluded_entities=args.excluded_entities[0].split(',') if (
+                args.excluded_entities and
+                len(args.excluded_entities[0]) > 0) else None,
             bootstrap=args.bootstrap,
             rate_limit_timeout=args.rate_limit_timeout,
-            asn_alts=args.asn_alts[0]
+            asn_alts=args.asn_alts[0].split(',') if (
+                args.asn_alts and
+                len(args.asn_alts[0]) > 0) else None,
+            extra_org_map=args.extra_org_map
         ))
