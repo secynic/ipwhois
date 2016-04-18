@@ -120,9 +120,7 @@ class IPWhois:
             :raw: Raw whois results if the inc_raw parameter is True. (String)
             :referral: Dictionary of referral whois information if get_referral
                 is True and the server isn't blacklisted. Consists of fields
-                listed in the ipwhois.whois.RWHOIS dictionary. Additional
-                referral server informaion is added in the server and port
-                keys. (Dictionary)
+                listed in the ipwhois.whois.RWHOIS dictionary.
             :raw_referral: Raw referral whois results if the inc_raw parameter
                 is True. (String)
         """
