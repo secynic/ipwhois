@@ -100,6 +100,35 @@ ipwhois needs some outbound firewall ports opened from your host/server.
 API
 ===
 
+IPWhois (main class)
+--------------------
+
+ipwhois.IPWhois is the base class for wrapping RDAP and Legacy Whois lookups.
+Instantiate this object, then call one of the lookup functions:
+
+`RDAP (HTTP) - IPWhois.lookup_rdap() <#rdap-http>`_
+OR
+`Legacy Whois - IPWhois.lookup_whois() <#legacy-whois>`_
+
+Input
+^^^^^
+
++--------------------+--------+-----------------------------------------------+
+| **Key**            |**Type**| **Description**                               |
++--------------------+--------+-----------------------------------------------+
+| address            | String | An IPv4 or IPv6 address as a string, integer, |
+|                    |        | IPv4Address, or IPv6Address.                  |
++--------------------+--------+-----------------------------------------------+
+| timeout            | Int    | The default timeout for socket connections    |
+|                    |        | in seconds.                                   |
++--------------------+--------+-----------------------------------------------+
+| proxy_opener       | Object | The urllib.request.OpenerDirector request for |
+|                    |        | proxy support or None.                        |
++--------------------+--------+-----------------------------------------------+
+| allow_permutations | Bool   | Allow net.Net() to use additional methods if  |
+|                    |        | DNS lookups to Cymru fail.                    |
++--------------------+--------+-----------------------------------------------+
+
 RDAP (HTTP)
 -----------
 
