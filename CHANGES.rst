@@ -1,8 +1,8 @@
 Changelog
 =========
 
-0.13.0 (TBD)
-------------
+0.13.0 (2016-04-18)
+-------------------
 
 - Added events_actor parsing for RDAP results.
 - Added example for caching data via Redis (#81)
@@ -19,7 +19,7 @@ Changelog
 - Fixed _RDAPCommon.summarize_notices() None check - changed len() to all().
 - Added CLI (ipwhois_cli.py) - #46. Installed to your environments Scripts dir.
   This is a wrapper for ipwhois.py (IPWhois). Utils CLI will be in a future
-  release.
+  release (#121).
 - Documentation split up and added more detail (#81).
 
 0.12.0 (2016-03-28)
