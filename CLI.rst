@@ -12,7 +12,7 @@ utils.py, whois.py) will be included in a future release.
 Usage
 =====
 
-ipwhois_cli.py [-h] --addr "IP" [--whois] [--hr] [--show_name] [--colorize]
+ipwhois_cli.py [-h] --addr IP [--whois] [--hr] [--show_name] [--colorize]
                       [--timeout TIMEOUT] [--proxy_http "PROXY_HTTP"]
                       [--proxy_https "PROXY_HTTPS"] [--disallow_permutations]
                       [--inc_raw] [--retry_count RETRY_COUNT]
@@ -40,11 +40,11 @@ Output options:
 
 IPWhois settings:
   --timeout TIMEOUT     The default timeout for socket connections in seconds.
-  --proxy_http "PROXY_HTTP"
+  --proxy_http PROXY_HTTP
                         The proxy HTTP address passed to request.ProxyHandler.
                         User authcan be passed like
                         "http://user:pass@192.168.0.1:80"
-  --proxy_https "PROXY_HTTPS"
+  --proxy_https PROXY_HTTPS
                         The proxy HTTPS address passed to
                         request.ProxyHandler. User authcan be passed like
                         "https://user:pass@192.168.0.1:443"
@@ -59,12 +59,12 @@ Common settings (RDAP & Legacy Whois):
   --retry_count RETRY_COUNT
                         The number of times to retry in case socket errors,
                         timeouts, connection resets, etc. are encountered.
-  --asn_alts "ASN_ALTS"
+  --asn_alts ASN_ALTS
                         A comma delimited list of additional lookup types to
                         attempt if the ASN dns lookup fails. Allow
                         permutations must be enabled. Defaults to all:
                         "whois,http"
-  --extra_org_map "ASN_ALTS"
+  --extra_org_map ASN_ALTS
                         Dictionary mapping org handles to RIRs. This is for
                         limited cases where ARIN REST (ASN fallback HTTP
                         lookup) does not show an RIR as the org handle e.g.,
@@ -76,7 +76,7 @@ Common settings (RDAP & Legacy Whois):
 RDAP settings:
   --depth COLOR_DEPTH   If not --whois, how many levels deep to run RDAP
                         queries when additional referenced objects are found.
-  --excluded_entities "EXCLUDED_ENTITIES"
+  --excluded_entities EXCLUDED_ENTITIES
                         If not --whois, a comma delimited list of entity
                         handles to not perform lookups.
   --bootstrap           If not --whois, performs lookups via ARIN bootstrap
@@ -91,20 +91,20 @@ RDAP settings:
 Legacy Whois settings:
   --get_referral        If --whois, retrieve referral whois information, if
                         available.
-  --extra_blacklist "EXTRA_BLACKLIST"
+  --extra_blacklist EXTRA_BLACKLIST
                         If --whois, A list of blacklisted whois servers in
                         addition to the global BLACKLIST.
   --ignore_referral_errors
                         If --whois, ignore and continue when an exception is
                         encountered on referral whois lookups.
-  --field_list "FIELD_LIST"
+  --field_list FIELD_LIST
                         If --whois, a list of fields to parse: ['name',
                         'handle', 'description', 'country', 'state', 'city',
                         'address', 'postal_code', 'emails', 'created',
                         'updated']
 
 Input (Required):
-  --addr "IP"           An IPv4 or IPv6 address as a string.
+  --addr IP             An IPv4 or IPv6 address as a string.
 
 Usage Examples
 ==============
