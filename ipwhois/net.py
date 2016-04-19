@@ -828,7 +828,10 @@ class Net:
                     log.debug('ASN WHOIS lookup failed, trying ASN via HTTP')
                     try:
 
-                        asn_data = self.get_asn_http(retry_count)
+                        asn_data = self.get_asn_http(
+                            retry_count=retry_count,
+                            extra_org_map=extra_org_map
+                        )
 
                     except ASNRegistryError:
 
