@@ -17,6 +17,19 @@ Use Legacy XML File::
 	>>>> from ipwhois.utils import get_countries
 	>>>> countries = get_countries(is_legacy_xml=True)
 
+Human Readable Fields
+=====================
+
+Human readable translations are available for all result fields (RDAP and
+Legacy Whois). Translations are currently limited to the short name (_short),
+the name (_name), and the description (_description).
+
+See the ipwhois CLI (ipwhois_cli.py) for an example. I plan to better document
+this functionality in a future release.
+
+Import the human readable translation dictionaries::
+
+    >>>> from ipwhois.hr import (HR_ASN, HR_RDAP_COMMON, HR_RDAP, HR_WHOIS)
 
 Usage Examples
 ==============
