@@ -6,7 +6,7 @@ IPWhois.lookup() is deprecated as of v0.12.0 and will be removed. Legacy whois
 lookups were moved to IPWhois.lookup_whois().
 
 Parsing is currently limited to the keys in the output
-`below <#results-dictionary>`_..
+`below <#results-dictionary>`_.
 This is assuming that those fields are present (for both whois and rwhois).
 
 Some IPs have parent networks listed. The parser attempts to recognize this,
