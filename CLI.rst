@@ -34,7 +34,7 @@ Output options:
   --hr                  If set, returns results with human readable key
                         translations.
   --show_name           If this and --hr are set, the key name is shown in
-                        parentheses afterits short value
+                        parentheses after its short value
   --colorize            If set, colorizes the output using ANSI. Should work
                         in most platform consoles.
 
@@ -42,11 +42,11 @@ IPWhois settings:
   --timeout TIMEOUT     The default timeout for socket connections in seconds.
   --proxy_http PROXY_HTTP
                         The proxy HTTP address passed to request.ProxyHandler.
-                        User authcan be passed like
+                        User auth can be passed like
                         "http://user:pass@192.168.0.1:80"
   --proxy_https PROXY_HTTPS
                         The proxy HTTPS address passed to
-                        request.ProxyHandler. User authcan be passed like
+                        request.ProxyHandler. User auth can be passed like
                         "https://user:pass@192.168.0.1:443"
   --disallow_permutations
                         Disable additional methods if DNS lookups to Cymru
