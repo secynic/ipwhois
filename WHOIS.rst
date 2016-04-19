@@ -73,7 +73,34 @@ Results Dictionary
 
 The output dictionary from IPWhois.lookup_whois().
 
-TODO
++------------------+--------+-------------------------------------------------+
+| **Key**          |**Type**| **Description**                                 |
++------------------+--------+-------------------------------------------------+
+| query            | String | The IP address input                            |
++------------------+--------+-------------------------------------------------+
+| asn              | String | Globally unique identifier used for routing     |
+|                  |        | information exchange with Autonomous Systems.   |
++------------------+--------+-------------------------------------------------+
+| asn_cidr         | String | Network routing block assigned to an ASN.       |
++------------------+--------+-------------------------------------------------+
+| asn_country_code | String | ASN assigned country code in ISO 3166-1 format. |
++------------------+--------+-------------------------------------------------+
+| asn_date         | String | ASN allocation date in ISO 8601 format.         |
++------------------+--------+-------------------------------------------------+
+| asn_registry     | String | ASN assigned regional internet registry.        |
++------------------+--------+-------------------------------------------------+
+| nets             | List   | List of network dictionaries.                   |
+|                  |        | See `Network Dictionary <#network-dictionary>`_.|
++------------------+--------+-------------------------------------------------+
+| raw              | String | Raw whois results if inc_raw is True.           |
++------------------+--------+-------------------------------------------------+
+| referral         | Dict   | Referral whois information if get_referral      |
+|                  |        | is True and the server isn't blacklisted. See   |
+|                  |        | `Referral Dictionary <#referral-dictionary>`_.  |
++------------------+--------+-------------------------------------------------+
+| raw_referral     | String | Raw referral whois results if the inc_raw       |
+|                  |        | parameter is True.                              |
++------------------+--------+-------------------------------------------------+
 
 Network Dictionary
 ^^^^^^^^^^^^^^^^^^
@@ -81,7 +108,74 @@ Network Dictionary
 The dictionary mapped to the nets key in the
 `Results Dictionary <#results-dictionary>`_.
 
-TODO
++-------------+--------+------------------------------------------------------+
+| **Key**     |**Type**| **Description**                                      |
++-------------+--------+------------------------------------------------------+
+| cidr        | String | Network routing block an IP address belongs to.      |
++-------------+--------+------------------------------------------------------+
+| range       | String | Network range an IP address belongs to.              |
++-------------+--------+------------------------------------------------------+
+| name        | String | The identifier assigned to the network registration  |
+|             |        | for an IP address.                                   |
++-------------+--------+------------------------------------------------------+
+| handle      | String | Unique identifier for a registered network.          |
++-------------+--------+------------------------------------------------------+
+| description | String | Description for a registered network.                |
++-------------+--------+------------------------------------------------------+
+| country     | String | Country code registered with the RIR in              |
+|             |        | ISO 3166-1 format.                                   |
++-------------+--------+------------------------------------------------------+
+| state       | String | State for a registered network (if applicable).      |
++-------------+--------+------------------------------------------------------+
+| city        | String | City for a registered network (if applicable).       |
++-------------+--------+------------------------------------------------------+
+| address     | String | The mailing address for a registered network.        |
++-------------+--------+------------------------------------------------------+
+| postal_code | String | The postal code for a registered network.            |
++-------------+--------+------------------------------------------------------+
+| emails      | String | The email addresses listed for a registered network, |
+|             |        | separated by '\n\'                                   |
++-------------+--------+------------------------------------------------------+
+| created     | String | Network registration date in ISO 8601 format.        |
++-------------+--------+------------------------------------------------------+
+| updated     | String | Network registration updated date in ISO 8601 format.|
++-------------+--------+------------------------------------------------------+
+
+Referral Dictionary
+^^^^^^^^^^^^^^^^^^^
+
+The dictionary mapped to the referral key in the
+`Results Dictionary <#results-dictionary>`_.
+
++-------------+--------+------------------------------------------------------+
+| **Key**     |**Type**| **Description**                                      |
++-------------+--------+------------------------------------------------------+
+| cidr        | String | Network routing block an IP address belongs to.      |
++-------------+--------+------------------------------------------------------+
+| range       | String | Network range an IP address belongs to.              |
++-------------+--------+------------------------------------------------------+
+| name        | String | The identifier assigned to the network registration  |
+|             |        | for an IP address.                                   |
++-------------+--------+------------------------------------------------------+
+| description | String | Description for a registered network.                |
++-------------+--------+------------------------------------------------------+
+| country     | String | Country code registered in ISO 3166-1 format.        |
++-------------+--------+------------------------------------------------------+
+| state       | String | State for a registered network (if applicable).      |
++-------------+--------+------------------------------------------------------+
+| city        | String | City for a registered network (if applicable).       |
++-------------+--------+------------------------------------------------------+
+| address     | String | The mailing address for a registered network.        |
++-------------+--------+------------------------------------------------------+
+| postal_code | String | The postal code for a registered network.            |
++-------------+--------+------------------------------------------------------+
+| emails      | String | The email addresses listed for a registered network, |
+|             |        | separated by \'\n\'.                                 |
++-------------+--------+------------------------------------------------------+
+| created     | String | Network registration date in ISO 8601 format.        |
++-------------+--------+------------------------------------------------------+
+| updated     | String | Network registration updated date in ISO 8601 format.|
++-------------+--------+------------------------------------------------------+
 
 Usage Examples
 ==============
