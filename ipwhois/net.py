@@ -569,8 +569,8 @@ class Net:
 
                 log.debug('WHOIS query rate limit exceeded. Waiting...')
                 sleep(1)
-                return self.get_whois(asn_registry, retry_count, server, port,
-                                      extra_blacklist)
+                return self.get_whois(asn_registry, retry_count - 1, server,
+                                      port, extra_blacklist)
 
             elif ('error 501' in response or 'error 230' in response
                   ):  # pragma: no cover
