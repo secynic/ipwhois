@@ -481,7 +481,8 @@ class _RDAPNetwork(_RDAPCommon):
             log.debug('Handle missing, json_output: {0}'.format(json.dumps(
                 self.json)))
             raise InvalidNetworkObject('Handle is missing for RDAP network '
-                                       'object')
+                                       'object: {0}'.format(json.dumps(
+                                        self.json)))
 
         try:
 
