@@ -478,6 +478,8 @@ class _RDAPNetwork(_RDAPCommon):
 
         except (KeyError, ValueError):
 
+            log.debug('Handle missing, json_output: {0}'.format(json.dumps(
+                self.json)))
             raise InvalidNetworkObject('Handle is missing for RDAP network '
                                        'object')
 
