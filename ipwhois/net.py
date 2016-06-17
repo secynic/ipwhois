@@ -781,7 +781,7 @@ class Net:
             Tuple:
 
             :Dictionary: Result from get_asn_dns() or get_asn_whois().
-            :Dictionary: The dictionary returned by get_asn_dns() or
+            :Dictionary: The response returned by get_asn_dns() or
                 get_asn_whois().
 
         Raises:
