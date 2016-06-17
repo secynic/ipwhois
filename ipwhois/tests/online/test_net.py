@@ -53,7 +53,7 @@ class TestNet(TestCommon):
         self.assertRaises(BlacklistError, result.get_whois, **dict(
             server='whois.arin.net', extra_blacklist=['whois.arin.net']))
 
-        result = Net('74.125.225.229', 0)
+        result = Net(address='74.125.225.229', timeout=0)
         self.assertRaises(WhoisLookupError, result.get_whois, **dict(
             retry_count=1))
 
@@ -73,7 +73,7 @@ class TestNet(TestCommon):
         self.assertRaises(HTTPLookupError, result.get_http_json, **dict(
             url='http://255.255.255.255', retry_count=0))
 
-        result = Net('74.125.225.229', 0)
+        result = Net(address='74.125.225.229', timeout=0)
         url = RIR_RDAP['arin']['ip_url'].format('74.125.225.229')
         self.assertRaises(HTTPLookupError, result.get_http_json, **dict(
             url=url, retry_count=0))
@@ -130,10 +130,12 @@ class TestNet(TestCommon):
         except Exception as e:
             self.fail('Unexpected exception raised: {0}'.format(e))
 
-        result = Net('74.125.225.229', timeout=0, allow_permutations=False)
+        result = Net(address='74.125.225.229', timeout=0,
+                     allow_permutations=False)
         self.assertRaises(ASNRegistryError, result.lookup_asn)
 
-        result = Net('74.125.225.229', timeout=0, allow_permutations=True)
+        result = Net(address='74.125.225.229', timeout=0,
+                     allow_permutations=True)
         self.assertRaises(HTTPLookupError, result.lookup_asn, **dict(
             asn_alts=['http']
         ))

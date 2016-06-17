@@ -427,8 +427,8 @@ class Net:
                 # ARIN.
                 log.debug('ASN query for {0}'.format(self.address_str))
                 response = self.get_http_json(
-                    str(ARIN).format(self.address_str),
-                    retry_count,
+                    url=str(ARIN).format(self.address_str),
+                    retry_count=retry_count,
                     headers={'Accept': 'application/json'}
                 )
 
@@ -481,7 +481,7 @@ class Net:
 
                 log.debug('ASN query retrying (count: {0})'.format(
                     str(retry_count)))
-                return self.get_asn_http(retry_count - 1)
+                return self.get_asn_http(retry_count=retry_count-1)
 
             else:
 
@@ -569,8 +569,10 @@ class Net:
 
                 log.debug('WHOIS query rate limit exceeded. Waiting...')
                 sleep(1)
-                return self.get_whois(asn_registry, retry_count - 1, server,
-                                      port, extra_blacklist)
+                return self.get_whois(
+                    asn_registry=asn_registry, retry_count=retry_count-1,
+                    server=server, port=port, extra_blacklist=extra_blacklist
+                )
 
             elif ('error 501' in response or 'error 230' in response
                   ):  # pragma: no cover
@@ -587,8 +589,10 @@ class Net:
 
                 log.debug('WHOIS query retrying (count: {0})'.format(
                     str(retry_count)))
-                return self.get_whois(asn_registry, retry_count - 1, server,
-                                      port, extra_blacklist)
+                return self.get_whois(
+                    asn_registry=asn_registry, retry_count=retry_count-1,
+                    server=server, port=port, extra_blacklist=extra_blacklist
+                )
 
             else:
 
@@ -656,10 +660,11 @@ class Net:
                                 str(rate_limit_timeout)))
 
                             sleep(rate_limit_timeout)
-                            return self.get_http_json(url,
-                                                      retry_count - 1,
-                                                      rate_limit_timeout,
-                                                      headers)
+                            return self.get_http_json(
+                                url=url, retry_count=retry_count-1,
+                                rate_limit_timeout=rate_limit_timeout,
+                                headers=headers
+                            )
                         else:
                             raise HTTPRateLimitError(
                                 'HTTP lookup failed for {0}. Rate limit '
@@ -689,8 +694,10 @@ class Net:
                 log.debug('HTTP query retrying (count: {0})'.format(
                     str(retry_count)))
 
-                return self.get_http_json(url, retry_count - 1,
-                                          rate_limit_timeout, headers)
+                return self.get_http_json(
+                    url=url, retry_count=retry_count-1,
+                    rate_limit_timeout=rate_limit_timeout, headers=headers
+                )
 
             else:
 

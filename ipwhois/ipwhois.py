@@ -46,7 +46,10 @@ class IPWhois:
     def __init__(self, address, timeout=5, proxy_opener=None,
                  allow_permutations=True):
 
-        self.net = Net(address, timeout, proxy_opener, allow_permutations)
+        self.net = Net(
+            address=address, timeout=timeout, proxy_opener=proxy_opener,
+            allow_permutations=allow_permutations
+        )
 
         self.address = self.net.address
         self.timeout = self.net.timeout
@@ -132,8 +135,10 @@ class IPWhois:
 
         # Retrieve the ASN information.
         log.debug('ASN lookup for {0}'.format(self.address_str))
-        asn_data, response = self.net.lookup_asn(retry_count, asn_alts,
-                                                 extra_org_map)
+        asn_data, response = self.net.lookup_asn(
+            retry_count=retry_count, asn_alts=asn_alts,
+            extra_org_map=extra_org_map
+        )
 
         # Add the ASN information to the return dictionary.
         results.update(asn_data)
@@ -142,8 +147,10 @@ class IPWhois:
         whois = Whois(self.net)
         log.debug('WHOIS lookup for {0}'.format(self.address_str))
         whois_data = whois.lookup(
-            inc_raw, retry_count, response, get_referral, extra_blacklist,
-            ignore_referral_errors, asn_data, field_list
+            inc_raw=inc_raw, retry_count=retry_count, response=response,
+            get_referral=get_referral, extra_blacklist=extra_blacklist,
+            ignore_referral_errors=ignore_referral_errors, asn_data=asn_data,
+            field_list=field_list
         )
 
         # Add the RDAP information to the return dictionary.
@@ -213,8 +220,10 @@ class IPWhois:
 
             # Retrieve the ASN information.
             log.debug('ASN lookup for {0}'.format(self.address_str))
-            asn_data, asn_response = self.net.lookup_asn(retry_count, asn_alts,
-                                                         extra_org_map)
+            asn_data, asn_response = self.net.lookup_asn(
+                retry_count=retry_count, asn_alts=asn_alts,
+                extra_org_map=extra_org_map
+            )
 
             # Add the ASN information to the return dictionary.
             results.update(asn_data)
@@ -222,9 +231,12 @@ class IPWhois:
         # Retrieve the RDAP data and parse.
         rdap = RDAP(self.net)
         log.debug('RDAP lookup for {0}'.format(self.address_str))
-        rdap_data = rdap.lookup(inc_raw, retry_count, asn_data, depth,
-                                excluded_entities, response, bootstrap,
-                                rate_limit_timeout)
+        rdap_data = rdap.lookup(
+            inc_raw=inc_raw, retry_count=retry_count, asn_data=asn_data,
+            depth=depth, excluded_entities=excluded_entities,
+            response=response, bootstrap=bootstrap,
+            rate_limit_timeout=rate_limit_timeout
+        )
 
         # Add the RDAP information to the return dictionary.
         results.update(rdap_data)

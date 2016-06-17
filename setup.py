@@ -30,12 +30,10 @@ KEYWORDS = [
     "RIR"
 ]
 
-LONG_DESCRIPTION = '\n\n'.join([io.open('README.rst', 'r',
-                                        encoding='utf-8').read(),
-                                io.open('CHANGES.rst', 'r',
-                                        encoding='utf-8').read()])
-
-LICENSE = io.open('LICENSE.txt', 'r', encoding='utf-8').read()
+README = io.open(file='README.rst', mode='r', encoding='utf-8').read()
+CHANGES = io.open(file='CHANGES.rst', mode='r', encoding='utf-8').read()
+LONG_DESCRIPTION = '\n\n'.join([README, CHANGES])
+LICENSE = io.open(file='LICENSE.txt', mode='r', encoding='utf-8').read()
 
 URL = "https://github.com/secynic/ipwhois"
 DOWNLOAD_URL = "https://github.com/secynic/ipwhois/tarball/master"

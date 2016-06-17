@@ -130,9 +130,11 @@ class TestIPWhois(TestCommon):
 
         handler = ProxyHandler({'http': 'http://0.0.0.0:80/'})
         opener = build_opener(handler)
-        result = IPWhois('74.125.225.229', 0, opener)
+        result = IPWhois(address='74.125.225.229', timeout=0,
+                         proxy_opener=opener)
         self.assertRaises(HTTPLookupError, result.lookup_rdap)
 
         log.debug('Testing allow_permutations')
-        result = IPWhois('74.125.225.229', timeout=0, allow_permutations=False)
+        result = IPWhois(address='74.125.225.229', timeout=0,
+                         allow_permutations=False)
         self.assertRaises(ASNRegistryError, result.lookup_rdap)
