@@ -478,6 +478,8 @@ class _RDAPNetwork(_RDAPCommon):
 
         except (KeyError, ValueError):
 
+            log.debug('Handle missing, json_output: {0}'.format(json.dumps(
+                self.json)))
             raise InvalidNetworkObject('Handle is missing for RDAP network '
                                        'object')
 
@@ -731,7 +733,8 @@ class RDAP:
 
             # Retrieve the whois data.
             response = self._net.get_http_json(
-                ip_url, retry_count, rate_limit_timeout=rate_limit_timeout
+                url=ip_url, retry_count=retry_count,
+                rate_limit_timeout=rate_limit_timeout
             )
 
         if inc_raw:
@@ -799,7 +802,7 @@ class RDAP:
 
                                 # RDAP entity query
                                 response = self._net.get_http_json(
-                                    entity_url, retry_count,
+                                    url=entity_url, retry_count=retry_count,
                                     rate_limit_timeout=rate_limit_timeout
                                 )
 

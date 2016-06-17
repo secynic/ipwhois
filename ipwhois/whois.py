@@ -547,9 +547,10 @@ class Whois:
                       .format(self._net.address_str))
 
             # Retrieve the whois data.
-            response = self._net.get_whois(asn_data['asn_registry'],
-                                           retry_count,
-                                           extra_blacklist=extra_blacklist)
+            response = self._net.get_whois(
+                asn_registry=asn_data['asn_registry'], retry_count=retry_count,
+                extra_blacklist=extra_blacklist
+            )
 
             if get_referral:
 
@@ -591,11 +592,11 @@ class Whois:
 
                 try:
 
-                    response_ref = self._net.get_whois('',
-                                                       retry_count,
-                                                       referral_server,
-                                                       referral_port,
-                                                       extra_blacklist)
+                    response_ref = self._net.get_whois(
+                        asn_registry='', retry_count=retry_count,
+                        server=referral_server, port=referral_port,
+                        extra_blacklist=extra_blacklist
+                    )
 
                 except (BlacklistError, WhoisLookupError):
 
@@ -604,8 +605,9 @@ class Whois:
             else:
 
                 response_ref = self._net.get_whois(
-                    '', retry_count, referral_server, referral_port,
-                    extra_blacklist
+                    asn_registry='', retry_count=retry_count,
+                    server=referral_server, port=referral_port,
+                    extra_blacklist=extra_blacklist
                 )
 
             if response_ref:

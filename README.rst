@@ -174,6 +174,13 @@ https://secynic.github.io/ipwhois/CLI.html
 
 https://github.com/secynic/ipwhois/blob/master/CLI.rst
 
+Contributing
+============
+
+https://secynic.github.io/ipwhois/CONTRIBUTING.html
+
+https://github.com/secynic/ipwhois/blob/master/CONTRIBUTING.rst
+
 IP Reputation Support
 =====================
 

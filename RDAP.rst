@@ -462,12 +462,54 @@ Use a proxy
 	>>>> opener = request.build_opener(handler)
 	>>>> obj = IPWhois('74.125.225.229', proxy_opener = opener)
 
-Tweaking queries for your network
----------------------------------
+Optimizing queries for your network
+-----------------------------------
 
-::
+Multiple factors will slow your queries down. Several `Input <#input>`_
+arguments assist in optimizing query performance:
 
-	>>>> from ipwhois import IPWhois
-	>>>> obj = IPWhois('74.125.225.229', timeout=10)
-	>>>> results = obj.lookup_rdap(retry_count=5, rate_limit_timeout=60)
+bootstrap
+^^^^^^^^^
 
+**False**: ASN lookups are performed to determine the correct RIR to query
+RDAP. This adds minor overhead for single queries.
+
+**True**: Use ARIN bootstrap (redirection), significantly reducing overall time
+for bulk queries, but at the sacrifice of not having asn* field data in the
+results.
+
+depth
+^^^^^
+
+This value equates to the number of entity levels deep to search for sub-entity
+information. Found entities each result in a query to the RIR. The larger this
+value, the longer a single IP query will take. More queries will cause RIR rate
+limiting to trigger more often for bulk IP queries (only seen with LACNIC).
+
+retry_count
+^^^^^^^^^^^
+
+This is the number of times to retry a query in the case of failure. If a
+rate limit error (HTTPRateLimitError) is raised, the lookup will wait for
+rate_limit_timeout seconds before retrying. A combination of adjusting
+retry_count and rate_limit_timeout is needed to optimize bulk queries.
+
+When performing bulk IP lookups, the goal should be to acquire as much data, as
+fast as possible. If you have multiple IP lookups, in a row, that belong to the
+same RIR (generally LACNIC), the chance to hit rate limiting errors increases
+(also depending on bootstrap, depth, network speeds).
+
+One option to increase bulk query performance is to disable retries and store
+the errored IPs in a list for the next round of lookups (loop your bulk queries
+until all IPs resolve). Disable retries by setting retry_count=0
+
+rate_limit_timeout
+^^^^^^^^^^^^^^^^^^
+
+When a HTTPRateLimitError is raised, and retry_count > 0, this is the amount of
+seconds to sleep before retrying the query. Using the default value, or setting
+this too high, will have a large impact on bulk IP queries. I recommend setting
+this very low for bulk queries, or disable completely by setting retry_count=0.
+
+Note that setting this result too low may cause a larger number of IP lookups
+to fail.

@@ -1,11 +1,13 @@
 Changelog
 =========
 
-0.13.1/0.14.0 (TBD)
--------------------
+0.14.0 (TBD)
+------------
 
 - Fixed retry count non-decrementing infinite loop in
   ipwhois.net.Net.get_whois() (issue #125 - krader1961)
+- Documentation improvements (#123)
+- kw arg readability (#115)
 
 0.13.0 (2016-04-18)
 -------------------
