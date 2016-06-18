@@ -84,5 +84,6 @@ setup(
     packages=PACKAGES,
     package_data=PACKAGE_DATA,
     install_requires=INSTALL_REQUIRES,
-    scripts=['ipwhois/scripts/ipwhois_cli.py']
+    scripts=['ipwhois/scripts/ipwhois_cli.py',
+             'ipwhois/scripts/ipwhois_utils_cli.py']
 )
