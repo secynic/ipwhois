@@ -402,7 +402,7 @@ class Net:
                     asn_registry (String) - The assigned ASN registry.
                     asn_cidr (String) - None, can't retrieve with this method.
                     asn_country_code (String) - None, can't retrieve with this
-                        method.
+                    method.
 
         Raises:
             ASNRegistryError: The ASN registry is not known.
