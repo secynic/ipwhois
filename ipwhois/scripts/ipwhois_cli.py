@@ -22,7 +22,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-# CLI python script interface for ipwhois lookups and utilities.
+# CLI python script interface for ipwhois.IPWhois lookups.
 
 import argparse
 import json
@@ -264,7 +264,7 @@ group.add_argument(
 )
 
 # Get the args
-args = parser.parse_args()
+script_args = parser.parse_args()
 
 # Get the current working directory.
 CUR_DIR = path.dirname(__file__)
@@ -1189,56 +1189,56 @@ class IPWhoisCLI:
 
         return output
 
-if args.addr:
+if script_args.addr:
 
     results = IPWhoisCLI(
-        addr=args.addr[0],
-        timeout=args.timeout,
-        proxy_http=args.proxy_http if (
-            args.proxy_http and len(args.proxy_http) > 0) else None,
-        proxy_https=args.proxy_https if (
-            args.proxy_https and len(args.proxy_https) > 0) else None,
-        allow_permutations=(not args.disallow_permutations)
+        addr=script_args.addr[0],
+        timeout=script_args.timeout,
+        proxy_http=script_args.proxy_http if (
+            script_args.proxy_http and len(script_args.proxy_http) > 0) else None,
+        proxy_https=script_args.proxy_https if (
+            script_args.proxy_https and len(script_args.proxy_https) > 0) else None,
+        allow_permutations=(not script_args.disallow_permutations)
     )
 
-    if args.whois:
+    if script_args.whois:
 
         print(results.lookup_whois(
-            hr=args.hr,
-            show_name=args.show_name,
-            colorize=args.colorize,
-            inc_raw=args.inc_raw,
-            retry_count=args.retry_count,
-            get_referral=args.get_referral,
-            extra_blacklist=args.extra_blacklist.split(',') if (
-                args.extra_blacklist and
-                len(args.extra_blacklist) > 0) else None,
-            ignore_referral_errors=args.ignore_referral_errors,
-            field_list=args.field_list.split(',') if (
-                args.field_list and
-                len(args.field_list) > 0) else None,
-            asn_alts=args.asn_alts.split(',') if (
-                args.asn_alts and
-                len(args.asn_alts) > 0) else None,
-            extra_org_map=args.extra_org_map
+            hr=script_args.hr,
+            show_name=script_args.show_name,
+            colorize=script_args.colorize,
+            inc_raw=script_args.inc_raw,
+            retry_count=script_args.retry_count,
+            get_referral=script_args.get_referral,
+            extra_blacklist=script_args.extra_blacklist.split(',') if (
+                script_args.extra_blacklist and
+                len(script_args.extra_blacklist) > 0) else None,
+            ignore_referral_errors=script_args.ignore_referral_errors,
+            field_list=script_args.field_list.split(',') if (
+                script_args.field_list and
+                len(script_args.field_list) > 0) else None,
+            asn_alts=script_args.asn_alts.split(',') if (
+                script_args.asn_alts and
+                len(script_args.asn_alts) > 0) else None,
+            extra_org_map=script_args.extra_org_map
         ))
 
     else:
 
         print(results.lookup_rdap(
-            hr=args.hr,
-            show_name=args.show_name,
-            colorize=args.colorize,
-            inc_raw=args.inc_raw,
-            retry_count=args.retry_count,
-            depth=args.depth,
-            excluded_entities=args.excluded_entities.split(',') if (
-                args.excluded_entities and
-                len(args.excluded_entities) > 0) else None,
-            bootstrap=args.bootstrap,
-            rate_limit_timeout=args.rate_limit_timeout,
-            asn_alts=args.asn_alts.split(',') if (
-                args.asn_alts and
-                len(args.asn_alts) > 0) else None,
-            extra_org_map=args.extra_org_map
+            hr=script_args.hr,
+            show_name=script_args.show_name,
+            colorize=script_args.colorize,
+            inc_raw=script_args.inc_raw,
+            retry_count=script_args.retry_count,
+            depth=script_args.depth,
+            excluded_entities=script_args.excluded_entities.split(',') if (
+                script_args.excluded_entities and
+                len(script_args.excluded_entities) > 0) else None,
+            bootstrap=script_args.bootstrap,
+            rate_limit_timeout=script_args.rate_limit_timeout,
+            asn_alts=script_args.asn_alts.split(',') if (
+                script_args.asn_alts and
+                len(script_args.asn_alts) > 0) else None,
+            extra_org_map=script_args.extra_org_map
         ))
