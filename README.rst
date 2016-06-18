@@ -2,6 +2,12 @@
 ipwhois
 =======
 
+.. image:: https://travis-ci.org/secynic/ipwhois.svg?branch=master
+    :target: https://travis-ci.org/secynic/ipwhois
+.. image:: https://img.shields.io/badge/license-BSD%202--Clause-blue.png
+    :target: https://github.com/secynic/ipwhois/tree/master/LICENSE.txt
+.. image:: https://img.shields.io/badge/python-2.6%2C%202.7%2C%203.3+-blue.png
+
 ipwhois is a Python package focused on retrieving and parsing whois data
 for IPv4 and IPv6 addresses.
 
