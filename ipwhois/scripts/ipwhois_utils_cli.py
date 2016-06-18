@@ -42,33 +42,6 @@ ANSI = {
     'cyan': '\033[36m'
 }
 
-# Color definitions for sub lines
-COLOR_DEPTH = {
-    '0': ANSI['green'],
-    '1': ANSI['yellow'],
-    '2': ANSI['red'],
-    '3': ANSI['cyan']
-}
-
-# Line formatting, keys ending in C are colorized versions.
-LINES = {
-    '1': '>> ',
-    '2': '>> >>> ',
-    '3': '>> >>> >>>> ',
-    '4': '>> >>> >>>> >>>>> ',
-    '1C': '{0}>>{1} '.format(COLOR_DEPTH['0'], ANSI['end']),
-    '2C': '{0}>>{1} >>>{2} '.format(
-        COLOR_DEPTH['0'], COLOR_DEPTH['1'], ANSI['end']
-    ),
-    '3C': '{0}>>{1} >>>{2} >>>>{3} '.format(
-        COLOR_DEPTH['0'], COLOR_DEPTH['1'], COLOR_DEPTH['2'], ANSI['end']
-    ),
-    '4C': '{0}>>{1} >>>{2} >>>>{3} >>>>>{4} '.format(
-        COLOR_DEPTH['0'], COLOR_DEPTH['1'], COLOR_DEPTH['2'], COLOR_DEPTH['3'],
-        ANSI['end']
-    ),
-}
-
 # Setup the arg parser.
 parser = argparse.ArgumentParser(
     description='ipwhois utilities CLI interface'
