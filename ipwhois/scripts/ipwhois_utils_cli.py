@@ -25,6 +25,7 @@
 # CLI python script interface for ipwhois.utils lookups.
 
 import argparse
+from collections import OrderedDict
 import json
 from ipwhois.utils import (ipv4_lstrip_zeros, calculate_cidr, get_countries,
                            ipv4_is_defined, ipv6_is_defined, unique_everseen,
@@ -92,6 +93,13 @@ parser.add_argument(
     help='Output a dictionary containing ISO_3166-1 country codes to names.'
 )
 parser.add_argument(
+    '--get_country',
+    type=str,
+    nargs=1,
+    metavar='"COUNTRY CODE"',
+    help='Output the ISO_3166-1 name for a country code.'
+)
+parser.add_argument(
     '--ipv4_is_defined',
     type=str,
     nargs=1,
@@ -121,6 +129,15 @@ parser.add_argument(
          'IPv4/IPv6 addresses/networks.'
 )
 
+# Output options
+group = parser.add_argument_group('Output options')
+group.add_argument(
+    '--colorize',
+    action='store_true',
+    help='If set, colorizes the output using ANSI. Should work in most '
+         'platform consoles.'
+)
+
 # Get the args
 script_args = parser.parse_args()
 
@@ -130,25 +147,150 @@ if script_args.ipv4_lstrip_zeros:
 
 elif script_args.calculate_cidr:
 
-    print(calculate_cidr(start_address=script_args.calculate_cidr[0],
-                         end_address=script_args.calculate_cidr[1]))
+    try:
+
+        result = calculate_cidr(
+            start_address=script_args.calculate_cidr[0],
+            end_address=script_args.calculate_cidr[1]
+        )
+
+        print('{0}Found {1} CIDR blocks for ({2}, {3}){4}:\n{5}'.format(
+            ANSI['green'] if script_args.colorize else '',
+            len(result),
+            script_args.calculate_cidr[0],
+            script_args.calculate_cidr[1],
+            ANSI['end'] if script_args.colorize else '',
+            '\n'.join(result)
+        ))
+
+    except Exception as e:
+
+        print('{0}Error{1}: {2}'.format(ANSI['red'], ANSI['end'], str(e)))
 
 elif script_args.get_countries:
 
-    print(get_countries())
+    try:
+
+        result = get_countries()
+
+        print('{0}Found {1} countries{2}:\n{3}'.format(
+            ANSI['green'] if script_args.colorize else '',
+            len(result),
+            ANSI['end'] if script_args.colorize else '',
+            '\n'.join(['{0}: {1}'.format(k, v) for k, v in (
+                OrderedDict(sorted(result.items())).iteritems())])
+        ))
+
+    except Exception as e:
+
+        print('{0}Error{1}: {2}'.format(ANSI['red'], ANSI['end'], str(e)))
+
+elif script_args.get_country:
+
+    try:
+
+        countries = get_countries()
+        result = countries[script_args.get_country[0].upper()]
+
+        print('{0}Match found for country code ({1}){2}:\n{3}'.format(
+            ANSI['green'] if script_args.colorize else '',
+            script_args.get_country[0],
+            ANSI['end'] if script_args.colorize else '',
+            result
+        ))
+
+    except Exception as e:
+
+        print('{0}Error{1}: {2}'.format(ANSI['red'], ANSI['end'], str(e)))
 
 elif script_args.ipv4_is_defined:
 
-    print(ipv4_is_defined(address=script_args.ipv4_is_defined[0]))
+    try:
+
+        result = ipv4_is_defined(address=script_args.ipv4_is_defined[0])
+
+        if result[0]:
+            print('{0}{1} is defined{2}:\n{3}'.format(
+                ANSI['green'] if script_args.colorize else '',
+                script_args.ipv4_is_defined[0],
+                ANSI['end'] if script_args.colorize else '',
+                'Name: {0}\nRFC: {1}'.format(result[1], result[2])
+            ))
+        else:
+            print('{0}{1} is not defined{2}'.format(
+                ANSI['yellow'] if script_args.colorize else '',
+                script_args.ipv4_is_defined[0],
+                ANSI['end'] if script_args.colorize else ''
+            ))
+
+    except Exception as e:
+
+        print('{0}Error{1}: {2}'.format(ANSI['red'], ANSI['end'], str(e)))
 
 elif script_args.ipv6_is_defined:
 
-    print(ipv6_is_defined(address=script_args.ipv6_is_defined[0]))
+    try:
+
+        result = ipv6_is_defined(address=script_args.ipv6_is_defined[0])
+
+        if result[0]:
+            print('{0}{1} is defined{2}:\n{3}'.format(
+                ANSI['green'] if script_args.colorize else '',
+                script_args.ipv6_is_defined[0],
+                ANSI['end'] if script_args.colorize else '',
+                'Name: {0}\nRFC: {1}'.format(result[1], result[2])
+            ))
+        else:
+            print('{0}{1} is not defined{2}'.format(
+                ANSI['yellow'] if script_args.colorize else '',
+                script_args.ipv6_is_defined[0],
+                ANSI['end'] if script_args.colorize else ''
+            ))
+
+    except Exception as e:
+
+        print('{0}Error{1}: {2}'.format(ANSI['red'], ANSI['end'], str(e)))
 
 elif script_args.unique_everseen:
 
-    print(list(unique_everseen(iterable=script_args.unique_everseen[0])))
+    try:
+
+        result = list(unique_everseen(iterable=script_args.unique_everseen[0]))
+
+        print('{0}Unique everseen{1}:\n{2}'.format(
+            ANSI['green'] if script_args.colorize else '',
+            ANSI['end'] if script_args.colorize else '',
+            result
+        ))
+
+    except Exception as e:
+
+        print('{0}Error{1}: {2}'.format(ANSI['red'], ANSI['end'], str(e)))
 
 elif script_args.unique_addresses:
 
-    print(unique_addresses(file_path=script_args.unique_addresses[0]))
+    try:
+
+        result = unique_addresses(file_path=script_args.unique_addresses[0])
+
+        tmp = []
+        for k, v in sorted(result.items(), key=lambda kv: int(kv[1]['count']),
+                           reverse=True):
+            tmp.append('{0}{1}{2}: Count: {3}, Ports: {4}'.format(
+                ANSI['b'] if script_args.colorize else '',
+                k,
+                ANSI['end'] if script_args.colorize else '',
+                v['count'],
+                json.dumps(v['ports'])
+            ))
+
+        print('{0}Found {1} unique addresses{2}:\n{3}'.format(
+            ANSI['green'] if script_args.colorize else '',
+            len(result),
+            ANSI['end'] if script_args.colorize else '',
+            '\n'.join(tmp)
+        ))
+
+    except Exception as e:
+
+        print('{0}Error{1}: {2}'.format(ANSI['red'], ANSI['end'], str(e)))
