@@ -6,8 +6,11 @@ Changelog
 
 - Fixed retry count non-decrementing infinite loop in
   ipwhois.net.Net.get_whois() (issue #125 - krader1961)
+- Added utils CLI (ipwhois_utils_cli.py) - #121. Installed to your environments
+  Scripts dir. This is a wrapper for utils.py.
 - Documentation improvements (#123)
 - kw arg readability (#115)
+- Replaced usage of args with script_args in ipwhois_cli.py
 
 0.13.0 (2016-04-18)
 -------------------

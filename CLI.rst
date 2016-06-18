@@ -2,15 +2,19 @@
 CLI
 ===
 
-ipwhois_cli.py is a command line interface for the ipwhois library. When
-using pip to install ipwhois, the CLI is installed to your Python
-environment Scripts directory.
+ipwhois_cli.py and ipwhois_utils_cli.py are command line interfaces for the
+ipwhois library. When using pip to install ipwhois, the CLI scripts are
+installed to your Python environment Scripts directory.
 
-It currently has full ipwhois.py functionality. The others (net.py, rdap.py,
-utils.py, whois.py) will be included in a future release.
+- ipwhois_cli.py has full ipwhois.py functionality.
+- ipwhois_utils_cli.py has full utils.py functionality.
+- The others (net.py, rdap.py, whois.py) will be included in a future release.
+
+ipwhois_cli.py
+==============
 
 Usage
-=====
+-----
 
 ipwhois_cli.py [-h] --addr IP [--whois] [--hr] [--show_name] [--colorize]
                       [--timeout TIMEOUT] [--proxy_http "PROXY_HTTP"]
@@ -107,12 +111,161 @@ Input (Required):
   --addr IP             An IPv4 or IPv6 address as a string.
 
 Usage Examples
-==============
+--------------
 
 Basic usage
------------
+^^^^^^^^^^^
 
 ::
 
     ipwhois_cli.py --addr 74.125.225.229 --hr --show_name --colorize --depth 1
 
+ipwhois_utils_cli.py
+====================
+
+Usage
+-----
+
+ipwhois_utils_cli.py [-h] [--ipv4_lstrip_zeros IPADDRESS]
+                     [--calculate_cidr IPADDRESS IPADDRESS]
+                     [--get_countries] [--get_country COUNTRYCODE]
+                     [--ipv4_is_defined IPADDRESS]
+                     [--ipv6_is_defined IPADDRESS]
+                     [--unique_everseen ITERABLE]
+                     [--unique_addresses FILEPATH] [--colorize]
+
+ipwhois utilities CLI interface
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --ipv4_lstrip_zeros IPADDRESS
+                        Strip leading zeros in each octet of an IPv4 address.
+  --calculate_cidr IPADDRESSRANGE
+                        Calculate a CIDR range(s) from a start and end IP
+                        address. Separate start and end address arguments by
+                        space.
+  --get_countries       Output a dictionary containing ISO_3166-1 country
+                        codes to names.
+  --get_country COUNTRYCODE
+                        Output the ISO_3166-1 name for a country code.
+  --ipv4_is_defined IPADDRESS
+                        Check if an IPv4 address is defined (in a reserved
+                        address range).
+  --ipv6_is_defined IPADDRESS
+                        Check if an IPv6 address is defined (in a reserved
+                        address range).
+  --unique_everseen ITERABLE
+                        List unique elements from input iterable, preserving
+                        the order.
+  --unique_addresses FILEPATH
+                        Search an input file, extracting, counting, and
+                        summarizing IPv4/IPv6 addresses/networks.
+
+Output options:
+  --colorize            If set, colorizes the output using ANSI. Should work
+                        in most platform consoles.
+
+Usage Examples
+--------------
+
+ipv4_lstrip_zeros
+^^^^^^^^^^^^^^^^^
+
+::
+
+    >>>> ipwhois_utils_cli.py --ipv4_lstrip_zeros 074.125.025.229
+
+    74.125.25.229
+
+calculate_cidr
+^^^^^^^^^^^^^^
+
+::
+
+    >>>> ipwhois_utils_cli.py --calculate_cidr 192.168.0.9 192.168.5.4
+
+    Found 12 CIDR blocks for (192.168.0.9, 192.168.5.4):
+    192.168.0.9/32
+    192.168.0.10/31
+    192.168.0.12/30
+    192.168.0.16/28
+    192.168.0.32/27
+    192.168.0.64/26
+    192.168.0.128/25
+    192.168.1.0/24
+    192.168.2.0/23
+    192.168.4.0/24
+    192.168.5.0/30
+    192.168.5.4/32
+
+get_countries
+^^^^^^^^^^^^^
+
+::
+
+    >>>> ipwhois_utils_cli.py --get_countries
+
+    Found 252 countries:
+    AD: Andorra
+    AE: United Arab Emirates
+    AF: Afghanistan
+    AG: Antigua and Barbuda
+    AI: Anguilla
+    AL: Albania
+    AM: Armenia
+    ...
+
+get_country
+^^^^^^^^^^^
+
+::
+
+    >>>> ipwhois_utils_cli.py --get_country US
+
+    Match found for country code (US):
+    United States
+
+ipv4_is_defined
+^^^^^^^^^^^^^^^
+
+::
+
+    >>>> ipwhois_utils_cli.py --ipv4_is_defined 192.168.0.1
+
+    192.168.0.1 is defined:
+    Name: Private-Use Networks
+    RFC: RFC 1918
+
+ipv6_is_defined
+^^^^^^^^^^^^^^^
+
+::
+
+    >>>> ipwhois_utils_cli.py --ipv6_is_defined fc00::
+
+    fc00:: is defined:
+    Name: Unique Local Unicast
+    RFC: RFC 4193
+
+unique_everseen
+^^^^^^^^^^^^^^^
+
+::
+
+    >>>> ipwhois_utils_cli.py --unique_everseen [4,2,6,4,6,2]
+
+    Unique everseen:
+    [4, 2, 6]
+
+unique_addresses
+^^^^^^^^^^^^^^^^
+
+::
+
+    >>>> ipwhois_utils_cli.py --unique_addresses /tmp/some.file
+
+    Found 477 unique addresses:
+    74.125.225.229: Count: 5, Ports: {'22': 1}
+    2001:4860::/32: Count: 4, Ports: {'443': 1, '80': 2}
+    2001:4860:4860::8888: Count: 3, Ports: {}
+    ...
