@@ -59,17 +59,35 @@ try:  # pragma: no cover
                                 build_opener,
                                 Request,
                                 URLError)
+    from urllib.parse import urlencode
 except ImportError:  # pragma: no cover
     from urllib2 import (OpenerDirector,
                          ProxyHandler,
                          build_opener,
                          Request,
                          URLError)
+    from urllib import urlencode
 
 log = logging.getLogger(__name__)
 
 # POSSIBLY UPDATE TO USE RDAP
 ARIN = 'http://whois.arin.net/rest/nets;q={0}?showDetails=true&showARIN=true'
+
+# National Internet Registry
+NIR = {
+    'jpnic': {
+        'url': ('http://whois.nic.ad.jp/cgi-bin/whois_gw?lang=%2Fe&key={0}'
+                '&submit=query'),
+        'request_type': 'GET',
+        'request_headers': {'Accept': 'text/html'}
+    },
+    'krnic': {
+        'url': 'http://whois.kisa.or.kr/eng/whois.jsc',
+        'request_type': 'POST',
+        'request_headers': {'Accept': 'text/html'},
+        'form_data_ip_field': 'query'
+    }
+}
 
 CYMRU_WHOIS = 'whois.cymru.com'
 
@@ -680,7 +698,7 @@ class Net:
         except (URLError, socket.timeout, socket.error) as e:
 
             # Check needed for Python 2.6, also why URLError is caught.
-            try:
+            try:  # pragma: no cover
                 if not isinstance(e.reason, (socket.timeout, socket.error)):
                     raise HTTPLookupError('HTTP lookup failed for {0}.'
                                           ''.format(url))
@@ -853,3 +871,88 @@ class Net:
                     raise ASNRegistryError('ASN registry lookup failed.')
 
         return asn_data, response
+
+    def get_http_raw(self, url=None, retry_count=3, headers=None,
+                     request_type='GET', form_data=None):
+        """
+        The function for retrieving a raw HTML result via HTTP.
+
+        Args:
+            url: The URL to retrieve.
+            retry_count: The number of times to retry in case socket errors,
+                timeouts, connection resets, etc. are encountered.
+            headers: The HTTP headers dictionary. The Accept header defaults
+                to 'application/rdap+json'.
+            request_type: 'GET' or 'POST'
+            form_data: Dictionary of form POST data
+
+        Returns:
+            String: The raw data.
+
+        Raises:
+            HTTPLookupError: The HTTP lookup failed.
+        """
+
+        if headers is None:
+            headers = {'Accept': 'text/html'}
+
+        if form_data:
+            form_data = urlencode(form_data)
+            try:
+                form_data = bytes(form_data, encoding='ascii')
+            except TypeError:  # pragma: no cover
+                pass
+
+        try:
+
+            # Create the connection for the HTTP query.
+            log.debug('HTTP query for {0} at {1}'.format(
+                self.address_str, url))
+            try:
+                conn = Request(url=url, data=form_data, headers=headers,
+                               method=request_type)
+            except TypeError:  # pragma: no cover
+                conn = Request(url=url, data=form_data, headers=headers)
+            data = self.opener.open(conn, timeout=self.timeout)
+
+            try:
+                d = data.readall().decode('ascii', 'ignore')
+            except AttributeError:  # pragma: no cover
+                d = data.read().decode('ascii', 'ignore')
+
+            return str(d)
+
+        except (URLError, socket.timeout, socket.error) as e:
+
+            # Check needed for Python 2.6, also why URLError is caught.
+            try:  # pragma: no cover
+                if not isinstance(e.reason, (socket.timeout, socket.error)):
+                    raise HTTPLookupError('HTTP lookup failed for {0}.'
+                                          ''.format(url))
+            except AttributeError:  # pragma: no cover
+
+                pass
+
+            log.debug('HTTP query socket error: {0}'.format(e))
+            if retry_count > 0:
+
+                log.debug('HTTP query retrying (count: {0})'.format(
+                    str(retry_count)))
+
+                return self.get_http_raw(
+                    url=url, retry_count=retry_count - 1, headers=headers,
+                    request_type=request_type, form_data=form_data
+                )
+
+            else:
+
+                raise HTTPLookupError('HTTP lookup failed for {0}.'.format(
+                    url))
+
+        except HTTPLookupError as e:  # pragma: no cover
+
+            raise e
+
+        except Exception:  # pragma: no cover
+
+            raise HTTPLookupError('HTTP lookup failed for {0}.'.format(url))
