@@ -7,6 +7,7 @@ from ipwhois import (Net, ASNLookupError, ASNRegistryError, BlacklistError,
 LOG_FORMAT = ('[%(asctime)s] [%(levelname)s] [%(filename)s:%(lineno)s] '
               '[%(funcName)s()] %(message)s')
 logging.basicConfig(level=logging.DEBUG, format=LOG_FORMAT)
+log = logging.getLogger(__name__)
 
 
 class TestNet(TestCommon):
@@ -71,7 +72,7 @@ class TestNet(TestCommon):
             self.fail('Unexpected exception raised: {0}'.format(e))
 
         self.assertRaises(HTTPLookupError, result.get_http_json, **dict(
-            url='http://255.255.255.255', retry_count=0))
+            url='http://255.255.255.255', retry_count=1))
 
         result = Net(address='74.125.225.229', timeout=0)
         url = RIR_RDAP['arin']['ip_url'].format('74.125.225.229')
@@ -139,3 +140,41 @@ class TestNet(TestCommon):
         self.assertRaises(HTTPLookupError, result.lookup_asn, **dict(
             asn_alts=['http']
         ))
+
+    def test_get_http_raw(self):
+        from ipwhois.net import NIR
+
+        # GET
+        result = Net('133.1.2.5')
+        try:
+            self.assertIsInstance(result.get_http_raw(
+                NIR['jpnic']['url'].format('133.1.2.5')), str)
+        except HTTPLookupError:
+            pass
+        except AssertionError as e:
+            raise e
+        except Exception as e:
+            self.fail('Unexpected exception raised: {0}'.format(e))
+
+        # POST
+        result = Net('115.1.2.3')
+        try:
+            self.assertIsInstance(result.get_http_raw(
+                url=NIR['krnic']['url'].format('115.1.2.3'),
+                request_type=NIR['krnic']['request_type'],
+                form_data={NIR['krnic']['form_data_ip_field']: '115.1.2.3'}
+            ), str)
+        except HTTPLookupError:
+            pass
+        except AssertionError as e:
+            raise e
+        except Exception as e:
+            self.fail('Unexpected exception raised: {0}'.format(e))
+
+        self.assertRaises(HTTPLookupError, result.get_http_raw, **dict(
+            url='http://255.255.255.255', retry_count=1))
+
+        result = Net(address='133.1.2.5', timeout=0)
+        url = NIR['jpnic']['url'].format('133.1.2.5')
+        self.assertRaises(HTTPLookupError, result.get_http_raw, **dict(
+            url=url, retry_count=0))

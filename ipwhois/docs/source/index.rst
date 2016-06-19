@@ -43,14 +43,6 @@ Project Info
 
    LICENSE
 
-Code
-====
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
-
-
 Updates
 =======
 
@@ -63,3 +55,11 @@ Updates
    :maxdepth: 1
 
    CHANGES.old
+
+Code
+====
+
+.. toctree::
+   :maxdepth: 2
+
+   Code <code>

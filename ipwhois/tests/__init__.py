@@ -2,6 +2,7 @@ import unittest
 
 
 class TestCommon(unittest.TestCase):
+    longMessage = False
 
     # Python 2.6 doesn't have unittest._formatMessage or
     # unittest.util.safe_repr
