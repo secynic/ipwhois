@@ -5,61 +5,28 @@ ipwhois
 ipwhois is a Python package focused on retrieving and parsing whois data
 for IPv4 and IPv6 addresses.
 
-Project Info
-============
-
 .. toctree::
+   :caption: Project Info
    :maxdepth: 2
 
    Readme <README>
+   Contributing <CONTRIBUTING>
+   License <LICENSE>
+   Changes <CHANGES>
+   Changes (Archive) <CHANGES.old>
 
 .. toctree::
+   :caption: API Documentation
    :maxdepth: 2
 
-   RDAP API (Recommended) <RDAP>
-
-.. toctree::
-   :maxdepth: 2
-
-   Legacy Whois API <WHOIS>
-
-.. toctree::
-   :maxdepth: 2
-
-   Utilities API <UTILS>
-
-.. toctree::
-   :maxdepth: 2
-
+   RDAP (Recommended) <RDAP>
+   Legacy Whois <WHOIS>
+   Utilities <UTILS>
    CLI <CLI>
 
 .. toctree::
-   :maxdepth: 2
+   :caption: Code
 
-   Contributing <CONTRIBUTING>
-
-.. toctree::
-   :maxdepth: 2
-
-   LICENSE
-
-Updates
-=======
-
-.. toctree::
-   :maxdepth: 2
-
-   CHANGES
-
-.. toctree::
-   :maxdepth: 1
-
-   CHANGES.old
-
-Code
-====
-
-.. toctree::
-   :maxdepth: 2
-
-   Code <code>
+   Index <https://secynic.github.io/ipwhois/genindex.html>
+   Module Index <https://secynic.github.io/ipwhois/py-modindex.html>
+   ipwhois
