@@ -30,8 +30,14 @@ class TestWhois(TestCommon):
 
             try:
 
-                self.assertIsInstance(obj.lookup(asn_data=val['asn_data']),
-                                      dict)
+                self.assertIsInstance(
+                    obj.lookup(
+                        asn_data=val['asn_data'],
+                        get_referral=True,
+                        ignore_referral_errors=True
+                    ),
+                    dict
+                )
 
             except WhoisLookupError:
 
