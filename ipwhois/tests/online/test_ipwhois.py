@@ -1,7 +1,7 @@
 import logging
 from ipwhois.tests import TestCommon
 from ipwhois import (IPWhois, ASNLookupError, ASNRegistryError,
-                     WhoisLookupError, HTTPLookupError)
+                     WhoisLookupError, HTTPLookupError, BlacklistError)
 
 LOG_FORMAT = ('[%(asctime)s] [%(levelname)s] [%(filename)s:%(lineno)s] '
               '[%(funcName)s()] %(message)s')
@@ -69,6 +69,20 @@ class TestIPWhois(TestCommon):
                     inc_raw=True,
                     extra_blacklist=['rwhois.cogentco.com']), dict)
             except (ASNLookupError, ASNRegistryError, WhoisLookupError):
+                pass
+            except AssertionError as e:
+                raise e
+            except Exception as e:
+                self.fail('Unexpected exception raised: {0}'.format(e))
+
+            try:
+                self.assertIsInstance(result.lookup(
+                    get_referral=True,
+                    ignore_referral_errors=False,
+                    inc_raw=True,
+                    extra_blacklist=['rwhois.cogentco.com']), dict)
+            except (ASNLookupError, ASNRegistryError, WhoisLookupError,
+                    BlacklistError):
                 pass
             except AssertionError as e:
                 raise e

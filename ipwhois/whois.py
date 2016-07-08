@@ -588,27 +588,23 @@ class Whois:
 
             response_ref = None
 
-            if ignore_referral_errors:
-
-                try:
-
-                    response_ref = self._net.get_whois(
-                        asn_registry='', retry_count=retry_count,
-                        server=referral_server, port=referral_port,
-                        extra_blacklist=extra_blacklist
-                    )
-
-                except (BlacklistError, WhoisLookupError):
-
-                    pass
-
-            else:
+            try:
 
                 response_ref = self._net.get_whois(
                     asn_registry='', retry_count=retry_count,
                     server=referral_server, port=referral_port,
                     extra_blacklist=extra_blacklist
                 )
+
+            except (BlacklistError, WhoisLookupError):
+
+                if ignore_referral_errors:
+
+                    pass
+
+                else:
+
+                    raise
 
             if response_ref:
 

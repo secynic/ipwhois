@@ -10,6 +10,9 @@ install:
   - if [[ $TRAVIS_PYTHON_VERSION == 3.3* ]]; then pip install -r requirements/python3.txt --use-mirrors; fi
   - if [[ $TRAVIS_PYTHON_VERSION == 3.4* ]]; then pip install -r requirements/python3.txt --use-mirrors; fi
   - if [[ $TRAVIS_PYTHON_VERSION == 3.5* ]]; then pip install -r requirements/python3.txt; fi
+  - pip install coveralls
   - python setup.py -q install
 script:
-  - nosetests -v -w ipwhois
+  - nosetests -v -w ipwhois --include=online --with-coverage --cover-package=ipwhois
+after_success:
+  - coveralls --rcfile=.coveragerc
