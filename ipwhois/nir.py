@@ -60,7 +60,7 @@ BASE_NET = {
     'updated': None
 }
 
-# Base NIR whois output dictionary.
+# Base NIR whois contact output dictionary.
 BASE_CONTACT = {
     'name': None,
     'email': None,
@@ -496,54 +496,26 @@ class NIRWhois:
                 hourdelta=int(NIR_WHOIS[nir]['dt_hourdelta'])
             )
 
-            contact_admin = temp_net['contact_admin']
+            contacts = {
+                'admin': temp_net['contact_admin'],
+                'tech': temp_net['contact_tech']
+            }
 
-            if len(contact_admin) > 0:
+            for key, val in contacts.items():
 
-                for contact in contact_admin:
+                if len(val) > 0:
 
-                    form_data = None
-                    if NIR_WHOIS[nir]['form_data_ip_field']:
-                        form_data = {NIR_WHOIS[nir]['form_data_ip_field']:
-                                         self._net.address_str}
+                    for contact in val:
 
-                    # Retrieve the whois data.
-                    response = self._net.get_http_raw(
-                        url=NIR_WHOIS[nir]['url'].format(
-                            contact),
-                        retry_count=retry_count,
-                        headers=NIR_WHOIS[nir]['request_headers'],
-                        request_type=NIR_WHOIS[nir]['request_type'],
-                        form_data=form_data
-                    )
-
-                    temp_net['contacts']['admin'] = self._parse_fields(
-                        response=response,
-                        fields_dict=NIR_WHOIS[nir]['contact_fields'],
-                        dt_format=dt_format,
-                        hourdelta=int(NIR_WHOIS[nir]['dt_hourdelta']),
-                        is_contact=True
-                    )
-
-                log.debug(contact_admin)
-
-            contact_tech = temp_net['contact_tech']
-            if len(contact_tech) > 0:
-
-                if contact_tech == contact_admin:
-
-                    temp_net['contacts']['tech'] = temp_net['contacts']['admin']
-
-                    log.debug(contact_tech)
-
-                else:
-
-                    for contact in contact_tech:
+                        # TODO: check if contact is cached (same contact as
+                        # another contact type, e.g. admin and tech share
+                        # similar contacts). This is to reduce duplicate
+                        # queries.
 
                         form_data = None
                         if NIR_WHOIS[nir]['form_data_ip_field']:
                             form_data = {NIR_WHOIS[nir]['form_data_ip_field']:
-                                             self._net.address_str}
+                                         self._net.address_str}
 
                         # Retrieve the whois data.
                         response = self._net.get_http_raw(
@@ -555,15 +527,13 @@ class NIRWhois:
                             form_data=form_data
                         )
 
-                        temp_net['contacts']['tech'] = self._parse_fields(
+                        temp_net['contacts'][key] = self._parse_fields(
                             response=response,
                             fields_dict=NIR_WHOIS[nir]['contact_fields'],
                             dt_format=dt_format,
                             hourdelta=int(NIR_WHOIS[nir]['dt_hourdelta']),
                             is_contact=True
                         )
-
-                    log.debug(contact_tech)
 
             del temp_net['contact_admin'], temp_net['contact_tech']
 
