@@ -293,8 +293,18 @@ class NIRWhois:
 
                 net = copy.deepcopy(BASE_NET)
                 tmp = ip_network(match.group(2))
+                try:
+                    network_address = tmp.network_address
+                except AttributeError:
+                    network_address = tmp.ip
+
+                try:
+                    broadcast_address = tmp.broadcast_address
+                except AttributeError:
+                    broadcast_address = tmp.broadcast
+
                 net['range'] = '{0} - {1}'.format(
-                    tmp.network_address + 1, tmp.broadcast_address
+                    network_address + 1, broadcast_address
                 )
 
                 cidr = ip_network(match.group(2).strip()).__str__()
