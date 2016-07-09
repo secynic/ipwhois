@@ -73,22 +73,6 @@ log = logging.getLogger(__name__)
 # POSSIBLY UPDATE TO USE RDAP
 ARIN = 'http://whois.arin.net/rest/nets;q={0}?showDetails=true&showARIN=true'
 
-# National Internet Registry
-NIR = {
-    'jpnic': {
-        'url': ('http://whois.nic.ad.jp/cgi-bin/whois_gw?lang=%2Fe&key={0}'
-                '&submit=query'),
-        'request_type': 'GET',
-        'request_headers': {'Accept': 'text/html'}
-    },
-    'krnic': {
-        'url': 'http://whois.kisa.or.kr/eng/whois.jsc',
-        'request_type': 'POST',
-        'request_headers': {'Accept': 'text/html'},
-        'form_data_ip_field': 'query'
-    }
-}
-
 CYMRU_WHOIS = 'whois.cymru.com'
 
 IPV4_DNS_ZONE = '{0}.origin.asn.cymru.com'
