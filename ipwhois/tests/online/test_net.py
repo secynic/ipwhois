@@ -1,8 +1,7 @@
 import logging
 from ipwhois.tests import TestCommon
 from ipwhois import (Net, ASNLookupError, ASNRegistryError, BlacklistError,
-                     WhoisLookupError, HTTPLookupError, HostLookupError,
-                     HTTPRateLimitError)
+                     WhoisLookupError, HTTPLookupError, HostLookupError)
 
 LOG_FORMAT = ('[%(asctime)s] [%(levelname)s] [%(filename)s:%(lineno)s] '
               '[%(funcName)s()] %(message)s')
@@ -162,7 +161,9 @@ class TestNet(TestCommon):
             self.assertIsInstance(result.get_http_raw(
                 url=NIR_WHOIS['krnic']['url'].format('115.1.2.3'),
                 request_type=NIR_WHOIS['krnic']['request_type'],
-                form_data={NIR_WHOIS['krnic']['form_data_ip_field']: '115.1.2.3'}
+                form_data={
+                    NIR_WHOIS['krnic']['form_data_ip_field']: '115.1.2.3'
+                }
             ), str)
         except HTTPLookupError:
             pass

@@ -15,8 +15,12 @@ class TestNIR(TestCommon):
 
         net = Net('133.1.2.5')
         obj = NIRWhois(net)
+
+        # TODO: replace with assertion test
         log.debug(obj.lookup('jpnic'))
 
         net = Net('115.1.2.3')
         obj = NIRWhois(net)
+
+        # TODO: replace with assertion test
         log.debug(obj.lookup('krnic'))

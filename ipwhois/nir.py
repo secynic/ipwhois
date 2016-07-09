@@ -284,7 +284,7 @@ class NIRWhois:
         # Iterate through all of the networks found, storing the CIDR value
         # and the start and end positions.
         for match in re.finditer(
-                r'^.+?(\[Network Number\])[^\S\n]+.+?\>(?P<val>.+?)\<\/A\>$',
+                r'^.+?(\[Network Number\])[^\S\n]+.+?>(?P<val>.+?)</A>$',
                 response,
                 re.MULTILINE
         ):
@@ -336,7 +336,7 @@ class NIRWhois:
         # Iterate through all of the networks found, storing the CIDR value
         # and the start and end positions.
         for match in re.finditer(
-                r'^(IPv4 Address)[\s]+\:[^\S\n]+((.+?)[^\S\n]-[^\S\n](.+?)'
+                r'^(IPv4 Address)[\s]+:[^\S\n]+((.+?)[^\S\n]-[^\S\n](.+?)'
                 '[^\S\n]\((.+?)\)|.+)$',
                 response,
                 re.MULTILINE
@@ -445,7 +445,7 @@ class NIRWhois:
 
             # Retrieve the whois data.
             response = self._net.get_http_raw(
-                url=NIR_WHOIS[nir]['url'].format(self._net.address_str),
+                url=str(NIR_WHOIS[nir]['url']).format(self._net.address_str),
                 retry_count=retry_count,
                 headers=NIR_WHOIS[nir]['request_headers'],
                 request_type=NIR_WHOIS[nir]['request_type'],
@@ -458,7 +458,7 @@ class NIRWhois:
             results['raw'] = response
 
         nets = []
-
+        nets_response = None
         if nir == 'jpnic':
 
             nets_response = self._get_nets_jpnic(response)
@@ -501,6 +501,8 @@ class NIRWhois:
                 'tech': temp_net['contact_tech']
             }
 
+            del temp_net['contact_admin'], temp_net['contact_tech']
+
             for key, val in contacts.items():
 
                 if len(val) > 0:
@@ -519,7 +521,7 @@ class NIRWhois:
 
                         # Retrieve the whois data.
                         response = self._net.get_http_raw(
-                            url=NIR_WHOIS[nir]['url'].format(
+                            url=str(NIR_WHOIS[nir]['url']).format(
                                 contact),
                             retry_count=retry_count,
                             headers=NIR_WHOIS[nir]['request_headers'],
@@ -534,8 +536,6 @@ class NIRWhois:
                             hourdelta=int(NIR_WHOIS[nir]['dt_hourdelta']),
                             is_contact=True
                         )
-
-            del temp_net['contact_admin'], temp_net['contact_tech']
 
             # Merge the net dictionaries.
             net.update(temp_net)

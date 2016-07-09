@@ -4,11 +4,13 @@ ipwhois
 
 .. image:: https://travis-ci.org/secynic/ipwhois.svg?branch=master
     :target: https://travis-ci.org/secynic/ipwhois
-.. image:: https://coveralls.io/repos/github/secynic/ipwhois/badge.svg?branch=master
+.. image:: https://coveralls.io/repos/github/secynic/ipwhois/badge.svg?branch=
+    master
     :target: https://coveralls.io/github/secynic/ipwhois?branch=master
 .. image:: https://img.shields.io/badge/license-BSD%202--Clause-blue.svg
     :target: https://github.com/secynic/ipwhois/tree/master/LICENSE.txt
-.. image:: https://img.shields.io/badge/python-2.6%2C%202.7%2C%203.3+-blue.svg
+.. image:: https://img.shields.io/badge/python-2.6%2C%202.7%2C%203.3%2C%203.4
+    %2C%203.5-blue.svg
 
 ipwhois is a Python package focused on retrieving and parsing whois data
 for IPv4 and IPv6 addresses.
@@ -81,11 +83,11 @@ Installing
 
 Latest version from PyPi::
 
-	pip install --upgrade ipwhois
+    pip install --upgrade ipwhois
 
 Latest version from GitHub::
 
-	pip install -e git+https://github.com/secynic/ipwhois@master#egg=ipwhois
+    pip install -e git+https://github.com/secynic/ipwhois@master#egg=ipwhois
 
 Firewall Ports
 ==============
