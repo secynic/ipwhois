@@ -265,9 +265,9 @@ class NIRWhois:
 
                     else:
 
-                        if isinstance(values, basestring):
+                        if isinstance(values, str):
 
-                            value = str(values)
+                            value = values
 
                         elif isinstance(values, list):
 
