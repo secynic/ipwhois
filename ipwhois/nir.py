@@ -115,15 +115,16 @@ NIR_WHOIS = {
             'name': r'(Organization Name)[\s]+\:[^\S\n]+(?P<val>.+?)\n',
             'handle': r'(Service Name)[\s]+\:[^\S\n]+(?P<val>.+?)\n',
             'created': r'(Registration Date)[\s]+\:[^\S\n]+(?P<val>.+?)\n',
-            'contact_admin': r'(id="eng_isp_contact").+?\>'
-                              '(?P<val>.*?)\n\</div\>',
-            'contact_tech': r'(id="eng_user_contact").+?\>'
-                             '(?P<val>.*?)\n\</div\>'
+            'contact_admin': r'(id="eng_isp_contact").+?\>(?P<val>.*?)\<'
+                              '\/div\>\n',
+            'contact_tech': r'(id="eng_user_contact").+?\>(?P<val>.*?)\<'
+                             '\/div\>\n'
         },
         'contact_fields': {
-            'name': r'(Name)[^\S\n]+:\s(?P<val>.*?)\n',
-            'email': r'(E-Mail)[^\S\n]+:\s(?P<val>.*?)\n',
-            'phone': r'(Phone)[^\S\n]+:\s(?P<val>.*?)\n'
+            'name': r'(Name)[^\S\n]+?:[^\S\n]+?(?P<val>.*?)\n',
+            # TODO: email may not always be last, account for lack of \n
+            'email': r'(E-Mail)[^\S\n]+?:[^\S\n]+?(?P<val>.*)',
+            'phone': r'(Phone)[^\S\n]+?:[^\S\n]+?(?P<val>.*?)\n'
         },
         'dt_format': '%Y%m%d',
         'dt_hourdelta': 0,
@@ -234,9 +235,7 @@ class NIRWhois:
 
                 if sub_section_end:
 
-                    if field not in (
-                            'emails'
-                    ) and (sub_section_end != (m.start() - 1)):
+                    if sub_section_end != (m.start() - 1):
 
                         break
 
@@ -247,6 +246,8 @@ class NIRWhois:
                 except IndexError:
 
                     pass
+
+                sub_section_end = m.end()
 
             if len(values) > 0:
 
@@ -526,6 +527,7 @@ class NIRWhois:
                         # similar contacts). This is to reduce duplicate
                         # queries.
 
+                        contact_response = ''
                         if nir == 'jpnic':
 
                             form_data = None
@@ -536,7 +538,7 @@ class NIRWhois:
                                 }
 
                             # Retrieve the whois data.
-                            response = self._net.get_http_raw(
+                            contact_response = self._net.get_http_raw(
                                 url=str(NIR_WHOIS[nir]['url']).format(
                                     contact),
                                 retry_count=retry_count,
@@ -545,8 +547,12 @@ class NIRWhois:
                                 form_data=form_data
                             )
 
+                        elif nir == 'krnic':
+
+                            contact_response = contact
+
                         temp_net['contacts'][key] = self._parse_fields(
-                            response=response,
+                            response=contact_response,
                             fields_dict=NIR_WHOIS[nir]['contact_fields'],
                             dt_format=dt_format,
                             hourdelta=int(NIR_WHOIS[nir]['dt_hourdelta']),
