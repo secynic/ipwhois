@@ -265,8 +265,18 @@ class NIRWhois:
 
                     else:
 
-                        values = unique_everseen(values)
-                        value = list(values)
+                        if isinstance(values, basestring):
+
+                            value = str(values)
+
+                        elif isinstance(values, list):
+
+                            values = unique_everseen(values)
+                            value = '\n'.join(values)
+
+                        else:
+
+                            value = list(values)
 
                 except ValueError as e:
 
@@ -386,6 +396,52 @@ class NIRWhois:
                 pass
 
         return nets
+
+    def _get_contact(self, contact=None, nir=None, retry_count=None,
+                     dt_format=None):
+        """
+        Experimental
+
+        """
+
+        # TODO: docstring
+
+        # TODO: check if contact is cached (same contact as
+        # another contact type, e.g. admin and tech share
+        # similar contacts). This is to reduce duplicate
+        # queries.
+
+        contact_response = ''
+        if nir == 'jpnic':
+
+            form_data = None
+            if NIR_WHOIS[nir]['form_data_ip_field']:
+                form_data = {
+                    NIR_WHOIS[nir]['form_data_ip_field']:
+                        self._net.address_str
+                }
+
+            # Retrieve the whois data.
+            contact_response = self._net.get_http_raw(
+                url=str(NIR_WHOIS[nir]['url']).format(
+                    contact),
+                retry_count=retry_count,
+                headers=NIR_WHOIS[nir]['request_headers'],
+                request_type=NIR_WHOIS[nir]['request_type'],
+                form_data=form_data
+            )
+
+        elif nir == 'krnic':
+
+            contact_response = contact
+
+        return self._parse_fields(
+            response=contact_response,
+            fields_dict=NIR_WHOIS[nir]['contact_fields'],
+            dt_format=dt_format,
+            hourdelta=int(NIR_WHOIS[nir]['dt_hourdelta']),
+            is_contact=True
+        )
 
     def lookup(self, nir=None, inc_raw=False, retry_count=3, response=None,
                field_list=None, is_offline=False):
@@ -520,43 +576,17 @@ class NIRWhois:
 
                 if len(val) > 0:
 
+                    if isinstance(val, str):
+
+                        val = [val]
+
                     for contact in val:
 
-                        # TODO: check if contact is cached (same contact as
-                        # another contact type, e.g. admin and tech share
-                        # similar contacts). This is to reduce duplicate
-                        # queries.
-
-                        contact_response = ''
-                        if nir == 'jpnic':
-
-                            form_data = None
-                            if NIR_WHOIS[nir]['form_data_ip_field']:
-                                form_data = {
-                                    NIR_WHOIS[nir]['form_data_ip_field']:
-                                        self._net.address_str
-                                }
-
-                            # Retrieve the whois data.
-                            contact_response = self._net.get_http_raw(
-                                url=str(NIR_WHOIS[nir]['url']).format(
-                                    contact),
-                                retry_count=retry_count,
-                                headers=NIR_WHOIS[nir]['request_headers'],
-                                request_type=NIR_WHOIS[nir]['request_type'],
-                                form_data=form_data
-                            )
-
-                        elif nir == 'krnic':
-
-                            contact_response = contact
-
-                        temp_net['contacts'][key] = self._parse_fields(
-                            response=contact_response,
-                            fields_dict=NIR_WHOIS[nir]['contact_fields'],
-                            dt_format=dt_format,
-                            hourdelta=int(NIR_WHOIS[nir]['dt_hourdelta']),
-                            is_contact=True
+                        temp_net['contacts'][key] = self._get_contact(
+                            contact=contact,
+                            nir=nir,
+                            retry_count=retry_count,
+                            dt_format=dt_format
                         )
 
             # Merge the net dictionaries.
