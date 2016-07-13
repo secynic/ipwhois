@@ -186,15 +186,18 @@ contact key contained in `Objects Dictionary <#objects-dictionary>`_.
 +---------+--------+----------------------------------------------------------+
 | **Key** |**Type**| **Description**                                          |
 +---------+--------+----------------------------------------------------------+
-| address | Dict   | The contact postal address. Contains key type and value. |
+| address | List   | List of contact postal address dictionaries. Contains key|
+|         |        | type and value.                                          |
 +---------+--------+----------------------------------------------------------+
-| email   | Dict   | The contact email address. Contains key type and value.  |
+| email   | List   | List of contact email address dictionaries. Contains key |
+|         |        | type and value.                                          |
 +---------+--------+----------------------------------------------------------+
 | kind    | String | The contact information kind (individual, group, org).   |
 +---------+--------+----------------------------------------------------------+
 | name    | String | The contact name.                                        |
 +---------+--------+----------------------------------------------------------+
-| phone   | Dict   | The contact phone number. Contains key type and value.   |
+| phone   | List   | List of contact phone number dictionaries. Contains key  |
+|         |        | type and value.                                          |
 +---------+--------+----------------------------------------------------------+
 | role    | String | The contact's role.                                      |
 +---------+--------+----------------------------------------------------------+
