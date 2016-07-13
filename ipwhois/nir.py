@@ -114,7 +114,16 @@ NIR_WHOIS = {
         'fields': {
             'name': r'(Organization Name)[\s]+\:[^\S\n]+(?P<val>.+?)\n',
             'handle': r'(Service Name)[\s]+\:[^\S\n]+(?P<val>.+?)\n',
-            'created': r'(Registration Date)[\s]+\:[^\S\n]+(?P<val>.+?)\n'
+            'created': r'(Registration Date)[\s]+\:[^\S\n]+(?P<val>.+?)\n',
+            'contact_admin': r'(id="eng_isp_contact").+?\>'
+                              '(?P<val>.*?)\n\</div\>',
+            'contact_tech': r'(id="eng_user_contact").+?\>'
+                             '(?P<val>.*?)\n\</div\>'
+        },
+        'contact_fields': {
+            'name': r'(Name)[^\S\n]+:\s(?P<val>.*?)\n',
+            'email': r'(E-Mail)[^\S\n]+:\s(?P<val>.*?)\n',
+            'phone': r'(Phone)[^\S\n]+:\s(?P<val>.*?)\n'
         },
         'dt_format': '%Y%m%d',
         'dt_hourdelta': 0,
@@ -501,7 +510,10 @@ class NIRWhois:
                 'tech': temp_net['contact_tech']
             }
 
-            del temp_net['contact_admin'], temp_net['contact_tech']
+            del (
+                temp_net['contact_admin'],
+                temp_net['contact_tech']
+            )
 
             for key, val in contacts.items():
 
@@ -514,20 +526,24 @@ class NIRWhois:
                         # similar contacts). This is to reduce duplicate
                         # queries.
 
-                        form_data = None
-                        if NIR_WHOIS[nir]['form_data_ip_field']:
-                            form_data = {NIR_WHOIS[nir]['form_data_ip_field']:
-                                         self._net.address_str}
+                        if nir == 'jpnic':
 
-                        # Retrieve the whois data.
-                        response = self._net.get_http_raw(
-                            url=str(NIR_WHOIS[nir]['url']).format(
-                                contact),
-                            retry_count=retry_count,
-                            headers=NIR_WHOIS[nir]['request_headers'],
-                            request_type=NIR_WHOIS[nir]['request_type'],
-                            form_data=form_data
-                        )
+                            form_data = None
+                            if NIR_WHOIS[nir]['form_data_ip_field']:
+                                form_data = {
+                                    NIR_WHOIS[nir]['form_data_ip_field']:
+                                        self._net.address_str
+                                }
+
+                            # Retrieve the whois data.
+                            response = self._net.get_http_raw(
+                                url=str(NIR_WHOIS[nir]['url']).format(
+                                    contact),
+                                retry_count=retry_count,
+                                headers=NIR_WHOIS[nir]['request_headers'],
+                                request_type=NIR_WHOIS[nir]['request_type'],
+                                form_data=form_data
+                            )
 
                         temp_net['contacts'][key] = self._parse_fields(
                             response=response,
