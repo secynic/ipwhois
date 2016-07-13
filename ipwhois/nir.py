@@ -397,14 +397,22 @@ class NIRWhois:
 
         return nets
 
-    def _get_contact(self, contact=None, nir=None, retry_count=None,
+    def _get_contact(self, response=None, nir=None, retry_count=None,
                      dt_format=None):
         """
-        Experimental
+        The function for retrieving and parsing NIR whois data based on
+        NIR_WHOIS contact_fields.
 
+        Args:
+            response: Optional response object, this bypasses the Whois lookup.
+            nir: The NIR to query ('jpnic' or 'krnic').
+            retry_count: The number of times to retry in case socket errors,
+                timeouts, connection resets, etc. are encountered.
+            dt_format: The format of datetime fields if known.
+
+        Returns:
+            Dictionary: A dictionary of fields provided in contact_fields.
         """
-
-        # TODO: docstring
 
         # TODO: check if contact is cached (same contact as
         # another contact type, e.g. admin and tech share
@@ -424,7 +432,7 @@ class NIRWhois:
             # Retrieve the whois data.
             contact_response = self._net.get_http_raw(
                 url=str(NIR_WHOIS[nir]['url']).format(
-                    contact),
+                    response),
                 retry_count=retry_count,
                 headers=NIR_WHOIS[nir]['request_headers'],
                 request_type=NIR_WHOIS[nir]['request_type'],
@@ -433,7 +441,7 @@ class NIRWhois:
 
         elif nir == 'krnic':
 
-            contact_response = contact
+            contact_response = response
 
         return self._parse_fields(
             response=contact_response,
@@ -583,7 +591,7 @@ class NIRWhois:
                     for contact in val:
 
                         temp_net['contacts'][key] = self._get_contact(
-                            contact=contact,
+                            response=contact,
                             nir=nir,
                             retry_count=retry_count,
                             dt_format=dt_format
