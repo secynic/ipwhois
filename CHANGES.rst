@@ -14,6 +14,7 @@ Changelog
 - Replaced usage of args with script_args in ipwhois_cli.py
 - Minor optimization in whois.py and online/test_whois.py
 - Added coveralls integration and re-enabled online tests with Travis CI
+- Fixed test imports
 
 0.13.0 (2016-04-18)
 -------------------

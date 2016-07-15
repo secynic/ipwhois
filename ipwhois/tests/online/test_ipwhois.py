@@ -1,7 +1,9 @@
 import logging
 from ipwhois.tests import TestCommon
-from ipwhois import (IPWhois, ASNLookupError, ASNRegistryError,
-                     WhoisLookupError, HTTPLookupError, BlacklistError)
+from ipwhois.exceptions import (ASNLookupError, ASNRegistryError,
+                                WhoisLookupError, HTTPLookupError,
+                                BlacklistError)
+from ipwhois.ipwhois import IPWhois
 
 LOG_FORMAT = ('[%(asctime)s] [%(levelname)s] [%(filename)s:%(lineno)s] '
               '[%(funcName)s()] %(message)s')

@@ -1,6 +1,6 @@
 import logging
 from ipwhois.tests import TestCommon
-from ipwhois import IPWhois
+from ipwhois.ipwhois import IPWhois
 
 LOG_FORMAT = ('[%(asctime)s] [%(levelname)s] [%(filename)s:%(lineno)s] '
               '[%(funcName)s()] %(message)s')
