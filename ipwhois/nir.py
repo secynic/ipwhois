@@ -22,13 +22,13 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+from . import (HTTPLookupError, NetError)
+from .utils import unique_everseen
+import logging
 import sys
 import re
 import copy
 from datetime import (datetime, timedelta)
-import logging
-from .utils import unique_everseen
-from . import (HTTPLookupError, NetError)
 
 if sys.version_info >= (3, 3):  # pragma: no cover
     from ipaddress import (ip_address,
@@ -49,21 +49,20 @@ BASE_NET = {
     'name': None,
     'handle': None,
     'range': None,
-    'description': None,
     'country': None,
-    'state': None,
-    'city': None,
     'address': None,
     'postal_code': None,
-    'emails': None,
+    'nameservers': None,
     'created': None,
-    'updated': None
+    'updated': None,
+    'contacts': None
 }
 
 # Base NIR whois contact output dictionary.
 BASE_CONTACT = {
     'name': None,
     'email': None,
+    'reply_email': None,
     'organization': None,
     'division': None,
     'title': None,
@@ -75,6 +74,7 @@ BASE_CONTACT = {
 # National Internet Registry
 NIR_WHOIS = {
     'jpnic': {
+        'country_code': 'JP',
         'url': ('http://whois.nic.ad.jp/cgi-bin/whois_gw?lang=%2Fe&key={0}'
                 '&submit=query'),
         'request_type': 'GET',
@@ -92,14 +92,14 @@ NIR_WHOIS = {
                              '(?P<val>.+?)\<\/A\>\n'
         },
         'contact_fields': {
-            'name': r'(\[Organization\])[^\S\n]+(?P<last>.*?),\s'
-                    '(?P<first>.*?)\n',
+            'name': r'(\[Last, First\])[^\S\n]+(?P<val>.*?)\n',
             'email': r'(\[E-Mail\])[^\S\n]+(?P<val>.*?)\n',
+            'reply_email': r'(\[Reply Mail\])[^\S\n]+(?P<val>.*?)\n',
             'organization': r'(\[Organization\])[^\S\n]+(?P<val>.*?)\n',
             'division': r'(\[Division\])[^\S\n]+(?P<val>.*?)\n',
             'title': r'(\[Title\])[^\S\n]+(?P<val>.*?)\n',
-            'phone': r'(\[Phone\])[^\S\n]+(?P<val>.*?)\n',
-            'fax': r'(\[Fax\])[^\S\n]+(?P<val>.*?)\n',
+            'phone': r'(\[TEL\])[^\S\n]+(?P<val>.*?)\n',
+            'fax': r'(\[FAX\])[^\S\n]+(?P<val>.*?)\n',
             'updated': r'(\[Last Update\])[^\S\n]+(?P<val>.*?)\n'
         },
         'dt_format': '%Y/%m/%d %H:%M:%S(JST)',
@@ -107,13 +107,17 @@ NIR_WHOIS = {
         'multi_net': False
     },
     'krnic': {
+        'country_code': 'KR',
         'url': 'http://whois.kisa.or.kr/eng/whois.jsc',
         'request_type': 'POST',
         'request_headers': {'Accept': 'text/html'},
         'form_data_ip_field': 'query',
         'fields': {
             'name': r'(Organization Name)[\s]+\:[^\S\n]+(?P<val>.+?)\n',
-            'handle': r'(Service Name)[\s]+\:[^\S\n]+(?P<val>.+?)\n',
+            'handle': r'(Service Name|Network Type)[\s]+\:[^\S\n]+(?P<val>.+?)'
+                      '\n',
+            'address': r'(Address)[\s]+\:[^\S\n]+(?P<val>.+?)\n',
+            'postal_code': r'(Zip Code)[\s]+\:[^\S\n]+(?P<val>.+?)\n',
             'created': r'(Registration Date)[\s]+\:[^\S\n]+(?P<val>.+?)\n',
             'contact_admin': r'(id="eng_isp_contact").+?\>(?P<val>.*?)\<'
                               '\/div\>\n',
@@ -122,8 +126,7 @@ NIR_WHOIS = {
         },
         'contact_fields': {
             'name': r'(Name)[^\S\n]+?:[^\S\n]+?(?P<val>.*?)\n',
-            # TODO: email may not always be last, account for lack of \n
-            'email': r'(E-Mail)[^\S\n]+?:[^\S\n]+?(?P<val>.*)',
+            'email': r'(E-Mail)[^\S\n]+?:[^\S\n]+?(?P<val>.*?)\n',
             'phone': r'(Phone)[^\S\n]+?:[^\S\n]+?(?P<val>.*?)\n'
         },
         'dt_format': '%Y%m%d',
@@ -186,13 +189,14 @@ class NIRWhois:
             Dictionary: A dictionary of fields provided in fields_dict.
         """
 
+        response = '{0}\n'.format(response)
         if is_contact:
 
             ret = {}
 
             if not field_list:
 
-                field_list = BASE_CONTACT.keys()
+                field_list = list(BASE_CONTACT.keys())
 
         else:
 
@@ -204,8 +208,10 @@ class NIRWhois:
 
             if not field_list:
 
-                field_list = ['cidr', 'name', 'handle', 'created', 'updated',
-                              'nameservers', 'contact_admin', 'contact_tech']
+                field_list = list(BASE_NET.keys())
+                field_list.remove('contacts')
+                field_list.append('contact_admin')
+                field_list.append('contact_tech')
 
         generate = ((field, pattern) for (field, pattern) in
                     fields_dict.items() if field in field_list)
@@ -569,7 +575,7 @@ class NIRWhois:
                 field_list=field_list,
                 hourdelta=int(NIR_WHOIS[nir]['dt_hourdelta'])
             )
-
+            temp_net['country'] = NIR_WHOIS[nir]['country_code']
             contacts = {
                 'admin': temp_net['contact_admin'],
                 'tech': temp_net['contact_tech']
