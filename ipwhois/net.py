@@ -883,6 +883,7 @@ class Net:
         if form_data:
             form_data = urlencode(form_data)
             try:
+                # Py 2 inspection will alert on the encoding arg, no harm done.
                 form_data = bytes(form_data, encoding='ascii')
             except TypeError:  # pragma: no cover
                 pass
@@ -893,8 +894,9 @@ class Net:
             log.debug('HTTP query for {0} at {1}'.format(
                 self.address_str, url))
             try:
+                # Py 2 inspection alert bypassed by using kwargs dict.
                 conn = Request(url=url, data=form_data, headers=headers,
-                               method=request_type)
+                               **{'method': request_type})
             except TypeError:  # pragma: no cover
                 conn = Request(url=url, data=form_data, headers=headers)
             data = self.opener.open(conn, timeout=self.timeout)
