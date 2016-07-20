@@ -61,6 +61,7 @@ BASE_NET = {
 # Base NIR whois contact output dictionary.
 BASE_CONTACT = {
     'name': None,
+    'handle': None,
     'email': None,
     'reply_email': None,
     'organization': None,
@@ -271,18 +272,8 @@ class NIRWhois:
 
                     else:
 
-                        if isinstance(values, str):
-
-                            value = values
-
-                        elif isinstance(values, list):
-
-                            values = unique_everseen(values)
-                            value = '\n'.join(values)
-
-                        else:
-
-                            value = list(values)
+                        values = unique_everseen(values)
+                        value = '\n'.join(values)
 
                 except ValueError as e:
 
@@ -319,15 +310,18 @@ class NIRWhois:
 
                 net = copy.deepcopy(BASE_NET)
                 tmp = ip_network(match.group(2))
-                try:
-                    network_address = tmp.network_address
-                except AttributeError:
-                    network_address = tmp.ip
 
-                try:
+                try:  # pragma: no cover
+                    network_address = tmp.network_address
+                except AttributeError:  # pragma: no cover
+                    network_address = tmp.ip
+                    pass
+
+                try:  # pragma: no cover
                     broadcast_address = tmp.broadcast_address
-                except AttributeError:
+                except AttributeError:  # pragma: no cover
                     broadcast_address = tmp.broadcast
+                    pass
 
                 net['range'] = '{0} - {1}'.format(
                     network_address + 1, broadcast_address
@@ -420,20 +414,9 @@ class NIRWhois:
             Dictionary: A dictionary of fields provided in contact_fields.
         """
 
-        # TODO: check if contact is cached (same contact as
-        # another contact type, e.g. admin and tech share
-        # similar contacts). This is to reduce duplicate
-        # queries.
-
         contact_response = ''
-        if nir == 'jpnic':
 
-            form_data = None
-            if NIR_WHOIS[nir]['form_data_ip_field']:
-                form_data = {
-                    NIR_WHOIS[nir]['form_data_ip_field']:
-                        self._net.address_str
-                }
+        if nir == 'jpnic':
 
             # Retrieve the whois data.
             contact_response = self._net.get_http_raw(
@@ -441,8 +424,7 @@ class NIRWhois:
                     response),
                 retry_count=retry_count,
                 headers=NIR_WHOIS[nir]['request_headers'],
-                request_type=NIR_WHOIS[nir]['request_type'],
-                form_data=form_data
+                request_type=NIR_WHOIS[nir]['request_type']
             )
 
         elif nir == 'krnic':
@@ -460,8 +442,8 @@ class NIRWhois:
     def lookup(self, nir=None, inc_raw=False, retry_count=3, response=None,
                field_list=None, is_offline=False):
         """
-        The function for retrieving and parsing whois information for an IP
-        address via port 43/tcp (WHOIS).
+        The function for retrieving and parsing NIR whois information for an IP
+        address via HTTP (HTML scraping).
 
         Args:
             nir: The NIR to query ('jpnic' or 'krnic').
@@ -498,8 +480,7 @@ class NIRWhois:
 
         if nir not in NIR_WHOIS.keys():
 
-            raise KeyError('Invalid argument for nir (National Internet '
-                           'Registry')
+            raise KeyError('Invalid arg for nir (National Internet Registry')
 
         # Create the return dictionary.
         results = {
@@ -549,6 +530,8 @@ class NIRWhois:
 
         nets.extend(nets_response)
 
+        global_contacts = {}
+
         # Iterate through all of the network sections and parse out the
         # appropriate fields for each.
         log.debug('Parsing NIR WHOIS data')
@@ -586,22 +569,35 @@ class NIRWhois:
                 temp_net['contact_tech']
             )
 
-            for key, val in contacts.items():
+            if not is_offline:
 
-                if len(val) > 0:
+                for key, val in contacts.items():
 
-                    if isinstance(val, str):
+                    if len(val) > 0:
 
-                        val = [val]
+                        if isinstance(val, str):
 
-                    for contact in val:
+                            val = [val]
 
-                        temp_net['contacts'][key] = self._get_contact(
-                            response=contact,
-                            nir=nir,
-                            retry_count=retry_count,
-                            dt_format=dt_format
-                        )
+                        for contact in val:
+
+                            if contact in global_contacts.keys():
+
+                                temp_net['contacts'][key] = (
+                                    global_contacts[contact]
+                                )
+
+                            else:
+
+                                temp_net['contacts'][key] = self._get_contact(
+                                    response=contact,
+                                    nir=nir,
+                                    retry_count=retry_count,
+                                    dt_format=dt_format
+                                )
+                                global_contacts[contact] = (
+                                    temp_net['contacts'][key]
+                                )
 
             # Merge the net dictionaries.
             net.update(temp_net)

@@ -1,4 +1,8 @@
+import json
+import io
+from os import path
 import logging
+from ipwhois.exceptions import HTTPLookupError
 from ipwhois.tests import TestCommon
 from ipwhois.net import Net
 from ipwhois.nir import NIRWhois
@@ -13,14 +17,37 @@ class TestNIR(TestCommon):
 
     def test__NIRWhoisLookup(self):
 
-        net = Net('133.1.2.5')
-        obj = NIRWhois(net)
+        data_dir = path.abspath(path.join(path.dirname(__file__), '..'))
 
-        # TODO: replace with assertion test
-        log.debug(obj.lookup('jpnic'))
+        with io.open(str(data_dir) + '/jpnic.json', 'r') as data_jpnic:
+            data = json.load(data_jpnic)
 
-        net = Net('115.1.2.3')
-        obj = NIRWhois(net)
+        with io.open(str(data_dir) + '/krnic.json', 'r') as data_krnic:
+            data.update(json.load(data_krnic))
 
-        # TODO: replace with assertion test
-        log.debug(obj.lookup('krnic'))
+        for key, val in data.items():
+
+            log.debug('Testing: {0}'.format(key))
+            net = Net(key)
+            obj = NIRWhois(net)
+
+            try:
+
+                self.assertIsInstance(
+                    obj.lookup(
+                        nir=val['nir'],
+                    ),
+                    dict
+                )
+
+            except HTTPLookupError:
+
+                pass
+
+            except AssertionError as e:
+
+                raise e
+
+            except Exception as e:
+
+                self.fail('Unexpected exception raised: {0}'.format(e))
