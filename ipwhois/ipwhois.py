@@ -23,6 +23,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 from . import Net
+from .nir import NIRWhois
 import logging
 
 log = logging.getLogger(__name__)
@@ -68,7 +69,7 @@ class IPWhois:
         """
         Temporary wrapper for legacy whois lookups (moved to
         IPWhois.lookup_whois()). This will be removed in a future
-        release (TBD).
+        release (1.0.0).
         """
 
         from warnings import warn
@@ -79,7 +80,8 @@ class IPWhois:
 
     def lookup_whois(self, inc_raw=False, retry_count=3, get_referral=False,
                      extra_blacklist=None, ignore_referral_errors=False,
-                     field_list=None, asn_alts=None, extra_org_map=None):
+                     field_list=None, asn_alts=None, extra_org_map=None,
+                     inc_nir=True, nir_field_list=None):
         """
         The function for retrieving and parsing whois information for an IP
         address via port 43 (WHOIS).
@@ -107,6 +109,14 @@ class IPWhois:
                 built in ORG_MAP) e.g., {'DNIC': 'arin'}. Valid RIR values are
                 (note the case-sensitive - this is meant to match the REST
                 result): 'ARIN', 'RIPE', 'apnic', 'lacnic', 'afrinic'
+            inc_nir: Boolean for whether to retrieve NIR (National Internet
+                Registry) information, if registry is JPNIC (Japan) or KRNIC
+                (Korea). If True, extra network requests will be required.
+                If False, the information returned for JP or KR IPs is
+                severely restricted.
+            nir_field_list: If provided and inc_nir, a list of fields to parse:
+                ['name', 'handle', 'description', 'country', 'state', 'city',
+                'address', 'postal_code', 'emails', 'created', 'updated']
 
         Returns:
             Dictionary:
@@ -131,7 +141,7 @@ class IPWhois:
         from .whois import Whois
 
         # Create the return dictionary.
-        results = {}
+        results = {'nir': None}
 
         # Retrieve the ASN information.
         log.debug('ASN lookup for {0}'.format(self.address_str))
@@ -153,14 +163,35 @@ class IPWhois:
             field_list=field_list
         )
 
-        # Add the RDAP information to the return dictionary.
+        # Add the WHOIS information to the return dictionary.
         results.update(whois_data)
+
+        if inc_nir:
+
+            nir = None
+            if 'JP' == asn_data['asn_country_code']:
+                nir = 'jpnic'
+            elif 'KR' == asn_data['asn_country_code']:
+                nir = 'krnic'
+
+            if nir:
+
+                nir_whois = NIRWhois(self.net)
+                nir_data = nir_whois.lookup(
+                    nir=nir, inc_raw=inc_raw, retry_count=retry_count,
+                    response=None,  # TODO: fix this, make param
+                    field_list=nir_field_list, is_offline=False
+                )
+
+                # Add the NIR information to the return dictionary.
+                results['nir'] = nir_data
 
         return results
 
     def lookup_rdap(self, inc_raw=False, retry_count=3, depth=0,
                     excluded_entities=None, bootstrap=False,
-                    rate_limit_timeout=120, asn_alts=None, extra_org_map=None):
+                    rate_limit_timeout=120, asn_alts=None, extra_org_map=None,
+                    inc_nir=True, nir_field_list=None):
         """
         The function for retrieving and parsing whois information for an IP
         address via HTTP (RDAP).
@@ -190,6 +221,14 @@ class IPWhois:
                 built in ORG_MAP) e.g., {'DNIC': 'arin'}. Valid RIR values are
                 (note the case-sensitive - this is meant to match the REST
                 result): 'ARIN', 'RIPE', 'apnic', 'lacnic', 'afrinic'
+            inc_nir: Boolean for whether to retrieve NIR (National Internet
+                Registry) information, if registry is JPNIC (Japan) or KRNIC
+                (Korea). If True, extra network requests will be required.
+                If False, the information returned for JP or KR IPs is
+                severely restricted.
+            nir_field_list: If provided and inc_nir, a list of fields to parse:
+                ['name', 'handle', 'description', 'country', 'state', 'city',
+                'address', 'postal_code', 'emails', 'created', 'updated']
 
         Returns:
             Dictionary:
@@ -212,7 +251,7 @@ class IPWhois:
         from .rdap import RDAP
 
         # Create the return dictionary.
-        results = {}
+        results = {'nir': None}
 
         asn_data = None
         response = None
@@ -240,5 +279,24 @@ class IPWhois:
 
         # Add the RDAP information to the return dictionary.
         results.update(rdap_data)
+
+        if inc_nir:
+
+            nir = None
+            if 'JP' == asn_data['asn_country_code']:
+                nir = 'jpnic'
+            elif 'KR' == asn_data['asn_country_code']:
+                nir = 'krnic'
+
+            if nir:
+                nir_whois = NIRWhois(self.net)
+                nir_data = nir_whois.lookup(
+                    nir=nir, inc_raw=inc_raw, retry_count=retry_count,
+                    response=None,  # TODO: fix this, make param
+                    field_list=nir_field_list, is_offline=False
+                )
+
+                # Add the NIR information to the return dictionary.
+                results['nir'] = nir_data
 
         return results
