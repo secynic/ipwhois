@@ -242,7 +242,9 @@ class NIRWhois:
 
                 if sub_section_end:
 
-                    if sub_section_end != (m.start() - 1):
+                    if field not in (
+                            'nameservers'
+                    ) and (sub_section_end != (m.start() - 1)):
 
                         break
 
