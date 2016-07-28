@@ -15,12 +15,16 @@ ipwhois
 ipwhois is a Python package focused on retrieving and parsing whois data
 for IPv4 and IPv6 addresses.
 
-RDAP is the recommended query method as of v0.11.0. Please see the
-`upgrade info <https://github.com/secynic/ipwhois/blob/master/RDAP.rst
-#upgrading-from-0-10-to-0-11>`_.
+.. attention::
 
-IPWhois.lookup() is deprecated as of v0.12.0 and will be removed. Legacy whois
-lookups were moved to IPWhois.lookup_whois().
+    RDAP is the recommended query method as of v0.11.0. Please see the
+    `upgrade info <https://github.com/secynic/ipwhois/blob/master/RDAP.rst
+    #upgrading-from-0-10-to-0-11>`_.
+
+.. warning::
+
+    IPWhois.lookup() is deprecated as of v0.12.0 and will be removed. Legacy
+    whois lookups were moved to IPWhois.lookup_whois().
 
 Features
 ========
@@ -28,7 +32,8 @@ Features
 * Parses a majority of whois fields in to a standard dictionary
 * IPv4 and IPv6 support
 * Referral whois support
-* Supports RDAP queries (recommended method, more detailed information)
+* Supports RDAP queries (recommended method, see:
+  https://tools.ietf.org/html/rfc7483)
 * Proxy support for RDAP queries
 * Recursive network parsing for IPs with parent/children networks listed
 * Python 2.6+ and 3.3+ supported
@@ -88,6 +93,10 @@ Latest version from PyPi::
 Latest version from GitHub::
 
     pip install -e git+https://github.com/secynic/ipwhois@master#egg=ipwhois
+
+Dev version from GitHub::
+
+    pip install -e git+https://github.com/secynic/ipwhois@dev#egg=ipwhois
 
 Firewall Ports
 ==============
