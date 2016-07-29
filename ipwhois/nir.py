@@ -388,8 +388,8 @@ class NIRWhois:
 
         return nets
 
-    def _get_contact(self, response=None, nir=None, retry_count=None,
-                     dt_format=None):
+    def _get_contact(self, response=None, nir=None, handle=None,
+                     retry_count=None, dt_format=None):
         """
         The function for retrieving and parsing NIR whois data based on
         NIR_WHOIS contact_fields.
@@ -397,6 +397,8 @@ class NIRWhois:
         Args:
             response: Optional response object, this bypasses the Whois lookup.
             nir: The NIR to query ('jpnic' or 'krnic').
+            handle: For NIRs that have seperate contact queries (JPNIC),
+                this is the contact handle to use in the query.
             retry_count: The number of times to retry in case socket errors,
                 timeouts, connection resets, etc. are encountered.
             dt_format: The format of datetime fields if known.
@@ -405,22 +407,19 @@ class NIRWhois:
             Dictionary: A dictionary of fields provided in contact_fields.
         """
 
-        contact_response = ''
+        if response or nir == 'krnic':
 
-        if nir == 'jpnic':
+            contact_response = response
+
+        else:
 
             # Retrieve the whois data.
             contact_response = self._net.get_http_raw(
-                url=str(NIR_WHOIS[nir]['url']).format(
-                    response),
+                url=str(NIR_WHOIS[nir]['url']).format(handle),
                 retry_count=retry_count,
                 headers=NIR_WHOIS[nir]['request_headers'],
                 request_type=NIR_WHOIS[nir]['request_type']
             )
-
-        elif nir == 'krnic':
-
-            contact_response = response
 
         return self._parse_fields(
             response=contact_response,
@@ -580,8 +579,19 @@ class NIRWhois:
 
                             else:
 
+                                if nir == 'krnic':
+
+                                    tmp_response = contact
+                                    tmp_handle = None
+
+                                else:
+
+                                    tmp_response = None
+                                    tmp_handle = contact
+
                                 temp_net['contacts'][key] = self._get_contact(
-                                    response=contact,
+                                    response=tmp_response,
+                                    handle=tmp_handle,
                                     nir=nir,
                                     retry_count=retry_count,
                                     dt_format=dt_format
