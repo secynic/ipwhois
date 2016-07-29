@@ -88,12 +88,44 @@ class TestNIR(TestCommon):
         )
 
     def test__get_nets_jpnic(self):
-        # TODO: this
-        return
+
+        net = Net('133.1.2.5')
+        obj = NIRWhois(net)
+
+        # No exception raised, but should provide code coverage for multiple
+        # network scenarios and CIDR invalid IP ValueError.
+        multi_net_response = (
+            'a. [Network Number] asd>133.1.0.0/16</A>'
+            'a. [Network Number] asd>133.1.0.0/24</A>'
+        )
+        obj._get_nets_jpnic(multi_net_response)
+
+        self.assertFalse(obj._get_nets_jpnic(
+            'a. [Network Number] asd>asd/16</A>'
+        ))
 
     def test__get_nets_krnic(self):
-        # TODO: this
-        return
+
+        net = Net('115.1.2.3')
+        obj = NIRWhois(net)
+
+        # No exception raised, but should provide code coverage for multiple
+        # network scenarios and CIDR invalid IP ValueError.
+        multi_net_response = (
+            'IPv4 Address       : 115.0.0.0 - 115.23.255.255 (/12+/13)'
+            'IPv4 Address       : 115.1.2.0 - 115.1.2.63 (/26)'
+        )
+        obj._get_nets_krnic(multi_net_response)
+
+        # ip_network ValueError
+        self.assertFalse(obj._get_nets_krnic(
+            'IPv4 Address       : asd - asd (/12+/13)'
+        ))
+
+        # Expected IP range regex not found, but some value found
+        self.assertFalse(obj._get_nets_krnic(
+            'IPv4 Address       : asd'
+        ))
 
     def test__get_contact(self):
         # TODO: this

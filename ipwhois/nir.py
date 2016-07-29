@@ -237,16 +237,7 @@ class NIRWhois:
                 match = pattern.finditer(response)
 
             values = []
-            sub_section_end = None
             for m in match:
-
-                if sub_section_end:
-
-                    if field not in (
-                            'nameservers'
-                    ) and (sub_section_end != (m.start() - 1)):
-
-                        break
 
                 try:
 
@@ -255,8 +246,6 @@ class NIRWhois:
                 except IndexError:
 
                     pass
-
-                sub_section_end = m.end()
 
             if len(values) > 0:
 
@@ -547,7 +536,7 @@ class NIRWhois:
 
                 dt_format = NIR_WHOIS[nir]['dt_format']
 
-            except KeyError:
+            except KeyError:  # pragma: no cover
 
                 dt_format = None
 
