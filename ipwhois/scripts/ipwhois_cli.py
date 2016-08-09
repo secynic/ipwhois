@@ -28,7 +28,8 @@ import argparse
 import json
 from os import path
 from ipwhois import IPWhois
-from ipwhois.hr import (HR_ASN, HR_RDAP, HR_RDAP_COMMON, HR_WHOIS)
+from ipwhois.hr import (HR_ASN, HR_RDAP, HR_RDAP_COMMON, HR_WHOIS,
+                        HR_WHOIS_NIR)
 
 try:  # pragma: no cover
     from urllib.request import (ProxyHandler,
@@ -84,6 +85,14 @@ parser.add_argument(
     action='store_true',
     help='Retrieve whois data via legacy Whois (port 43) instead of RDAP '
          '(default).'
+)
+parser.add_argument(
+    '--exclude_nir',
+    action='store_true',
+    help='Disable NIR whois lookups (JPNIC, KRNIC). This is the opposite of '
+         'the ipwhois inc_nir, in order to enable inc_nir by default in the '
+         'CLI.',
+    default=False
 )
 
 # Output options
@@ -250,6 +259,20 @@ group.add_argument(
          '[\'name\', \'handle\', \'description\', \'country\', \'state\', '
          '\'city\', \'address\', \'postal_code\', \'emails\', \'created\', '
          '\'updated\']'
+)
+
+# NIR (National Internet Registry -- JPNIC, KRNIC)
+group = parser.add_argument_group('NIR (National Internet Registry) settings')
+group.add_argument(
+    '--nir_field_list',
+    type=str,
+    nargs=1,
+    default='',
+    metavar='"NIR_FIELD_LIST"',
+    help='If not --exclude_nir, a list of fields to parse: '
+         '[\'name\', \'handle\', \'country\', \'address\', \'postal_code\', '
+         '\'nameservers\', \'created\', \'updated\', \'contact_admin\', '
+         '\'contact_tech\']'
 )
 
 # Input (required)
@@ -1000,6 +1023,14 @@ class IPWhoisCLI:
         )
         output += self.generate_output_newline(colorize=colorize)
 
+        if 'nir' in ret:
+
+            # NIR
+            output += self.generate_output_nir(
+                json_data=ret, hr=hr, show_name=show_name, colorize=colorize
+            )
+            output += self.generate_output_newline(colorize=colorize)
+
         return output
 
     def generate_output_whois_nets(self, json_data=None, hr=True,
@@ -1147,6 +1178,35 @@ class IPWhoisCLI:
 
         return output
 
+    def generate_output_nir(self, json_data=None, hr=True, show_name=False,
+                            colorize=True):
+        """
+        The function for generating CLI output NIR network results.
+
+        Args:
+            json_data: The data dictionary to process.
+            hr: Enable human readable key translations.
+            show_name: Show human readable name (default is to only show
+                short).
+            colorize: Colorize the console output with ANSI colors.
+
+        Returns:
+            String: The generated output string.
+        """
+
+        output = generate_output(
+            line='0',
+            short=HR_WHOIS_NIR['nets']['_short'] if hr else 'nir_nets',
+            name=HR_WHOIS_NIR['nets']['_name'] if (hr and show_name) else None,
+            is_parent=True,
+            colorize=colorize
+        )
+
+        # TODO: this
+        output += 'NIR output placeholder'
+
+        return output
+
     def lookup_whois(self, hr=True, show_name=False, colorize=True, **kwargs):
         """
         The function for wrapping IPWhois.lookup_whois() and generating
@@ -1187,6 +1247,14 @@ class IPWhoisCLI:
         )
         output += self.generate_output_newline(colorize=colorize)
 
+        if 'nir' in ret:
+
+            # NIR
+            output += self.generate_output_nir(
+                json_data=ret, hr=hr, show_name=show_name, colorize=colorize
+            )
+            output += self.generate_output_newline(colorize=colorize)
+
         return output
 
 if script_args.addr:
@@ -1195,9 +1263,11 @@ if script_args.addr:
         addr=script_args.addr[0],
         timeout=script_args.timeout,
         proxy_http=script_args.proxy_http if (
-            script_args.proxy_http and len(script_args.proxy_http) > 0) else None,
+            script_args.proxy_http and len(script_args.proxy_http) > 0
+        ) else None,
         proxy_https=script_args.proxy_https if (
-            script_args.proxy_https and len(script_args.proxy_https) > 0) else None,
+            script_args.proxy_https and len(script_args.proxy_https) > 0
+        ) else None,
         allow_permutations=(not script_args.disallow_permutations)
     )
 
@@ -1220,7 +1290,11 @@ if script_args.addr:
             asn_alts=script_args.asn_alts.split(',') if (
                 script_args.asn_alts and
                 len(script_args.asn_alts) > 0) else None,
-            extra_org_map=script_args.extra_org_map
+            extra_org_map=script_args.extra_org_map,
+            inc_nir=(not script_args.exclude_nir),
+            nir_field_list=script_args.nir_field_list.split(',') if (
+                script_args.nir_field_list and
+                len(script_args.nir_field_list) > 0) else None
         ))
 
     else:
@@ -1240,5 +1314,9 @@ if script_args.addr:
             asn_alts=script_args.asn_alts.split(',') if (
                 script_args.asn_alts and
                 len(script_args.asn_alts) > 0) else None,
-            extra_org_map=script_args.extra_org_map
+            extra_org_map=script_args.extra_org_map,
+            inc_nir=(not script_args.exclude_nir),
+            nir_field_list=script_args.nir_field_list.split(',') if (
+                script_args.nir_field_list and
+                len(script_args.nir_field_list) > 0) else None
         ))
