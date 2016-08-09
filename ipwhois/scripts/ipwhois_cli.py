@@ -942,7 +942,7 @@ class IPWhoisCLI:
                                         tmp_out = '{0}{1}{2}'.format(
                                             i_type,
                                             ': ' if i_type != '' else '',
-                                            i_value.encode('utf-8')
+                                            i_value
                                         )
 
                                         output += generate_output(
@@ -1194,6 +1194,9 @@ class IPWhoisCLI:
             String: The generated output string.
         """
 
+        if json_data is None:
+            json_data = {}
+
         output = generate_output(
             line='0',
             short=HR_WHOIS_NIR['nets']['_short'] if hr else 'nir_nets',
@@ -1202,8 +1205,90 @@ class IPWhoisCLI:
             colorize=colorize
         )
 
-        # TODO: this
-        output += 'NIR output placeholder'
+        count = 0
+        for net in json_data['nir']['nets']:
+            if count > 0:
+                output += self.generate_output_newline(
+                    line='1',
+                    colorize=colorize
+                )
+            count += 1
+
+            output += generate_output(
+                line='1',
+                short=net['handle'],
+                is_parent=True,
+                colorize=colorize
+            )
+
+            for key, val in net.items():
+
+                if val and (isinstance(val, dict) or '\n' in val):
+
+                    output += generate_output(
+                        line='2',
+                        short=(
+                            HR_WHOIS_NIR['nets'][key]['_short'] if hr else key
+                        ),
+                        name=HR_WHOIS_NIR['nets'][key]['_name'] if (
+                            hr and show_name) else None,
+                        is_parent=False if (val is None or
+                                            len(val) == 0) else True,
+                        value='None' if (val is None or
+                                         len(val) == 0) else None,
+                        colorize=colorize
+                    )
+
+                    if key == 'contacts':
+
+                        for k, v in val.items():
+
+                            if v:
+
+                                output += generate_output(
+                                    line='3',
+                                    is_parent=False if len(v) == 0 else True,
+                                    name=k,
+                                    colorize=colorize
+                                )
+
+                                for contact_key, contact_val in v.items():
+
+                                    if v is not None:
+
+                                        tmp_out = '{0}{1}{2}'.format(
+                                            contact_key,
+                                            ': ',
+                                            contact_val
+                                        )
+
+                                        output += generate_output(
+                                            line='4',
+                                            value=tmp_out,
+                                            colorize=colorize
+                                        )
+
+                    else:
+
+                        for v in val.split('\n'):
+                            output += generate_output(
+                                line='3',
+                                value=v,
+                                colorize=colorize
+                            )
+
+                else:
+
+                    output += generate_output(
+                        line='2',
+                        short=(
+                            HR_WHOIS_NIR['nets'][key]['_short'] if hr else key
+                        ),
+                        name=HR_WHOIS_NIR['nets'][key]['_name'] if (
+                            hr and show_name) else None,
+                        value=val,
+                        colorize=colorize
+                    )
 
         return output
 

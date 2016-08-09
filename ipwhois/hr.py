@@ -356,8 +356,8 @@ HR_WHOIS = {
 
 HR_WHOIS_NIR = {
     'nets': {
-        '_short': 'Network',
-        '_name': 'NIR Network',
+        '_short': 'NIR Network',
+        '_name': 'National Internet Registry Network',
         '_description': 'The assigned NIR (JPNIC, KRNIC) network for an IP '
                         'address. May be a parent or child network.',
         'address': {
