@@ -128,5 +128,20 @@ class TestNIR(TestCommon):
         ))
 
     def test__get_contact(self):
-        # TODO: this
-        return
+
+        net = Net('115.1.2.3')
+        obj = NIRWhois(net)
+
+        contact_response = (
+            'Name               : IP Manager'
+            'Phone              : +82-2-500-6630'
+            'E-Mail             : kornet_ip@kt.com'
+        )
+
+        # No exception raised.
+        obj._get_contact(
+            response=contact_response,
+            handle=None,
+            nir='krnic',
+            dt_format=NIR_WHOIS['krnic']['dt_format']
+        )
