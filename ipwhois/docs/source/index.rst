@@ -21,6 +21,7 @@ for IPv4 and IPv6 addresses.
 
    RDAP (Recommended) <RDAP>
    Legacy Whois <WHOIS>
+   NIR (National Internet Registry) <NIR>
    Utilities <UTILS>
    CLI <CLI>
 

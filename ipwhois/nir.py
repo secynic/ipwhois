@@ -61,7 +61,6 @@ BASE_NET = {
 # Base NIR whois contact output dictionary.
 BASE_CONTACT = {
     'name': None,
-    'handle': None,
     'email': None,
     'reply_email': None,
     'organization': None,
@@ -182,8 +181,8 @@ class NIRWhois:
                 networks).
             dt_format: The format of datetime fields if known.
             field_list: If provided, a list of fields to parse:
-                ['name', 'handle', 'description', 'country', 'state', 'city',
-                'address', 'postal_code', 'emails', 'created', 'updated']
+                ['name', 'handle', 'country', 'address', 'postal_code',
+                'nameservers', 'created', 'updated', 'contacts']
             is_contact: If True, uses contact information field parsing.
 
         Returns:
@@ -441,10 +440,10 @@ class NIRWhois:
                 returned dictionary.
             retry_count: The number of times to retry in case socket errors,
                 timeouts, connection resets, etc. are encountered.
-            response: Optional response object, this bypasses the Whois lookup.
+            response: Optional response object, this bypasses the NIR lookup.
             field_list: If provided, a list of fields to parse:
-                ['name', 'handle', 'description', 'country', 'state', 'city',
-                'address', 'postal_code', 'emails', 'created', 'updated']
+                ['name', 'handle', 'country', 'address', 'postal_code',
+                'nameservers', 'created', 'updated', 'contacts']
             is_offline: Boolean for whether to perform lookups offline. If
                 True, response and asn_data must be provided. Primarily used
                 for testing.

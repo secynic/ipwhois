@@ -16,6 +16,9 @@ Library Structure
 .. automodule:: ipwhois.whois
    :members:
 
+.. automodule:: ipwhois.nir
+   :members:
+
 .. automodule:: ipwhois.utils
    :members:
 
