@@ -115,8 +115,8 @@ class IPWhois:
                 If False, the information returned for JP or KR IPs is
                 severely restricted.
             nir_field_list: If provided and inc_nir, a list of fields to parse:
-                ['name', 'handle', 'description', 'country', 'state', 'city',
-                'address', 'postal_code', 'emails', 'created', 'updated']
+                ['name', 'handle', 'country', 'address', 'postal_code',
+                'nameservers', 'created', 'updated', 'contacts']
 
         Returns:
             Dictionary:
@@ -136,6 +136,7 @@ class IPWhois:
                 listed in the ipwhois.whois.RWHOIS dictionary.
             :raw_referral: Raw referral whois results if the inc_raw parameter
                 is True. (String)
+            :nir: (Dictionary) - nir.NIRWhois() results if inc_nir is True.
         """
 
         from .whois import Whois
@@ -227,8 +228,8 @@ class IPWhois:
                 If False, the information returned for JP or KR IPs is
                 severely restricted.
             nir_field_list: If provided and inc_nir, a list of fields to parse:
-                ['name', 'handle', 'description', 'country', 'state', 'city',
-                'address', 'postal_code', 'emails', 'created', 'updated']
+                ['name', 'handle', 'country', 'address', 'postal_code',
+                'nameservers', 'created', 'updated', 'contacts']
 
         Returns:
             Dictionary:
@@ -246,6 +247,7 @@ class IPWhois:
                 of the fields listed in the ipwhois.rdap._RDAPEntity dict.
             :raw: (Dictionary) - Whois results in json format if the inc_raw
                 parameter is True.
+            :nir: (Dictionary) - nir.NIRWhois() results if inc_nir is True.
         """
 
         from .rdap import RDAP
