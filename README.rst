@@ -17,14 +17,21 @@ for IPv4 and IPv6 addresses.
 
 .. attention::
 
-    RDAP is the recommended query method as of v0.11.0. Please see the
+    RDAP (IPWhois.lookup_rdap()) is the recommended query method as of v0.11.0.
+    Please see the
     `upgrade info <https://github.com/secynic/ipwhois/blob/master/RDAP.rst
     #upgrading-from-0-10-to-0-11>`_.
 
+.. attention::
+
+    NIR (National Internet Registry) lookups are now enabled by default.
+    This is currently only performed for JPNIC and KRNIC addresses.
+    To disable, set inc_nir=False in your IPWhois.lookup_*() query.
+
 .. warning::
 
-    IPWhois.lookup() is deprecated as of v0.12.0 and will be removed. Legacy
-    whois lookups were moved to IPWhois.lookup_whois().
+    The 'nets' -> 'emails' key in IPWhois.lookup_whois() has been changed from
+    a '\\n' separated string to a list.
 
 Features
 ========

@@ -4,9 +4,14 @@ Changelog
 0.14.0 (TBD)
 ------------
 
+- Changed legacy whois emails output type to list (#133)
 - Fixed retry count non-decrementing infinite loop in
   ipwhois.net.Net.get_whois() (issue #125 - krader1961)
 - Added new function ipwhois.net.Net.get_http_raw() and tests (#67)
+- Added National Internet Registry (JPNIC, KRNIC) support (#67). Enabled by
+  default in IPWhois.lookup_*(). Disable by passing inc_nir=False. Optionally,
+  lower level code can call nir.NIRWhois(). This enhancement results in extra
+  network queries, but more detailed information for NIRs.
 - Added utils CLI (ipwhois_utils_cli.py) - #121. Installed to your environments
   Scripts dir. This is a wrapper for utils.py.
 - Documentation improvements (#123)
@@ -14,6 +19,8 @@ Changelog
 - Replaced usage of args with script_args in ipwhois_cli.py
 - Minor optimization in whois.py and online/test_whois.py
 - Added coveralls integration and re-enabled online tests with Travis CI
+- Added Read the Docs support (#132)
+- Added documentation (Sphinx) requirements.txt (#132)
 - Fixed test imports
 
 0.13.0 (2016-04-18)

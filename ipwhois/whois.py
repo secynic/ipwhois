@@ -297,10 +297,14 @@ class Whois:
                             values[0],
                             str(dt_format)).isoformat('T')
 
+                    elif field in ['emails']:
+
+                        value = list(unique_everseen(values))
+
                     else:
 
                         values = unique_everseen(values)
-                        value = '\n'.join(values)
+                        value = '\n'.join(values).strip()
 
                 except ValueError as e:
 

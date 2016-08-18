@@ -133,8 +133,7 @@ The dictionary mapped to the nets key in the
 +-------------+--------+------------------------------------------------------+
 | postal_code | String | The postal code for a registered network.            |
 +-------------+--------+------------------------------------------------------+
-| emails      | String | The email addresses listed for a registered network, |
-|             |        | separated by '\n\'                                   |
+| emails      | List   | The email addresses listed for a registered network. |
 +-------------+--------+------------------------------------------------------+
 | created     | String | Network registration date in ISO 8601 format.        |
 +-------------+--------+------------------------------------------------------+
@@ -169,8 +168,7 @@ The dictionary mapped to the referral key in the
 +-------------+--------+------------------------------------------------------+
 | postal_code | String | The postal code for a registered network.            |
 +-------------+--------+------------------------------------------------------+
-| emails      | String | The email addresses listed for a registered network, |
-|             |        | separated by \'\n\'.                                 |
+| emails      | List   | The email addresses listed for a registered network. |
 +-------------+--------+------------------------------------------------------+
 | created     | String | Network registration date in ISO 8601 format.        |
 +-------------+--------+------------------------------------------------------+
@@ -204,7 +202,10 @@ Basic usage
               'country': 'US',
               'created': '2007-03-13',
               'description': 'Google Inc.',
-              'emails': 'arin-contact@google.com\nnetwork-abuse@google.com',
+              'emails': [
+                  'arin-contact@google.com',
+                  'network-abuse@google.com'
+              ],
               'handle': 'NET-74-125-0-0-1',
               'name': 'GOOGLE',
               'postal_code': '94043',
@@ -241,9 +242,11 @@ Multiple networks listed and referral whois
            'country': 'US',
            'created': '1991-04-16',
            'description': 'PSINet, Inc.',
-           'emails': 'noc@cogentco.com\n'
-                     'abuse@cogentco.com\n'
-                     'ipalloc@cogentco.com',
+           'emails': [
+               'noc@cogentco.com',
+               'abuse@cogentco.com',
+               'ipalloc@cogentco.com'
+           ],
            'handle': 'NET-38-0-0-0-1',
            'name': 'COGENT-A',
            'postal_code': '20037',
@@ -256,9 +259,11 @@ Multiple networks listed and referral whois
            'country': 'US',
            'created': '2003-08-20',
            'description': 'PSINet, Inc.',
-           'emails': 'noc@cogentco.com\n'
-                     'abuse@cogentco.com\n'
-                     'ipalloc@cogentco.com',
+           'emails': [
+               'noc@cogentco.com',
+               'abuse@cogentco.com',
+               'ipalloc@cogentco.com'
+           ],
            'handle': 'NET-38-112-0-0-1',
            'name': 'COGENT-NB-0002',
            'postal_code': '20037',

@@ -103,8 +103,7 @@ The dictionary mapped to the nets key in the
 +-------------+--------+------------------------------------------------------+
 | postal_code | String | The postal code for a registered network.            |
 +-------------+--------+------------------------------------------------------+
-| nameservers | String | The nameservers listed for a registered network,     |
-|             |        | separated by '\n\'                                   |
+| nameservers | List   | The nameservers listed for a registered network.     |
 +-------------+--------+------------------------------------------------------+
 | created     | String | Network registration date in ISO 8601 format.        |
 +-------------+--------+------------------------------------------------------+
@@ -177,7 +176,11 @@ show the usage and results.
             "country": "JP",
             "created": null,
             "description": "Japan Network Information Center",
-            "emails": "hm-changed@apnic.net, hostmaster@nic.ad.jp, ip-apnic@nic.ad.jp",
+            "emails": [
+                "hm-changed@apnic.net",
+                "hostmaster@nic.ad.jp",
+                "ip-apnic@nic.ad.jp"
+            ],
             "handle": "JNIC1-AP",
             "name": "JPNIC-NET-JP-ERX",
             "postal_code": null,
@@ -219,7 +222,11 @@ show the usage and results.
                 "created": null,
                 "handle": "OSAKAU-NET",
                 "name": "Osaka University",
-                "nameservers": "a.osaka-u.ac.jp, b.osaka-u.ac.jp, dns-x.sinet.ad.jp",
+                "nameservers": [
+                    "a.osaka-u.ac.jp",
+                    "b.osaka-u.ac.jp",
+                    "dns-x.sinet.ad.jp"
+                ],
                 "postal_code": null,
                 "range": "133.1.0.1 - 133.1.255.255",
                 "updated": "2015-01-14T02:50:03"
@@ -311,7 +318,11 @@ show the usage and results.
                 "created": null,
                 "handle": "OSAKAU-NET",
                 "name": "Osaka University",
-                "nameservers": "a.osaka-u.ac.jp, b.osaka-u.ac.jp, dns-x.sinet.ad.jp",
+                "nameservers": [
+                    "a.osaka-u.ac.jp",
+                    "b.osaka-u.ac.jp",
+                    "dns-x.sinet.ad.jp"
+                ],
                 "postal_code": null,
                 "range": "133.1.0.1 - 133.1.255.255",
                 "updated": "2015-01-14T02:50:03"
@@ -361,8 +372,8 @@ show the usage and results.
             "raw": null,
             "remarks": null,
             "roles": [
-                "technical",
-                "administrative"
+                "administrative",
+                "technical"
             ],
             "status": null
         }

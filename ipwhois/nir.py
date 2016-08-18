@@ -260,6 +260,10 @@ class NIRWhois:
                             ) - timedelta(hours=hourdelta)
                         ).isoformat('T')
 
+                    elif field in ['nameservers']:
+
+                        value = list(unique_everseen(values))
+
                     else:
 
                         values = unique_everseen(values)
