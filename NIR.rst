@@ -153,17 +153,222 @@ Basic usage
 inc_nir defaults to true in IPWhois.lookup_*(), but I will set it here to
 show the usage and results.
 
+.. OUTPUT_BASIC START
+
 ::
 
     >>>> from ipwhois import IPWhois
     >>>> from pprint import pprint
 
-    >>>> obj = IPWhois('74.125.225.229')
+    >>>> obj = IPWhois('133.1.2.5')
     >>>> results = obj.lookup_whois(inc_nir=True)
 
-    TODO: Output
+    {
+    "asn": "4730",
+    "asn_cidr": "133.1.0.0/16",
+    "asn_country_code": "JP",
+    "asn_date": "",
+    "asn_registry": "apnic",
+    "nets": [
+        {
+            "address": "Urbannet-Kanda Bldg 4F, 3-6-2 Uchi-Kanda, Chiyoda-ku, Tokyo 101-0047,Japan",
+            "cidr": "133.0.0.0/8",
+            "city": null,
+            "country": "JP",
+            "created": null,
+            "description": "Japan Network Information Center",
+            "emails": "hm-changed@apnic.net, hostmaster@nic.ad.jp, ip-apnic@nic.ad.jp",
+            "handle": "JNIC1-AP",
+            "name": "JPNIC-NET-JP-ERX",
+            "postal_code": null,
+            "range": "133.0.0.0 - 133.255.255.255",
+            "state": null,
+            "updated": "20120828"
+        }
+    ],
+    "nir": {
+        "nets": [
+            {
+                "address": null,
+                "cidr": "133.1.0.0/16",
+                "contacts": {
+                    "admin": {
+                        "division": "Department of Information and Communications Technology Services",
+                        "email": "odins-room@odins.osaka-u.ac.jp",
+                        "fax": "06-6879-8988",
+                        "name": "Yoshihide, Minami",
+                        "organization": "Osaka University",
+                        "phone": "06-6879-8815",
+                        "reply_email": "reg@jpdirect.jp",
+                        "title": "Specialist",
+                        "updated": "2015-08-13T09:08:34"
+                    },
+                    "tech": {
+                        "division": "Department of Information and Communications Technology Services",
+                        "email": "odins-room@odins.osaka-u.ac.jp",
+                        "fax": "06-6879-8988",
+                        "name": "Yoshihide, Minami",
+                        "organization": "Osaka University",
+                        "phone": "06-6879-8815",
+                        "reply_email": "reg@jpdirect.jp",
+                        "title": "Specialist",
+                        "updated": "2015-08-13T09:08:34"
+                    }
+                },
+                "country": "JP",
+                "created": null,
+                "handle": "OSAKAU-NET",
+                "name": "Osaka University",
+                "nameservers": "a.osaka-u.ac.jp, b.osaka-u.ac.jp, dns-x.sinet.ad.jp",
+                "postal_code": null,
+                "range": "133.1.0.1 - 133.1.255.255",
+                "updated": "2015-01-14T02:50:03"
+            }
+        ],
+        "query": "133.1.2.5",
+        "raw": null
+    },
+    "query": "133.1.2.5",
+    "raw": null,
+    "raw_referral": null,
+    "referral": null
+    }
 
     >>>> results = obj.lookup_rdap(depth=1, inc_nir=True)
 
-    TODO: Output
+    {
+    "asn": "4730",
+    "asn_cidr": "133.1.0.0/16",
+    "asn_country_code": "JP",
+    "asn_date": "",
+    "asn_registry": "apnic",
+    "entities": [
+        "JNIC1-AP"
+    ],
+    "network": {
+        "cidr": "133.0.0.0/8",
+        "country": "JP",
+        "end_address": "133.255.255.255",
+        "events": [
+            {
+                "action": "last changed",
+                "actor": null,
+                "timestamp": "2009-10-30T00:51:09Z"
+            }
+        ],
+        "handle": "133.0.0.0 - 133.255.255.255",
+        "ip_version": "v4",
+        "links": [
+            "http://rdap.apnic.net/ip/133.0.0.0/8"
+        ],
+        "name": "JPNIC-NET-JP-ERX",
+        "notices": [
+            {
+                "description": "This is the APNIC WHOIS Database query service. The objects are in RDAP format.",
+                "links": [
+                    "http://www.apnic.net/db/dbcopyright.html"
+                ],
+                "title": "Terms and Conditions"
+            }
+        ],
+        "parent_handle": null,
+        "raw": null,
+        "remarks": [],
+        "start_address": "133.0.0.0",
+        "status": null,
+        "type": "ALLOCATED PORTABLE"
+    },
+    "nir": {
+        "nets": [
+            {
+                "address": null,
+                "cidr": "133.1.0.0/16",
+                "contacts": {
+                    "admin": {
+                        "division": "Department of Information and Communications Technology Services",
+                        "email": "odins-room@odins.osaka-u.ac.jp",
+                        "fax": "06-6879-8988",
+                        "name": "Yoshihide, Minami",
+                        "organization": "Osaka University",
+                        "phone": "06-6879-8815",
+                        "reply_email": "reg@jpdirect.jp",
+                        "title": "Specialist",
+                        "updated": "2015-08-13T09:08:34"
+                    },
+                    "tech": {
+                        "division": "Department of Information and Communications Technology Services",
+                        "email": "odins-room@odins.osaka-u.ac.jp",
+                        "fax": "06-6879-8988",
+                        "name": "Yoshihide, Minami",
+                        "organization": "Osaka University",
+                        "phone": "06-6879-8815",
+                        "reply_email": "reg@jpdirect.jp",
+                        "title": "Specialist",
+                        "updated": "2015-08-13T09:08:34"
+                    }
+                },
+                "country": "JP",
+                "created": null,
+                "handle": "OSAKAU-NET",
+                "name": "Osaka University",
+                "nameservers": "a.osaka-u.ac.jp, b.osaka-u.ac.jp, dns-x.sinet.ad.jp",
+                "postal_code": null,
+                "range": "133.1.0.1 - 133.1.255.255",
+                "updated": "2015-01-14T02:50:03"
+            }
+        ],
+        "query": "133.1.2.5",
+        "raw": null
+    },
+    "objects": {
+        "JNIC1-AP": {
+            "contact": {
+                "address": [
+                    {
+                        "type": null,
+                        "value": "Urbannet-Kanda Bldg 4F\, 3-6-2 Uchi-Kanda\, Chiyoda-ku, Tokyo 101-0047,Japan"
+                    }
+                ],
+                "email": [
+                    {
+                        "type": null,
+                        "value": "hostmaster@nic.ad.jp"
+                    }
+                ],
+                "kind": "group",
+                "name": "Japan Network Information Center",
+                "phone": [
+                    {
+                        "type": "voice",
+                        "value": "+81-3-5297-2311"
+                    },
+                    {
+                        "type": "fax",
+                        "value": "+81-3-5297-2312"
+                    }
+                ],
+                "role": null,
+                "title": null
+            },
+            "entities": null,
+            "events": null,
+            "events_actor": null,
+            "handle": "JNIC1-AP",
+            "links": [
+                "http://rdap.apnic.net/entity/JNIC1-AP"
+            ],
+            "notices": null,
+            "raw": null,
+            "remarks": null,
+            "roles": [
+                "technical",
+                "administrative"
+            ],
+            "status": null
+        }
+    },
+    "query": "133.1.2.5",
+    "raw": null
+    }
 
+.. OUTPUT_BASIC END
