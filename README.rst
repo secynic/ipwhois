@@ -93,15 +93,15 @@ Python 3.3+::
 Installing
 ==========
 
-Latest version from PyPi::
+Latest release from PyPi::
 
     pip install --upgrade ipwhois
 
-Latest version from GitHub::
+GitHub - Stable::
 
     pip install -e git+https://github.com/secynic/ipwhois@master#egg=ipwhois
 
-Dev version from GitHub::
+GitHub - Dev::
 
     pip install -e git+https://github.com/secynic/ipwhois@dev#egg=ipwhois
 

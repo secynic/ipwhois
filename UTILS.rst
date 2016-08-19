@@ -60,7 +60,7 @@ Get a list of CIDR range(s) from a start and end IP address.
 
 Check if IP is reserved/defined
 -------------------------------
-Get a list of CIDR range(s) from a start and end IP address.
+Check if an IPv4 or IPv6 address is in a reserved/defined pool.
 
 ::
 
