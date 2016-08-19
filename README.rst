@@ -38,11 +38,13 @@ Features
 
 * Parses a majority of whois fields in to a standard dictionary
 * IPv4 and IPv6 support
-* Referral whois support
 * Supports RDAP queries (recommended method, see:
   https://tools.ietf.org/html/rfc7483)
 * Proxy support for RDAP queries
+* Supports legacy whois protocol queries
+* Referral whois support for legacy whois protocol
 * Recursive network parsing for IPs with parent/children networks listed
+* National Internet Registry support for JPNIC and KRNIC
 * Python 2.6+ and 3.3+ supported
 * Useful set of utilities
 * BSD license
@@ -181,6 +183,19 @@ Legacy Whois documentation:
 https://secynic.github.io/ipwhois/WHOIS.html
 
 https://github.com/secynic/ipwhois/blob/master/WHOIS.rst
+
+National Internet Registries
+----------------------------
+
+This library now supports NIR lookups for JPNIC and KRNIC. Previously, Whois
+and RDAP data for Japan and South Korea was restricted. NIR lookups scrape
+these national registries directly for the data restricted from regional
+internet registries. NIR queries are enabled by default via the inc_nir
+argument in the IPWhois.lookup_*() functions.
+
+https://secynic.github.io/ipwhois/NIR.html
+
+https://github.com/secynic/ipwhois/blob/master/NIR.rst
 
 Utilities
 ---------
