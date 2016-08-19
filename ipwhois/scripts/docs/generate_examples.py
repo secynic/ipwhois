@@ -24,9 +24,55 @@
 
 # CLI python script interface for generating the docs usage examples output.
 
-from ipwhois import IPWhois
-import re
+import argparse
 import json
+import logging
+import re
+from ipwhois import IPWhois
+from ipwhois.utils import unique_everseen
+
+# CLI ANSI rendering
+ANSI = {
+    'end': '\033[0m',
+    'b': '\033[1m',
+    'ul': '\033[4m',
+    'red': '\033[31m',
+    'green': '\033[32m',
+    'yellow': '\033[33m',
+    'cyan': '\033[36m'
+}
+
+# Setup the arg parser.
+parser = argparse.ArgumentParser(
+    description='ipwhois documentation usage examples generator'
+)
+
+parser.add_argument(
+    '--docs',
+    type=str,
+    metavar='"RDAP.rst,WHOIS.rst,NIR.rst..."',
+    nargs=1,
+    help='Comma separated list of RST document names to process. Omitting '
+         'this argmuent will default to all supported.'
+)
+
+# Output options
+group = parser.add_argument_group('Output options')
+
+group.add_argument(
+    '--progress',
+    action='store_true',
+    help='If set, provides output for this script\'s progress.'
+)
+
+group.add_argument(
+    '--debug',
+    action='store_true',
+    help='If set, provides debug logging output.'
+)
+
+# Get the args
+script_args = parser.parse_args()
 
 RST_FILES = {
     'NIR.rst': {
@@ -53,7 +99,45 @@ RST_FILES = {
     }
 }
 
-for filename, sections in RST_FILES.items():
+if script_args.debug:
+
+    LOG_FORMAT = ('[%(asctime)s] [%(levelname)s] [%(filename)s:%(lineno)s] '
+                  '[%(funcName)s()] %(message)s')
+    logging.basicConfig(level=logging.DEBUG, format=LOG_FORMAT)
+    log = logging.getLogger(__name__)
+
+if script_args.docs:
+
+    rst_files_keys = list(unique_everseen(script_args.docs[0].split(',')))
+
+    try:
+
+        for v in rst_files_keys:
+
+            keytest = RST_FILES[v]
+
+    except KeyError as e:
+
+        print('{0}--docs key error{1}: {2}'.format(
+            ANSI['red'], ANSI['end'], str(e)
+        ))
+        exit(0)
+
+else:
+
+    rst_files_keys = RST_FILES.keys()
+
+x = 1
+for filename, sections in (
+         x for x in RST_FILES.items() if x[0] in rst_files_keys
+):
+
+    if script_args.progress:
+
+        print('{0}Processing file{1}: {2} ({3}/{4})'.format(
+            ANSI['b'], ANSI['end'], str(filename), str(x),
+            str(len(rst_files_keys))
+        ))
 
     filepath = '../../../{0}'.format(filename)
     s = open(filepath).read()
@@ -89,6 +173,22 @@ for filename, sections in RST_FILES.items():
             flags=re.DOTALL
         )
 
+    if script_args.progress:
+
+        print('{0}Writing updates to file{1}: {2} ({3}/{4})'.format(
+            ANSI['b'], ANSI['end'], str(filename), str(x),
+            str(len(rst_files_keys))
+        ))
+
     f = open(filepath, 'w')
     f.write(s)
     f.close()
+
+    if script_args.progress:
+
+        print('{0}Updates completed for file{1}: {2} ({3}/{4})'.format(
+            ANSI['b'], ANSI['end'], str(filename), str(x),
+            str(len(rst_files_keys))
+        ))
+
+    x += 1
