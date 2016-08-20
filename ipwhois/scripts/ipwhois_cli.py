@@ -1241,7 +1241,8 @@ class IPWhoisCLI:
 
                 for key, val in net.items():
 
-                    if val and (isinstance(val, dict) or '\n' in val):
+                    if val and (isinstance(val, dict) or '\n' in val or
+                                key == 'nameservers'):
 
                         output += generate_output(
                             line='2',
@@ -1287,7 +1288,14 @@ class IPWhoisCLI:
                                                 value=tmp_out,
                                                 colorize=colorize
                                             )
+                        elif key == 'nameservers':
 
+                            for v in val:
+                                output += generate_output(
+                                    line='3',
+                                    value=v,
+                                    colorize=colorize
+                                )
                         else:
 
                             for v in val.split('\n'):
