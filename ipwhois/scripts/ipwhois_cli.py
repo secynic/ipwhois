@@ -94,6 +94,12 @@ parser.add_argument(
          'CLI.',
     default=False
 )
+parser.add_argument(
+    '--json',
+    action='store_true',
+    help='Output results in JSON format.',
+    default=False
+)
 
 # Output options
 group = parser.add_argument_group('Output options')
@@ -130,7 +136,7 @@ group.add_argument(
     nargs=1,
     default='',
     metavar='"PROXY_HTTP"',
-    help='The proxy HTTP address passed to request.ProxyHandler. User auth'
+    help='The proxy HTTP address passed to request.ProxyHandler. User auth '
          'can be passed like "http://user:pass@192.168.0.1:80"',
     required=False
 )
@@ -996,40 +1002,47 @@ class IPWhoisCLI:
         # Perform the RDAP lookup
         ret = self.obj.lookup_rdap(**kwargs)
 
-        # Header
-        output = self.generate_output_header(query_type='RDAP')
+        if script_args.json:
 
-        # ASN
-        output += self.generate_output_asn(
-            json_data=ret, hr=hr, show_name=show_name, colorize=colorize
-        )
-        output += self.generate_output_newline(colorize=colorize)
+            output = json.dumps(ret)
 
-        # Entities
-        output += self.generate_output_entities(
-            json_data=ret, hr=hr, show_name=show_name, colorize=colorize
-        )
-        output += self.generate_output_newline(colorize=colorize)
+        else:
 
-        # Network
-        output += self.generate_output_network(
-            json_data=ret, hr=hr, show_name=show_name, colorize=colorize
-        )
-        output += self.generate_output_newline(colorize=colorize)
+            # Header
+            output = self.generate_output_header(query_type='RDAP')
 
-        # Objects
-        output += self.generate_output_objects(
-            json_data=ret, hr=hr, show_name=show_name, colorize=colorize
-        )
-        output += self.generate_output_newline(colorize=colorize)
-
-        if 'nir' in ret:
-
-            # NIR
-            output += self.generate_output_nir(
+            # ASN
+            output += self.generate_output_asn(
                 json_data=ret, hr=hr, show_name=show_name, colorize=colorize
             )
             output += self.generate_output_newline(colorize=colorize)
+
+            # Entities
+            output += self.generate_output_entities(
+                json_data=ret, hr=hr, show_name=show_name, colorize=colorize
+            )
+            output += self.generate_output_newline(colorize=colorize)
+
+            # Network
+            output += self.generate_output_network(
+                json_data=ret, hr=hr, show_name=show_name, colorize=colorize
+            )
+            output += self.generate_output_newline(colorize=colorize)
+
+            # Objects
+            output += self.generate_output_objects(
+                json_data=ret, hr=hr, show_name=show_name, colorize=colorize
+            )
+            output += self.generate_output_newline(colorize=colorize)
+
+            if 'nir' in ret:
+
+                # NIR
+                output += self.generate_output_nir(
+                    json_data=ret, hr=hr, show_name=show_name,
+                    colorize=colorize
+                )
+                output += self.generate_output_newline(colorize=colorize)
 
         return output
 
@@ -1206,89 +1219,101 @@ class IPWhoisCLI:
         )
 
         count = 0
-        for net in json_data['nir']['nets']:
-            if count > 0:
-                output += self.generate_output_newline(
-                    line='1',
-                    colorize=colorize
-                )
-            count += 1
+        if json_data['nir']:
 
-            output += generate_output(
-                line='1',
-                short=net['handle'],
-                is_parent=True,
-                colorize=colorize
-            )
+            for net in json_data['nir']['nets']:
 
-            for key, val in net.items():
+                if count > 0:
 
-                if val and (isinstance(val, dict) or '\n' in val):
-
-                    output += generate_output(
-                        line='2',
-                        short=(
-                            HR_WHOIS_NIR['nets'][key]['_short'] if hr else key
-                        ),
-                        name=HR_WHOIS_NIR['nets'][key]['_name'] if (
-                            hr and show_name) else None,
-                        is_parent=False if (val is None or
-                                            len(val) == 0) else True,
-                        value='None' if (val is None or
-                                         len(val) == 0) else None,
+                    output += self.generate_output_newline(
+                        line='1',
                         colorize=colorize
                     )
 
-                    if key == 'contacts':
+                count += 1
 
-                        for k, v in val.items():
+                output += generate_output(
+                    line='1',
+                    short=net['handle'],
+                    is_parent=True,
+                    colorize=colorize
+                )
 
-                            if v:
+                for key, val in net.items():
 
+                    if val and (isinstance(val, dict) or '\n' in val):
+
+                        output += generate_output(
+                            line='2',
+                            short=(
+                                HR_WHOIS_NIR['nets'][key]['_short'] if (
+                                    hr) else key
+                            ),
+                            name=HR_WHOIS_NIR['nets'][key]['_name'] if (
+                                hr and show_name) else None,
+                            is_parent=False if (val is None or
+                                                len(val) == 0) else True,
+                            value='None' if (val is None or
+                                             len(val) == 0) else None,
+                            colorize=colorize
+                        )
+
+                        if key == 'contacts':
+
+                            for k, v in val.items():
+
+                                if v:
+
+                                    output += generate_output(
+                                        line='3',
+                                        is_parent=False if (
+                                            len(v) == 0) else True,
+                                        name=k,
+                                        colorize=colorize
+                                    )
+
+                                    for contact_key, contact_val in v.items():
+
+                                        if v is not None:
+
+                                            tmp_out = '{0}{1}{2}'.format(
+                                                contact_key,
+                                                ': ',
+                                                contact_val
+                                            )
+
+                                            output += generate_output(
+                                                line='4',
+                                                value=tmp_out,
+                                                colorize=colorize
+                                            )
+
+                        else:
+
+                            for v in val.split('\n'):
                                 output += generate_output(
                                     line='3',
-                                    is_parent=False if len(v) == 0 else True,
-                                    name=k,
+                                    value=v,
                                     colorize=colorize
                                 )
 
-                                for contact_key, contact_val in v.items():
-
-                                    if v is not None:
-
-                                        tmp_out = '{0}{1}{2}'.format(
-                                            contact_key,
-                                            ': ',
-                                            contact_val
-                                        )
-
-                                        output += generate_output(
-                                            line='4',
-                                            value=tmp_out,
-                                            colorize=colorize
-                                        )
-
                     else:
 
-                        for v in val.split('\n'):
-                            output += generate_output(
-                                line='3',
-                                value=v,
-                                colorize=colorize
-                            )
+                        output += generate_output(
+                            line='2',
+                            short=(
+                                HR_WHOIS_NIR['nets'][key]['_short'] if (
+                                    hr) else key
+                            ),
+                            name=HR_WHOIS_NIR['nets'][key]['_name'] if (
+                                hr and show_name) else None,
+                            value=val,
+                            colorize=colorize
+                        )
 
-                else:
+        else:
 
-                    output += generate_output(
-                        line='2',
-                        short=(
-                            HR_WHOIS_NIR['nets'][key]['_short'] if hr else key
-                        ),
-                        name=HR_WHOIS_NIR['nets'][key]['_name'] if (
-                            hr and show_name) else None,
-                        value=val,
-                        colorize=colorize
-                    )
+            output += 'None'
 
         return output
 
@@ -1311,34 +1336,41 @@ class IPWhoisCLI:
         # Perform the RDAP lookup
         ret = self.obj.lookup_whois(**kwargs)
 
-        # Header
-        output = self.generate_output_header(query_type='Legacy Whois')
+        if script_args.json:
 
-        # ASN
-        output += self.generate_output_asn(
-            json_data=ret, hr=hr, show_name=show_name, colorize=colorize
-        )
-        output += self.generate_output_newline(colorize=colorize)
+            output = json.dumps(ret)
 
-        # Network
-        output += self.generate_output_whois_nets(
-            json_data=ret, hr=hr, show_name=show_name, colorize=colorize
-        )
-        output += self.generate_output_newline(colorize=colorize)
+        else:
 
-        # Referral
-        output += self.generate_output_whois_referral(
-            json_data=ret, hr=hr, show_name=show_name, colorize=colorize
-        )
-        output += self.generate_output_newline(colorize=colorize)
+            # Header
+            output = self.generate_output_header(query_type='Legacy Whois')
 
-        if 'nir' in ret:
-
-            # NIR
-            output += self.generate_output_nir(
+            # ASN
+            output += self.generate_output_asn(
                 json_data=ret, hr=hr, show_name=show_name, colorize=colorize
             )
             output += self.generate_output_newline(colorize=colorize)
+
+            # Network
+            output += self.generate_output_whois_nets(
+                json_data=ret, hr=hr, show_name=show_name, colorize=colorize
+            )
+            output += self.generate_output_newline(colorize=colorize)
+
+            # Referral
+            output += self.generate_output_whois_referral(
+                json_data=ret, hr=hr, show_name=show_name, colorize=colorize
+            )
+            output += self.generate_output_newline(colorize=colorize)
+
+            if 'nir' in ret:
+
+                # NIR
+                output += self.generate_output_nir(
+                    json_data=ret, hr=hr, show_name=show_name,
+                    colorize=colorize
+                )
+                output += self.generate_output_newline(colorize=colorize)
 
         return output
 

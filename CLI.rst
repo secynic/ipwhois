@@ -16,8 +16,9 @@ ipwhois_cli.py
 Usage
 -----
 
-ipwhois_cli.py [-h] --addr IP [--whois] [--hr] [--show_name] [--colorize]
-                      [--timeout TIMEOUT] [--proxy_http "PROXY_HTTP"]
+ipwhois_cli.py [-h] [--whois] [--exclude_nir] [--json] [--hr]
+                      [--show_name] [--colorize] [--timeout TIMEOUT]
+                      [--proxy_http "PROXY_HTTP"]
                       [--proxy_https "PROXY_HTTPS"] [--disallow_permutations]
                       [--inc_raw] [--retry_count RETRY_COUNT]
                       [--asn_alts "ASN_ALTS"] [--extra_org_map "ASN_ALTS"]
@@ -26,6 +27,7 @@ ipwhois_cli.py [-h] --addr IP [--whois] [--hr] [--show_name] [--colorize]
                       [--rate_limit_timeout RATE_LIMIT_TIMEOUT]
                       [--get_referral] [--extra_blacklist "EXTRA_BLACKLIST"]
                       [--ignore_referral_errors] [--field_list "FIELD_LIST"]
+                      [--nir_field_list "NIR_FIELD_LIST"] --addr "IP"
 
 ipwhois CLI interface
 
@@ -33,12 +35,16 @@ optional arguments:
   -h, --help            show this help message and exit
   --whois               Retrieve whois data via legacy Whois (port 43) instead
                         of RDAP (default).
+  --exclude_nir         Disable NIR whois lookups (JPNIC, KRNIC). This is the
+                        opposite of the ipwhois inc_nir, in order to enable
+                        inc_nir by default in the CLI.
+  --json                Output results in JSON format.
 
 Output options:
   --hr                  If set, returns results with human readable key
                         translations.
   --show_name           If this and --hr are set, the key name is shown in
-                        parentheses after its short value
+                        parentheses afterits short value
   --colorize            If set, colorizes the output using ANSI. Should work
                         in most platform consoles.
 
@@ -106,6 +112,13 @@ Legacy Whois settings:
                         'handle', 'description', 'country', 'state', 'city',
                         'address', 'postal_code', 'emails', 'created',
                         'updated']
+
+NIR (National Internet Registry) settings:
+  --nir_field_list NIR_FIELD_LIST
+                        If not --exclude_nir, a list of fields to parse:
+                        ['name', 'handle', 'country', 'address',
+                        'postal_code', 'nameservers', 'created', 'updated',
+                        'contact_admin', 'contact_tech']
 
 Input (Required):
   --addr IP             An IPv4 or IPv6 address as a string.
