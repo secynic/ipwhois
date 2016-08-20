@@ -22,6 +22,7 @@ Changelog
 - Added Read the Docs support (#132)
 - Added documentation (Sphinx) requirements.txt (#132)
 - Fixed test imports
+- Added --json argument (output in JSON format) to ipwhois_cli.py (#135)
 
 0.13.0 (2016-04-18)
 -------------------
