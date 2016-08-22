@@ -11,6 +11,12 @@ ipwhois
     :target: https://github.com/secynic/ipwhois/tree/master/LICENSE.txt
 .. image:: https://img.shields.io/badge/python-2.6%2C%202.7%2C%203.3%2C%203.4
     %2C%203.5-blue.svg
+.. image:: https://img.shields.io/badge/docs-release%20v0.14.0-green.svg?style=flat
+    :target: https://ipwhois.readthedocs.io/en/v0.14.0
+.. image:: https://readthedocs.org/projects/pip/badge/?version=latest
+    :target: https://ipwhois.readthedocs.io/en/latest
+.. image:: https://img.shields.io/badge/docs-dev-yellow.svg?style=flat
+    :target: https://ipwhois.readthedocs.io/en/dev
 
 ipwhois is a Python package focused on retrieving and parsing whois data
 for IPv4 and IPv6 addresses.
