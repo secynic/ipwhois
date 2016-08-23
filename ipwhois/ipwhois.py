@@ -180,7 +180,7 @@ class IPWhois:
                 nir_whois = NIRWhois(self.net)
                 nir_data = nir_whois.lookup(
                     nir=nir, inc_raw=inc_raw, retry_count=retry_count,
-                    response=None,  # TODO: fix this, make param
+                    response=None,
                     field_list=nir_field_list, is_offline=False
                 )
 
@@ -294,7 +294,7 @@ class IPWhois:
                 nir_whois = NIRWhois(self.net)
                 nir_data = nir_whois.lookup(
                     nir=nir, inc_raw=inc_raw, retry_count=retry_count,
-                    response=None,  # TODO: fix this, make param
+                    response=None,
                     field_list=nir_field_list, is_offline=False
                 )
 

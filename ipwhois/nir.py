@@ -22,7 +22,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-from . import (HTTPLookupError, NetError)
+from . import NetError
 from .utils import unique_everseen
 import logging
 import sys
@@ -398,7 +398,7 @@ class NIRWhois:
         NIR_WHOIS contact_fields.
 
         Args:
-            response: Optional response object, this bypasses the Whois lookup.
+            response: Optional response object, this bypasses the lookup.
             nir: The NIR to query ('jpnic' or 'krnic').
             handle: For NIRs that have seperate contact queries (JPNIC),
                 this is the contact handle to use in the query.
@@ -456,19 +456,10 @@ class NIRWhois:
             Dictionary:
 
             :query: The IP address (String)
-            :asn: The Autonomous System Number (String)
-            :asn_date: The ASN Allocation date (String)
-            :asn_registry: The assigned ASN registry (String)
-            :asn_cidr: The assigned ASN CIDR (String)
-            :asn_country_code: The assigned ASN country code (String)
-            :nets: Dictionaries containing network information which consists
-                of the fields listed in the NIC_WHOIS dictionary. (List)
-            :raw: Raw whois results if the inc_raw parameter is True. (String)
-            :referral: Dictionary of referral whois information if get_referral
-                is True and the server isn't blacklisted. Consists of fields
-                listed in the RWHOIS dictionary.
-            :raw_referral: Raw referral whois results if the inc_raw parameter
-                is True. (String)
+            :nets: List of dictionaries containing network information which
+                consists of the fields listed in the NIR_WHOIS dictionary.
+            :raw: Raw NIR whois results if the inc_raw parameter is True.
+                (String)
         """
 
         if nir not in NIR_WHOIS.keys():
