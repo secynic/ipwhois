@@ -38,12 +38,26 @@ Feature Requests
 - Include sources of information with links or screenshots
 - Do you have a suggestion on how to implement the feature?
 
+Testing
+=======
+
+You may have noticed that Travis CI tests are taking longer to complete.
+This is due to the enabling of online lookup tests (network tests in the
+ipwhois/tests/online directory).
+
+When running local tests, you may include these tests by adding the
+--include=online flag to your nosetests command.
+
+Example::
+
+    nosetests -v -w ipwhois --include=online
+
 Questions
 =========
 
 I am happy to answer any questions and provide assistance where possible.
 Please be clear and concise. Provide examples when possible. Check the
-ipwhois `documentation <https://secynic.github.io/ipwhois>`_ and the
+ipwhois `documentation <https://ipwhois.readthedocs.io/en/latest>`_ and the
 `issue tracker <https://github.com/secynic/ipwhois/issues>`_ before asking a
 question.
 

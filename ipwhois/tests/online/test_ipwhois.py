@@ -1,7 +1,9 @@
 import logging
 from ipwhois.tests import TestCommon
-from ipwhois import (IPWhois, ASNLookupError, ASNRegistryError,
-                     WhoisLookupError, HTTPLookupError, BlacklistError)
+from ipwhois.exceptions import (ASNLookupError, ASNRegistryError,
+                                WhoisLookupError, HTTPLookupError,
+                                BlacklistError)
+from ipwhois.ipwhois import IPWhois
 
 LOG_FORMAT = ('[%(asctime)s] [%(levelname)s] [%(filename)s:%(lineno)s] '
               '[%(funcName)s()] %(message)s')
@@ -11,7 +13,7 @@ log = logging.getLogger(__name__)
 
 class TestIPWhois(TestCommon):
 
-    def test_lookup(self):
+    def test_lookup_whois(self):
 
         ips = [
             '74.125.225.229',  # ARIN
@@ -23,7 +25,9 @@ class TestIPWhois(TestCommon):
             '200.57.141.161',  # LACNIC
             '2801:10:c000::',
             '196.11.240.215',  # AFRINIC
-            '2001:43f8:7b0::'
+            '2001:43f8:7b0::',
+            '133.1.2.5',  # JPNIC
+            '115.1.2.3'  # KRNIC
         ]
 
         for ip in ips:
@@ -32,6 +36,7 @@ class TestIPWhois(TestCommon):
             result = IPWhois(ip)
 
             try:
+                # TODO: keep until deprecated lookup is removed, for coverage
                 self.assertIsInstance(result.lookup(), dict)
             except (ASNLookupError, ASNRegistryError, WhoisLookupError):
                 pass
@@ -48,7 +53,7 @@ class TestIPWhois(TestCommon):
 
             result = IPWhois(ip)
             try:
-                self.assertIsInstance(result.lookup(
+                self.assertIsInstance(result.lookup_whois(
                     get_referral=True,
                     ignore_referral_errors=True,
                     inc_raw=True), dict)
@@ -63,7 +68,7 @@ class TestIPWhois(TestCommon):
 
             result = IPWhois(ip)
             try:
-                self.assertIsInstance(result.lookup(
+                self.assertIsInstance(result.lookup_whois(
                     get_referral=True,
                     ignore_referral_errors=True,
                     inc_raw=True,
@@ -76,7 +81,7 @@ class TestIPWhois(TestCommon):
                 self.fail('Unexpected exception raised: {0}'.format(e))
 
             try:
-                self.assertIsInstance(result.lookup(
+                self.assertIsInstance(result.lookup_whois(
                     get_referral=True,
                     ignore_referral_errors=False,
                     inc_raw=True,
@@ -95,7 +100,7 @@ class TestIPWhois(TestCommon):
 
             result = IPWhois(ip)
             try:
-                self.assertIsInstance(result.lookup(
+                self.assertIsInstance(result.lookup_whois(
                     get_referral=True,
                     ignore_referral_errors=False,
                     inc_raw=False), dict)
@@ -124,7 +129,9 @@ class TestIPWhois(TestCommon):
             '200.57.141.161',  # LACNIC
             '2801:10:c000::',
             '196.11.240.215',  # AFRINIC
-            '2001:43f8:7b0::'
+            '2001:43f8:7b0::',
+            '133.1.2.5',  # JPNIC
+            '115.1.2.3'  # KRNIC
         ]
 
         for ip in ips:

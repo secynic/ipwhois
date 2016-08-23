@@ -4,31 +4,52 @@ ipwhois
 
 .. image:: https://travis-ci.org/secynic/ipwhois.svg?branch=master
     :target: https://travis-ci.org/secynic/ipwhois
-.. image:: https://coveralls.io/repos/github/secynic/ipwhois/badge.svg?branch=master
+.. image:: https://coveralls.io/repos/github/secynic/ipwhois/badge.svg?branch=
+    master
     :target: https://coveralls.io/github/secynic/ipwhois?branch=master
 .. image:: https://img.shields.io/badge/license-BSD%202--Clause-blue.svg
     :target: https://github.com/secynic/ipwhois/tree/master/LICENSE.txt
 .. image:: https://img.shields.io/badge/python-2.6%2C%202.7%2C%203.3+-blue.svg
+.. image:: https://img.shields.io/badge/docs-release%20v0.14.0-green.svg?style=flat
+    :target: https://ipwhois.readthedocs.io/en/v0.14.0
+.. image:: https://readthedocs.org/projects/pip/badge/?version=latest
+    :target: https://ipwhois.readthedocs.io/en/latest
+.. image:: https://img.shields.io/badge/docs-dev-yellow.svg?style=flat
+    :target: https://ipwhois.readthedocs.io/en/dev
 
 ipwhois is a Python package focused on retrieving and parsing whois data
 for IPv4 and IPv6 addresses.
 
-RDAP is the recommended query method as of v0.11.0. Please see the
-`upgrade info <https://github.com/secynic/ipwhois/blob/master/RDAP.rst
-#upgrading-from-0-10-to-0-11>`_.
+.. attention::
 
-IPWhois.lookup() is deprecated as of v0.12.0 and will be removed. Legacy whois
-lookups were moved to IPWhois.lookup_whois().
+    RDAP (IPWhois.lookup_rdap()) is the recommended query method as of v0.11.0.
+    If you are upgrading from earlier than 0.11.0, please see the
+    `upgrade info <https://ipwhois.readthedocs.io/en/v0.14.0/RDAP.html
+    #upgrading-from-0-10-to-0-11>`_.
+
+.. attention::
+
+    NIR (National Internet Registry) lookups are now enabled by default.
+    This is currently only performed for JPNIC and KRNIC addresses.
+    To disable, set inc_nir=False in your IPWhois.lookup_*() query.
+
+.. warning::
+
+    The 'nets' -> 'emails' key in IPWhois.lookup_whois() has been changed from
+    a '\\n' separated string to a list.
 
 Features
 ========
 
 * Parses a majority of whois fields in to a standard dictionary
 * IPv4 and IPv6 support
-* Referral whois support
-* Supports RDAP queries (recommended method, more detailed information)
+* Supports RDAP queries (recommended method, see:
+  https://tools.ietf.org/html/rfc7483)
 * Proxy support for RDAP queries
+* Supports legacy whois protocol queries
+* Referral whois support for legacy whois protocol
 * Recursive network parsing for IPs with parent/children networks listed
+* National Internet Registry support for JPNIC and KRNIC
 * Python 2.6+ and 3.3+ supported
 * Useful set of utilities
 * BSD license
@@ -42,7 +63,20 @@ Links
 Documentation
 -------------
 
-https://secynic.github.io/ipwhois
+Release v0.14.0
+^^^^^^^^^^^^^^^
+
+https://ipwhois.readthedocs.io/en/v0.14.0
+
+GitHub master
+^^^^^^^^^^^^^
+
+https://ipwhois.readthedocs.io/en/latest
+
+GitHub dev
+^^^^^^^^^^
+
+https://ipwhois.readthedocs.io/en/dev
 
 Examples
 --------
@@ -62,7 +96,7 @@ https://pypi.python.org/pypi/ipwhois
 Changes
 -------
 
-https://secynic.github.io/ipwhois/CHANGES.html
+https://ipwhois.readthedocs.io/en/latest/CHANGES.html
 
 Dependencies
 ============
@@ -79,13 +113,17 @@ Python 3.3+::
 Installing
 ==========
 
-Latest version from PyPi::
+Latest release from PyPi::
 
-	pip install --upgrade ipwhois
+    pip install --upgrade ipwhois
 
-Latest version from GitHub::
+GitHub - Stable::
 
-	pip install -e git+https://github.com/secynic/ipwhois@master#egg=ipwhois
+    pip install -e git+https://github.com/secynic/ipwhois@master#egg=ipwhois
+
+GitHub - Dev::
+
+    pip install -e git+https://github.com/secynic/ipwhois@dev#egg=ipwhois
 
 Firewall Ports
 ==============
@@ -148,9 +186,7 @@ network information.
 
 RDAP documentation:
 
-https://secynic.github.io/ipwhois/RDAP.html
-
-https://github.com/secynic/ipwhois/blob/master/RDAP.rst
+https://ipwhois.readthedocs.io/en/latest/RDAP.html
 
 Legacy Whois
 ------------
@@ -160,34 +196,37 @@ lookups were moved to IPWhois.lookup_whois().
 
 Legacy Whois documentation:
 
-https://secynic.github.io/ipwhois/WHOIS.html
+https://ipwhois.readthedocs.io/en/latest/WHOIS.html
 
-https://github.com/secynic/ipwhois/blob/master/WHOIS.rst
+National Internet Registries
+----------------------------
+
+This library now supports NIR lookups for JPNIC and KRNIC. Previously, Whois
+and RDAP data for Japan and South Korea was restricted. NIR lookups scrape
+these national registries directly for the data restricted from regional
+internet registries. NIR queries are enabled by default via the inc_nir
+argument in the IPWhois.lookup_*() functions.
+
+https://ipwhois.readthedocs.io/en/latest/NIR.html
 
 Utilities
 ---------
 
 Utilities documentation:
 
-https://secynic.github.io/ipwhois/UTILS.html
-
-https://github.com/secynic/ipwhois/blob/master/UTILS.rst
+https://ipwhois.readthedocs.io/en/latest/UTILS.html
 
 Scripts
 -------
 
 CLI documentation:
 
-https://secynic.github.io/ipwhois/CLI.html
-
-https://github.com/secynic/ipwhois/blob/master/CLI.rst
+https://ipwhois.readthedocs.io/en/latest/CLI.html
 
 Contributing
 ============
 
-https://secynic.github.io/ipwhois/CONTRIBUTING.html
-
-https://github.com/secynic/ipwhois/blob/master/CONTRIBUTING.rst
+https://ipwhois.readthedocs.io/en/latest/CONTRIBUTING.html
 
 IP Reputation Support
 =====================

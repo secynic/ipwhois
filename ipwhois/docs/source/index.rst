@@ -21,12 +21,11 @@ for IPv4 and IPv6 addresses.
 
    RDAP (Recommended) <RDAP>
    Legacy Whois <WHOIS>
+   NIR (National Internet Registry) <NIR>
    Utilities <UTILS>
    CLI <CLI>
 
 .. toctree::
    :caption: Code
 
-   Index <https://secynic.github.io/ipwhois/genindex.html>
-   Module Index <https://secynic.github.io/ipwhois/py-modindex.html>
    ipwhois

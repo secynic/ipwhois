@@ -1,8 +1,9 @@
 import logging
 from ipwhois.tests import TestCommon
-from ipwhois import (Net, ASNLookupError, ASNRegistryError, BlacklistError,
-                     WhoisLookupError, HTTPLookupError, HostLookupError,
-                     HTTPRateLimitError)
+from ipwhois.exceptions import (ASNLookupError, ASNRegistryError,
+                                BlacklistError, WhoisLookupError,
+                                HTTPLookupError, HostLookupError)
+from ipwhois.net import Net
 
 LOG_FORMAT = ('[%(asctime)s] [%(levelname)s] [%(filename)s:%(lineno)s] '
               '[%(funcName)s()] %(message)s')
@@ -142,13 +143,13 @@ class TestNet(TestCommon):
         ))
 
     def test_get_http_raw(self):
-        from ipwhois.net import NIR
+        from ipwhois.nir import NIR_WHOIS
 
         # GET
         result = Net('133.1.2.5')
         try:
             self.assertIsInstance(result.get_http_raw(
-                NIR['jpnic']['url'].format('133.1.2.5')), str)
+                NIR_WHOIS['jpnic']['url'].format('133.1.2.5')), str)
         except HTTPLookupError:
             pass
         except AssertionError as e:
@@ -160,9 +161,11 @@ class TestNet(TestCommon):
         result = Net('115.1.2.3')
         try:
             self.assertIsInstance(result.get_http_raw(
-                url=NIR['krnic']['url'].format('115.1.2.3'),
-                request_type=NIR['krnic']['request_type'],
-                form_data={NIR['krnic']['form_data_ip_field']: '115.1.2.3'}
+                url=NIR_WHOIS['krnic']['url'].format('115.1.2.3'),
+                request_type=NIR_WHOIS['krnic']['request_type'],
+                form_data={
+                    NIR_WHOIS['krnic']['form_data_ip_field']: '115.1.2.3'
+                }
             ), str)
         except HTTPLookupError:
             pass
@@ -175,6 +178,6 @@ class TestNet(TestCommon):
             url='http://255.255.255.255', retry_count=1))
 
         result = Net(address='133.1.2.5', timeout=0)
-        url = NIR['jpnic']['url'].format('133.1.2.5')
+        url = NIR_WHOIS['jpnic']['url'].format('133.1.2.5')
         self.assertRaises(HTTPLookupError, result.get_http_raw, **dict(
             url=url, retry_count=0))

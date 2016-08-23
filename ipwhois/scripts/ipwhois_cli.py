@@ -28,7 +28,8 @@ import argparse
 import json
 from os import path
 from ipwhois import IPWhois
-from ipwhois.hr import (HR_ASN, HR_RDAP, HR_RDAP_COMMON, HR_WHOIS)
+from ipwhois.hr import (HR_ASN, HR_RDAP, HR_RDAP_COMMON, HR_WHOIS,
+                        HR_WHOIS_NIR)
 
 try:  # pragma: no cover
     from urllib.request import (ProxyHandler,
@@ -85,6 +86,20 @@ parser.add_argument(
     help='Retrieve whois data via legacy Whois (port 43) instead of RDAP '
          '(default).'
 )
+parser.add_argument(
+    '--exclude_nir',
+    action='store_true',
+    help='Disable NIR whois lookups (JPNIC, KRNIC). This is the opposite of '
+         'the ipwhois inc_nir, in order to enable inc_nir by default in the '
+         'CLI.',
+    default=False
+)
+parser.add_argument(
+    '--json',
+    action='store_true',
+    help='Output results in JSON format.',
+    default=False
+)
 
 # Output options
 group = parser.add_argument_group('Output options')
@@ -121,7 +136,7 @@ group.add_argument(
     nargs=1,
     default='',
     metavar='"PROXY_HTTP"',
-    help='The proxy HTTP address passed to request.ProxyHandler. User auth'
+    help='The proxy HTTP address passed to request.ProxyHandler. User auth '
          'can be passed like "http://user:pass@192.168.0.1:80"',
     required=False
 )
@@ -250,6 +265,20 @@ group.add_argument(
          '[\'name\', \'handle\', \'description\', \'country\', \'state\', '
          '\'city\', \'address\', \'postal_code\', \'emails\', \'created\', '
          '\'updated\']'
+)
+
+# NIR (National Internet Registry -- JPNIC, KRNIC)
+group = parser.add_argument_group('NIR (National Internet Registry) settings')
+group.add_argument(
+    '--nir_field_list',
+    type=str,
+    nargs=1,
+    default='',
+    metavar='"NIR_FIELD_LIST"',
+    help='If not --exclude_nir, a list of fields to parse: '
+         '[\'name\', \'handle\', \'country\', \'address\', \'postal_code\', '
+         '\'nameservers\', \'created\', \'updated\', \'contact_admin\', '
+         '\'contact_tech\']'
 )
 
 # Input (required)
@@ -919,7 +948,7 @@ class IPWhoisCLI:
                                         tmp_out = '{0}{1}{2}'.format(
                                             i_type,
                                             ': ' if i_type != '' else '',
-                                            i_value.encode('utf-8')
+                                            i_value
                                         )
 
                                         output += generate_output(
@@ -973,32 +1002,47 @@ class IPWhoisCLI:
         # Perform the RDAP lookup
         ret = self.obj.lookup_rdap(**kwargs)
 
-        # Header
-        output = self.generate_output_header(query_type='RDAP')
+        if script_args.json:
 
-        # ASN
-        output += self.generate_output_asn(
-            json_data=ret, hr=hr, show_name=show_name, colorize=colorize
-        )
-        output += self.generate_output_newline(colorize=colorize)
+            output = json.dumps(ret)
 
-        # Entities
-        output += self.generate_output_entities(
-            json_data=ret, hr=hr, show_name=show_name, colorize=colorize
-        )
-        output += self.generate_output_newline(colorize=colorize)
+        else:
 
-        # Network
-        output += self.generate_output_network(
-            json_data=ret, hr=hr, show_name=show_name, colorize=colorize
-        )
-        output += self.generate_output_newline(colorize=colorize)
+            # Header
+            output = self.generate_output_header(query_type='RDAP')
 
-        # Objects
-        output += self.generate_output_objects(
-            json_data=ret, hr=hr, show_name=show_name, colorize=colorize
-        )
-        output += self.generate_output_newline(colorize=colorize)
+            # ASN
+            output += self.generate_output_asn(
+                json_data=ret, hr=hr, show_name=show_name, colorize=colorize
+            )
+            output += self.generate_output_newline(colorize=colorize)
+
+            # Entities
+            output += self.generate_output_entities(
+                json_data=ret, hr=hr, show_name=show_name, colorize=colorize
+            )
+            output += self.generate_output_newline(colorize=colorize)
+
+            # Network
+            output += self.generate_output_network(
+                json_data=ret, hr=hr, show_name=show_name, colorize=colorize
+            )
+            output += self.generate_output_newline(colorize=colorize)
+
+            # Objects
+            output += self.generate_output_objects(
+                json_data=ret, hr=hr, show_name=show_name, colorize=colorize
+            )
+            output += self.generate_output_newline(colorize=colorize)
+
+            if 'nir' in ret:
+
+                # NIR
+                output += self.generate_output_nir(
+                    json_data=ret, hr=hr, show_name=show_name,
+                    colorize=colorize
+                )
+                output += self.generate_output_newline(colorize=colorize)
 
         return output
 
@@ -1147,6 +1191,140 @@ class IPWhoisCLI:
 
         return output
 
+    def generate_output_nir(self, json_data=None, hr=True, show_name=False,
+                            colorize=True):
+        """
+        The function for generating CLI output NIR network results.
+
+        Args:
+            json_data: The data dictionary to process.
+            hr: Enable human readable key translations.
+            show_name: Show human readable name (default is to only show
+                short).
+            colorize: Colorize the console output with ANSI colors.
+
+        Returns:
+            String: The generated output string.
+        """
+
+        if json_data is None:
+            json_data = {}
+
+        output = generate_output(
+            line='0',
+            short=HR_WHOIS_NIR['nets']['_short'] if hr else 'nir_nets',
+            name=HR_WHOIS_NIR['nets']['_name'] if (hr and show_name) else None,
+            is_parent=True,
+            colorize=colorize
+        )
+
+        count = 0
+        if json_data['nir']:
+
+            for net in json_data['nir']['nets']:
+
+                if count > 0:
+
+                    output += self.generate_output_newline(
+                        line='1',
+                        colorize=colorize
+                    )
+
+                count += 1
+
+                output += generate_output(
+                    line='1',
+                    short=net['handle'],
+                    is_parent=True,
+                    colorize=colorize
+                )
+
+                for key, val in net.items():
+
+                    if val and (isinstance(val, dict) or '\n' in val or
+                                key == 'nameservers'):
+
+                        output += generate_output(
+                            line='2',
+                            short=(
+                                HR_WHOIS_NIR['nets'][key]['_short'] if (
+                                    hr) else key
+                            ),
+                            name=HR_WHOIS_NIR['nets'][key]['_name'] if (
+                                hr and show_name) else None,
+                            is_parent=False if (val is None or
+                                                len(val) == 0) else True,
+                            value='None' if (val is None or
+                                             len(val) == 0) else None,
+                            colorize=colorize
+                        )
+
+                        if key == 'contacts':
+
+                            for k, v in val.items():
+
+                                if v:
+
+                                    output += generate_output(
+                                        line='3',
+                                        is_parent=False if (
+                                            len(v) == 0) else True,
+                                        name=k,
+                                        colorize=colorize
+                                    )
+
+                                    for contact_key, contact_val in v.items():
+
+                                        if v is not None:
+
+                                            tmp_out = '{0}{1}{2}'.format(
+                                                contact_key,
+                                                ': ',
+                                                contact_val
+                                            )
+
+                                            output += generate_output(
+                                                line='4',
+                                                value=tmp_out,
+                                                colorize=colorize
+                                            )
+                        elif key == 'nameservers':
+
+                            for v in val:
+                                output += generate_output(
+                                    line='3',
+                                    value=v,
+                                    colorize=colorize
+                                )
+                        else:
+
+                            for v in val.split('\n'):
+                                output += generate_output(
+                                    line='3',
+                                    value=v,
+                                    colorize=colorize
+                                )
+
+                    else:
+
+                        output += generate_output(
+                            line='2',
+                            short=(
+                                HR_WHOIS_NIR['nets'][key]['_short'] if (
+                                    hr) else key
+                            ),
+                            name=HR_WHOIS_NIR['nets'][key]['_name'] if (
+                                hr and show_name) else None,
+                            value=val,
+                            colorize=colorize
+                        )
+
+        else:
+
+            output += 'None'
+
+        return output
+
     def lookup_whois(self, hr=True, show_name=False, colorize=True, **kwargs):
         """
         The function for wrapping IPWhois.lookup_whois() and generating
@@ -1166,26 +1344,41 @@ class IPWhoisCLI:
         # Perform the RDAP lookup
         ret = self.obj.lookup_whois(**kwargs)
 
-        # Header
-        output = self.generate_output_header(query_type='Legacy Whois')
+        if script_args.json:
 
-        # ASN
-        output += self.generate_output_asn(
-            json_data=ret, hr=hr, show_name=show_name, colorize=colorize
-        )
-        output += self.generate_output_newline(colorize=colorize)
+            output = json.dumps(ret)
 
-        # Network
-        output += self.generate_output_whois_nets(
-            json_data=ret, hr=hr, show_name=show_name, colorize=colorize
-        )
-        output += self.generate_output_newline(colorize=colorize)
+        else:
 
-        # Referral
-        output += self.generate_output_whois_referral(
-            json_data=ret, hr=hr, show_name=show_name, colorize=colorize
-        )
-        output += self.generate_output_newline(colorize=colorize)
+            # Header
+            output = self.generate_output_header(query_type='Legacy Whois')
+
+            # ASN
+            output += self.generate_output_asn(
+                json_data=ret, hr=hr, show_name=show_name, colorize=colorize
+            )
+            output += self.generate_output_newline(colorize=colorize)
+
+            # Network
+            output += self.generate_output_whois_nets(
+                json_data=ret, hr=hr, show_name=show_name, colorize=colorize
+            )
+            output += self.generate_output_newline(colorize=colorize)
+
+            # Referral
+            output += self.generate_output_whois_referral(
+                json_data=ret, hr=hr, show_name=show_name, colorize=colorize
+            )
+            output += self.generate_output_newline(colorize=colorize)
+
+            if 'nir' in ret:
+
+                # NIR
+                output += self.generate_output_nir(
+                    json_data=ret, hr=hr, show_name=show_name,
+                    colorize=colorize
+                )
+                output += self.generate_output_newline(colorize=colorize)
 
         return output
 
@@ -1195,9 +1388,11 @@ if script_args.addr:
         addr=script_args.addr[0],
         timeout=script_args.timeout,
         proxy_http=script_args.proxy_http if (
-            script_args.proxy_http and len(script_args.proxy_http) > 0) else None,
+            script_args.proxy_http and len(script_args.proxy_http) > 0
+        ) else None,
         proxy_https=script_args.proxy_https if (
-            script_args.proxy_https and len(script_args.proxy_https) > 0) else None,
+            script_args.proxy_https and len(script_args.proxy_https) > 0
+        ) else None,
         allow_permutations=(not script_args.disallow_permutations)
     )
 
@@ -1220,7 +1415,11 @@ if script_args.addr:
             asn_alts=script_args.asn_alts.split(',') if (
                 script_args.asn_alts and
                 len(script_args.asn_alts) > 0) else None,
-            extra_org_map=script_args.extra_org_map
+            extra_org_map=script_args.extra_org_map,
+            inc_nir=(not script_args.exclude_nir),
+            nir_field_list=script_args.nir_field_list.split(',') if (
+                script_args.nir_field_list and
+                len(script_args.nir_field_list) > 0) else None
         ))
 
     else:
@@ -1240,5 +1439,9 @@ if script_args.addr:
             asn_alts=script_args.asn_alts.split(',') if (
                 script_args.asn_alts and
                 len(script_args.asn_alts) > 0) else None,
-            extra_org_map=script_args.extra_org_map
+            extra_org_map=script_args.extra_org_map,
+            inc_nir=(not script_args.exclude_nir),
+            nir_field_list=script_args.nir_field_list.split(',') if (
+                script_args.nir_field_list and
+                len(script_args.nir_field_list) > 0) else None
         ))

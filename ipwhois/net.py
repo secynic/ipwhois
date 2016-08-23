@@ -73,22 +73,6 @@ log = logging.getLogger(__name__)
 # POSSIBLY UPDATE TO USE RDAP
 ARIN = 'http://whois.arin.net/rest/nets;q={0}?showDetails=true&showARIN=true'
 
-# National Internet Registry
-NIR = {
-    'jpnic': {
-        'url': ('http://whois.nic.ad.jp/cgi-bin/whois_gw?lang=%2Fe&key={0}'
-                '&submit=query'),
-        'request_type': 'GET',
-        'request_headers': {'Accept': 'text/html'}
-    },
-    'krnic': {
-        'url': 'http://whois.kisa.or.kr/eng/whois.jsc',
-        'request_type': 'POST',
-        'request_headers': {'Accept': 'text/html'},
-        'form_data_ip_field': 'query'
-    }
-}
-
 CYMRU_WHOIS = 'whois.cymru.com'
 
 IPV4_DNS_ZONE = '{0}.origin.asn.cymru.com'
@@ -899,6 +883,7 @@ class Net:
         if form_data:
             form_data = urlencode(form_data)
             try:
+                # Py 2 inspection will alert on the encoding arg, no harm done.
                 form_data = bytes(form_data, encoding='ascii')
             except TypeError:  # pragma: no cover
                 pass
@@ -909,8 +894,9 @@ class Net:
             log.debug('HTTP query for {0} at {1}'.format(
                 self.address_str, url))
             try:
+                # Py 2 inspection alert bypassed by using kwargs dict.
                 conn = Request(url=url, data=form_data, headers=headers,
-                               method=request_type)
+                               **{'method': request_type})
             except TypeError:  # pragma: no cover
                 conn = Request(url=url, data=form_data, headers=headers)
             data = self.opener.open(conn, timeout=self.timeout)
