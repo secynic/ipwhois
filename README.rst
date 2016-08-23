@@ -9,8 +9,7 @@ ipwhois
     :target: https://coveralls.io/github/secynic/ipwhois?branch=master
 .. image:: https://img.shields.io/badge/license-BSD%202--Clause-blue.svg
     :target: https://github.com/secynic/ipwhois/tree/master/LICENSE.txt
-.. image:: https://img.shields.io/badge/python-2.6%2C%202.7%2C%203.3%2C%203.4
-    %2C%203.5-blue.svg
+.. image:: https://img.shields.io/badge/python-2.6%2C%202.7%2C%203.3+-blue.svg
 .. image:: https://img.shields.io/badge/docs-release%20v0.14.0-green.svg?style=flat
     :target: https://ipwhois.readthedocs.io/en/v0.14.0
 .. image:: https://readthedocs.org/projects/pip/badge/?version=latest
@@ -24,8 +23,8 @@ for IPv4 and IPv6 addresses.
 .. attention::
 
     RDAP (IPWhois.lookup_rdap()) is the recommended query method as of v0.11.0.
-    Please see the
-    `upgrade info <https://github.com/secynic/ipwhois/blob/master/RDAP.rst
+    If you are upgrading from earlier than 0.11.0, please see the
+    `upgrade info <https://ipwhois.readthedocs.io/en/v0.14.0/RDAP.html
     #upgrading-from-0-10-to-0-11>`_.
 
 .. attention::
@@ -64,7 +63,20 @@ Links
 Documentation
 -------------
 
-https://secynic.github.io/ipwhois
+Release v0.14.0
+^^^^^^^^^^^^^^^
+
+https://ipwhois.readthedocs.io/en/v0.14.0
+
+GitHub master
+^^^^^^^^^^^^^
+
+https://ipwhois.readthedocs.io/en/latest
+
+GitHub dev
+^^^^^^^^^^
+
+https://ipwhois.readthedocs.io/en/dev
 
 Examples
 --------
@@ -84,7 +96,7 @@ https://pypi.python.org/pypi/ipwhois
 Changes
 -------
 
-https://secynic.github.io/ipwhois/CHANGES.html
+https://ipwhois.readthedocs.io/en/latest/CHANGES.html
 
 Dependencies
 ============
@@ -174,9 +186,7 @@ network information.
 
 RDAP documentation:
 
-https://secynic.github.io/ipwhois/RDAP.html
-
-https://github.com/secynic/ipwhois/blob/master/RDAP.rst
+https://ipwhois.readthedocs.io/en/latest/RDAP.html
 
 Legacy Whois
 ------------
@@ -186,9 +196,7 @@ lookups were moved to IPWhois.lookup_whois().
 
 Legacy Whois documentation:
 
-https://secynic.github.io/ipwhois/WHOIS.html
-
-https://github.com/secynic/ipwhois/blob/master/WHOIS.rst
+https://ipwhois.readthedocs.io/en/latest/WHOIS.html
 
 National Internet Registries
 ----------------------------
@@ -199,34 +207,26 @@ these national registries directly for the data restricted from regional
 internet registries. NIR queries are enabled by default via the inc_nir
 argument in the IPWhois.lookup_*() functions.
 
-https://secynic.github.io/ipwhois/NIR.html
-
-https://github.com/secynic/ipwhois/blob/master/NIR.rst
+https://ipwhois.readthedocs.io/en/latest/NIR.html
 
 Utilities
 ---------
 
 Utilities documentation:
 
-https://secynic.github.io/ipwhois/UTILS.html
-
-https://github.com/secynic/ipwhois/blob/master/UTILS.rst
+https://ipwhois.readthedocs.io/en/latest/UTILS.html
 
 Scripts
 -------
 
 CLI documentation:
 
-https://secynic.github.io/ipwhois/CLI.html
-
-https://github.com/secynic/ipwhois/blob/master/CLI.rst
+https://ipwhois.readthedocs.io/en/latest/CLI.html
 
 Contributing
 ============
 
-https://secynic.github.io/ipwhois/CONTRIBUTING.html
-
-https://github.com/secynic/ipwhois/blob/master/CONTRIBUTING.rst
+https://ipwhois.readthedocs.io/en/latest/CONTRIBUTING.html
 
 IP Reputation Support
 =====================

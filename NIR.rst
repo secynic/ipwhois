@@ -15,15 +15,11 @@ following input documentation links:
 
 RDAP documentation:
 
-https://secynic.github.io/ipwhois/RDAP.html#input
-
-https://github.com/secynic/ipwhois/blob/master/RDAP.rst#input
+https://ipwhois.readthedocs.io/en/latest/RDAP.html#input
 
 Legacy Whois documentation:
 
-https://secynic.github.io/ipwhois/WHOIS.html#input
-
-https://github.com/secynic/ipwhois/blob/master/WHOIS.rst#input
+https://ipwhois.readthedocs.io/en/latest/WHOIS.html#input
 
 Input (Direct)
 ==============

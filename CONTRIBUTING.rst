@@ -57,7 +57,7 @@ Questions
 
 I am happy to answer any questions and provide assistance where possible.
 Please be clear and concise. Provide examples when possible. Check the
-ipwhois `documentation <https://secynic.github.io/ipwhois>`_ and the
+ipwhois `documentation <https://ipwhois.readthedocs.io/en/latest>`_ and the
 `issue tracker <https://github.com/secynic/ipwhois/issues>`_ before asking a
 question.
 
