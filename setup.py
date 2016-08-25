@@ -13,6 +13,7 @@ KEYWORDS = [
     "Python",
     "WHOIS",
     "RWhois",
+    "Referral Whois",
     "ASN",
     "IP Address",
     "IP",
@@ -26,8 +27,12 @@ KEYWORDS = [
     "Lacnic",
     "Afrinic",
     "NIC",
+    "National Information Center",
     "RDAP",
-    "RIR"
+    "RIR",
+    "Regional Internet Registry"
+    "NIR",
+    "National Intgernet Registry"
 ]
 
 README = io.open(file='README.rst', mode='r', encoding='utf-8').read()
