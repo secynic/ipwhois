@@ -295,7 +295,7 @@ class NIRWhois:
         # Iterate through all of the networks found, storing the CIDR value
         # and the start and end positions.
         for match in re.finditer(
-                r'^.+?(\[Network Number\])[^\S\n]+.+?>(?P<val>.+?)</A>$',
+                r'^.*?(\[Network Number\])[^\S\n]+.+?>(?P<val>.+?)</A>$',
                 response,
                 re.MULTILINE
         ):
