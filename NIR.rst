@@ -6,6 +6,8 @@ IPWhois.nir provides functionality for national registries which restrict
 information on regional registries. Currently, JPNIC (Japan) and KRNIC
 (South Korea) are supported.
 
+.. _nir-input-ipwhois-wrapper:
+
 Input (IPWhois Wrapper)
 =======================
 
@@ -20,6 +22,8 @@ https://ipwhois.readthedocs.io/en/latest/RDAP.html#input
 Legacy Whois documentation:
 
 https://ipwhois.readthedocs.io/en/latest/WHOIS.html#input
+
+.. _nir-input-direct:
 
 Input (Direct)
 ==============
@@ -51,11 +55,15 @@ arguments for that function call:
 |             |        | Primarily used for testing.                          |
 +-------------+--------+------------------------------------------------------+
 
+.. _nir-output:
+
 Output
 ======
 
 If calling via an IPWhois wrapper, the NIR results are added to the RDAP/WHOIS
 result dictionary under the key 'nir'.
+
+.. _nir-results-dictionary:
 
 Results Dictionary
 ------------------
@@ -69,16 +77,18 @@ IPWhois.lookup_whois() results.
 | query            | String | The IP address input                            |
 +------------------+--------+-------------------------------------------------+
 | nets             | List   | List of network dictionaries.                   |
-|                  |        | See `Network Dictionary <#network-dictionary>`_.|
+|                  |        | See :ref:`nir-network-dictionary`.              |
 +------------------+--------+-------------------------------------------------+
 | raw              | String | Raw NIR whois results if inc_raw is True.       |
 +------------------+--------+-------------------------------------------------+
+
+.. _nir-network-dictionary:
 
 Network Dictionary
 ^^^^^^^^^^^^^^^^^^
 
 The dictionary mapped to the nets key in the
-`Results Dictionary <#results-dictionary>`_.
+:ref:`nir-results-dictionary`.
 
 +-------------+--------+------------------------------------------------------+
 | **Key**     |**Type**| **Description**                                      |
@@ -107,15 +117,17 @@ The dictionary mapped to the nets key in the
 +-------------+--------+------------------------------------------------------+
 | contacts    | Dict   | Dictionary with keys: admin, tech. Values map to     |
 |             |        | contact dictionaries if found. See                   |
-|             |        | `Contact Dictionary <#contact-dictionary>`_.         |
+|             |        | :ref:`nir-contact-dictionary`.                       |
 +-------------+--------+------------------------------------------------------+
+
+.. _nir-contact-dictionary:
 
 Contact Dictionary
 ^^^^^^^^^^^^^^^^^^
 
 The contact information dictionary registered to a NIR network object. This is
 'contacts' -> 'admin'/'tech' key in
-`Network Dictionary <#network-dictionary>`_.
+:ref:`nir-network-dictionary`.
 
 +--------------+--------+-----------------------------------------------------+
 | **Key**      |**Type**| **Description**                                     |
@@ -138,6 +150,8 @@ The contact information dictionary registered to a NIR network object. This is
 +--------------+--------+-----------------------------------------------------+
 | title        | String | The contact's position or job title.                |
 +--------------+--------+-----------------------------------------------------+
+
+.. _nir-usage-examples:
 
 Usage Examples
 ==============
