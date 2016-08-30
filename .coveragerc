@@ -2,6 +2,9 @@
 omit =
     */python?.?/*
     */site-packages/nose/*
-    ipwhois/hr.py
-    ipwhois/tests/*
+    ipwhois/data/*
+    ipwhois/docs/*
     ipwhois/examples/*
+    ipwhois/scripts/*
+    ipwhois/tests/*
+    ipwhois/hr.py

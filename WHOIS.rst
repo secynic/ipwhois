@@ -6,7 +6,7 @@ IPWhois.lookup() is deprecated as of v0.12.0 and will be removed. Legacy whois
 lookups were moved to IPWhois.lookup_whois().
 
 Parsing is currently limited to the keys in the output
-`below <#results-dictionary>`_.
+:ref:`whois-results-dictionary`.
 This is assuming that those fields are present (for both whois and rwhois).
 
 Some IPs have parent networks listed. The parser attempts to recognize this,
@@ -16,6 +16,8 @@ multiple CIDRs, they will be separated by ', '.
 Sometimes, you will see whois information with multiple consecutive same name
 fields, e.g., Description: some text\\nDescription: more text. The parser will
 recognize this and the returned result will have the values separated by '\\n'.
+
+.. _whois-input:
 
 Input
 =====
@@ -65,8 +67,12 @@ Arguments supported by IPWhois.lookup_whois().
 |                        |        | 'apnic', 'lacnic', 'afrinic'              |
 +------------------------+--------+-------------------------------------------+
 
+.. _whois-output:
+
 Output
 ======
+
+.. _whois-results-dictionary:
 
 Results Dictionary
 ------------------
@@ -90,23 +96,25 @@ The output dictionary from IPWhois.lookup_whois().
 | asn_registry     | String | ASN assigned regional internet registry.        |
 +------------------+--------+-------------------------------------------------+
 | nets             | List   | List of network dictionaries.                   |
-|                  |        | See `Network Dictionary <#network-dictionary>`_.|
+|                  |        | See :ref:`whois-network-dictionary`.            |
 +------------------+--------+-------------------------------------------------+
 | raw              | String | Raw whois results if inc_raw is True.           |
 +------------------+--------+-------------------------------------------------+
 | referral         | Dict   | Referral whois information if get_referral      |
 |                  |        | is True and the server isn't blacklisted. See   |
-|                  |        | `Referral Dictionary <#referral-dictionary>`_.  |
+|                  |        | :ref:`whois-referral-dictionary`.               |
 +------------------+--------+-------------------------------------------------+
 | raw_referral     | String | Raw referral whois results if the inc_raw       |
 |                  |        | parameter is True.                              |
 +------------------+--------+-------------------------------------------------+
 
+.. _whois-network-dictionary:
+
 Network Dictionary
 ^^^^^^^^^^^^^^^^^^
 
 The dictionary mapped to the nets key in the
-`Results Dictionary <#results-dictionary>`_.
+:ref:`whois-results-dictionary`.
 
 +-------------+--------+------------------------------------------------------+
 | **Key**     |**Type**| **Description**                                      |
@@ -140,11 +148,13 @@ The dictionary mapped to the nets key in the
 | updated     | String | Network registration updated date in ISO 8601 format.|
 +-------------+--------+------------------------------------------------------+
 
+.. _whois-referral-dictionary:
+
 Referral Dictionary
 ^^^^^^^^^^^^^^^^^^^
 
 The dictionary mapped to the referral key in the
-`Results Dictionary <#results-dictionary>`_.
+:ref:`whois-results-dictionary`.
 
 +-------------+--------+------------------------------------------------------+
 | **Key**     |**Type**| **Description**                                      |
@@ -175,6 +185,8 @@ The dictionary mapped to the referral key in the
 | updated     | String | Network registration updated date in ISO 8601 format.|
 +-------------+--------+------------------------------------------------------+
 
+.. _whois-usage-examples:
+
 Usage Examples
 ==============
 
@@ -183,20 +195,20 @@ Basic usage
 
 ::
 
-	>>>> from ipwhois import IPWhois
-	>>>> from pprint import pprint
+    >>>> from ipwhois import IPWhois
+    >>>> from pprint import pprint
 
-	>>>> obj = IPWhois('74.125.225.229')
-	>>>> results = obj.lookup_whois()
-	>>>> pprint(results)
+    >>>> obj = IPWhois('74.125.225.229')
+    >>>> results = obj.lookup_whois()
+    >>>> pprint(results)
 
-	{
-	'asn': '15169',
-	'asn_cidr': '74.125.225.0/24',
-	'asn_country_code': 'US',
-	'asn_date': '2007-03-13',
-	'asn_registry': 'arin',
-	'nets': [{'address': '1600 Amphitheatre Parkway',
+    {
+    'asn': '15169',
+    'asn_cidr': '74.125.225.0/24',
+    'asn_country_code': 'US',
+    'asn_date': '2007-03-13',
+    'asn_registry': 'arin',
+    'nets': [{'address': '1600 Amphitheatre Parkway',
               'cidr': '74.125.0.0/16',
               'city': 'Mountain View',
               'country': 'US',
@@ -212,11 +224,11 @@ Basic usage
               'range': '74.125.0.0 - 74.125.255.255',
               'state': 'CA',
               'updated': '2012-02-24'}],
-	'query': '74.125.225.229',
-	'raw': None,
-	'raw_referral': None,
-	'referral': None
-	}
+    'query': '74.125.225.229',
+    'raw': None,
+    'raw_referral': None,
+    'referral': None
+    }
 
 Multiple networks listed and referral whois
 -------------------------------------------

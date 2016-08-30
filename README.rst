@@ -22,21 +22,31 @@ for IPv4 and IPv6 addresses.
 
 .. attention::
 
+    NIR (National Internet Registry) lookups are now enabled by default.
+    This is currently only performed for JPNIC and KRNIC addresses.
+    To disable, set inc_nir=False in your IPWhois.lookup_*() query.
+
+.. attention::
+
+    The 'nets' -> 'emails' key in IPWhois.lookup_whois() has been changed from
+    a '\\n' separated string to a list.
+
+
+.. important::
+
     RDAP (IPWhois.lookup_rdap()) is the recommended query method as of v0.11.0.
     If you are upgrading from earlier than 0.11.0, please see the
     `upgrade info <https://ipwhois.readthedocs.io/en/v0.14.0/RDAP.html
     #upgrading-from-0-10-to-0-11>`_.
 
-.. attention::
+.. note::
 
-    NIR (National Internet Registry) lookups are now enabled by default.
-    This is currently only performed for JPNIC and KRNIC addresses.
-    To disable, set inc_nir=False in your IPWhois.lookup_*() query.
-
-.. warning::
-
-    The 'nets' -> 'emails' key in IPWhois.lookup_whois() has been changed from
-    a '\\n' separated string to a list.
+    If you are experiencing latency issues, it is likely related to rate
+    limiting. Profiling the tests, I see most time spent attributed to network
+    latency. Rate limiting is based on your source IP, which may be a problem
+    with multiple users behind the same proxy. Additionally, LACNIC implements
+    aggressive rate limiting. Bulk query optimization is on the roadmap
+    (https://github.com/secynic/ipwhois/issues/134)
 
 Features
 ========

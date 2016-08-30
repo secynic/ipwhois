@@ -11,6 +11,10 @@ class embedded in this file (IPWhoisRedisCache).
 Dependencies
 ============
 
+Tested using::
+
+    Redis 3.2.1
+
 Python 2.6 (requirements26.txt)::
 
     ipwhois

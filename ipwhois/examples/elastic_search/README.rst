@@ -17,6 +17,11 @@ https://dev.maxmind.com/geoip/geoip2/geolite2/
 Dependencies
 ============
 
+Tested using::
+
+    ElasticSearch 2.3.5
+    Kibana 4.5.4
+
 Python 2.6 (requirements26.txt - geopy is not supported)::
 
     ipwhois
@@ -66,14 +71,14 @@ Usage Examples
 ==============
 
 Create the ipwhois ElasticSearch index
----------------------------------------
+--------------------------------------
 
 ::
 
     elastic_search.py --create
 
 Delete the ipwhois ElasticSearch index
----------------------------------------
+--------------------------------------
 
 ::
 
@@ -122,7 +127,7 @@ Import Kibana config (dashboard, search, visualization, ipwhois) from json file
     elastic_search.py --kimport "/tmp/ipwhois-kibana.json"
 
 Create ipwhois index on custom ElasticSearch host and port
------------------------------------------------------------
+----------------------------------------------------------
 
 ::
 

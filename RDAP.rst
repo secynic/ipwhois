@@ -8,6 +8,8 @@ implementation). RDAP queries allow for parsing of contact information and
 details for users, organizations, and groups. RDAP also provides more detailed
 network information.
 
+.. _rdap-input:
+
 Input
 =====
 
@@ -54,8 +56,12 @@ Arguments supported by IPWhois.lookup_rdap().
 |                    |        | 'ARIN', 'RIPE', 'apnic', 'lacnic', 'afrinic'  |
 +--------------------+--------+-----------------------------------------------+
 
+.. _rdap-output:
+
 Output
 ======
+
+.. _rdap-results-dictionary:
 
 Results Dictionary
 ------------------
@@ -81,7 +87,7 @@ and dictionaries, detailed below this section.
 +------------------+--------+-------------------------------------------------+
 | network          | Dict   | The assigned network for an IP address. May be  |
 |                  |        | a parent or child network. See                  |
-|                  |        | `Network Dictionary <#network-dictionary>`_.    |
+|                  |        | :ref:`rdap-network-dictionary`.                 |
 +------------------+--------+-------------------------------------------------+
 | entities         | List   | List of object names referenced by an RIR       |
 |                  |        | network. Map these to the objects dict keys.    |
@@ -90,17 +96,19 @@ and dictionaries, detailed below this section.
 |                  |        | network or by other entities (depending on      |
 |                  |        | depth parameter). Keys are the object names     |
 |                  |        | with values as                                  |
-|                  |        | `Objects Dictionary <#objects-dictionary>`_.    |
+|                  |        | :ref:`rdap-objects-dictionary`.                 |
 +------------------+--------+-------------------------------------------------+
 | raw              | Dict   | The raw results dictionary (JSON) if            |
 |                  |        | inc_raw is True.                                |
 +------------------+--------+-------------------------------------------------+
 
+.. _rdap-network-dictionary:
+
 Network Dictionary
 ^^^^^^^^^^^^^^^^^^
 
 The dictionary mapped to the network key in the objects list within
-`Results Dictionary <#results-dictionary>`_.
+:ref:`rdap-results-dictionary`.
 
 +---------------+--------+----------------------------------------------------+
 | **Key**       |**Type**| **Description**                                    |
@@ -113,7 +121,7 @@ The dictionary mapped to the network key in the objects list within
 | end_address   | String | The last IP address in a network block.            |
 +---------------+--------+----------------------------------------------------+
 | events        | List   | List of event dictionaries. See                    |
-|               |        | `Events Dictionary <#events-dictionary>`_.         |
+|               |        | :ref:`rdap-events-dictionary`.                     |
 +---------------+--------+----------------------------------------------------+
 | handle        | String | Unique identifier for a registered object.         |
 +---------------+--------+----------------------------------------------------+
@@ -125,13 +133,13 @@ The dictionary mapped to the network key in the objects list within
 |               |        | registration for an IP address.                    |
 +---------------+--------+----------------------------------------------------+
 | notices       | List   | List of notice dictionaries. See                   |
-|               |        | `Notices Dictionary <#notices-dictionary>`_.       |
+|               |        | :ref:`rdap-notices-dictionary`.                    |
 +---------------+--------+----------------------------------------------------+
 | parent_handle | String | Unique identifier for the parent network of a      |
 |               |        | registered network.                                |
 +---------------+--------+----------------------------------------------------+
 | remarks       | List   | List of remark (notice) dictionaries. See          |
-|               |        | `Notices Dictionary <#notices-dictionary>`_.       |
+|               |        | :ref:`rdap-notices-dictionary`.                    |
 +---------------+--------+----------------------------------------------------+
 | start_address | String | The first IP address in a network block.           |
 +---------------+--------+----------------------------------------------------+
@@ -140,48 +148,52 @@ The dictionary mapped to the network key in the objects list within
 | type          | String | The RIR classification of a registered network.    |
 +---------------+--------+----------------------------------------------------+
 
+.. _rdap-objects-dictionary:
+
 Objects Dictionary
 ^^^^^^^^^^^^^^^^^^
 
 The dictionary mapped to the object (entity) key in the objects list within
-`Results Dictionary <#results-dictionary>`_.
+:ref:`rdap-results-dictionary`.
 
 +--------------+--------+-----------------------------------------------------+
 | **Key**      |**Type**| **Description**                                     |
 +--------------+--------+-----------------------------------------------------+
 | contact      | Dict   | Contact information registered with an RIR object.  |
 |              |        | See                                                 |
-|              |        | `Contact Dictionary <#objects-contact-dictionary>`_.|
+|              |        | :ref:`rdap-objects-contact-dictionary`.             |
 +--------------+--------+-----------------------------------------------------+
 | entities     | List   | List of object names referenced by an RIR object.   |
 |              |        | Map these to other objects dictionary keys.         |
 +--------------+--------+-----------------------------------------------------+
 | events       | List   | List of event dictionaries. See                     |
-|              |        | `Events Dictionary <#events-dictionary>`_.          |
+|              |        | :ref:`rdap-events-dictionary`.                      |
 +--------------+--------+-----------------------------------------------------+
 | events_actor | List   | List of event (no actor) dictionaries. See          |
-|              |        | `Events Dictionary <#events-dictionary>`_.          |
+|              |        | :ref:`rdap-events-dictionary`.                      |
 +--------------+--------+-----------------------------------------------------+
 | handle       | String | Unique identifier for a registered object.          |
 +--------------+--------+-----------------------------------------------------+
 | links        | List   | List of HTTP/HTTPS links provided for an RIR object.|
 +--------------+--------+-----------------------------------------------------+
 | notices      | List   | List of notice dictionaries. See                    |
-|              |        | `Notices Dictionary <#notices-dictionary>`_.        |
+|              |        | :ref:`rdap-notices-dictionary`.                     |
 +--------------+--------+-----------------------------------------------------+
 | remarks      | List   | List of remark (notice) dictionaries. See           |
-|              |        | `Notices Dictionary <#notices-dictionary>`_.        |
+|              |        | :ref:`rdap-notices-dictionary`.                     |
 +--------------+--------+-----------------------------------------------------+
 | roles        | List   | List of roles assigned to a registered object.      |
 +--------------+--------+-----------------------------------------------------+
 | status       | List   | List indicating the state of a registered object.   |
 +--------------+--------+-----------------------------------------------------+
 
+.. _rdap-objects-contact-dictionary:
+
 Objects Contact Dictionary
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The contact information dictionary registered to an RIR object. This is the
-contact key contained in `Objects Dictionary <#objects-dictionary>`_.
+contact key contained in :ref:`rdap-objects-dictionary`.
 
 +---------+--------+----------------------------------------------------------+
 | **Key** |**Type**| **Description**                                          |
@@ -204,11 +216,13 @@ contact key contained in `Objects Dictionary <#objects-dictionary>`_.
 | title   | String | The contact's position or job title.                     |
 +---------+--------+----------------------------------------------------------+
 
+.. _rdap-events-dictionary:
+
 Events Dictionary
 ^^^^^^^^^^^^^^^^^
 
-Common to lists in `Network <#network-dictionary>`_ and
-`Objects <#objects-dictionary>`_.
+Common to lists in :ref:`rdap-network-dictionary` and
+:ref:`rdap-objects-dictionary`.
 Contained in events and events_actor (no actor).
 
 +-----------+--------+-------------------------------------------------+
@@ -221,11 +235,13 @@ Contained in events and events_actor (no actor).
 | actor     | String | The identifier for an event initiator (if any). |
 +-----------+--------+-------------------------------------------------+
 
+.. _rdap-notices-dictionary:
+
 Notices Dictionary
 ^^^^^^^^^^^^^^^^^^
 
-Common to lists in `Network <#network-dictionary>`_ and
-`Objects <#objects-dictionary>`_. Contained in notices and remarks.
+Common to lists in :ref:`rdap-network-dictionary` and
+:ref:`rdap-objects-dictionary`. Contained in notices and remarks.
 
 +-------------+--------+-------------------------------------------------+
 | **Key**     |**Type**| **Description**                                 |
@@ -236,6 +252,8 @@ Common to lists in `Network <#network-dictionary>`_ and
 +-------------+--------+-------------------------------------------------+
 | links       | List   | List of HTTP/HTTPS links provided for a notice. |
 +-------------+--------+-------------------------------------------------+
+
+.. _rdap-upgrading-from-0-10-to-0-11:
 
 Upgrading from 0.10 to 0.11
 ===========================
@@ -248,6 +266,8 @@ RDAP return data is different in nearly every way from the legacy whois data.
 
 For information on raw RDAP responses, please see the RFC:
 https://tools.ietf.org/html/rfc7483
+
+.. _rdap-usage-examples:
 
 Usage Examples
 ==============
@@ -459,16 +479,16 @@ Use a proxy
 
 ::
 
-	>>>> from urllib import request
-	>>>> from ipwhois import IPWhois
-	>>>> handler = request.ProxyHandler({'http': 'http://192.168.0.1:80/'})
-	>>>> opener = request.build_opener(handler)
-	>>>> obj = IPWhois('74.125.225.229', proxy_opener = opener)
+    >>>> from urllib import request
+    >>>> from ipwhois import IPWhois
+    >>>> handler = request.ProxyHandler({'http': 'http://192.168.0.1:80/'})
+    >>>> opener = request.build_opener(handler)
+    >>>> obj = IPWhois('74.125.225.229', proxy_opener = opener)
 
 Optimizing queries for your network
 -----------------------------------
 
-Multiple factors will slow your queries down. Several `Input <#input>`_
+Multiple factors will slow your queries down. Several :ref:`rdap-input`
 arguments assist in optimizing query performance:
 
 bootstrap
