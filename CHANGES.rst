@@ -1,8 +1,8 @@
 Changelog
 =========
 
-0.14.0 (TBD)
-------------
+0.14.0 (2016-08-29)
+-------------------
 
 - Changed legacy whois emails output type to list (#133)
 - Fixed retry count non-decrementing infinite loop in
