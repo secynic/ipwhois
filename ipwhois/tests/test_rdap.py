@@ -83,9 +83,9 @@ class TestRDAP(TestCommon):
         log.debug('Testing rdap.lookup entitiy checks')
         net = Net('74.125.225.229')
         obj = RDAP(net)
-        entity = [{"handle": "test", "roles": [
-            "administrative", "technical"], "entities": [
-            {"handle": "GOGL", "roles": ["administrative", "technical"]}]}]
+        entity = [{'handle': 'test', 'roles': [
+            'administrative', 'technical'], 'entities': [
+            {'handle': 'GOGL', 'roles': ['administrative', 'technical']}]}]
 
         self.assertIsInstance(obj.lookup(response={
                                              'handle': 'test',

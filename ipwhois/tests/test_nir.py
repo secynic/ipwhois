@@ -67,13 +67,13 @@ class TestNIR(TestCommon):
         tmp_dict = NIR_WHOIS['jpnic']['fields']
         tmp_dict['name'] = r'(NetName):[^\S\n]+(?P<val1>.+?)\n'
         obj._parse_fields(
-            response="\nNetName:        TEST\n",
+            response='\nNetName:        TEST\n',
             fields_dict=tmp_dict,
             dt_format=NIR_WHOIS['jpnic']['dt_format']
         )
 
         obj._parse_fields(
-            response="\nUpdated:        2012-02-24\n",
+            response='\nUpdated:        2012-02-24\n',
             fields_dict=NIR_WHOIS['jpnic']['fields'],
             dt_format=NIR_WHOIS['jpnic']['dt_format']
         )
@@ -82,7 +82,7 @@ class TestNIR(TestCommon):
             'Testing field parse error. This should be followed by a '
             'debug log.')
         obj._parse_fields(
-            response="\nUpdated:        2012-02-244\n",
+            response='\nUpdated:        2012-02-244\n',
             fields_dict=NIR_WHOIS['jpnic']['fields'],
             dt_format=NIR_WHOIS['jpnic']['dt_format']
         )
