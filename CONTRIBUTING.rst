@@ -73,7 +73,7 @@ Aside from the core code changes, it is helpful to provide the following
 
 - Unit tests
 - Examples
-- Sphinx configuration changes in /data
+- Sphinx configuration changes in /docs
 - Requirements (python2.txt, python3.txt)
 
 Guidelines

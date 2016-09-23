@@ -6,33 +6,33 @@ import io
 
 NAME = 'ipwhois'
 VERSION = '0.14.0'
-AUTHOR = "Philip Hane"
-AUTHOR_EMAIL = "secynic AT gmail DOT com"
-DESCRIPTION = "Retrieve and parse whois data for IPv4 and IPv6 addresses."
+AUTHOR = 'Philip Hane'
+AUTHOR_EMAIL = 'secynic AT gmail DOT com'
+DESCRIPTION = 'Retrieve and parse whois data for IPv4 and IPv6 addresses.'
 KEYWORDS = [
-    "Python",
-    "WHOIS",
-    "RWhois",
-    "Referral Whois",
-    "ASN",
-    "IP Address",
-    "IP",
-    "IPv4",
-    "IPv6",
-    "IETF",
-    "REST",
-    "Arin",
-    "Ripe",
-    "Apnic",
-    "Lacnic",
-    "Afrinic",
-    "NIC",
-    "National Information Center",
-    "RDAP",
-    "RIR",
-    "Regional Internet Registry"
-    "NIR",
-    "National Intgernet Registry"
+    'Python',
+    'WHOIS',
+    'RWhois',
+    'Referral Whois',
+    'ASN',
+    'IP Address',
+    'IP',
+    'IPv4',
+    'IPv6',
+    'IETF',
+    'REST',
+    'Arin',
+    'Ripe',
+    'Apnic',
+    'Lacnic',
+    'Afrinic',
+    'NIC',
+    'National Information Center',
+    'RDAP',
+    'RIR',
+    'Regional Internet Registry'
+    'NIR',
+    'National Intgernet Registry'
 ]
 
 README = io.open(file='README.rst', mode='r', encoding='utf-8').read()
@@ -40,25 +40,25 @@ CHANGES = io.open(file='CHANGES.rst', mode='r', encoding='utf-8').read()
 LONG_DESCRIPTION = '\n\n'.join([README, CHANGES])
 LICENSE = io.open(file='LICENSE.txt', mode='r', encoding='utf-8').read()
 
-URL = "https://github.com/secynic/ipwhois"
-DOWNLOAD_URL = "https://github.com/secynic/ipwhois/tarball/master"
+URL = 'https://github.com/secynic/ipwhois'
+DOWNLOAD_URL = 'https://github.com/secynic/ipwhois/tarball/master'
 CLASSIFIERS = [
-    "Development Status :: 4 - Beta",
-    "Intended Audience :: Developers",
-    "Intended Audience :: Information Technology",
-    "Intended Audience :: Science/Research",
-    "License :: OSI Approved :: BSD License",
-    "Operating System :: OS Independent",
-    "Programming Language :: Python",
-    "Programming Language :: Python :: 2",
-    "Programming Language :: Python :: 2.6",
-    "Programming Language :: Python :: 2.7",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.3",
-    "Programming Language :: Python :: 3.4",
-    "Programming Language :: Python :: 3.5",
-    "Topic :: Internet",
-    "Topic :: Software Development",
+    'Development Status :: 4 - Beta',
+    'Intended Audience :: Developers',
+    'Intended Audience :: Information Technology',
+    'Intended Audience :: Science/Research',
+    'License :: OSI Approved :: BSD License',
+    'Operating System :: OS Independent',
+    'Programming Language :: Python',
+    'Programming Language :: Python :: 2',
+    'Programming Language :: Python :: 2.6',
+    'Programming Language :: Python :: 2.7',
+    'Programming Language :: Python :: 3',
+    'Programming Language :: Python :: 3.3',
+    'Programming Language :: Python :: 3.4',
+    'Programming Language :: Python :: 3.5',
+    'Topic :: Internet',
+    'Topic :: Software Development',
 ]
 
 PACKAGES = ['ipwhois']
@@ -67,12 +67,12 @@ PACKAGE_DATA = {'ipwhois': ['data/*.xml', 'data/*.csv']}
 
 INSTALL_REQUIRES = []
 if sys.version_info >= (3,):
-    INSTALL_REQUIRES.append("dnspython3")
+    INSTALL_REQUIRES.append('dnspython3')
 else:
-    INSTALL_REQUIRES.append("dnspython")
+    INSTALL_REQUIRES.append('dnspython')
 
 if sys.version_info < (3, 3,):
-    INSTALL_REQUIRES.append("ipaddr")
+    INSTALL_REQUIRES.append('ipaddr')
 
 setup(
     name=NAME,

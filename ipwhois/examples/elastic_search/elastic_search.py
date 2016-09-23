@@ -105,30 +105,30 @@ args = parser.parse_args()
 
 # Common es mapping.
 DEFAULT_MAPPING = {
-    "date_detection": 1,
-    "properties": {
-        "@version": {
-            "type": "string",
-            "index": "not_analyzed"
+    'date_detection': 1,
+    'properties': {
+        '@version': {
+            'type': 'string',
+            'index': 'not_analyzed'
         },
-        "updated": {
-            "type": "date",
-            "format": "yyyy-MM-dd'T'HH:mm:ssZ",
-            "ignore_malformed": "false"
+        'updated': {
+            'type': 'date',
+            'format': 'yyyy-MM-dd\'T\'HH:mm:ssZ',
+            'ignore_malformed': 'false'
         }
     },
-    "_all": {"enabled": "true"},
-    "dynamic_templates": [
+    '_all': {'enabled': 'true'},
+    'dynamic_templates': [
         {
-            "string_fields": {
-                "match": "*",
-                "match_mapping_type": "string",
-                "mapping": {
-                    "type": "multi_field",
-                    "fields": {
-                        "{name}": {
-                            "type": "string",
-                            "index": "not_analyzed"
+            'string_fields': {
+                'match': '*',
+                'match_mapping_type': 'string',
+                'mapping': {
+                    'type': 'multi_field',
+                    'fields': {
+                        '{name}': {
+                            'type': 'string',
+                            'index': 'not_analyzed'
                         }
                     }
                 }
@@ -167,17 +167,17 @@ def create_index():
 
     # Create the ipwhois index
     es.indices.create(index='ipwhois', ignore=400, body={
-        "settings": {
-            "index.refresh_interval": "5s",
-            "analysis": {
-                "analyzer": {
-                    "base": {
-                        "type": "standard",
-                        "stopwords": "_none_"
+        'settings': {
+            'index.refresh_interval': '5s',
+            'analysis': {
+                'analyzer': {
+                    'base': {
+                        'type': 'standard',
+                        'stopwords': '_none_'
                     },
-                    "entity": {
-                        "type": "standard",
-                        "stopwords": "_none_"
+                    'entity': {
+                        'type': 'standard',
+                        'stopwords': '_none_'
                     }
                 }
             }
@@ -187,43 +187,43 @@ def create_index():
     # base doc type mapping
     mapping = DEFAULT_MAPPING.copy()
     mapping.update({
-        "properties": {
-            "asn_date": {
-                "type": "date",
-                "format": "date",
-                "ignore_malformed": "true"
+        'properties': {
+            'asn_date': {
+                'type': 'date',
+                'format': 'date',
+                'ignore_malformed': 'true'
             },
-            "network_events_timestamp": {
-                "type": "date",
-                "format": "yyyy-MM-dd'T'HH:mm:ssZ",
-                "ignore_malformed": "false"
+            'network_events_timestamp': {
+                'type': 'date',
+                'format': 'yyyy-MM-dd\'T\'HH:mm:ssZ',
+                'ignore_malformed': 'false'
             },
-            "query": {
-                "type": "ip",
-                "store": True,
-                "ignore_malformed": True
+            'query': {
+                'type': 'ip',
+                'store': True,
+                'ignore_malformed': True
             },
-            "query_geo": {
-                "type": "geo_point",
-                "lat_lon": True,
-                "geohash": True
+            'query_geo': {
+                'type': 'geo_point',
+                'lat_lon': True,
+                'geohash': True
             },
-            "network": {
-                "properties": {
-                    "country_geo": {
-                        "type": "geo_point",
-                        "lat_lon": True,
-                        "geohash": True
+            'network': {
+                'properties': {
+                    'country_geo': {
+                        'type': 'geo_point',
+                        'lat_lon': True,
+                        'geohash': True
                     },
-                    "start_address": {
-                        "type": "ip",
-                        "store": True,
-                        "ignore_malformed": True
+                    'start_address': {
+                        'type': 'ip',
+                        'store': True,
+                        'ignore_malformed': True
                     },
-                    "end_address": {
-                        "type": "ip",
-                        "store": True,
-                        "ignore_malformed": True
+                    'end_address': {
+                        'type': 'ip',
+                        'store': True,
+                        'ignore_malformed': True
                     }
                 }
             }
@@ -239,18 +239,18 @@ def create_index():
     # entity doc type mapping
     mapping = DEFAULT_MAPPING.copy()
     mapping.update({
-        "properties": {
-            "contact": {
-                "properties": {
-                    "address": {
-                        "properties": {
-                            "geo": {
-                                "type": "geo_point",
-                                "lat_lon": True,
-                                "geohash": True
+        'properties': {
+            'contact': {
+                'properties': {
+                    'address': {
+                        'properties': {
+                            'geo': {
+                                'type': 'geo_point',
+                                'lat_lon': True,
+                                'geohash': True
                             },
-                            "value": {
-                                "type": "string",
+                            'value': {
+                                'type': 'string',
                             }
                         }
                     }
@@ -277,11 +277,11 @@ def insert(input_ip='', update=True, expires=7, depth=1):
                 doc_type='base',
                 body={
                     'query': {
-                        "bool": {
-                            "must": [{
+                        'bool': {
+                            'must': [{
                                 'range': {
-                                    "updated": {
-                                        "gt": "now-{0}d".format(expires)
+                                    'updated': {
+                                        'gt': 'now-{0}d'.format(expires)
                                     }
                                 }
                             }, {
@@ -322,12 +322,12 @@ def insert(input_ip='', update=True, expires=7, depth=1):
                     doc_type='entity',
                     body={
                         'query': {
-                            "bool": {
-                                "must": [
+                            'bool': {
+                                'must': [
                                     {
                                         'range': {
-                                            "updated": {
-                                                "gt": "now-{0}d".format(expires)
+                                            'updated': {
+                                                'gt': 'now-{0}d'.format(expires)
                                             }
                                         }
                                     },
@@ -388,8 +388,8 @@ def insert(input_ip='', update=True, expires=7, depth=1):
                     doc_type='entity',
                     body={
                         'query': {
-                            "match": {
-                                "handle": ent['handle']
+                            'match': {
+                                'handle': ent['handle']
                             }
                         }
                     }
@@ -408,7 +408,7 @@ def insert(input_ip='', update=True, expires=7, depth=1):
         es.index(index='ipwhois', doc_type='entity', body=ent)
 
         # Refresh the index for searching duplicates.
-        es.indices.refresh(index="ipwhois")
+        es.indices.refresh(index='ipwhois')
 
     # Don't need the objects key since that data has been entered as the
     # entities doc_type.
@@ -470,8 +470,8 @@ def insert(input_ip='', update=True, expires=7, depth=1):
                 doc_type='base',
                 body={
                     'query': {
-                        "match": {
-                            "query": ret['query']
+                        'match': {
+                            'query': ret['query']
                         }
                     }
                 }
@@ -489,7 +489,7 @@ def insert(input_ip='', update=True, expires=7, depth=1):
     es.index(index='ipwhois', doc_type='base', body=ret)
 
     # Refresh the index for searching duplicates.
-    es.indices.refresh(index="ipwhois")
+    es.indices.refresh(index='ipwhois')
 
 if args.delete:
 
@@ -508,15 +508,15 @@ if args.kexport:
     # Export dashboards, searches, and visualizations.
     kibana_export = list(scan(
         client=es, index='.kibana',
-        doc_type="dashboard,search,visualization")
+        doc_type='dashboard,search,visualization')
     )
 
     # Export the ipwhois index pattern.
     kibana_idx_export = list(scan(
         client=es,
         index='.kibana',
-        doc_type="index-pattern",
-        query={"query": {"match": {"_id": "ipwhois"}}}
+        doc_type='index-pattern',
+        query={'query': {'match': {'_id': 'ipwhois'}}}
     ))
 
     # Dump exports to json file.
@@ -534,5 +534,5 @@ if args.kimport:
     # Update or Insert kibana config for ipwhois.
     for item in kibana_import:
 
-        es.update(index=".kibana", doc_type=item['_type'], id=item["_id"],
+        es.update(index='.kibana', doc_type=item['_type'], id=item['_id'],
                   body={'doc': item['_source'], 'doc_as_upsert': True})

@@ -1,6 +1,13 @@
 Changelog
 =========
 
+1.0.0 (TBD)
+-----------
+
+- Removed nose requirements and fixed travis.yml for updated pip
+- Documentation updates
+- Code style tweaks
+
 0.14.0 (2016-08-29)
 -------------------
 

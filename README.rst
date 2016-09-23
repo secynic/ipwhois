@@ -31,7 +31,6 @@ for IPv4 and IPv6 addresses.
     The 'nets' -> 'emails' key in IPWhois.lookup_whois() has been changed from
     a '\\n' separated string to a list.
 
-
 .. important::
 
     RDAP (IPWhois.lookup_rdap()) is the recommended query method as of v0.11.0.
@@ -111,7 +110,13 @@ https://ipwhois.readthedocs.io/en/latest/CHANGES.html
 Dependencies
 ============
 
-Python 2.6, 2.7::
+Python 2.6::
+
+    dnspython
+    ipaddr
+    argparse (required only for CLI)
+
+Python 2.7::
 
     dnspython
     ipaddr
@@ -257,4 +262,5 @@ domain support.
 Special Thanks
 ==============
 
-Thank you JetBrains for the PyCharm open source support!
+Thank you JetBrains for the `PyCharm <https://www.jetbrains.com/pycharm/>`_
+open source support!

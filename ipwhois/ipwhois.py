@@ -73,9 +73,9 @@ class IPWhois:
         """
 
         from warnings import warn
-        warn("IPWhois.lookup() has been deprecated and will be removed. "
-             "You should now use IPWhois.lookup_whois() for legacy whois "
-             "lookups.")
+        warn('IPWhois.lookup() has been deprecated and will be removed. '
+             'You should now use IPWhois.lookup_whois() for legacy whois '
+             'lookups.')
         return self.lookup_whois(*args, **kwargs)
 
     def lookup_whois(self, inc_raw=False, retry_count=3, get_referral=False,

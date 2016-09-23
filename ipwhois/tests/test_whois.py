@@ -69,7 +69,7 @@ class TestWhois(TestCommon):
         log.debug('Testing field parse error. This should be followed by a '
                   'debug log.')
         obj._parse_fields(
-            response="\nUpdated:        2012-02-244\n",
+            response='\nUpdated:        2012-02-244\n',
             fields_dict=RIR_WHOIS['arin']['fields'],
             dt_format=RIR_WHOIS['arin']['dt_format']
         )
@@ -82,11 +82,11 @@ class TestWhois(TestCommon):
         # No exception raised, but should provide code coverage for multiple
         # network scenarios and CIDR invalid IP ValueError.
         multi_net_response = (
-            "\n#\n\nNetRange:       74.125.0.0 - 74.125.255.255"
-            "\nCIDR:           74.125.0.0/16\nNetName:        TEST"
-            "\nCIDR:           74.125.1.256/24\nNetName:        TEST2"
-            "\nNetRange:       74.125.1.0 - 74.125.1.0"
-            "\n"
+            '\n#\n\nNetRange:       74.125.0.0 - 74.125.255.255'
+            '\nCIDR:           74.125.0.0/16\nNetName:        TEST'
+            '\nCIDR:           74.125.1.256/24\nNetName:        TEST2'
+            '\nNetRange:       74.125.1.0 - 74.125.1.0'
+            '\n'
         )
         obj._get_nets_arin(multi_net_response)
 
@@ -98,8 +98,8 @@ class TestWhois(TestCommon):
         # No exception raised, but should provide code coverage for inetnum
         # invalid IP ValueError.
         multi_net_response = (
-            "\ninetnum:     200.57.256/19\r\n"
-            "\n"
+            '\ninetnum:     200.57.256/19\r\n'
+            '\n'
         )
         obj._get_nets_lacnic(multi_net_response)
 
@@ -111,7 +111,7 @@ class TestWhois(TestCommon):
         # No exception raised, but should provide code coverage for inetnum
         # invalid IP ValueError.
         multi_net_response = (
-            "\ninetnum:        210.107.0.0 - 210.107.127.256\n"
-            "\n"
+            '\ninetnum:        210.107.0.0 - 210.107.127.256\n'
+            '\n'
         )
         obj._get_nets_other(multi_net_response)

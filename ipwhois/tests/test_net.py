@@ -94,10 +94,10 @@ class TestNet(TestCommon):
 
     def test_get_asn_http(self):
         data = {
-            "nets": {
-                "net": {
-                    "orgRef": {
-                        "@handle": "APNIC"
+            'nets': {
+                'net': {
+                    'orgRef': {
+                        '@handle': 'APNIC'
                     }
                 }
             }
