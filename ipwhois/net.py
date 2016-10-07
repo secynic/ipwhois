@@ -681,6 +681,10 @@ class Net:
 
         except (URLError, socket.timeout, socket.error) as e:
 
+            if isinstance(e, URLError):
+                if e.getcode() == 429:
+                    raise HTTPRateLimitError
+
             # Check needed for Python 2.6, also why URLError is caught.
             try:  # pragma: no cover
                 if not isinstance(e.reason, (socket.timeout, socket.error)):
