@@ -17,6 +17,9 @@ ipwhois
 .. image:: https://img.shields.io/badge/docs-dev-yellow.svg?style=flat
     :target: https://ipwhois.readthedocs.io/en/dev
 
+Summary
+=======
+
 ipwhois is a Python package focused on retrieving and parsing whois data
 for IPv4 and IPv6 addresses.
 
