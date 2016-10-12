@@ -58,14 +58,16 @@ try:  # pragma: no cover
                                 ProxyHandler,
                                 build_opener,
                                 Request,
-                                URLError)
+                                URLError,
+                                HTTPError)
     from urllib.parse import urlencode
 except ImportError:  # pragma: no cover
     from urllib2 import (OpenerDirector,
                          ProxyHandler,
                          build_opener,
                          Request,
-                         URLError)
+                         URLError,
+                         HTTPError)
     from urllib import urlencode
 
 log = logging.getLogger(__name__)
@@ -678,6 +680,34 @@ class Net:
                 pass
 
             return d
+
+        except HTTPError as e:  # pragma: no cover
+
+            # RIPE is producing this HTTP error rather than a JSON error.
+            if e.code == 429:
+
+                log.debug('HTTP query rate limit exceeded.')
+
+                if retry_count > 0:
+                    log.debug('Waiting {0} seconds...'.format(
+                        str(rate_limit_timeout)))
+
+                    sleep(rate_limit_timeout)
+                    return self.get_http_json(
+                        url=url, retry_count=retry_count - 1,
+                        rate_limit_timeout=rate_limit_timeout,
+                        headers=headers
+                    )
+                else:
+                    raise HTTPRateLimitError(
+                        'HTTP lookup failed for {0}. Rate limit '
+                        'exceeded, wait and try again (possibly a '
+                        'temporary block).'.format(url))
+
+            else:
+
+                raise HTTPLookupError('HTTP lookup failed for {0} with error '
+                                      'code {1}.'.format(url, str(e.code)))
 
         except (URLError, socket.timeout, socket.error) as e:
 
