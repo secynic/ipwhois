@@ -34,7 +34,8 @@ import dns.rdtypes.ANY.TXT  # @UnusedImport
 
 from .exceptions import (IPDefinedError, ASNRegistryError, ASNLookupError,
                          BlacklistError, WhoisLookupError, HTTPLookupError,
-                         HostLookupError, HTTPRateLimitError)
+                         HostLookupError, HTTPRateLimitError,
+                         WhoisRateLimitError)
 from .whois import RIR_WHOIS
 from .utils import ipv4_is_defined, ipv6_is_defined
 
@@ -526,6 +527,8 @@ class Net:
             BlacklistError: Raised if the whois server provided is in the
                 global BLACKLIST or extra_blacklist.
             WhoisLookupError: The whois lookup failed.
+            WhoisRateLimitError: The Whois request rate limited and retries
+                were exhausted.
         """
 
         try:
@@ -571,12 +574,22 @@ class Net:
 
             if 'Query rate limit exceeded' in response:  # pragma: no cover
 
-                log.debug('WHOIS query rate limit exceeded. Waiting...')
-                sleep(1)
-                return self.get_whois(
-                    asn_registry=asn_registry, retry_count=retry_count-1,
-                    server=server, port=port, extra_blacklist=extra_blacklist
-                )
+                if retry_count > 0:
+
+                    log.debug('WHOIS query rate limit exceeded. Waiting...')
+                    sleep(1)
+                    return self.get_whois(
+                        asn_registry=asn_registry, retry_count=retry_count-1,
+                        server=server, port=port,
+                        extra_blacklist=extra_blacklist
+                    )
+
+                else:
+
+                    raise WhoisRateLimitError(
+                        'Whois lookup failed for {0}. Rate limit '
+                        'exceeded, wait and try again (possibly a '
+                        'temporary block).'.format(self.address_str))
 
             elif ('error 501' in response or 'error 230' in response
                   ):  # pragma: no cover
