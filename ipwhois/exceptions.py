@@ -67,6 +67,13 @@ class WhoisLookupError(Exception):
     """
 
 
+class WhoisRateLimitError(Exception):
+    """
+    An Exception for when Whois queries exceed the NIC's request limit and have
+    exhausted all retries.
+    """
+
+
 class HTTPLookupError(Exception):
     """
     An Exception for when the RDAP lookup failed.
