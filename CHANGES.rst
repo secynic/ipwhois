@@ -1,8 +1,8 @@
 Changelog
 =========
 
-1.0.0 (TBD)
------------
+0.15.0 (TBD)
+------------
 
 - Fixed rate-limiting exception handling for when HTTP errors are returned
   rather than JSON errors (rikonor - #144)
@@ -10,6 +10,7 @@ Changelog
 - Removed nose requirements and fixed travis.yml for updated pip
 - Documentation updates
 - Code style tweaks
+- Updated tests and version info for Python 3.6
 
 0.14.0 (2016-08-29)
 -------------------
