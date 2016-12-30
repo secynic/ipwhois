@@ -617,7 +617,7 @@ class Net:
                     'WHOIS lookup failed for {0}.'.format(self.address_str)
                 )
 
-        except WhoisRateLimitError:
+        except WhoisRateLimitError:  # pragma: no cover
 
             raise
 
