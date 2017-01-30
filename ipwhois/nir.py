@@ -1,4 +1,4 @@
-# Copyright (c) 2013, 2014, 2015, 2016 Philip Hane
+# Copyright (c) 2013-2017 Philip Hane
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -445,6 +445,7 @@ class NIRWhois:
             retry_count: The number of times to retry in case socket errors,
                 timeouts, connection resets, etc. are encountered.
             response: Optional response object, this bypasses the NIR lookup.
+                Required when is_offline=True.
             field_list: If provided, a list of fields to parse:
                 ['name', 'handle', 'country', 'address', 'postal_code',
                 'nameservers', 'created', 'updated', 'contacts']
