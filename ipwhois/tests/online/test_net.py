@@ -59,6 +59,29 @@ class TestNet(TestCommon):
         self.assertRaises(WhoisLookupError, result.get_whois, **dict(
             retry_count=1))
 
+    def test_get_asn_origin_whois(self):
+        # IP doesn't matter here
+        result = Net('74.125.225.229')
+
+        try:
+            self.assertIsInstance(result.get_asn_origin_whois(
+                asn='AS15169'), str)
+        except WhoisLookupError:
+            pass
+        except AssertionError as e:
+            raise e
+        except Exception as e:
+            self.fail('Unexpected exception raised: {0}'.format(e))
+
+        self.assertRaises(WhoisLookupError, result.get_asn_origin_whois,
+                          **dict(asn='AS15169', retry_count=0,
+                                 server='radb.net'))
+
+        # IP doesn't matter here
+        result = Net(address='74.125.225.229', timeout=0)
+        self.assertRaises(WhoisLookupError, result.get_asn_origin_whois,
+                          **dict(asn='AS15169', retry_count=1))
+
     def test_get_http_json(self):
         from ipwhois.rdap import RIR_RDAP
         result = Net('74.125.225.229')

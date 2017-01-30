@@ -4,6 +4,7 @@ Changelog
 0.15.0 (TBD)
 ------------
 
+- Added ASN origin lookup support (#149)
 - Fixed rate-limiting exception handling for when HTTP errors are returned
   rather than JSON errors (rikonor - #144)
 - Fixed rate-limit infinite recursion bug for legacy whois (rikonor - #144)
@@ -11,6 +12,7 @@ Changelog
 - Documentation updates
 - Code style tweaks
 - Updated tests and version info for Python 3.6
+- Minor tweaks to existing tests
 
 0.14.0 (2016-08-29)
 -------------------

@@ -32,7 +32,9 @@ KEYWORDS = [
     'RIR',
     'Regional Internet Registry'
     'NIR',
-    'National Intgernet Registry'
+    'National Intgernet Registry',
+    'ASN origin',
+    'Origin'
 ]
 
 README = io.open(file='README.rst', mode='r', encoding='utf-8').read()

@@ -1,4 +1,4 @@
-# Copyright (c) 2013, 2014, 2015, 2016 Philip Hane
+# Copyright (c) 2013-2017 Philip Hane
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -37,6 +37,7 @@ from .exceptions import (IPDefinedError, ASNRegistryError, ASNLookupError,
                          HostLookupError, HTTPRateLimitError,
                          WhoisRateLimitError)
 from .whois import RIR_WHOIS
+from .asn import ASN_WHOIS
 from .utils import ipv4_is_defined, ipv6_is_defined
 
 if sys.version_info >= (3, 3):  # pragma: no cover
@@ -502,6 +503,116 @@ class Net:
 
             raise ASNLookupError(
                 'ASN lookup failed for {0}.'.format(self.address_str)
+            )
+
+    def get_asn_origin_whois(self, asn_registry='radb', asn=None,
+                             retry_count=3, server=None, port=43):
+        """
+        The function for retrieving CIDR info for an ASN via whois.
+
+        Args:
+            asn_registry: The source to run the query against (asn.ASN_WHOIS).
+            asn: The ASN string (required).
+            retry_count: The number of times to retry in case socket errors,
+                timeouts, connection resets, etc. are encountered.
+            server: An optional server to connect to. Defaults to RADB.
+            port: The network port to connect on.
+
+        Returns:
+            String: The raw ASN origin whois data.
+
+        Raises:
+            WhoisLookupError: The ASN origin whois lookup failed.
+            WhoisRateLimitError: The ASN origin Whois request rate limited and
+                retries were exhausted.
+        """
+
+        try:
+
+            if server is None:
+                server = ASN_WHOIS[asn_registry]['server']
+
+            # Create the connection for the whois query.
+            conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            conn.settimeout(self.timeout)
+            log.debug('ASN origin WHOIS query for {0} at {1}:{2}'.format(
+                asn, server, port))
+            conn.connect((server, port))
+
+            # Prep the query.
+            query = ' -i origin {0}{1}'.format(asn, '\r\n')
+
+            # Query the whois server, and store the results.
+            conn.send(query.encode())
+
+            response = ''
+            while True:
+
+                d = conn.recv(4096).decode()
+
+                response += d
+
+                if not d:
+
+                    break
+
+            conn.close()
+
+            # TODO: this was taken from get_whois(). Need to test rate limiting
+            if 'Query rate limit exceeded' in response:  # pragma: no cover
+
+                if retry_count > 0:
+
+                    log.debug('ASN origin WHOIS query rate limit exceeded. '
+                              'Waiting...')
+                    sleep(1)
+                    return self.get_asn_origin_whois(
+                        asn_registry=asn_registry, asn=asn,
+                        retry_count=retry_count-1,
+                        server=server, port=port
+                    )
+
+                else:
+
+                    raise WhoisRateLimitError(
+                        'ASN origin Whois lookup failed for {0}. Rate limit '
+                        'exceeded, wait and try again (possibly a '
+                        'temporary block).'.format(asn))
+
+            elif ('error 501' in response or 'error 230' in response
+                  ):  # pragma: no cover
+
+                log.debug('ASN origin WHOIS query error: {0}'.format(response))
+                raise ValueError
+
+            return str(response)
+
+        except (socket.timeout, socket.error) as e:
+
+            log.debug('ASN origin WHOIS query socket error: {0}'.format(e))
+            if retry_count > 0:
+
+                log.debug('ASN origin WHOIS query retrying (count: {0})'
+                          ''.format(str(retry_count)))
+                return self.get_asn_origin_whois(
+                    asn_registry=asn_registry, asn=asn,
+                    retry_count=retry_count-1, server=server, port=port
+                )
+
+            else:
+
+                raise WhoisLookupError(
+                    'ASN origin WHOIS lookup failed for {0}.'.format(asn)
+                )
+
+        except WhoisRateLimitError:  # pragma: no cover
+
+            raise
+
+        except:  # pragma: no cover
+
+            raise WhoisLookupError(
+                'ASN origin WHOIS lookup failed for {0}.'.format(asn)
             )
 
     def get_whois(self, asn_registry='arin', retry_count=3, server=None,
