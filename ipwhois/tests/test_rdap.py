@@ -15,6 +15,10 @@ log = logging.getLogger(__name__)
 
 class TestRDAP(TestCommon):
 
+    def test__RDAP(self):
+
+        self.assertRaises(NetError, RDAP, 'a')
+
     def test__RDAPLookup(self):
 
         data_dir = path.dirname(__file__)

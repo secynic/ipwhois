@@ -14,6 +14,10 @@ log = logging.getLogger(__name__)
 
 class TestWhois(TestCommon):
 
+    def test__Whois(self):
+
+        self.assertRaises(NetError, Whois, 'a')
+
     def test__WhoisLookup(self):
 
         data_dir = path.dirname(__file__)
@@ -42,8 +46,6 @@ class TestWhois(TestCommon):
             except Exception as e:
 
                 self.fail('Unexpected exception raised: {0}'.format(e))
-
-            self.assertRaises(NetError, Whois, 'a')
 
     def test__parse_fields(self):
 

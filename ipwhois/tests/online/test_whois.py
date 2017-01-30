@@ -34,6 +34,7 @@ class TestWhois(TestCommon):
                     obj.lookup(
                         asn_data=val['asn_data'],
                         get_referral=True,
+                        inc_raw=True,
                         ignore_referral_errors=True
                     ),
                     dict
