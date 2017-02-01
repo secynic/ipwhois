@@ -49,6 +49,12 @@ class ASNRegistryError(Exception):
     """
 
 
+class ASNParseError(Exception):
+    """
+    An Exception for when the ASN parsing failed.
+    """
+
+
 class HostLookupError(Exception):
     """
     An Exception for when the host lookup failed.

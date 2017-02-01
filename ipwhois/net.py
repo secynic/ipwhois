@@ -32,28 +32,21 @@ from time import sleep
 # Import the dnspython3 rdtypes to fix the dynamic import problem when frozen.
 import dns.rdtypes.ANY.TXT  # @UnusedImport
 
-from .exceptions import (IPDefinedError, ASNRegistryError, ASNLookupError,
-                         BlacklistError, WhoisLookupError, HTTPLookupError,
-                         HostLookupError, HTTPRateLimitError,
-                         WhoisRateLimitError)
+from .exceptions import (IPDefinedError, ASNLookupError, BlacklistError,
+                         WhoisLookupError, HTTPLookupError, HostLookupError,
+                         HTTPRateLimitError, WhoisRateLimitError)
 from .whois import RIR_WHOIS
-from .asn import ASN_WHOIS
+from .asn import ASN_ORIGIN_WHOIS
 from .utils import ipv4_is_defined, ipv6_is_defined
 
 if sys.version_info >= (3, 3):  # pragma: no cover
     from ipaddress import (ip_address,
                            IPv4Address,
-                           IPv6Address,
-                           ip_network,
-                           summarize_address_range,
-                           collapse_addresses)
+                           IPv6Address)
 else:  # pragma: no cover
     from ipaddr import (IPAddress as ip_address,
                         IPv4Address,
-                        IPv6Address,
-                        IPNetwork as ip_network,
-                        summarize_address_range,
-                        collapse_address_list as collapse_addresses)
+                        IPv6Address)
 
 try:  # pragma: no cover
     from urllib.request import (OpenerDirector,
@@ -215,59 +208,38 @@ class Net:
 
             self.dns_zone = IPV6_DNS_ZONE.format(self.reversed)
 
-    def get_asn_dns(self, result=None):
+    def lookup_asn(self, *args, **kwargs):
+        """
+        Temporary wrapper for IP ASN lookups (moved to
+        asn.IPASN.lookup()). This will be removed in a future
+        release (1.0.0).
+        """
+
+        from warnings import warn
+        warn('Net.lookup_asn() has been deprecated and will be removed. '
+             'You should now use asn.IPASN.lookup() for IP ASN lookups.')
+        from .asn import IPASN
+        response = None
+        ipasn = IPASN(self)
+        return ipasn.lookup(*args, **kwargs), response
+
+    def get_asn_dns(self):
         """
         The function for retrieving ASN information for an IP address from
         Cymru via port 53 (DNS).
 
-        Args:
-            result: Optional result object. This bypasses the ASN lookup.
-
         Returns:
-            Dictionary: A dictionary containing the following keys:
-                    asn (String) - The Autonomous System Number.
-                    asn_date (String) - The ASN Allocation date.
-                    asn_registry (String) - The assigned ASN registry.
-                    asn_cidr (String) - The assigned ASN CIDR.
-                    asn_country_code (String) - The assigned ASN country code.
+            String: The raw ASN data.
 
         Raises:
-            ASNRegistryError: The ASN registry is not known.
             ASNLookupError: The ASN lookup failed.
         """
 
         try:
 
-            if result is None:
-
-                log.debug('ASN query for {0}'.format(self.dns_zone))
-                data = self.dns_resolver.query(self.dns_zone, 'TXT')
-                temp = str(data[0]).split('|')
-
-            else:
-
-                temp = result
-
-            # Parse out the ASN information.
-            ret = {'asn_registry': temp[3].strip(' \n')}
-
-            if ret['asn_registry'] not in RIR_WHOIS.keys():
-
-                raise ASNRegistryError(
-                    'ASN registry {0} is not known.'.format(
-                        ret['asn_registry'])
-                )
-
-            ret['asn'] = temp[0].strip(' "\n')
-            ret['asn_cidr'] = temp[1].strip(' \n')
-            ret['asn_country_code'] = temp[2].strip(' \n').upper()
-            ret['asn_date'] = temp[4].strip(' "\n')
-
-            return ret
-
-        except ASNRegistryError:
-
-            raise
+            log.debug('ASN query for {0}'.format(self.dns_zone))
+            data = self.dns_resolver.query(self.dns_zone, 'TXT')
+            return str(data[0])
 
         except (dns.resolver.NXDOMAIN, dns.resolver.NoNameservers,
                 dns.resolver.NoAnswer, dns.exception.Timeout) as e:
@@ -277,13 +249,13 @@ class Net:
                     e.__class__.__name__, self.address_str)
             )
 
-        except:
+        except:  # pragma: no cover
 
             raise ASNLookupError(
                 'ASN lookup failed for {0}.'.format(self.address_str)
             )
 
-    def get_asn_whois(self, retry_count=3, result=None):
+    def get_asn_whois(self, retry_count=3):
         """
         The function for retrieving ASN information for an IP address from
         Cymru via port 43/tcp (WHOIS).
@@ -291,71 +263,41 @@ class Net:
         Args:
             retry_count: The number of times to retry in case socket errors,
                 timeouts, connection resets, etc. are encountered.
-            result: Optional result object. This bypasses the ASN lookup.
 
         Returns:
-            Dictionary: A dictionary containing the following keys:
-                    asn (String) - The Autonomous System Number.
-                    asn_date (String) - The ASN Allocation date.
-                    asn_registry (String) - The assigned ASN registry.
-                    asn_cidr (String) - The assigned ASN CIDR.
-                    asn_country_code (String) - The assigned ASN country code.
+            String: The raw ASN data.
 
         Raises:
-            ASNRegistryError: The ASN registry is not known.
             ASNLookupError: The ASN lookup failed.
         """
 
         try:
 
-            if result is None:
+            # Create the connection for the Cymru whois query.
+            conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            conn.settimeout(self.timeout)
+            log.debug('ASN query for {0}'.format(self.address_str))
+            conn.connect((CYMRU_WHOIS, 43))
 
-                # Create the connection for the Cymru whois query.
-                conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                conn.settimeout(self.timeout)
-                log.debug('ASN query for {0}'.format(self.address_str))
-                conn.connect((CYMRU_WHOIS, 43))
+            # Query the Cymru whois server, and store the results.
+            conn.send((
+                ' -r -a -c -p -f -o {0}{1}'.format(
+                    self.address_str, '\r\n')
+            ).encode())
 
-                # Query the Cymru whois server, and store the results.
-                conn.send((
-                    ' -r -a -c -p -f -o {0}{1}'.format(
-                        self.address_str, '\r\n')
-                ).encode())
+            data = ''
+            while True:
 
-                data = ''
-                while True:
+                d = conn.recv(4096).decode()
+                data += d
 
-                    d = conn.recv(4096).decode()
-                    data += d
+                if not d:
 
-                    if not d:
+                    break
 
-                        break
+            conn.close()
 
-                conn.close()
-
-            else:
-
-                data = result
-
-            # Parse out the ASN information.
-            temp = str(data).split('|')
-
-            ret = {'asn_registry': temp[4].strip(' \n')}
-
-            if ret['asn_registry'] not in RIR_WHOIS.keys():
-
-                raise ASNRegistryError(
-                    'ASN registry {0} is not known.'.format(
-                        ret['asn_registry'])
-                )
-
-            ret['asn'] = temp[0].strip(' \n')
-            ret['asn_cidr'] = temp[2].strip(' \n')
-            ret['asn_country_code'] = temp[3].strip(' \n').upper()
-            ret['asn_date'] = temp[5].strip(' \n')
-
-            return ret
+            return str(data)
 
         except (socket.timeout, socket.error) as e:  # pragma: no cover
 
@@ -372,17 +314,13 @@ class Net:
                     'ASN lookup failed for {0}.'.format(self.address_str)
                 )
 
-        except ASNRegistryError:
-
-            raise
-
-        except:
+        except:  # pragma: no cover
 
             raise ASNLookupError(
                 'ASN lookup failed for {0}.'.format(self.address_str)
             )
 
-    def get_asn_http(self, retry_count=3, result=None, extra_org_map=None):
+    def get_asn_http(self, retry_count=3):
         """
         The function for retrieving ASN information for an IP address from
         Arin via port 80 (HTTP). Currently limited to fetching asn_registry
@@ -393,92 +331,26 @@ class Net:
         Args:
             retry_count: The number of times to retry in case socket errors,
                 timeouts, connection resets, etc. are encountered.
-            result: Optional result object. This bypasses the ASN lookup.
-            extra_org_map: Dictionary mapping org handles to RIRs. This is for
-                limited cases where ARIN REST (ASN fallback HTTP lookup) does
-                not show an RIR as the org handle e.g., DNIC (which is now the
-                built in ORG_MAP) e.g., {'DNIC': 'arin'}. Valid RIR values are
-                (note the case-sensitive - this is meant to match the REST
-                result): 'ARIN', 'RIPE', 'apnic', 'lacnic', 'afrinic'
 
         Returns:
-            Dictionary: A dictionary containing the following keys:
-                    asn (String) - None, can't retrieve with this method.
-                    asn_date (String) - None, can't retrieve with this method.
-                    asn_registry (String) - The assigned ASN registry.
-                    asn_cidr (String) - None, can't retrieve with this method.
-                    asn_country_code (String) - None, can't retrieve with this
-                    method.
+            Dictionary: The ASN data in json format.
 
         Raises:
-            ASNRegistryError: The ASN registry is not known.
             ASNLookupError: The ASN lookup failed.
         """
 
-        # Set the org_map. Map the orgRef handle to an RIR.
-        org_map = ORG_MAP.copy()
         try:
 
-            org_map.update(extra_org_map)
-
-        except (TypeError, ValueError, IndexError, KeyError):
-
-            pass
-
-        try:
-
-            if result is None:
-
-                # Lets attempt to get the ASN registry information from
-                # ARIN.
-                log.debug('ASN query for {0}'.format(self.address_str))
-                response = self.get_http_json(
-                    url=str(ARIN).format(self.address_str),
-                    retry_count=retry_count,
-                    headers={'Accept': 'application/json'}
+            # Lets attempt to get the ASN registry information from
+            # ARIN.
+            log.debug('ASN query for {0}'.format(self.address_str))
+            response = self.get_http_json(
+                url=str(ARIN).format(self.address_str),
+                retry_count=retry_count,
+                headers={'Accept': 'application/json'}
                 )
 
-            else:
-
-                response = result
-
-            asn_data = {
-                'asn_registry': None,
-                'asn': None,
-                'asn_cidr': None,
-                'asn_country_code': None,
-                'asn_date': None
-            }
-
-            try:
-
-                net_list = response['nets']['net']
-
-                if not isinstance(net_list, list):
-                    net_list = [net_list]
-
-            except (KeyError, TypeError):
-
-                log.debug('No networks found')
-                net_list = []
-
-            for n in net_list:
-
-                try:
-
-                    asn_data['asn_registry'] = (
-                        org_map[n['orgRef']['@handle'].upper()]
-                    )
-
-                except KeyError as e:
-
-                    log.debug('Could not parse ASN registry via HTTP: '
-                              '{0}'.format(str(e)))
-                    raise ASNRegistryError('ASN registry lookup failed.')
-
-                break
-
-            return asn_data
+            return response
 
         except (socket.timeout, socket.error) as e:  # pragma: no cover
 
@@ -495,10 +367,6 @@ class Net:
                     'ASN lookup failed for {0}.'.format(self.address_str)
                 )
 
-        except ASNRegistryError:
-
-            raise
-
         except:
 
             raise ASNLookupError(
@@ -511,7 +379,8 @@ class Net:
         The function for retrieving CIDR info for an ASN via whois.
 
         Args:
-            asn_registry: The source to run the query against (asn.ASN_WHOIS).
+            asn_registry: The source to run the query against
+                (asn.ASN_ORIGIN_WHOIS).
             asn: The ASN string (required).
             retry_count: The number of times to retry in case socket errors,
                 timeouts, connection resets, etc. are encountered.
@@ -530,7 +399,7 @@ class Net:
         try:
 
             if server is None:
-                server = ASN_WHOIS[asn_registry]['server']
+                server = ASN_ORIGIN_WHOIS[asn_registry]['server']
 
             # Create the connection for the whois query.
             conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -925,94 +794,6 @@ class Net:
             raise HostLookupError(
                 'Host lookup failed for {0}.'.format(self.address_str)
             )
-
-    def lookup_asn(self, retry_count=3, asn_alts=None, extra_org_map=None):
-        """
-        The wrapper function for retrieving and parsing ASN information for an
-        IP address.
-
-        Args:
-            retry_count: The number of times to retry in case socket errors,
-                timeouts, connection resets, etc. are encountered.
-            asn_alts: Array of additional lookup types to attempt if the
-                ASN dns lookup fails. Allow permutations must be enabled.
-                Defaults to all ['whois', 'http'].
-            extra_org_map: Dictionary mapping org handles to RIRs. This is for
-                limited cases where ARIN REST (ASN fallback HTTP lookup) does
-                not show an RIR as the org handle e.g., DNIC (which is now the
-                built in ORG_MAP) e.g., {'DNIC': 'arin'}. Valid RIR values are
-                (note the case-sensitive - this is meant to match the REST
-                result): 'ARIN', 'RIPE', 'apnic', 'lacnic', 'afrinic'
-
-        Returns:
-            Tuple:
-
-            :Dictionary: Result from get_asn_dns() or get_asn_whois().
-            :Dictionary: The response returned by get_asn_dns() or
-                get_asn_whois().
-
-        Raises:
-            ASNRegistryError: ASN registry does not match.
-            HTTPLookupError: The HTTP lookup failed.
-        """
-
-        lookups = asn_alts if asn_alts is not None else ['whois', 'http']
-
-        # Initialize the response.
-        response = None
-
-        # Attempt to resolve ASN info via Cymru. DNS is faster, try that first.
-        try:
-
-            self.dns_resolver.lifetime = self.dns_resolver.timeout * (
-                retry_count and retry_count or 1)
-            asn_data = self.get_asn_dns()
-
-        except (ASNLookupError, ASNRegistryError) as e:
-
-            if not self.allow_permutations:
-
-                raise ASNRegistryError('ASN registry lookup failed. '
-                                       'Permutations not allowed.')
-
-            try:
-                if 'whois' in lookups:
-
-                    log.debug('ASN DNS lookup failed, trying ASN WHOIS: '
-                              '{0}'.format(e))
-                    asn_data = self.get_asn_whois(retry_count)
-
-                else:
-
-                    raise ASNLookupError
-
-            except (ASNLookupError, ASNRegistryError):  # pragma: no cover
-
-                if 'http' in lookups:
-
-                    # Lets attempt to get the ASN registry information from
-                    # ARIN.
-                    log.debug('ASN WHOIS lookup failed, trying ASN via HTTP')
-                    try:
-
-                        asn_data = self.get_asn_http(
-                            retry_count=retry_count,
-                            extra_org_map=extra_org_map
-                        )
-
-                    except ASNRegistryError:
-
-                        raise ASNRegistryError('ASN registry lookup failed.')
-
-                    except ASNLookupError:
-
-                        raise HTTPLookupError('ASN HTTP lookup failed.')
-
-                else:
-
-                    raise ASNRegistryError('ASN registry lookup failed.')
-
-        return asn_data, response
 
     def get_http_raw(self, url=None, retry_count=3, headers=None,
                      request_type='GET', form_data=None):

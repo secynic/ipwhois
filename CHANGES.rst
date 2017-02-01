@@ -5,6 +5,10 @@ Changelog
 ------------
 
 - Added ASN origin lookup support (#149)
+- Moved ASN parsing from net.Net.get_asn_*() to new class asn.IPASN.
+  The original functions now return the raw query (#157)
+- net.Net.lookup_asn() is deprecated in favor of asn.IPASN.lookup() (#157)
+- Added new exception ASNParseError (#157)
 - Fixed rate-limiting exception handling for when HTTP errors are returned
   rather than JSON errors (rikonor - #144)
 - Fixed rate-limit infinite recursion bug for legacy whois (rikonor - #144)

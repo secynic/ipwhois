@@ -1,9 +1,108 @@
-===========
-ASN Lookups
-===========
+==============
+IP ASN Lookups
+==============
 
-This is new functionality as of v0.15.0. Currently only support origin lookups
-for a provided ASN. Both Whois and HTTP protocols are supported.
+This is new functionality as of v0.15.0. This functionality was migrated from
+net.Net.
+
+.. _ip-asn-input:
+
+IP ASN Input
+============
+
+Arguments supported by IPASN.lookup().
+
++------------------------+--------+-------------------------------------------+
+| **Key**                |**Type**| **Description**                           |
++------------------------+--------+-------------------------------------------+
+| inc_raw                | Bool   | Boolean for whether to include the raw    |
+|                        |        | whois results in the returned dictionary. |
++------------------------+--------+-------------------------------------------+
+| retry_count            | Int    | The number of times to retry in case      |
+|                        |        | socket errors, timeouts, connection       |
+|                        |        | resets, etc. are encountered.             |
++------------------------+--------+-------------------------------------------+
+| asn_alts               | List   | Array of additional lookup types to       |
+|                        |        | attempt if the ASN dns lookup fails.      |
+|                        |        | Allow permutations must be enabled.       |
+|                        |        | Defaults to all ['whois', 'http'].        |
++------------------------+--------+-------------------------------------------+
+| extra_org_map          | List   | Dictionary mapping org handles to RIRs.   |
+|                        |        | This is for limited cases where ARIN REST |
+|                        |        | (ASN fallback HTTP lookup) does not show  |
+|                        |        | an RIR as the org handle e.g., DNIC       |
+|                        |        | (which is now the built in ORG_MAP) e.g., |
+|                        |        | {'DNIC': 'arin'}. Valid RIR values are    |
+|                        |        | (note the case-sensitive - this is meant  |
+|                        |        | to match the REST result): 'ARIN',        |
+|                        |        | 'RIPE', 'apnic', 'lacnic', 'afrinic'      |
++------------------------+--------+-------------------------------------------+
+
+.. _ip-asn-output:
+
+IP ASN Output
+=============
+
+.. _ip-asn-results-dictionary:
+
+IP ASN Results Dictionary
+-------------------------
+
+The output dictionary from IPASN.lookup().
+
++------------------+--------+-------------------------------------------------+
+| **Key**          |**Type**| **Description**                                 |
++------------------+--------+-------------------------------------------------+
+| asn              | String | The Autonomous System Number                    |
++------------------+--------+-------------------------------------------------+
+| asn_date         | String | The ASN Allocation date                         |
++------------------+--------+-------------------------------------------------+
+| asn_registry     | String | The assigned ASN registry                       |
++------------------+--------+-------------------------------------------------+
+| asn_cidr         | String | The assigned ASN CIDR                           |
++------------------+--------+-------------------------------------------------+
+| asn_country_code | String | The assigned ASN country code                   |
++------------------+--------+-------------------------------------------------+
+| raw              | String | Raw ASN results if inc_raw is True.             |
++------------------+--------+-------------------------------------------------+
+
+.. _ip-asn-usage-examples:
+
+IP ASN Usage Examples
+=====================
+
+Basic usage
+-----------
+
+.. OUTPUT_IP_ASN_BASIC START
+
+::
+
+    >>>> from ipwhois.net import Net
+    >>>> from ipwhois.asn import IPASN
+    >>>> from pprint import pprint
+
+    >>>> net = Net('2001:43f8:7b0::')
+    >>>> obj = IPASN(net)
+    >>>> results = obj.lookup()
+
+    {
+    "asn": "37578",
+    "asn_cidr": "2001:43f8:7b0::/48",
+    "asn_country_code": "KE",
+    "asn_date": "2013-03-22",
+    "asn_registry": "afrinic"
+    }
+
+.. OUTPUT_IP_ASN_BASIC END
+
+==================
+ASN Origin Lookups
+==================
+
+This is new functionality as of v0.15.0.
+
+Both Whois and HTTP protocols are supported.
 
 RADB is the only query destination at the moment.
 

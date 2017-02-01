@@ -30,7 +30,7 @@ import logging
 import re
 from ipwhois import IPWhois
 from ipwhois.net import Net
-from ipwhois.asn import ASNOrigin
+from ipwhois.asn import (ASNOrigin, IPASN)
 from ipwhois.utils import unique_everseen
 
 # CLI ANSI rendering
@@ -78,6 +78,21 @@ script_args = parser.parse_args()
 
 RST_FILES = {
     'ASN.rst': {
+        'OUTPUT_IP_ASN_BASIC': {
+            'content': (
+                '::\n\n'
+                '    >>>> from ipwhois.net import Net\n'
+                '    >>>> from ipwhois.asn import IPASN\n'
+                '    >>>> from pprint import pprint\n\n'
+                '    >>>> net = Net(\'2001:43f8:7b0::\')\n'
+                '    >>>> obj = IPASN(net)\n'
+                '    >>>> results = obj.lookup()\n\n'
+                '    {0}'
+            ),
+            'queries': {
+                '0': lambda: IPASN(Net('2001:43f8:7b0::')).lookup(),
+            }
+        },
         'OUTPUT_ASN_ORIGIN_BASIC': {
             'content': (
                 '::\n\n'
@@ -109,11 +124,11 @@ RST_FILES = {
                 '    {1}'
             ),
             'queries': {
-                '0': lambda: IPWhois('133.1.2.5').lookup_whois(
-                    inc_nir=True
+                '0': lambda: IPWhois('133.1.2.5', timeout=15).lookup_whois(
+                    inc_nir=True, retry_count=10
                 ),
-                '1': lambda: IPWhois('133.1.2.5').lookup_rdap(
-                    depth=1, inc_nir=True
+                '1': lambda: IPWhois('133.1.2.5', timeout=15).lookup_rdap(
+                    depth=1, inc_nir=True, retry_count=10
                 ),
             }
         }

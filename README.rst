@@ -232,8 +232,11 @@ https://ipwhois.readthedocs.io/en/latest/NIR.html
 Autonomous System Numbers
 -------------------------
 
-This library now supports ASN origin lookups via Whois and HTTP. There is
-no IPWhois wrapper or CLI for these yet.
+This library now supports ASN origin lookups via Whois and HTTP.
+
+IP ASN functionality was moved to its own parser API (IPASN).
+
+There is no CLI for these yet.
 
 https://ipwhois.readthedocs.io/en/latest/ASN.html
 

@@ -23,6 +23,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 from . import Net
+from .asn import IPASN
 from .nir import NIRWhois
 import logging
 
@@ -51,6 +52,7 @@ class IPWhois:
             address=address, timeout=timeout, proxy_opener=proxy_opener,
             allow_permutations=allow_permutations
         )
+        self.ipasn = IPASN(self.net)
 
         self.address = self.net.address
         self.timeout = self.net.timeout
@@ -146,8 +148,9 @@ class IPWhois:
 
         # Retrieve the ASN information.
         log.debug('ASN lookup for {0}'.format(self.address_str))
-        asn_data, response = self.net.lookup_asn(
-            retry_count=retry_count, asn_alts=asn_alts,
+
+        asn_data = self.ipasn.lookup(
+            inc_raw=inc_raw, retry_count=retry_count, asn_alts=asn_alts,
             extra_org_map=extra_org_map
         )
 
@@ -158,7 +161,7 @@ class IPWhois:
         whois = Whois(self.net)
         log.debug('WHOIS lookup for {0}'.format(self.address_str))
         whois_data = whois.lookup(
-            inc_raw=inc_raw, retry_count=retry_count, response=response,
+            inc_raw=inc_raw, retry_count=retry_count, response=None,
             get_referral=get_referral, extra_blacklist=extra_blacklist,
             ignore_referral_errors=ignore_referral_errors, asn_data=asn_data,
             field_list=field_list
@@ -261,8 +264,8 @@ class IPWhois:
 
             # Retrieve the ASN information.
             log.debug('ASN lookup for {0}'.format(self.address_str))
-            asn_data, asn_response = self.net.lookup_asn(
-                retry_count=retry_count, asn_alts=asn_alts,
+            asn_data = self.ipasn.lookup(
+                inc_raw=inc_raw, retry_count=retry_count, asn_alts=asn_alts,
                 extra_org_map=extra_org_map
             )
 
