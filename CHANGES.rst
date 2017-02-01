@@ -4,6 +4,7 @@ Changelog
 0.15.0 (TBD)
 ------------
 
+- Python 3.3+ dnspython3 requirement changed to dnspython (#155)
 - Added ASN origin lookup support (#149)
 - Moved ASN parsing from net.Net.get_asn_*() to new class asn.IPASN.
   The original functions now return the raw query (#157)

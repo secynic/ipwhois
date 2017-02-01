@@ -128,7 +128,7 @@ Python 2.7::
 
 Python 3.3+::
 
-    dnspython3
+    dnspython
 
 Installing
 ==========

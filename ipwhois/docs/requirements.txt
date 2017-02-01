@@ -1,4 +1,4 @@
 sphinx
 sphinxcontrib-napoleon
 sphinx_rtd_theme
-dnspython3
+dnspython

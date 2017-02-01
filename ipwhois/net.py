@@ -29,7 +29,7 @@ import json
 import logging
 from time import sleep
 
-# Import the dnspython3 rdtypes to fix the dynamic import problem when frozen.
+# Import the dnspython rdtypes to fix the dynamic import problem when frozen.
 import dns.rdtypes.ANY.TXT  # @UnusedImport
 
 from .exceptions import (IPDefinedError, ASNLookupError, BlacklistError,
