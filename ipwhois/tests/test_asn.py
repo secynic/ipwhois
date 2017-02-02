@@ -221,3 +221,6 @@ class TestASNOrigin(TestCommon):
             '\n\n'
         )
         obj._get_nets_radb(multi_net_response)
+
+        self.assertEqual(obj._get_nets_radb(multi_net_response, is_http=True),
+                         [])

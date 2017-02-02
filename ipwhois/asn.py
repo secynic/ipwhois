@@ -26,7 +26,8 @@ import re
 import copy
 import logging
 from .exceptions import (NetError, ASNRegistryError, ASNParseError,
-                         ASNLookupError, HTTPLookupError)
+                         ASNLookupError, HTTPLookupError, WhoisLookupError,
+                         WhoisRateLimitError)
 
 log = logging.getLogger(__name__)
 
@@ -52,12 +53,21 @@ ASN_ORIGIN_WHOIS = {
 
 ASN_ORIGIN_HTTP = {
     'radb': {
-        'url': 'http://www.radb.net/query/{0}',
+        'url': 'http://www.radb.net/query/',
+        'form_data_asn_field': 'keywords',
+        'form_data': {
+            'advanced_query': '1',
+            'query': 'Query',
+            '-T option': 'inet-rtr',
+            'ip_option': '',
+            '-i': '1',
+            '-i option': 'origin'
+        },
         'fields': {
-            'description': r'(descr):[^\S\n]+(?P<val>.+?)\n',
-            'maintainer': r'(mnt-by):[^\S\n]+(?P<val>.+?)\n',
-            'updated': r'(changed):[^\S\n]+(?P<val>.+?)\n',
-            'source': r'(source):[^\S\n]+(?P<val>.+?)\n',
+            'description': r'(descr):[^\S\n]+(?P<val>.+?)\<br\>',
+            'maintainer': r'(mnt-by):[^\S\n]+(?P<val>.+?)\<br\>',
+            'updated': r'(changed):[^\S\n]+(?P<val>.+?)\<br\>',
+            'source': r'(source):[^\S\n]+(?P<val>.+?)\<br\>',
         }
     },
 }
@@ -343,7 +353,8 @@ class IPASN:
                     log.debug('ASN DNS lookup failed, trying ASN WHOIS: '
                               '{0}'.format(e))
                     response = self._net.get_asn_whois(retry_count)
-                    asn_data = self._parse_fields_whois(response)
+                    asn_data = self._parse_fields_whois(response
+                                                        )    # pragma: no cover
 
                 else:
 
@@ -492,12 +503,13 @@ class ASNOrigin:
 
         return ret
 
-    def _get_nets_radb(self, response):
+    def _get_nets_radb(self, response, is_http=False):
         """
-        The function for parsing network blocks from ASN origin whois data.
+        The function for parsing network blocks from ASN origin data.
 
         Args:
-            response: The response from the RADB whois server.
+            response: The response from the RADB whois/http server.
+            is_http: If the query is RADB HTTP instead of whois, set to True.
 
         Returns:
             List: A of dictionaries containing keys: cidr, start, end.
@@ -505,10 +517,15 @@ class ASNOrigin:
 
         nets = []
 
+        if is_http:
+            regex = r'route:[^\S\n]+(?P<val>.+?)<br>'
+        else:
+            regex = r'^route:[^\S\n]+(?P<val>.+|.+)$'
+
         # Iterate through all of the networks found, storing the CIDR value
         # and the start and end positions.
         for match in re.finditer(
-                r'^route:[^\S\n]+(?P<val>.+|.+)$',
+                regex,
                 response,
                 re.MULTILINE
         ):
@@ -528,7 +545,7 @@ class ASNOrigin:
         return nets
 
     def lookup(self, asn=None, inc_raw=False, retry_count=3, response=None,
-               field_list=None):
+               field_list=None, asn_alts=None):
         """
         The function for retrieving and parsing ASN origin whois information
         via port 43/tcp (WHOIS).
@@ -542,6 +559,8 @@ class ASNOrigin:
             response: Optional response object, this bypasses the Whois lookup.
             field_list: If provided, a list of fields to parse:
                 ['description', 'maintainer', 'updated', 'source']
+            asn_alts: Array of additional lookup types to attempt if the
+                ASN whois lookup fails. Defaults to all ['http'].
 
         Returns:
             Dictionary:
@@ -557,6 +576,8 @@ class ASNOrigin:
 
             asn = 'AS{0}'.format(asn)
 
+        lookups = asn_alts if asn_alts is not None else ['http']
+
         # Create the return dictionary.
         results = {
             'query': asn,
@@ -564,17 +585,47 @@ class ASNOrigin:
             'raw': None
         }
 
+        is_http = False
+
         # Only fetch the response if we haven't already.
         if response is None:
 
-            log.debug('Response not given, perform ASN origin WHOIS lookup '
-                      'for {0}'
-                      .format(asn))
+            try:
 
-            # Retrieve the whois data.
-            response = self._net.get_asn_origin_whois(
-                asn=asn, retry_count=retry_count
-            )
+                log.debug('Response not given, perform ASN origin WHOIS lookup'
+                          ' for {0}'.format(asn))
+
+                # Retrieve the whois data.
+                response = self._net.get_asn_origin_whois(
+                    asn=asn, retry_count=retry_count
+                )
+
+            except (WhoisLookupError, WhoisRateLimitError) as e:
+
+                if 'http' in lookups:
+
+                    try:
+
+                        log.debug('ASN origin whois lookup failed, trying ASN '
+                                  'origin http: {0}'.format(e))
+                        tmp = ASN_ORIGIN_HTTP['radb']['form_data']
+                        tmp[str(ASN_ORIGIN_HTTP['radb']['form_data_asn_field']
+                                )] = asn
+                        response = self._net.get_http_raw(
+                            url=ASN_ORIGIN_HTTP['radb']['url'],
+                            retry_count=retry_count,
+                            request_type='POST',
+                            form_data=tmp
+                        )
+                        is_http = True   # pragma: no cover
+
+                    except HTTPLookupError:
+
+                        raise
+
+                else:   # pragma: no cover
+
+                    raise
 
         # If inc_raw parameter is True, add the response to return dictionary.
         if inc_raw:
@@ -582,13 +633,19 @@ class ASNOrigin:
             results['raw'] = response
 
         nets = []
-        nets_response = self._get_nets_radb(response)
+        nets_response = self._get_nets_radb(response, is_http)
 
         nets.extend(nets_response)
 
+        if is_http:   # pragma: no cover
+            fields = ASN_ORIGIN_HTTP
+        else:
+            fields = ASN_ORIGIN_WHOIS
+
         # Iterate through all of the network sections and parse out the
         # appropriate fields for each.
-        log.debug('Parsing ASN origin WHOIS data')
+        log.debug('Parsing ASN origin data')
+
         for index, net in enumerate(nets):
 
             section_end = None
@@ -598,7 +655,7 @@ class ASNOrigin:
 
             temp_net = self._parse_fields(
                 response,
-                ASN_ORIGIN_WHOIS['radb']['fields'],
+                fields['radb']['fields'],
                 section_end,
                 net['end'],
                 field_list

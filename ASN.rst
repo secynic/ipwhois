@@ -3,7 +3,7 @@ IP ASN Lookups
 ==============
 
 This is new functionality as of v0.15.0. This functionality was migrated from
-net.Net.
+net.Net and is still used by IPWhois.lookup*().
 
 .. _ip-asn-input:
 
@@ -133,6 +133,10 @@ Arguments supported by ASNOrigin.lookup().
 | field_list             | List   | If provided, a list of fields to parse:   |
 |                        |        | ['description', 'maintainer', 'updated',  |
 |                        |        | 'source']                                 |
++------------------------+--------+-------------------------------------------+
+| asn_alts               | List   | Array of additional lookup types to       |
+|                        |        | attempt if the ASN whois lookup fails.    |
+|                        |        | Defaults to all ['http'].                 |
 +------------------------+--------+-------------------------------------------+
 
 .. _asn-origin-output:

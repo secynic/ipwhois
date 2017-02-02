@@ -42,7 +42,7 @@ class TestIPASN(TestCommon):
             asn_alts=['http']))
 
 
-class TestASNWhois(TestCommon):
+class TestASNOrigin(TestCommon):
 
     def test__TestASNOriginLookup(self):
 
@@ -80,3 +80,11 @@ class TestASNWhois(TestCommon):
             except Exception as e:
 
                 self.fail('Unexpected exception raised: {0}'.format(e))
+
+        net = Net(address='74.125.225.229', timeout=0,
+                  allow_permutations=True)
+        asnorigin = ASNOrigin(net)
+        self.assertRaises(HTTPLookupError, asnorigin.lookup, **dict(
+            asn='15169',
+            asn_alts=['http']))
+

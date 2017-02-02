@@ -805,7 +805,7 @@ class Net:
             retry_count: The number of times to retry in case socket errors,
                 timeouts, connection resets, etc. are encountered.
             headers: The HTTP headers dictionary. The Accept header defaults
-                to 'application/rdap+json'.
+                to 'text/html'.
             request_type: 'GET' or 'POST'
             form_data: Dictionary of form POST data
 
@@ -819,11 +819,12 @@ class Net:
         if headers is None:
             headers = {'Accept': 'text/html'}
 
+        enc_form_data = None
         if form_data:
-            form_data = urlencode(form_data)
+            enc_form_data = urlencode(form_data)
             try:
                 # Py 2 inspection will alert on the encoding arg, no harm done.
-                form_data = bytes(form_data, encoding='ascii')
+                enc_form_data = bytes(enc_form_data, encoding='ascii')
             except TypeError:  # pragma: no cover
                 pass
 
@@ -834,10 +835,10 @@ class Net:
                 self.address_str, url))
             try:
                 # Py 2 inspection alert bypassed by using kwargs dict.
-                conn = Request(url=url, data=form_data, headers=headers,
+                conn = Request(url=url, data=enc_form_data, headers=headers,
                                **{'method': request_type})
             except TypeError:  # pragma: no cover
-                conn = Request(url=url, data=form_data, headers=headers)
+                conn = Request(url=url, data=enc_form_data, headers=headers)
             data = self.opener.open(conn, timeout=self.timeout)
 
             try:

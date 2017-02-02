@@ -13,6 +13,8 @@ Changelog
 - Fixed rate-limiting exception handling for when HTTP errors are returned
   rather than JSON errors (rikonor - #144)
 - Fixed rate-limit infinite recursion bug for legacy whois (rikonor - #144)
+- Fixed bug in net.Net.get_http_raw() that would pass the encoded form_data on
+  retry rather than the original argument.
 - Removed nose requirements and fixed travis.yml for updated pip
 - Documentation updates
 - Code style tweaks
