@@ -1,4 +1,4 @@
-# Copyright (c) 2013, 2014, 2015, 2016 Philip Hane
+# Copyright (c) 2013-2017 Philip Hane
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -29,6 +29,8 @@ import json
 import logging
 import re
 from ipwhois import IPWhois
+from ipwhois.net import Net
+from ipwhois.asn import (ASNOrigin, IPASN)
 from ipwhois.utils import unique_everseen
 
 # CLI ANSI rendering
@@ -50,7 +52,7 @@ parser = argparse.ArgumentParser(
 parser.add_argument(
     '--docs',
     type=str,
-    metavar='"RDAP.rst,WHOIS.rst,NIR.rst..."',
+    metavar='"RDAP.rst,WHOIS.rst,NIR.rst,ASN.rst..."',
     nargs=1,
     help='Comma separated list of RST document names to process. Omitting '
          'this argmuent will default to all supported.'
@@ -75,6 +77,40 @@ group.add_argument(
 script_args = parser.parse_args()
 
 RST_FILES = {
+    'ASN.rst': {
+        'OUTPUT_IP_ASN_BASIC': {
+            'content': (
+                '::\n\n'
+                '    >>>> from ipwhois.net import Net\n'
+                '    >>>> from ipwhois.asn import IPASN\n'
+                '    >>>> from pprint import pprint\n\n'
+                '    >>>> net = Net(\'2001:43f8:7b0::\')\n'
+                '    >>>> obj = IPASN(net)\n'
+                '    >>>> results = obj.lookup()\n\n'
+                '    {0}'
+            ),
+            'queries': {
+                '0': lambda: IPASN(Net('2001:43f8:7b0::')).lookup(),
+            }
+        },
+        'OUTPUT_ASN_ORIGIN_BASIC': {
+            'content': (
+                '::\n\n'
+                '    >>>> from ipwhois.net import Net\n'
+                '    >>>> from ipwhois.asn import ASNOrigin\n'
+                '    >>>> from pprint import pprint\n\n'
+                '    >>>> net = Net(\'2001:43f8:7b0::\')\n'
+                '    >>>> obj = ASNOrigin(net)\n'
+                '    >>>> results = obj.lookup(asn=\'AS37578\')\n\n'
+                '    {0}'
+            ),
+            'queries': {
+                '0': lambda: ASNOrigin(Net('2001:43f8:7b0::')).lookup(
+                    asn='AS37578'
+                ),
+            }
+        }
+    },
     'NIR.rst': {
         'OUTPUT_BASIC': {
             'content': (
@@ -88,11 +124,11 @@ RST_FILES = {
                 '    {1}'
             ),
             'queries': {
-                '0': lambda: IPWhois('133.1.2.5').lookup_whois(
-                    inc_nir=True
+                '0': lambda: IPWhois('133.1.2.5', timeout=15).lookup_whois(
+                    inc_nir=True, retry_count=10
                 ),
-                '1': lambda: IPWhois('133.1.2.5').lookup_rdap(
-                    depth=1, inc_nir=True
+                '1': lambda: IPWhois('133.1.2.5', timeout=15).lookup_rdap(
+                    depth=1, inc_nir=True, retry_count=10
                 ),
             }
         }

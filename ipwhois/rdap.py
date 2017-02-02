@@ -1,4 +1,4 @@
-# Copyright (c) 2013, 2014, 2015, 2016 Philip Hane
+# Copyright (c) 2013-2017 Philip Hane
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -677,7 +677,7 @@ class RDAP:
                 returned dictionary.
             retry_count: The number of times to retry in case socket errors,
                 timeouts, connection resets, etc. are encountered.
-            asn_data: Result dictionary from ipwhois.net.Net.lookup_asn().
+            asn_data: Result dictionary from ipwhois.asn.IPASN.lookup().
                 Optional if the bootstrap parameter is True.
             depth: How many levels deep to run queries when additional
                 referenced objects are found.

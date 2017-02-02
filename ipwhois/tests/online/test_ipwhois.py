@@ -32,12 +32,22 @@ class TestIPWhois(TestCommon):
 
         for ip in ips:
 
+            timeout = 5
+            retry_count = 3
+
+            # JPNIC doesn't like my testing
+            if ip in ('133.1.2.5', '2001:240:10c:1::ca20:9d1d'):
+
+                timeout = 15
+                retry_count = 10
+
             log.debug('Testing: {0}'.format(ip))
-            result = IPWhois(ip)
+            result = IPWhois(address=ip, timeout=timeout)
 
             try:
                 # TODO: keep until deprecated lookup is removed, for coverage
-                self.assertIsInstance(result.lookup(), dict)
+                self.assertIsInstance(result.lookup(retry_count=retry_count),
+                                      dict)
             except (ASNLookupError, ASNRegistryError, WhoisLookupError):
                 pass
             except AssertionError as e:
@@ -136,11 +146,20 @@ class TestIPWhois(TestCommon):
 
         for ip in ips:
 
+            timeout = 5
+            retry_count = 3
+
+            # JPNIC doesn't like my testing
+            if ip in ('133.1.2.5', '2001:240:10c:1::ca20:9d1d'):
+                timeout = 15
+                retry_count = 10
+
             log.debug('Testing: {0}'.format(ip))
-            result = IPWhois(ip)
+            result = IPWhois(address=ip, timeout=timeout)
 
             try:
-                self.assertIsInstance(result.lookup_rdap(), dict)
+                self.assertIsInstance(result.lookup_rdap(
+                    retry_count=retry_count), dict)
             except (ASNLookupError, ASNRegistryError, WhoisLookupError,
                     HTTPLookupError):
                 pass

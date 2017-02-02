@@ -1,4 +1,4 @@
-# Copyright (c) 2013, 2014, 2015, 2016 Philip Hane
+# Copyright (c) 2013-2017 Philip Hane
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -46,6 +46,12 @@ class ASNRegistryError(Exception):
     """
     An Exception for when the ASN registry does not match one of the five
     expected values (arin, ripencc, apnic, lacnic, afrinic).
+    """
+
+
+class ASNParseError(Exception):
+    """
+    An Exception for when the ASN parsing failed.
     """
 
 

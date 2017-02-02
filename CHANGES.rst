@@ -4,13 +4,22 @@ Changelog
 0.15.0 (TBD)
 ------------
 
+- Python 3.3+ dnspython3 requirement changed to dnspython (#155)
+- Added ASN origin lookup support (#149)
+- Moved ASN parsing from net.Net.get_asn_*() to new class asn.IPASN.
+  The original functions now return the raw query (#157)
+- net.Net.lookup_asn() is deprecated in favor of asn.IPASN.lookup() (#157)
+- Added new exception ASNParseError (#157)
 - Fixed rate-limiting exception handling for when HTTP errors are returned
   rather than JSON errors (rikonor - #144)
 - Fixed rate-limit infinite recursion bug for legacy whois (rikonor - #144)
+- Fixed bug in net.Net.get_http_raw() that would pass the encoded form_data on
+  retry rather than the original argument.
 - Removed nose requirements and fixed travis.yml for updated pip
 - Documentation updates
 - Code style tweaks
 - Updated tests and version info for Python 3.6
+- Minor tweaks to existing tests
 
 0.14.0 (2016-08-29)
 -------------------

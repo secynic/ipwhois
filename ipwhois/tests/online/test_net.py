@@ -13,30 +13,53 @@ log = logging.getLogger(__name__)
 
 class TestNet(TestCommon):
 
-    def test_get_asn_dns(self):
-        result = Net('74.125.225.229')
+    def test_lookup_asn(self):
+        # TODO: keep until deprecated lookup is removed, for coverage
+        net = Net('74.125.225.229')
         try:
-            self.assertIsInstance(result.get_asn_dns(), dict)
-        except (ASNLookupError, ASNRegistryError):
+            self.assertIsInstance(net.lookup_asn(), tuple)
+        except HTTPLookupError:
             pass
         except AssertionError as e:
             raise e
         except Exception as e:
             self.fail('Unexpected exception raised: {0}'.format(e))
+
+    def test_get_asn_dns(self):
+        result = Net('74.125.225.229')
+        try:
+            self.assertIsInstance(result.get_asn_dns(), str)
+        except ASNLookupError:
+            pass
+        except AssertionError as e:
+            raise e
+        except Exception as e:
+            self.fail('Unexpected exception raised: {0}'.format(e))
+
+        result.dns_zone = 'a'
+        self.assertRaises(ASNLookupError, result.get_asn_dns)
 
     def test_get_asn_whois(self):
         result = Net('74.125.225.229')
         try:
-            self.assertIsInstance(result.get_asn_whois(), dict)
-        except (ASNLookupError, ASNRegistryError):
+            self.assertIsInstance(result.get_asn_whois(), str)
+        except ASNLookupError:
             pass
         except AssertionError as e:
             raise e
         except Exception as e:
             self.fail('Unexpected exception raised: {0}'.format(e))
 
+    def test_get_asn_http(self):
         result = Net('74.125.225.229')
-        self.assertRaises(ASNLookupError, result.get_asn_whois, 3, 'a')
+        try:
+            self.assertIsInstance(result.get_asn_http(), dict)
+        except ASNLookupError:
+            pass
+        except AssertionError as e:
+            raise e
+        except Exception as e:
+            self.fail('Unexpected exception raised: {0}'.format(e))
 
     def test_get_whois(self):
         result = Net('74.125.225.229')
@@ -58,6 +81,29 @@ class TestNet(TestCommon):
         result = Net(address='74.125.225.229', timeout=0)
         self.assertRaises(WhoisLookupError, result.get_whois, **dict(
             retry_count=1))
+
+    def test_get_asn_origin_whois(self):
+        # IP doesn't matter here
+        result = Net('74.125.225.229')
+
+        try:
+            self.assertIsInstance(result.get_asn_origin_whois(
+                asn='AS15169'), str)
+        except WhoisLookupError:
+            pass
+        except AssertionError as e:
+            raise e
+        except Exception as e:
+            self.fail('Unexpected exception raised: {0}'.format(e))
+
+        self.assertRaises(WhoisLookupError, result.get_asn_origin_whois,
+                          **dict(asn='AS15169', retry_count=0,
+                                 server='radb.net'))
+
+        # IP doesn't matter here
+        result = Net(address='74.125.225.229', timeout=0)
+        self.assertRaises(WhoisLookupError, result.get_asn_origin_whois,
+                          **dict(asn='AS15169', retry_count=1))
 
     def test_get_http_json(self):
         from ipwhois.rdap import RIR_RDAP
@@ -120,27 +166,6 @@ class TestNet(TestCommon):
         result = Net('74.125.225.229', 0)
         self.assertRaises(HostLookupError, result.get_host, **dict(
             retry_count=1))
-
-    def test_lookup_asn(self):
-        result = Net('74.125.225.229')
-        try:
-            self.assertIsInstance(result.lookup_asn(), tuple)
-        except (HTTPLookupError, ASNRegistryError):
-            pass
-        except AssertionError as e:
-            raise e
-        except Exception as e:
-            self.fail('Unexpected exception raised: {0}'.format(e))
-
-        result = Net(address='74.125.225.229', timeout=0,
-                     allow_permutations=False)
-        self.assertRaises(ASNRegistryError, result.lookup_asn)
-
-        result = Net(address='74.125.225.229', timeout=0,
-                     allow_permutations=True)
-        self.assertRaises(HTTPLookupError, result.lookup_asn, **dict(
-            asn_alts=['http']
-        ))
 
     def test_get_http_raw(self):
         from ipwhois.nir import NIR_WHOIS

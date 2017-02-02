@@ -25,6 +25,10 @@ Library Structure
    :members:
    :private-members:
 
+.. automodule:: ipwhois.asn
+   :members:
+   :private-members:
+
 .. automodule:: ipwhois.utils
    :members:
    :private-members:

@@ -1,4 +1,4 @@
-# Copyright (c) 2013, 2014, 2015, 2016 Philip Hane
+# Copyright (c) 2013-2017 Philip Hane
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -22,7 +22,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-__version__ = '0.14.0'
+__version__ = '0.15.0'
 
 from .exceptions import *
 from .net import Net

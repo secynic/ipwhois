@@ -10,8 +10,9 @@ ipwhois
 .. image:: https://img.shields.io/badge/license-BSD%202--Clause-blue.svg
     :target: https://github.com/secynic/ipwhois/tree/master/LICENSE.txt
 .. image:: https://img.shields.io/badge/python-2.6%2C%202.7%2C%203.3+-blue.svg
-.. image:: https://img.shields.io/badge/docs-release%20v0.14.0-green.svg?style=flat
-    :target: https://ipwhois.readthedocs.io/en/v0.14.0
+    :target: https://docs.python.org
+.. image:: https://img.shields.io/badge/docs-release%20v0.15.0-green.svg?style=flat
+    :target: https://ipwhois.readthedocs.io/en/v0.15.0
 .. image:: https://readthedocs.org/projects/pip/badge/?version=latest
     :target: https://ipwhois.readthedocs.io/en/latest
 .. image:: https://img.shields.io/badge/docs-dev-yellow.svg?style=flat
@@ -38,7 +39,7 @@ for IPv4 and IPv6 addresses.
 
     RDAP (IPWhois.lookup_rdap()) is the recommended query method as of v0.11.0.
     If you are upgrading from earlier than 0.11.0, please see the
-    `upgrade info <https://ipwhois.readthedocs.io/en/v0.14.0/RDAP.html
+    `upgrade info <https://ipwhois.readthedocs.io/en/v0.15.0/RDAP.html
     #upgrading-from-0-10-to-0-11>`_.
 
 .. note::
@@ -62,6 +63,7 @@ Features
 * Referral whois support for legacy whois protocol
 * Recursive network parsing for IPs with parent/children networks listed
 * National Internet Registry support for JPNIC and KRNIC
+* Supports ASN origin queries
 * Python 2.6+ and 3.3+ supported
 * Useful set of utilities
 * BSD license
@@ -75,10 +77,10 @@ Links
 Documentation
 -------------
 
-Release v0.14.0
+Release v0.15.0
 ^^^^^^^^^^^^^^^
 
-https://ipwhois.readthedocs.io/en/v0.14.0
+https://ipwhois.readthedocs.io/en/v0.15.0
 
 GitHub master
 ^^^^^^^^^^^^^
@@ -126,7 +128,7 @@ Python 2.7::
 
 Python 3.3+::
 
-    dnspython3
+    dnspython
 
 Installing
 ==========
@@ -226,6 +228,17 @@ internet registries. NIR queries are enabled by default via the inc_nir
 argument in the IPWhois.lookup_*() functions.
 
 https://ipwhois.readthedocs.io/en/latest/NIR.html
+
+Autonomous System Numbers
+-------------------------
+
+This library now supports ASN origin lookups via Whois and HTTP.
+
+IP ASN functionality was moved to its own parser API (IPASN).
+
+There is no CLI for these yet.
+
+https://ipwhois.readthedocs.io/en/latest/ASN.html
 
 Utilities
 ---------
