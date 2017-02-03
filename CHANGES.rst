@@ -1,8 +1,8 @@
 Changelog
 =========
 
-0.15.0 (TBD)
-------------
+0.15.0 (2017-02-02)
+-------------------
 
 - Python 3.3+ dnspython3 requirement changed to dnspython (#155)
 - Added ASN origin lookup support (#149)
