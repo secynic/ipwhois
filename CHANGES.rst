@@ -19,6 +19,7 @@ Changelog
 - Documentation updates
 - Code style tweaks
 - Updated tests and version info for Python 3.6
+- Added basic stress tests (#144)
 - Minor tweaks to existing tests
 
 0.14.0 (2016-08-29)

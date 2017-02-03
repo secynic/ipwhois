@@ -53,6 +53,40 @@ HR_ASN = {
     }
 }
 
+HR_ASN_ORIGIN = {
+    'nets': {
+        '_short': 'Network',
+        '_name': 'ASN Network',
+        '_description': 'A network associated with an Autonomous System Number'
+                        ' (ASN)',
+        'cidr': {
+            '_short': 'CIDR',
+            '_name': 'Classless Inter-Domain Routing Block',
+            '_description': 'The network routing block.'
+        },
+        'description': {
+            '_short': 'Description',
+            '_name': 'Description',
+            '_description': 'Description for the registered network.'
+        },
+        'maintainer': {
+            '_short': 'Maintainer',
+            '_name': 'Maintainer',
+            '_description': 'The entity that maintains the network.'
+        },
+        'updated': {
+            '_short': 'Updated',
+            '_name': 'Updated Timestamp',
+            '_description': 'Network registration updated information.'
+        },
+        'source': {
+            '_short': 'Source',
+            '_name': 'ASN Network Information Source',
+            '_description': 'The source of the network information.'
+        }
+    }
+}
+
 HR_RDAP_COMMON = {
     'entities': {
         '_short': 'Entities',

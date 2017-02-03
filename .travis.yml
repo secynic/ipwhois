@@ -15,6 +15,6 @@ install:
   - pip install coveralls
   - python setup.py -q install
 script:
-  - nosetests -v -w ipwhois --include=online --with-coverage --cover-package=ipwhois
+  - nosetests -v -w ipwhois --include=online --exclude=stress --with-coverage --cover-package=ipwhois
 after_success:
   - coveralls --rcfile=.coveragerc
