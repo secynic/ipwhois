@@ -26,14 +26,14 @@ for IPv4 and IPv6 addresses.
 
 .. attention::
 
-    NIR (National Internet Registry) lookups are now enabled by default.
-    This is currently only performed for JPNIC and KRNIC addresses.
+    NIR (National Internet Registry) lookups are enabled by default as of
+    v0.14.0. This is currently only performed for JPNIC and KRNIC addresses.
     To disable, set inc_nir=False in your IPWhois.lookup_*() query.
 
 .. attention::
 
-    The 'nets' -> 'emails' key in IPWhois.lookup_whois() has been changed from
-    a '\\n' separated string to a list.
+    The 'nets' -> 'emails' key in IPWhois.lookup_whois() was changed from
+    a '\\n' separated string to a list in v0.14.0.
 
 .. important::
 
@@ -63,7 +63,7 @@ Features
 * Referral whois support for legacy whois protocol
 * Recursive network parsing for IPs with parent/children networks listed
 * National Internet Registry support for JPNIC and KRNIC
-* Supports ASN origin queries
+* Supports IP to ASN and ASN origin queries
 * Python 2.6+ and 3.3+ supported
 * Useful set of utilities
 * BSD license

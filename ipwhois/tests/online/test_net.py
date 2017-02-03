@@ -126,26 +126,6 @@ class TestNet(TestCommon):
         self.assertRaises(HTTPLookupError, result.get_http_json, **dict(
             url=url, retry_count=0))
 
-        # Uncommenting below will result in a flood of up to 20 requests
-        # to test rate limiting.
-        '''
-        url = RIR_RDAP['lacnic']['ip_url'].format('200.57.141.161')
-        result = Net('200.57.141.161')
-        count = 20
-        while count > 0:
-            count -= 1
-            try:
-                self.assertRaises(HTTPRateLimitError, result.get_http_json,
-                                  **dict(url=url, retry_count=0))
-                break
-
-            except AssertionError as e:
-                if count == 0:
-                    raise e
-                else:
-                    pass
-        '''
-
     def test_get_host(self):
         ips = [
             '74.125.225.229',  # ARIN
