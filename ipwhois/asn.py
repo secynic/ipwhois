@@ -518,9 +518,9 @@ class ASNOrigin:
         nets = []
 
         if is_http:
-            regex = r'route:[^\S\n]+(?P<val>.+?)<br>'
+            regex = r'route(?:6)?:[^\S\n]+(?P<val>.+?)<br>'
         else:
-            regex = r'^route:[^\S\n]+(?P<val>.+|.+)$'
+            regex = r'^route(?:6)?:[^\S\n]+(?P<val>.+|.+)$'
 
         # Iterate through all of the networks found, storing the CIDR value
         # and the start and end positions.
