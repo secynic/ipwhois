@@ -1,6 +1,11 @@
 Changelog
 =========
 
+0.15.1 (TBD)
+------------
+
+- Fixed IPv6 parsing for ASN origin lookups and added tests (#162 - ti-mo)
+
 0.15.0 (2017-02-02)
 -------------------
 

@@ -224,3 +224,29 @@ class TestASNOrigin(TestCommon):
 
         self.assertEqual(obj._get_nets_radb(multi_net_response, is_http=True),
                          [])
+
+        net = Net('2001:43f8:7b0::')
+        obj = ASNOrigin(net)
+
+        multi_net_response = (
+            '\n\nroute6:         2001:43f8:7b0::/48'
+            '\ndescr:          KIXP Nairobi Management Network'
+            '\norigin:         AS37578'
+            '\norg:            ORG-TA38-AFRINIC'
+            '\nmnt-by:         TESPOK-MNT'
+            '\nchanged:        ***@isoc.org 20160721'
+            '\nsource:         AFRINIC'
+            '\n\n'
+        )
+        self.assertEquals(
+            obj._get_nets_radb(multi_net_response),
+            [{
+                'updated': None,
+                'maintainer': None,
+                'description': None,
+                'start': 2,
+                'source': None,
+                'end': 36,
+                'cidr': '2001:43f8:7b0::/48'
+            }]
+        )
