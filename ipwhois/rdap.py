@@ -747,6 +747,7 @@ class RDAP:
         results['network'] = result_net.vars
         results['entities'] = []
         results['objects'] = {}
+        roles = {}
 
         # Iterate through and parse the root level entities.
         log.debug('Parsing RDAP root level entities')
@@ -763,6 +764,16 @@ class RDAP:
                     results['objects'][ent['handle']] = result_ent.vars
 
                     results['entities'].append(ent['handle'])
+
+                    try:
+
+                        for tmp in ent['entities']:
+
+                            roles[tmp['handle']] = tmp['roles']
+
+                    except KeyError:
+
+                        pass
 
         except KeyError:
 
@@ -810,6 +821,27 @@ class RDAP:
                                 result_ent = _RDAPEntity(response)
                                 result_ent.parse()
                                 new_objects[ent] = result_ent.vars
+
+                                new_objects[ent]['roles'] = None
+                                try:
+
+                                    new_objects[ent]['roles'] = roles[ent]
+
+                                except KeyError:  # pragma: no cover
+
+                                    pass
+
+                                try:
+
+                                    for tmp in response['entities']:
+
+                                        if tmp['handle'] not in roles:
+
+                                            roles[tmp['handle']] = tmp['roles']
+
+                                except (IndexError, KeyError):
+
+                                    pass
 
                                 if inc_raw:
 

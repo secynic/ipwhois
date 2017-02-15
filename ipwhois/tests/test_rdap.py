@@ -113,6 +113,20 @@ class TestRDAP(TestCommon):
                                          bootstrap=True,
                                          inc_raw=True), dict)
 
+        # No sub entities. This is for coverage, but won't error out.
+        entity = [{'handle': 'test', 'roles': [
+            'administrative', 'technical']}]
+
+        self.assertIsInstance(obj.lookup(response={
+            'handle': 'test',
+            'ipVersion': 'v4',
+            'startAddress': '74.125.225.229',
+            'endAddress': '74.125.225.229',
+            'entities': entity
+        },
+            asn_data=val['asn_data'],
+            depth=1), dict)
+
 
 class TestRDAPContact(TestCommon):
 
