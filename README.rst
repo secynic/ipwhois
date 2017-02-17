@@ -11,8 +11,8 @@ ipwhois
     :target: https://github.com/secynic/ipwhois/tree/master/LICENSE.txt
 .. image:: https://img.shields.io/badge/python-2.6%2C%202.7%2C%203.3+-blue.svg
     :target: https://docs.python.org
-.. image:: https://img.shields.io/badge/docs-release%20v0.15.0-green.svg?style=flat
-    :target: https://ipwhois.readthedocs.io/en/v0.15.0
+.. image:: https://img.shields.io/badge/docs-release%20v0.15.1-green.svg?style=flat
+    :target: https://ipwhois.readthedocs.io/en/v0.15.1
 .. image:: https://readthedocs.org/projects/pip/badge/?version=latest
     :target: https://ipwhois.readthedocs.io/en/latest
 .. image:: https://img.shields.io/badge/docs-dev-yellow.svg?style=flat
@@ -39,7 +39,7 @@ for IPv4 and IPv6 addresses.
 
     RDAP (IPWhois.lookup_rdap()) is the recommended query method as of v0.11.0.
     If you are upgrading from earlier than 0.11.0, please see the
-    `upgrade info <https://ipwhois.readthedocs.io/en/v0.15.0/RDAP.html
+    `upgrade info <https://ipwhois.readthedocs.io/en/v0.15.1/RDAP.html
     #upgrading-from-0-10-to-0-11>`_.
 
 .. note::
@@ -77,10 +77,10 @@ Links
 Documentation
 -------------
 
-Release v0.15.0
+Release v0.15.1
 ^^^^^^^^^^^^^^^
 
-https://ipwhois.readthedocs.io/en/v0.15.0
+https://ipwhois.readthedocs.io/en/v0.15.1
 
 GitHub master
 ^^^^^^^^^^^^^
