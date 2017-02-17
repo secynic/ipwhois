@@ -1,10 +1,11 @@
 Changelog
 =========
 
-0.15.1 (TBD)
-------------
+0.15.1 (2017-02-16)
+-------------------
 
 - Fixed IPv6 parsing for ASN origin lookups and added tests (#162 - ti-mo)
+- Fixed recursive role parsing at depths greater than 0 (#161 - cdubz)
 
 0.15.0 (2017-02-02)
 -------------------
