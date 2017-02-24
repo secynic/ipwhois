@@ -83,7 +83,7 @@ class IPWhois:
     def lookup_whois(self, inc_raw=False, retry_count=3, get_referral=False,
                      extra_blacklist=None, ignore_referral_errors=False,
                      field_list=None, asn_alts=None, extra_org_map=None,
-                     inc_nir=True, nir_field_list=None, methods=None):
+                     inc_nir=True, nir_field_list=None, asn_methods=None):
         """
         The function for retrieving and parsing whois information for an IP
         address via port 43 (WHOIS).
@@ -120,7 +120,7 @@ class IPWhois:
             nir_field_list: If provided and inc_nir, a list of fields to parse:
                 ['name', 'handle', 'country', 'address', 'postal_code',
                 'nameservers', 'created', 'updated', 'contacts']
-            methods: Array of ASN lookup types to attempt, in order.
+            asn_methods: Array of ASN lookup types to attempt, in order.
                 Defaults to all ['dns', 'whois', 'http'].
 
         Returns:
@@ -154,7 +154,7 @@ class IPWhois:
 
         asn_data = self.ipasn.lookup(
             inc_raw=inc_raw, retry_count=retry_count, asn_alts=asn_alts,
-            extra_org_map=extra_org_map, methods=methods
+            extra_org_map=extra_org_map, asn_methods=asn_methods
         )
 
         # Add the ASN information to the return dictionary.
@@ -198,7 +198,7 @@ class IPWhois:
     def lookup_rdap(self, inc_raw=False, retry_count=3, depth=0,
                     excluded_entities=None, bootstrap=False,
                     rate_limit_timeout=120, asn_alts=None, extra_org_map=None,
-                    inc_nir=True, nir_field_list=None, methods=None):
+                    inc_nir=True, nir_field_list=None, asn_methods=None):
         """
         The function for retrieving and parsing whois information for an IP
         address via HTTP (RDAP).
@@ -237,7 +237,7 @@ class IPWhois:
             nir_field_list: If provided and inc_nir, a list of fields to parse:
                 ['name', 'handle', 'country', 'address', 'postal_code',
                 'nameservers', 'created', 'updated', 'contacts']
-            methods: Array of ASN lookup types to attempt, in order.
+            asn_methods: Array of ASN lookup types to attempt, in order.
                 Defaults to all ['dns', 'whois', 'http'].
 
         Returns:
@@ -272,7 +272,7 @@ class IPWhois:
             log.debug('ASN lookup for {0}'.format(self.address_str))
             asn_data = self.ipasn.lookup(
                 inc_raw=inc_raw, retry_count=retry_count, asn_alts=asn_alts,
-                extra_org_map=extra_org_map, methods=methods
+                extra_org_map=extra_org_map, asn_methods=asn_methods
             )
 
             # Add the ASN information to the return dictionary.

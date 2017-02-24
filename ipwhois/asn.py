@@ -292,7 +292,7 @@ class IPASN:
         return asn_data
 
     def lookup(self, inc_raw=False, retry_count=3, asn_alts=None,
-               extra_org_map=None, methods=None):
+               extra_org_map=None, asn_methods=None):
         """
         The wrapper function for retrieving and parsing ASN information for an
         IP address.
@@ -312,7 +312,7 @@ class IPASN:
                 built in ORG_MAP) e.g., {'DNIC': 'arin'}. Valid RIR values are
                 (note the case-sensitive - this is meant to match the REST
                 result): 'ARIN', 'RIPE', 'apnic', 'lacnic', 'afrinic'
-            methods: Array of ASN lookup types to attempt, in order.
+            asn_methods: Array of ASN lookup types to attempt, in order.
                 Defaults to all ['dns', 'whois', 'http'].
 
         Returns:
@@ -331,7 +331,7 @@ class IPASN:
             HTTPLookupError: The HTTP lookup failed.
         """
 
-        if methods is None:
+        if asn_methods is None:
 
             if asn_alts is None:
 
@@ -349,12 +349,12 @@ class IPASN:
 
             # Python 2.6 doesn't support set literal expressions, use explicit
             # set() instead.
-            if not set(['dns', 'whois', 'http']).isdisjoint(methods):
+            if not set(['dns', 'whois', 'http']).isdisjoint(asn_methods):
 
                 raise ValueError('methods argument requires at least one of '
                                  'dns, whois, http.')
 
-            lookups = methods
+            lookups = asn_methods
 
         # Attempt to resolve ASN info via Cymru. DNS is faster, try that first.
         try:
