@@ -105,7 +105,7 @@ class IPWhois:
             asn_alts: Array of additional lookup types to attempt if the
                 ASN dns lookup fails. Allow permutations must be enabled.
                 Defaults to all ['whois', 'http']. *WARNING* deprecated in
-                favor of new argument methods.
+                favor of new argument asn_methods.
             extra_org_map: Dictionary mapping org handles to RIRs. This is for
                 limited cases where ARIN REST (ASN fallback HTTP lookup) does
                 not show an RIR as the org handle e.g., DNIC (which is now the
@@ -222,7 +222,7 @@ class IPWhois:
             asn_alts: Array of additional lookup types to attempt if the
                 ASN dns lookup fails. Allow permutations must be enabled.
                 Defaults to all ['whois', 'http']. *WARNING* deprecated in
-                favor of new argument methods.
+                favor of new argument asn_methods.
             extra_org_map: Dictionary mapping org handles to RIRs. This is for
                 limited cases where ARIN REST (ASN fallback HTTP lookup) does
                 not show an RIR as the org handle e.g., DNIC (which is now the
