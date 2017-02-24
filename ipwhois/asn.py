@@ -292,7 +292,7 @@ class IPASN:
         return asn_data
 
     def lookup(self, inc_raw=False, retry_count=3, asn_alts=None,
-               extra_org_map=None):
+               extra_org_map=None, methods=None):
         """
         The wrapper function for retrieving and parsing ASN information for an
         IP address.
@@ -304,13 +304,16 @@ class IPASN:
                 timeouts, connection resets, etc. are encountered.
             asn_alts: Array of additional lookup types to attempt if the
                 ASN dns lookup fails. Allow permutations must be enabled.
-                Defaults to all ['whois', 'http'].
+                Defaults to all ['whois', 'http']. *WARNING* deprecated in
+                favor of new argument methods.
             extra_org_map: Dictionary mapping org handles to RIRs. This is for
                 limited cases where ARIN REST (ASN fallback HTTP lookup) does
                 not show an RIR as the org handle e.g., DNIC (which is now the
                 built in ORG_MAP) e.g., {'DNIC': 'arin'}. Valid RIR values are
                 (note the case-sensitive - this is meant to match the REST
                 result): 'ARIN', 'RIPE', 'apnic', 'lacnic', 'afrinic'
+            methods: Array of lookup types to attempt.
+                Defaults to all ['dns', 'whois', 'http'].
 
         Returns:
             Dictionary:
@@ -323,11 +326,35 @@ class IPASN:
             :raw: Raw ASN results if the inc_raw parameter is True. (String)
 
         Raises:
+            ValueError: methods argument requires one of dns, whois, http.
             ASNRegistryError: ASN registry does not match.
             HTTPLookupError: The HTTP lookup failed.
         """
 
-        lookups = asn_alts if asn_alts is not None else ['whois', 'http']
+        if methods is None:
+
+            if asn_alts is None:
+
+                lookups = ['dns', 'whois', 'http']
+
+            else:
+
+                from warnings import warn
+                warn('IPASN.lookup() asn_alts argument has been deprecated '
+                     'and will be removed. You should now use the methods '
+                     'argument.')
+                lookups = ['dns'] + asn_alts
+
+        else:
+
+            # Python 2.6 doesn't support set literal expressions, use explicit
+            # set() instead.
+            if not set(['dns', 'whois', 'http']).isdisjoint(methods):
+
+                raise ValueError('methods argument requires at least one of '
+                                 'dns, whois, http.')
+
+            lookups = methods
 
         # Attempt to resolve ASN info via Cymru. DNS is faster, try that first.
         try:
