@@ -305,7 +305,7 @@ class IPASN:
             asn_alts: Array of additional lookup types to attempt if the
                 ASN dns lookup fails. Allow permutations must be enabled.
                 Defaults to all ['whois', 'http']. *WARNING* deprecated in
-                favor of new argument methods.
+                favor of new argument asn_methods.
             extra_org_map: Dictionary mapping org handles to RIRs. This is for
                 limited cases where ARIN REST (ASN fallback HTTP lookup) does
                 not show an RIR as the org handle e.g., DNIC (which is now the
@@ -341,7 +341,7 @@ class IPASN:
 
                 from warnings import warn
                 warn('IPASN.lookup() asn_alts argument has been deprecated '
-                     'and will be removed. You should now use the methods '
+                     'and will be removed. You should now use the asn_methods '
                      'argument.')
                 lookups = ['dns'] + asn_alts
 
@@ -572,7 +572,7 @@ class ASNOrigin:
         return nets
 
     def lookup(self, asn=None, inc_raw=False, retry_count=3, response=None,
-               field_list=None, asn_alts=None):
+               field_list=None, asn_alts=None, asn_methods=None):
         """
         The function for retrieving and parsing ASN origin whois information
         via port 43/tcp (WHOIS).
@@ -588,6 +588,9 @@ class ASNOrigin:
                 ['description', 'maintainer', 'updated', 'source']
             asn_alts: Array of additional lookup types to attempt if the
                 ASN whois lookup fails. Defaults to all ['http'].
+                *WARNING* deprecated in favor of new argument asn_methods.
+            asn_methods: Array of ASN lookup types to attempt, in order.
+                Defaults to all ['whois', 'http'].
 
         Returns:
             Dictionary:
@@ -603,7 +606,30 @@ class ASNOrigin:
 
             asn = 'AS{0}'.format(asn)
 
-        lookups = asn_alts if asn_alts is not None else ['http']
+        if asn_methods is None:
+
+            if asn_alts is None:
+
+                lookups = ['whois', 'http']
+
+            else:
+
+                from warnings import warn
+                warn('ASNOrigin.lookup() asn_alts argument has been deprecated'
+                     ' and will be removed. You should now use the asn_methods'
+                     ' argument.')
+                lookups = ['whois'] + asn_alts
+
+        else:
+
+            # Python 2.6 doesn't support set literal expressions, use explicit
+            # set() instead.
+            if not set(['whois', 'http']).isdisjoint(asn_methods):
+
+                raise ValueError('methods argument requires at least one of '
+                                 'whois, http.')
+
+            lookups = asn_methods
 
         # Create the return dictionary.
         results = {
