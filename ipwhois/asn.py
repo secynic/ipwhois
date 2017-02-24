@@ -312,7 +312,7 @@ class IPASN:
                 built in ORG_MAP) e.g., {'DNIC': 'arin'}. Valid RIR values are
                 (note the case-sensitive - this is meant to match the REST
                 result): 'ARIN', 'RIPE', 'apnic', 'lacnic', 'afrinic'
-            methods: Array of lookup types to attempt.
+            methods: Array of ASN lookup types to attempt, in order.
                 Defaults to all ['dns', 'whois', 'http'].
 
         Returns:
