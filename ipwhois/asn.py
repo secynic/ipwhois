@@ -349,7 +349,7 @@ class IPASN:
 
             # Python 2.6 doesn't support set literal expressions, use explicit
             # set() instead.
-            if not set(['dns', 'whois', 'http']).isdisjoint(asn_methods):
+            if set(['dns', 'whois', 'http']).isdisjoint(asn_methods):
 
                 raise ValueError('methods argument requires at least one of '
                                  'dns, whois, http.')
@@ -624,7 +624,7 @@ class ASNOrigin:
 
             # Python 2.6 doesn't support set literal expressions, use explicit
             # set() instead.
-            if not set(['whois', 'http']).isdisjoint(asn_methods):
+            if set(['whois', 'http']).isdisjoint(asn_methods):
 
                 raise ValueError('methods argument requires at least one of '
                                  'whois, http.')
