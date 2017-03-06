@@ -101,7 +101,7 @@ class Net:
         proxy_opener: The urllib.request.OpenerDirector request for proxy
             support or None.
         allow_permutations: Use additional methods if DNS lookups to Cymru
-            fail.
+            fail. *WARNING* deprecated in favor of new argument asn_methods.
 
     Raises:
         IPDefinedError: The address provided is defined (does not need to be

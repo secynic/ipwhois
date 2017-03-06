@@ -26,6 +26,11 @@ for IPv4 and IPv6 addresses.
 
 .. attention::
 
+    The IPWhois argument allow_permutations and the lookup argument asn_alts
+    have been deprecated in favor of new argument asn_methods.
+
+.. attention::
+
     NIR (National Internet Registry) lookups are enabled by default as of
     v0.14.0. This is currently only performed for JPNIC and KRNIC addresses.
     To disable, set inc_nir=False in your IPWhois.lookup_*() query.
@@ -192,7 +197,9 @@ Input
 |                    |        | proxy support or None.                        |
 +--------------------+--------+-----------------------------------------------+
 | allow_permutations | Bool   | Allow net.Net() to use additional methods if  |
-|                    |        | DNS lookups to Cymru fail.                    |
+|                    |        | DNS lookups to Cymru fail. *WARNING*          |
+|                    |        | deprecated in favor of new argument           |
+|                    |        | asn_methods.                                  |
 +--------------------+--------+-----------------------------------------------+
 
 RDAP (HTTP)

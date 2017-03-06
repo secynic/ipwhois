@@ -8,7 +8,8 @@ installed to your Python environment Scripts directory.
 
 - ipwhois_cli.py has full ipwhois.py functionality.
 - ipwhois_utils_cli.py has full utils.py functionality.
-- The others (net.py, rdap.py, whois.py) will be included in a future release.
+- The others (net.py, rdap.py, whois.py, nir.py, asn.py) will be included in a
+  future release.
 
 ipwhois_cli.py
 ==============
@@ -21,8 +22,8 @@ ipwhois_cli.py [-h] [--whois] [--exclude_nir] [--json] [--hr]
                       [--proxy_http "PROXY_HTTP"]
                       [--proxy_https "PROXY_HTTPS"] [--disallow_permutations]
                       [--inc_raw] [--retry_count RETRY_COUNT]
-                      [--asn_alts "ASN_ALTS"] [--extra_org_map "ASN_ALTS"]
-                      [--depth COLOR_DEPTH]
+                      [--asn_alts "ASN_ALTS"] [--asn_methods "ASN_METHODS"]
+                      [--extra_org_map "EXTRA_ORG_MAP"] [--depth COLOR_DEPTH]
                       [--excluded_entities "EXCLUDED_ENTITIES"] [--bootstrap]
                       [--rate_limit_timeout RATE_LIMIT_TIMEOUT]
                       [--get_referral] [--extra_blacklist "EXTRA_BLACKLIST"]
@@ -62,7 +63,8 @@ IPWhois settings:
                         Disable additional methods if DNS lookups to Cymru
                         fail. This is the opposite of the ipwhois
                         allow_permutations, in order to enable
-                        allow_permutations by default in the CLI.
+                        allow_permutations by default in the CLI. *WARNING*
+                        deprecated in favor of new argument asn_methods.
 
 Common settings (RDAP & Legacy Whois):
   --inc_raw             Include the raw whois results in the output.
@@ -74,6 +76,9 @@ Common settings (RDAP & Legacy Whois):
                         attempt if the ASN dns lookup fails. Allow
                         permutations must be enabled. Defaults to all:
                         "whois,http"
+  --asn_methods ASN_METHODS
+                        Array of ASN lookup types to attempt, in order.
+                        Defaults to all ['dns', 'whois', 'http'].
   --extra_org_map ASN_ALTS
                         Dictionary mapping org handles to RIRs. This is for
                         limited cases where ARIN REST (ASN fallback HTTP

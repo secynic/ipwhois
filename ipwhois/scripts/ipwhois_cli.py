@@ -155,7 +155,8 @@ group.add_argument(
     action='store_true',
     help='Disable additional methods if DNS lookups to Cymru fail. This is the'
          ' opposite of the ipwhois allow_permutations, in order to enable '
-         'allow_permutations by default in the CLI.',
+         'allow_permutations by default in the CLI. *WARNING* deprecated in '
+         'favor of new argument asn_methods.',
     default=False
 )
 
@@ -348,7 +349,8 @@ class IPWhoisCLI:
         proxy_https: The urllib.request.ProxyHandler dictionary for proxy
             HTTPS support or None.
         allow_permutations: allow net.Net() to use additional methods if DNS
-            lookups to Cymru fail.
+            lookups to Cymru fail. *WARNING* deprecated in favor of new
+            argument asn_methods.
     """
 
     def __init__(

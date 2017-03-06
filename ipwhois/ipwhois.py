@@ -42,7 +42,8 @@ class IPWhois:
         proxy_opener: The urllib.request.OpenerDirector request for proxy
             support or None.
         allow_permutations: allow net.Net() to use additional methods if DNS
-            lookups to Cymru fail.
+            lookups to Cymru fail. *WARNING* deprecated in favor of new
+            argument asn_methods.
     """
 
     def __init__(self, address, timeout=5, proxy_opener=None,

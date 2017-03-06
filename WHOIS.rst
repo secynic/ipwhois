@@ -54,6 +54,12 @@ Arguments supported by IPWhois.lookup_whois().
 |                        |        | attempt if the ASN dns lookup fails.      |
 |                        |        | Allow permutations must be enabled.       |
 |                        |        | Defaults to all ['whois', 'http'].        |
+|                        |        | *WARNING* deprecated in favor of new      |
+|                        |        | argument asn_methods.                     |
++------------------------+--------+-------------------------------------------+
+| asn_methods            | List   | Array of ASN lookup types to attempt, in  |
+|                        |        | order. Defaults to all                    |
+|                        |        | ['dns', 'whois', 'http'].                 |
 +------------------------+--------+-------------------------------------------+
 | extra_org_map          | Dict   | Dictionary mapping org handles to RIRs.   |
 |                        |        | This is for limited cases where ARIN      |
