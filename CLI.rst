@@ -75,7 +75,8 @@ Common settings (RDAP & Legacy Whois):
                         A comma delimited list of additional lookup types to
                         attempt if the ASN dns lookup fails. Allow
                         permutations must be enabled. Defaults to all:
-                        "whois,http"
+                        "whois,http". *WARNING* deprecated in favor of new
+                        argument asn_methods.
   --asn_methods ASN_METHODS
                         Array of ASN lookup types to attempt, in order.
                         Defaults to all ['dns', 'whois', 'http'].
