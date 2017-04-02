@@ -101,7 +101,7 @@ class Net:
         proxy_opener: The urllib.request.OpenerDirector request for proxy
             support or None.
         allow_permutations: Use additional methods if DNS lookups to Cymru
-            fail.
+            fail. *WARNING* deprecated in favor of new argument asn_methods.
 
     Raises:
         IPDefinedError: The address provided is defined (does not need to be
@@ -127,6 +127,13 @@ class Net:
 
         # Allow other than DNS lookups for ASNs.
         self.allow_permutations = allow_permutations
+
+        if self.allow_permutations:
+
+            from warnings import warn
+            warn('allow_permutations has been deprecated and will be removed. '
+                 'It is no longer needed, due to the deprecation of asn_alts, '
+                 'and the addition of the asn_methods argument.')
 
         self.dns_resolver = dns.resolver.Resolver()
         self.dns_resolver.timeout = timeout

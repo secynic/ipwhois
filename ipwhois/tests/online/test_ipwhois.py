@@ -48,7 +48,8 @@ class TestIPWhois(TestCommon):
                 # TODO: keep until deprecated lookup is removed, for coverage
                 self.assertIsInstance(result.lookup(retry_count=retry_count),
                                       dict)
-            except (ASNLookupError, ASNRegistryError, WhoisLookupError):
+            except (ASNLookupError, ASNRegistryError, WhoisLookupError,
+                    HTTPLookupError):
                 pass
             except AssertionError as e:
                 raise e
@@ -172,7 +173,7 @@ class TestIPWhois(TestCommon):
         opener = build_opener(handler)
         result = IPWhois(address='74.125.225.229', timeout=0,
                          proxy_opener=opener)
-        self.assertRaises(HTTPLookupError, result.lookup_rdap)
+        self.assertRaises(ASNRegistryError, result.lookup_rdap)
 
         log.debug('Testing allow_permutations')
         result = IPWhois(address='74.125.225.229', timeout=0,

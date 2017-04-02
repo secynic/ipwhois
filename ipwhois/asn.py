@@ -27,7 +27,7 @@ import copy
 import logging
 from .exceptions import (NetError, ASNRegistryError, ASNParseError,
                          ASNLookupError, HTTPLookupError, WhoisLookupError,
-                         WhoisRateLimitError)
+                         WhoisRateLimitError, ASNOriginLookupError)
 
 log = logging.getLogger(__name__)
 
@@ -292,7 +292,7 @@ class IPASN:
         return asn_data
 
     def lookup(self, inc_raw=False, retry_count=3, asn_alts=None,
-               extra_org_map=None):
+               extra_org_map=None, asn_methods=None):
         """
         The wrapper function for retrieving and parsing ASN information for an
         IP address.
@@ -304,13 +304,16 @@ class IPASN:
                 timeouts, connection resets, etc. are encountered.
             asn_alts: Array of additional lookup types to attempt if the
                 ASN dns lookup fails. Allow permutations must be enabled.
-                Defaults to all ['whois', 'http'].
+                Defaults to all ['whois', 'http']. *WARNING* deprecated in
+                favor of new argument asn_methods.
             extra_org_map: Dictionary mapping org handles to RIRs. This is for
                 limited cases where ARIN REST (ASN fallback HTTP lookup) does
                 not show an RIR as the org handle e.g., DNIC (which is now the
                 built in ORG_MAP) e.g., {'DNIC': 'arin'}. Valid RIR values are
                 (note the case-sensitive - this is meant to match the REST
                 result): 'ARIN', 'RIPE', 'apnic', 'lacnic', 'afrinic'
+            asn_methods: Array of ASN lookup types to attempt, in order.
+                Defaults to all ['dns', 'whois', 'http'].
 
         Returns:
             Dictionary:
@@ -323,69 +326,97 @@ class IPASN:
             :raw: Raw ASN results if the inc_raw parameter is True. (String)
 
         Raises:
+            ValueError: methods argument requires one of dns, whois, http.
             ASNRegistryError: ASN registry does not match.
-            HTTPLookupError: The HTTP lookup failed.
         """
 
-        lookups = asn_alts if asn_alts is not None else ['whois', 'http']
+        if asn_methods is None:
 
-        # Attempt to resolve ASN info via Cymru. DNS is faster, try that first.
-        try:
+            if asn_alts is None:
 
-            self._net.dns_resolver.lifetime = (
-                self._net.dns_resolver.timeout * (
-                    retry_count and retry_count or 1
-                )
-            )
-            response = self._net.get_asn_dns()
-            asn_data = self._parse_fields_dns(response)
+                lookups = ['dns', 'whois', 'http']
 
-        except (ASNLookupError, ASNRegistryError) as e:
+            else:
 
-            if not self._net.allow_permutations:
+                from warnings import warn
+                warn('IPASN.lookup() asn_alts argument has been deprecated '
+                     'and will be removed. You should now use the asn_methods '
+                     'argument.')
+                lookups = ['dns'] + asn_alts
+
+        else:
+
+            # Python 2.6 doesn't support set literal expressions, use explicit
+            # set() instead.
+            if set(['dns', 'whois', 'http']).isdisjoint(asn_methods):
+
+                raise ValueError('methods argument requires at least one of '
+                                 'dns, whois, http.')
+
+            lookups = asn_methods
+
+        response = None
+        asn_data = None
+        for index, lookup_method in enumerate(lookups):
+
+            if index > 0 and not asn_methods and not (
+                    self._net.allow_permutations):
 
                 raise ASNRegistryError('ASN registry lookup failed. '
                                        'Permutations not allowed.')
 
-            try:
-                if 'whois' in lookups:
+            if lookup_method == 'dns':
 
-                    log.debug('ASN DNS lookup failed, trying ASN WHOIS: '
-                              '{0}'.format(e))
-                    response = self._net.get_asn_whois(retry_count)
-                    asn_data = self._parse_fields_whois(response
-                                                        )    # pragma: no cover
+                try:
 
-                else:
-
-                    raise ASNLookupError
-
-            except (ASNLookupError, ASNRegistryError):  # pragma: no cover
-
-                if 'http' in lookups:
-
-                    # Lets attempt to get the ASN registry information from
-                    # ARIN.
-                    log.debug('ASN WHOIS lookup failed, trying ASN via HTTP')
-                    try:
-
-                        response = self._net.get_asn_http(
-                            retry_count=retry_count
+                    self._net.dns_resolver.lifetime = (
+                        self._net.dns_resolver.timeout * (
+                            retry_count and retry_count or 1
                         )
-                        asn_data = self._parse_fields_http(response,
-                                                           extra_org_map)
+                    )
+                    response = self._net.get_asn_dns()
+                    asn_data = self._parse_fields_dns(response)
+                    break
 
-                    except ASNRegistryError:
+                except (ASNLookupError, ASNRegistryError) as e:
 
-                        raise ASNRegistryError('ASN registry lookup failed.')
+                    log.debug('ASN DNS lookup failed: {0}'.format(e))
+                    pass
 
-                    except ASNLookupError:
+            elif lookup_method == 'whois':
 
-                        raise HTTPLookupError('ASN HTTP lookup failed.')
+                try:
 
-                else:
+                    response = self._net.get_asn_whois(retry_count)
+                    asn_data = self._parse_fields_whois(
+                        response)  # pragma: no cover
+                    break
 
-                    raise ASNRegistryError('ASN registry lookup failed.')
+                except (ASNLookupError, ASNRegistryError) as e:
+
+                    log.debug('ASN WHOIS lookup failed: {0}'.format(e))
+                    pass
+
+            elif lookup_method == 'http':
+
+                try:
+
+                    response = self._net.get_asn_http(
+                        retry_count=retry_count
+                    )
+                    asn_data = self._parse_fields_http(response,
+                                                       extra_org_map)
+                    break
+
+                except (ASNLookupError, ASNRegistryError) as e:
+
+                    log.debug('ASN HTTP lookup failed: {0}'.format(e))
+                    pass
+
+        if asn_data is None:
+
+            raise ASNRegistryError('ASN lookup failed with no more methods to '
+                                   'try.')
 
         if inc_raw:
 
@@ -545,7 +576,7 @@ class ASNOrigin:
         return nets
 
     def lookup(self, asn=None, inc_raw=False, retry_count=3, response=None,
-               field_list=None, asn_alts=None):
+               field_list=None, asn_alts=None, asn_methods=None):
         """
         The function for retrieving and parsing ASN origin whois information
         via port 43/tcp (WHOIS).
@@ -561,6 +592,9 @@ class ASNOrigin:
                 ['description', 'maintainer', 'updated', 'source']
             asn_alts: Array of additional lookup types to attempt if the
                 ASN whois lookup fails. Defaults to all ['http'].
+                *WARNING* deprecated in favor of new argument asn_methods.
+            asn_methods: Array of ASN lookup types to attempt, in order.
+                Defaults to all ['whois', 'http'].
 
         Returns:
             Dictionary:
@@ -570,13 +604,40 @@ class ASNOrigin:
                 of the fields listed in the ASN_ORIGIN_WHOIS dictionary. (List)
             :raw: Raw ASN origin whois results if the inc_raw parameter is
                 True. (String)
+                
+        Raises:
+            ValueError: methods argument requires one of whois, http.
+            ASNOriginLookupError: ASN origin lookup failed.
         """
 
         if asn[0:2] != 'AS':
 
             asn = 'AS{0}'.format(asn)
 
-        lookups = asn_alts if asn_alts is not None else ['http']
+        if asn_methods is None:
+
+            if asn_alts is None:
+
+                lookups = ['whois', 'http']
+
+            else:
+
+                from warnings import warn
+                warn('ASNOrigin.lookup() asn_alts argument has been deprecated'
+                     ' and will be removed. You should now use the asn_methods'
+                     ' argument.')
+                lookups = ['whois'] + asn_alts
+
+        else:
+
+            # Python 2.6 doesn't support set literal expressions, use explicit
+            # set() instead.
+            if set(['whois', 'http']).isdisjoint(asn_methods):
+
+                raise ValueError('methods argument requires at least one of '
+                                 'whois, http.')
+
+            lookups = asn_methods
 
         # Create the return dictionary.
         results = {
@@ -590,24 +651,33 @@ class ASNOrigin:
         # Only fetch the response if we haven't already.
         if response is None:
 
-            try:
+            for index, lookup_method in enumerate(lookups):
 
-                log.debug('Response not given, perform ASN origin WHOIS lookup'
-                          ' for {0}'.format(asn))
-
-                # Retrieve the whois data.
-                response = self._net.get_asn_origin_whois(
-                    asn=asn, retry_count=retry_count
-                )
-
-            except (WhoisLookupError, WhoisRateLimitError) as e:
-
-                if 'http' in lookups:
+                if lookup_method == 'whois':
 
                     try:
 
-                        log.debug('ASN origin whois lookup failed, trying ASN '
-                                  'origin http: {0}'.format(e))
+                        log.debug('Response not given, perform ASN origin '
+                                  'WHOIS lookup for {0}'.format(asn))
+
+                        # Retrieve the whois data.
+                        response = self._net.get_asn_origin_whois(
+                            asn=asn, retry_count=retry_count
+                        )
+
+                    except (WhoisLookupError, WhoisRateLimitError) as e:
+
+                        log.debug('ASN origin WHOIS lookup failed: {0}'
+                                  ''.format(e))
+                        pass
+
+                elif lookup_method == 'http':
+
+                    try:
+
+                        log.debug('Response not given, perform ASN origin '
+                                  'HTTP lookup for: {0}'.format(asn))
+
                         tmp = ASN_ORIGIN_HTTP['radb']['form_data']
                         tmp[str(ASN_ORIGIN_HTTP['radb']['form_data_asn_field']
                                 )] = asn
@@ -619,13 +689,16 @@ class ASNOrigin:
                         )
                         is_http = True   # pragma: no cover
 
-                    except HTTPLookupError:
+                    except HTTPLookupError as e:
 
-                        raise
+                        log.debug('ASN origin HTTP lookup failed: {0}'
+                                  ''.format(e))
+                        pass
 
-                else:   # pragma: no cover
+            if response is None:
 
-                    raise
+                raise ASNOriginLookupError('ASN origin lookup failed with no '
+                                           'more methods to try.')
 
         # If inc_raw parameter is True, add the response to return dictionary.
         if inc_raw:

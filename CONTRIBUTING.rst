@@ -27,6 +27,7 @@ Bug reports
     LOG_FORMAT = ('[%(asctime)s] [%(levelname)s] [%(filename)s:%(lineno)s] '
        '[%(funcName)s()] %(message)s')
     logging.basicConfig(level=logging.DEBUG, format=LOG_FORMAT)
+
 - Include sources of information with links or screenshots
 - Do you have a suggestion on how to fix the bug?
 
@@ -50,7 +51,8 @@ When running local tests, you may include these tests by adding the
 
 Example::
 
-    nosetests -v -w ipwhois --include=online
+    nosetests -v -w ipwhois --include=online --exclude=stress --with-coverage
+     --cover-package=ipwhois
 
 Questions
 =========
@@ -74,7 +76,7 @@ Aside from the core code changes, it is helpful to provide the following
 - Unit tests
 - Examples
 - Sphinx configuration changes in /docs
-- Requirements (python2.txt, python3.txt)
+- Requirements (python2.txt, python3.txt, docs/requirements.txt)
 
 Guidelines
 ==========
@@ -92,3 +94,9 @@ Guidelines
   ::
 
     --verbosity=3 --nologcapture --include=online --cover-erase
+
+  If you would like to exclude the aggressive online stress tests, add to the
+  above:
+  ::
+
+     --exclude stress

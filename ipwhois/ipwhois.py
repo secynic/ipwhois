@@ -42,7 +42,8 @@ class IPWhois:
         proxy_opener: The urllib.request.OpenerDirector request for proxy
             support or None.
         allow_permutations: allow net.Net() to use additional methods if DNS
-            lookups to Cymru fail.
+            lookups to Cymru fail. *WARNING* deprecated in favor of new
+            argument asn_methods.
     """
 
     def __init__(self, address, timeout=5, proxy_opener=None,
@@ -83,7 +84,7 @@ class IPWhois:
     def lookup_whois(self, inc_raw=False, retry_count=3, get_referral=False,
                      extra_blacklist=None, ignore_referral_errors=False,
                      field_list=None, asn_alts=None, extra_org_map=None,
-                     inc_nir=True, nir_field_list=None):
+                     inc_nir=True, nir_field_list=None, asn_methods=None):
         """
         The function for retrieving and parsing whois information for an IP
         address via port 43 (WHOIS).
@@ -104,7 +105,8 @@ class IPWhois:
                 'address', 'postal_code', 'emails', 'created', 'updated']
             asn_alts: Array of additional lookup types to attempt if the
                 ASN dns lookup fails. Allow permutations must be enabled.
-                Defaults to all ['whois', 'http'].
+                Defaults to all ['whois', 'http']. *WARNING* deprecated in
+                favor of new argument asn_methods.
             extra_org_map: Dictionary mapping org handles to RIRs. This is for
                 limited cases where ARIN REST (ASN fallback HTTP lookup) does
                 not show an RIR as the org handle e.g., DNIC (which is now the
@@ -119,6 +121,8 @@ class IPWhois:
             nir_field_list: If provided and inc_nir, a list of fields to parse:
                 ['name', 'handle', 'country', 'address', 'postal_code',
                 'nameservers', 'created', 'updated', 'contacts']
+            asn_methods: Array of ASN lookup types to attempt, in order.
+                Defaults to all ['dns', 'whois', 'http'].
 
         Returns:
             Dictionary:
@@ -151,7 +155,7 @@ class IPWhois:
 
         asn_data = self.ipasn.lookup(
             inc_raw=inc_raw, retry_count=retry_count, asn_alts=asn_alts,
-            extra_org_map=extra_org_map
+            extra_org_map=extra_org_map, asn_methods=asn_methods
         )
 
         # Add the ASN information to the return dictionary.
@@ -195,7 +199,7 @@ class IPWhois:
     def lookup_rdap(self, inc_raw=False, retry_count=3, depth=0,
                     excluded_entities=None, bootstrap=False,
                     rate_limit_timeout=120, asn_alts=None, extra_org_map=None,
-                    inc_nir=True, nir_field_list=None):
+                    inc_nir=True, nir_field_list=None, asn_methods=None):
         """
         The function for retrieving and parsing whois information for an IP
         address via HTTP (RDAP).
@@ -218,7 +222,8 @@ class IPWhois:
                 when a rate limit notice is returned via rdap+json.
             asn_alts: Array of additional lookup types to attempt if the
                 ASN dns lookup fails. Allow permutations must be enabled.
-                Defaults to all ['whois', 'http'].
+                Defaults to all ['whois', 'http']. *WARNING* deprecated in
+                favor of new argument asn_methods.
             extra_org_map: Dictionary mapping org handles to RIRs. This is for
                 limited cases where ARIN REST (ASN fallback HTTP lookup) does
                 not show an RIR as the org handle e.g., DNIC (which is now the
@@ -233,6 +238,8 @@ class IPWhois:
             nir_field_list: If provided and inc_nir, a list of fields to parse:
                 ['name', 'handle', 'country', 'address', 'postal_code',
                 'nameservers', 'created', 'updated', 'contacts']
+            asn_methods: Array of ASN lookup types to attempt, in order.
+                Defaults to all ['dns', 'whois', 'http'].
 
         Returns:
             Dictionary:
@@ -266,7 +273,7 @@ class IPWhois:
             log.debug('ASN lookup for {0}'.format(self.address_str))
             asn_data = self.ipasn.lookup(
                 inc_raw=inc_raw, retry_count=retry_count, asn_alts=asn_alts,
-                extra_org_map=extra_org_map
+                extra_org_map=extra_org_map, asn_methods=asn_methods
             )
 
             # Add the ASN information to the return dictionary.

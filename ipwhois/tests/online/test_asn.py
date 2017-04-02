@@ -3,8 +3,7 @@ import io
 from os import path
 import logging
 from ipwhois.tests import TestCommon
-from ipwhois.exceptions import (WhoisLookupError, HTTPLookupError,
-                                ASNRegistryError)
+from ipwhois.exceptions import (ASNOriginLookupError, ASNRegistryError)
 from ipwhois.net import Net
 from ipwhois.asn import (IPASN, ASNOrigin)
 
@@ -23,12 +22,18 @@ class TestIPASN(TestCommon):
 
         try:
             self.assertIsInstance(ipasn.lookup(inc_raw=True), dict)
-        except (HTTPLookupError, ASNRegistryError):
+        except ASNRegistryError:
             pass
         except AssertionError as e:
             raise e
         except Exception as e:
             self.fail('Unexpected exception raised: {0}'.format(e))
+
+        self.assertRaises(ValueError, ipasn.lookup, **dict(
+            asn_methods=['asd']))
+
+        ipasn.lookup(asn_methods=['dns', 'whois', 'http'])
+        ipasn.lookup(asn_methods=['http'])
 
         net = Net(address='74.125.225.229', timeout=0,
                   allow_permutations=False)
@@ -38,7 +43,7 @@ class TestIPASN(TestCommon):
         net = Net(address='74.125.225.229', timeout=0,
                   allow_permutations=True)
         ipasn = IPASN(net)
-        self.assertRaises(HTTPLookupError, ipasn.lookup, **dict(
+        self.assertRaises(ASNRegistryError, ipasn.lookup, **dict(
             asn_alts=['http']))
 
 
@@ -69,7 +74,7 @@ class TestASNOrigin(TestCommon):
                     dict
                 )
 
-            except WhoisLookupError:
+            except ASNOriginLookupError:
 
                 pass
 
@@ -84,7 +89,14 @@ class TestASNOrigin(TestCommon):
         net = Net(address='74.125.225.229', timeout=0,
                   allow_permutations=True)
         asnorigin = ASNOrigin(net)
-        self.assertRaises(HTTPLookupError, asnorigin.lookup, **dict(
+        self.assertRaises(ASNOriginLookupError, asnorigin.lookup, **dict(
             asn='15169',
             asn_alts=['http']))
 
+        self.assertRaises(ValueError, asnorigin.lookup, **dict(
+            asn='15169',
+            asn_methods=['asd']))
+
+        net = Net(address='74.125.225.229')
+        asnorigin = ASNOrigin(net)
+        asnorigin.lookup(asn='15169', asn_methods=['whois', 'http'])
