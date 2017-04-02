@@ -695,10 +695,10 @@ class ASNOrigin:
                                   ''.format(e))
                         pass
 
-        if response is None:
+            if response is None:
 
-            raise ASNOriginLookupError('ASN origin lookup failed with no more '
-                                       'methods to try.')
+                raise ASNOriginLookupError('ASN origin lookup failed with no '
+                                           'more methods to try.')
 
         # If inc_raw parameter is True, add the response to return dictionary.
         if inc_raw:
