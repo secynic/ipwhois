@@ -27,7 +27,7 @@ import copy
 import logging
 from .exceptions import (NetError, ASNRegistryError, ASNParseError,
                          ASNLookupError, HTTPLookupError, WhoisLookupError,
-                         WhoisRateLimitError)
+                         WhoisRateLimitError, ASNOriginLookupError)
 
 log = logging.getLogger(__name__)
 
@@ -604,6 +604,10 @@ class ASNOrigin:
                 of the fields listed in the ASN_ORIGIN_WHOIS dictionary. (List)
             :raw: Raw ASN origin whois results if the inc_raw parameter is
                 True. (String)
+                
+        Raises:
+            ValueError: methods argument requires one of whois, http.
+            ASNOriginLookupError: ASN origin lookup failed.
         """
 
         if asn[0:2] != 'AS':
@@ -647,24 +651,33 @@ class ASNOrigin:
         # Only fetch the response if we haven't already.
         if response is None:
 
-            try:
+            for index, lookup_method in enumerate(lookups):
 
-                log.debug('Response not given, perform ASN origin WHOIS lookup'
-                          ' for {0}'.format(asn))
-
-                # Retrieve the whois data.
-                response = self._net.get_asn_origin_whois(
-                    asn=asn, retry_count=retry_count
-                )
-
-            except (WhoisLookupError, WhoisRateLimitError) as e:
-
-                if 'http' in lookups:
+                if lookup_method == 'whois':
 
                     try:
 
-                        log.debug('ASN origin whois lookup failed, trying ASN '
-                                  'origin http: {0}'.format(e))
+                        log.debug('Response not given, perform ASN origin '
+                                  'WHOIS lookup for {0}'.format(asn))
+
+                        # Retrieve the whois data.
+                        response = self._net.get_asn_origin_whois(
+                            asn=asn, retry_count=retry_count
+                        )
+
+                    except (WhoisLookupError, WhoisRateLimitError) as e:
+
+                        log.debug('ASN origin WHOIS lookup failed: {0}'
+                                  ''.format(e))
+                        pass
+
+                elif lookup_method == 'http':
+
+                    try:
+
+                        log.debug('Response not given, perform ASN origin '
+                                  'HTTP lookup for: {0}'.format(asn))
+
                         tmp = ASN_ORIGIN_HTTP['radb']['form_data']
                         tmp[str(ASN_ORIGIN_HTTP['radb']['form_data_asn_field']
                                 )] = asn
@@ -676,13 +689,16 @@ class ASNOrigin:
                         )
                         is_http = True   # pragma: no cover
 
-                    except HTTPLookupError:
+                    except HTTPLookupError as e:
 
-                        raise
+                        log.debug('ASN origin HTTP lookup failed: {0}'
+                                  ''.format(e))
+                        pass
 
-                else:   # pragma: no cover
+        if response is None:
 
-                    raise
+            raise ASNOriginLookupError('ASN origin lookup failed with no more '
+                                       'methods to try.')
 
         # If inc_raw parameter is True, add the response to return dictionary.
         if inc_raw:

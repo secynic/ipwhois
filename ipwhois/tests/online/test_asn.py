@@ -3,8 +3,7 @@ import io
 from os import path
 import logging
 from ipwhois.tests import TestCommon
-from ipwhois.exceptions import (WhoisLookupError, ASNRegistryError,
-                                HTTPLookupError)
+from ipwhois.exceptions import (ASNOriginLookupError, ASNRegistryError)
 from ipwhois.net import Net
 from ipwhois.asn import (IPASN, ASNOrigin)
 
@@ -75,7 +74,7 @@ class TestASNOrigin(TestCommon):
                     dict
                 )
 
-            except WhoisLookupError:
+            except ASNOriginLookupError:
 
                 pass
 
@@ -90,7 +89,7 @@ class TestASNOrigin(TestCommon):
         net = Net(address='74.125.225.229', timeout=0,
                   allow_permutations=True)
         asnorigin = ASNOrigin(net)
-        self.assertRaises(HTTPLookupError, asnorigin.lookup, **dict(
+        self.assertRaises(ASNOriginLookupError, asnorigin.lookup, **dict(
             asn='15169',
             asn_alts=['http']))
 

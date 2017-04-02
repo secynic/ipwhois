@@ -55,6 +55,12 @@ class ASNParseError(Exception):
     """
 
 
+class ASNOriginLookupError(Exception):
+    """
+    An Exception for when the ASN origin lookup failed.
+    """
+
+
 class HostLookupError(Exception):
     """
     An Exception for when the host lookup failed.

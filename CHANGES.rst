@@ -5,6 +5,7 @@ Changelog
 -----------
 
 - Deprecated asn_alts, allow_permutations in favor of new asn_methods (#158)
+- Added new exception ASNOriginLookupError (#158)
 - KRNIC lookups changed to HTTPS (#166)
 
 0.15.1 (2017-02-16)
