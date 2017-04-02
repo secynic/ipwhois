@@ -3,8 +3,8 @@ import io
 from os import path
 import logging
 from ipwhois.tests import TestCommon
-from ipwhois.exceptions import (WhoisLookupError, HTTPLookupError,
-                                ASNRegistryError)
+from ipwhois.exceptions import (WhoisLookupError, ASNRegistryError,
+                                HTTPLookupError)
 from ipwhois.net import Net
 from ipwhois.asn import (IPASN, ASNOrigin)
 
@@ -23,7 +23,7 @@ class TestIPASN(TestCommon):
 
         try:
             self.assertIsInstance(ipasn.lookup(inc_raw=True), dict)
-        except (HTTPLookupError, ASNRegistryError):
+        except ASNRegistryError:
             pass
         except AssertionError as e:
             raise e
@@ -34,6 +34,7 @@ class TestIPASN(TestCommon):
             asn_methods=['asd']))
 
         ipasn.lookup(asn_methods=['dns', 'whois', 'http'])
+        ipasn.lookup(asn_methods=['http'])
 
         net = Net(address='74.125.225.229', timeout=0,
                   allow_permutations=False)
@@ -43,7 +44,7 @@ class TestIPASN(TestCommon):
         net = Net(address='74.125.225.229', timeout=0,
                   allow_permutations=True)
         ipasn = IPASN(net)
-        self.assertRaises(HTTPLookupError, ipasn.lookup, **dict(
+        self.assertRaises(ASNRegistryError, ipasn.lookup, **dict(
             asn_alts=['http']))
 
 

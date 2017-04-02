@@ -328,7 +328,6 @@ class IPASN:
         Raises:
             ValueError: methods argument requires one of dns, whois, http.
             ASNRegistryError: ASN registry does not match.
-            HTTPLookupError: The HTTP lookup failed.
         """
 
         if asn_methods is None:
@@ -356,63 +355,68 @@ class IPASN:
 
             lookups = asn_methods
 
-        # Attempt to resolve ASN info via Cymru. DNS is faster, try that first.
-        try:
+        response = None
+        asn_data = None
+        for index, lookup_method in enumerate(lookups):
 
-            self._net.dns_resolver.lifetime = (
-                self._net.dns_resolver.timeout * (
-                    retry_count and retry_count or 1
-                )
-            )
-            response = self._net.get_asn_dns()
-            asn_data = self._parse_fields_dns(response)
-
-        except (ASNLookupError, ASNRegistryError) as e:
-
-            if not self._net.allow_permutations:
+            if index > 0 and not asn_methods and not (
+                    self._net.allow_permutations):
 
                 raise ASNRegistryError('ASN registry lookup failed. '
                                        'Permutations not allowed.')
 
-            try:
-                if 'whois' in lookups:
+            if lookup_method == 'dns':
 
-                    log.debug('ASN DNS lookup failed, trying ASN WHOIS: '
-                              '{0}'.format(e))
-                    response = self._net.get_asn_whois(retry_count)
-                    asn_data = self._parse_fields_whois(response
-                                                        )    # pragma: no cover
+                try:
 
-                else:
-
-                    raise ASNLookupError
-
-            except (ASNLookupError, ASNRegistryError):  # pragma: no cover
-
-                if 'http' in lookups:
-
-                    # Lets attempt to get the ASN registry information from
-                    # ARIN.
-                    log.debug('ASN WHOIS lookup failed, trying ASN via HTTP')
-                    try:
-
-                        response = self._net.get_asn_http(
-                            retry_count=retry_count
+                    self._net.dns_resolver.lifetime = (
+                        self._net.dns_resolver.timeout * (
+                            retry_count and retry_count or 1
                         )
-                        asn_data = self._parse_fields_http(response,
-                                                           extra_org_map)
+                    )
+                    response = self._net.get_asn_dns()
+                    asn_data = self._parse_fields_dns(response)
+                    break
 
-                    except ASNRegistryError:
+                except (ASNLookupError, ASNRegistryError) as e:
 
-                        raise ASNRegistryError('ASN registry lookup failed.')
+                    log.debug('ASN DNS lookup failed: {0}'.format(e))
+                    pass
 
-                    except ASNLookupError:
+            elif lookup_method == 'whois':
 
-                        raise HTTPLookupError('ASN HTTP lookup failed.')
+                try:
 
-                else:
+                    response = self._net.get_asn_whois(retry_count)
+                    asn_data = self._parse_fields_whois(
+                        response)  # pragma: no cover
+                    break
 
-                    raise ASNRegistryError('ASN registry lookup failed.')
+                except (ASNLookupError, ASNRegistryError) as e:
+
+                    log.debug('ASN WHOIS lookup failed: {0}'.format(e))
+                    pass
+
+            elif lookup_method == 'http':
+
+                try:
+
+                    response = self._net.get_asn_http(
+                        retry_count=retry_count
+                    )
+                    asn_data = self._parse_fields_http(response,
+                                                       extra_org_map)
+                    break
+
+                except (ASNLookupError, ASNRegistryError) as e:
+
+                    log.debug('ASN HTTP lookup failed: {0}'.format(e))
+                    pass
+
+        if asn_data is None:
+
+            raise ASNRegistryError('ASN lookup failed with no more methods to '
+                                   'try.')
 
         if inc_raw:
 
