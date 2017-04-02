@@ -108,7 +108,7 @@ NIR_WHOIS = {
     },
     'krnic': {
         'country_code': 'KR',
-        'url': 'http://whois.kisa.or.kr/eng/whois.jsc',
+        'url': 'https://whois.kisa.or.kr/eng/whois.jsc',
         'request_type': 'POST',
         'request_headers': {'Accept': 'text/html'},
         'form_data_ip_field': 'query',

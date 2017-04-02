@@ -165,6 +165,10 @@ ipwhois needs some outbound firewall ports opened from your host/server.
     80/tcp
 
     443/tcp (Pending)
+:NIR (HTTP):
+    80/tcp
+
+    443/tcp (KRNIC)
 :Legacy Whois: 43/tcp
 :Get Host: 43/tcp
 
