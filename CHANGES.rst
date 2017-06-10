@@ -10,6 +10,7 @@ Changelog
 - Added experimental functions - get_bulk_asn_whois (#134)
 - Fixed bug in NIR lookups that caused addresses with multi-line contacts to
   error (#172 - kwheeles)
+- Added IANA Reserved CIDR 198.97.38.0/24 to ipv4_is_defined (#174)
 
 0.15.1 (2017-02-16)
 -------------------
