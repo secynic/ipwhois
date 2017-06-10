@@ -8,6 +8,8 @@ Changelog
 - Added new exception ASNOriginLookupError (#158)
 - KRNIC lookups changed to HTTPS (#166)
 - Added experimental functions - get_bulk_asn_whois (#134)
+- Fixed bug in NIR lookups that caused addresses with multi-line contacts to
+  error (#172 - kwheeles)
 
 0.15.1 (2017-02-16)
 -------------------
