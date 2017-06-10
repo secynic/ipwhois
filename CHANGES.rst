@@ -7,6 +7,10 @@ Changelog
 - Deprecated asn_alts, allow_permutations in favor of new asn_methods (#158)
 - Added new exception ASNOriginLookupError (#158)
 - KRNIC lookups changed to HTTPS (#166)
+- Added experimental functions - get_bulk_asn_whois (#134)
+- Fixed bug in NIR lookups that caused addresses with multi-line contacts to
+  error (#172 - kwheeles)
+- Added IANA Reserved CIDR 198.97.38.0/24 to ipv4_is_defined (#174)
 
 0.15.1 (2017-02-16)
 -------------------

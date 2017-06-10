@@ -562,7 +562,7 @@ class NIRWhois:
 
                         if isinstance(val, str):
 
-                            val = [val]
+                            val = val.splitlines()
 
                         for contact in val:
 
