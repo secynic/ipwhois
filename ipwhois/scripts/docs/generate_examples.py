@@ -86,7 +86,8 @@ RST_FILES = {
                 '    >>>> from pprint import pprint\n\n'
                 '    >>>> net = Net(\'2001:43f8:7b0::\')\n'
                 '    >>>> obj = IPASN(net)\n'
-                '    >>>> results = obj.lookup()\n\n'
+                '    >>>> results = obj.lookup()\n'
+                '    >>>> pprint(results)\n\n'
                 '    {0}'
             ),
             'queries': {
@@ -101,7 +102,8 @@ RST_FILES = {
                 '    >>>> from pprint import pprint\n\n'
                 '    >>>> net = Net(\'2001:43f8:7b0::\')\n'
                 '    >>>> obj = ASNOrigin(net)\n'
-                '    >>>> results = obj.lookup(asn=\'AS37578\')\n\n'
+                '    >>>> results = obj.lookup(asn=\'AS37578\')\n'
+                '    >>>> pprint(results)\n\n'
                 '    {0}'
             ),
             'queries': {
@@ -118,9 +120,11 @@ RST_FILES = {
                 '    >>>> from ipwhois import IPWhois\n'
                 '    >>>> from pprint import pprint\n\n'
                 '    >>>> obj = IPWhois(\'133.1.2.5\')\n'
-                '    >>>> results = obj.lookup_whois(inc_nir=True)\n\n'
+                '    >>>> results = obj.lookup_whois(inc_nir=True)\n'
+                '    >>>> pprint(results)\n\n'                
                 '    {0}\n\n'
-                '    >>>> results = obj.lookup_rdap(depth=1, inc_nir=True)\n\n'
+                '    >>>> results = obj.lookup_rdap(depth=1, inc_nir=True)\n'
+                '    >>>> pprint(results)\n\n'
                 '    {1}'
             ),
             'queries': {
@@ -129,6 +133,60 @@ RST_FILES = {
                 ),
                 '1': lambda: IPWhois('133.1.2.5', timeout=15).lookup_rdap(
                     depth=1, inc_nir=True, retry_count=10
+                ),
+            }
+        }
+    },
+    'RDAP.rst': {
+        'OUTPUT_BASIC': {
+            'content': (
+                '::\n\n'
+                '    >>>> from ipwhois import IPWhois\n'
+                '    >>>> from pprint import pprint\n\n'
+                '    >>>> obj = IPWhois(\'74.125.225.229\')\n'
+                '    >>>> results = obj.lookup_rdap(depth=1)\n'
+                '    >>>> pprint(results)\n\n'
+                '    {0}'
+            ),
+            'queries': {
+                '0': lambda: IPWhois('74.125.225.229', timeout=15).lookup_rdap(
+                    depth=1, retry_count=10
+                ),
+            }
+        }
+    },
+    'WHOIS.rst': {
+        'OUTPUT_BASIC': {
+            'content': (
+                '::\n\n'
+                '    >>>> from ipwhois import IPWhois\n'
+                '    >>>> from pprint import pprint\n\n'
+                '    >>>> obj = IPWhois(\'74.125.225.229\')\n'
+                '    >>>> results = obj.lookup_whois()\n'
+                '    >>>> pprint(results)\n\n'
+                '    {0}'
+            ),
+            'queries': {
+                '0': lambda: IPWhois('74.125.225.229',
+                                     timeout=15).lookup_whois(
+                    retry_count=10
+                ),
+            }
+        },
+        'OUTPUT_MULTI_REF': {
+            'content': (
+                '::\n\n'
+                '    >>>> from ipwhois import IPWhois\n'
+                '    >>>> from pprint import pprint\n\n'
+                '    >>>> obj = IPWhois(\'38.113.198.252\')\n'
+                '    >>>> results = obj.lookup_whois(get_referral=True)\n'
+                '    >>>> pprint(results)\n\n'
+                '    {0}'
+            ),
+            'queries': {
+                '0': lambda: IPWhois('38.113.198.252',
+                                     timeout=15).lookup_whois(
+                    get_referral=True, retry_count=10
                 ),
             }
         }
@@ -185,11 +243,25 @@ for filename, sections in (
 
             new_str = json.dumps(
                 query(), indent=4, sort_keys=True
-            ).replace(', "', ',\n    "')
+            ).replace(': null', ': None')
+
+            new_str = re.sub(
+                r'(\\r\\n)(?=.+?")',
+                r'\\\\r\\\\n',
+                new_str,
+                flags=re.DOTALL
+            )
+
+            new_str = re.sub(
+                r'(\\\\n)',
+                r'\\n',
+                new_str,
+                flags=re.DOTALL
+            )
 
             tmp_query_results[query_key] = re.sub(
-                r'(\\n)(?=.+?")',
-                r', ',
+                r'(?<!\\\\r\\)(\\n)(?=.+?")',
+                r'\\\\n',
                 new_str,
                 flags=re.DOTALL
             )[:-1] + '    }'
