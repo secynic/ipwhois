@@ -354,7 +354,7 @@ class _RDAPCommon:
 
                 pass
 
-            if all(tmp.values()):
+            if any(tmp.values()):
 
                 ret.append(tmp)
 
