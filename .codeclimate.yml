@@ -1,0 +1,4 @@
+ratings:
+   paths:
+   - "ipwhois/*.py"
+   - "ipwhois/scripts/*.py"
