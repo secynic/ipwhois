@@ -27,9 +27,12 @@ the name (_name), and the description (_description).
 
 See the ipwhois CLI (ipwhois_utils_cli.py) for an example.
 
-Import the human readable translation dictionaries::
+Import the human readable translation dictionaries
 
-    >>>> from ipwhois.hr import (HR_ASN, HR_RDAP_COMMON, HR_RDAP, HR_WHOIS)
+::
+
+    >>>> from ipwhois.hr import (HR_ASN, HR_ASN_ORIGIN, HR_RDAP_COMMON,
+                                 HR_RDAP, HR_WHOIS, HR_WHOIS_NIR)
 
 Usage Examples
 ==============
