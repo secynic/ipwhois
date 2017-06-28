@@ -50,6 +50,11 @@ HR_ASN = {
         '_short': 'ASN Registry',
         '_name': 'ASN Assigned Registry',
         '_description': 'ASN assigned regional internet registry.'
+    },
+    'asn_description': {
+        '_short': 'ASN Description',
+        '_name': 'ASN Description',
+        '_description': 'A brief description for the assigned ASN.'
     }
 }
 

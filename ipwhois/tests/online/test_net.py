@@ -39,6 +39,21 @@ class TestNet(TestCommon):
         result.dns_zone = 'a'
         self.assertRaises(ASNLookupError, result.get_asn_dns)
 
+    def test_get_asn_verbose_dns(self):
+        result = Net('74.125.225.229')
+        try:
+            self.assertIsInstance(result.get_asn_verbose_dns(asn='15169'), str)
+        except ASNLookupError:
+            pass
+        except AssertionError as e:
+            raise e
+        except Exception as e:
+            self.fail('Unexpected exception raised: {0}'.format(e))
+
+        self.assertRaises(ASNLookupError, result.get_asn_verbose_dns, **dict(
+            asn='a'
+        ))
+
     def test_get_asn_whois(self):
         result = Net('74.125.225.229')
         try:

@@ -262,6 +262,48 @@ class Net:
                 'ASN lookup failed for {0}.'.format(self.address_str)
             )
 
+    def get_asn_verbose_dns(self, asn=None):
+        """
+        The function for retrieving the information for an ASN from
+        Cymru via port 53 (DNS). This is needed since IP to ASN mapping via
+        Cymru DNS does not return the ASN Description like Cymru Whois does.
+
+        Args:
+            asn: The ASN string (required).
+
+        Returns:
+            String: The raw ASN data.
+
+        Raises:
+            ASNLookupError: The ASN lookup failed.
+        """
+
+        if asn[0:2] != 'AS':
+
+            asn = 'AS{0}'.format(asn)
+
+        zone = '{0}.asn.cymru.com'.format(asn)
+
+        try:
+
+            log.debug('ASN verbose query for {0}'.format(zone))
+            data = self.dns_resolver.query(zone, 'TXT')
+            return str(data[0])
+
+        except (dns.resolver.NXDOMAIN, dns.resolver.NoNameservers,
+                dns.resolver.NoAnswer, dns.exception.Timeout) as e:
+
+            raise ASNLookupError(
+                'ASN lookup failed (DNS {0}) for {1}.'.format(
+                    e.__class__.__name__, asn)
+            )
+
+        except:  # pragma: no cover
+
+            raise ASNLookupError(
+                'ASN lookup failed for {0}.'.format(asn)
+            )
+
     def get_asn_whois(self, retry_count=3):
         """
         The function for retrieving ASN information for an IP address from
@@ -288,7 +330,7 @@ class Net:
 
             # Query the Cymru whois server, and store the results.
             conn.send((
-                ' -r -a -c -p -f -o {0}{1}'.format(
+                ' -r -a -c -p -f {0}{1}'.format(
                     self.address_str, '\r\n')
             ).encode())
 

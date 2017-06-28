@@ -50,14 +50,14 @@ Arguments supported by IPWhois.lookup_whois().
 |                        |        | 'postal_code', 'emails', 'created',       |
 |                        |        | 'updated']                                |
 +------------------------+--------+-------------------------------------------+
-| asn_alts               | List   | Array of additional lookup types to       |
+| asn_alts               | List   | List of additional lookup types to        |
 |                        |        | attempt if the ASN dns lookup fails.      |
 |                        |        | Allow permutations must be enabled.       |
 |                        |        | Defaults to all ['whois', 'http'].        |
 |                        |        | *WARNING* deprecated in favor of new      |
 |                        |        | argument asn_methods.                     |
 +------------------------+--------+-------------------------------------------+
-| asn_methods            | List   | Array of ASN lookup types to attempt, in  |
+| asn_methods            | List   | List of ASN lookup types to attempt, in   |
 |                        |        | order. Defaults to all                    |
 |                        |        | ['dns', 'whois', 'http'].                 |
 +------------------------+--------+-------------------------------------------+
@@ -71,6 +71,10 @@ Arguments supported by IPWhois.lookup_whois().
 |                        |        | case-sensitive - this is meant to match   |
 |                        |        | the REST result):  'ARIN', 'RIPE',        |
 |                        |        | 'apnic', 'lacnic', 'afrinic'              |
++------------------------+--------+-------------------------------------------+
+| get_asn_description    | Bool   | Boolean for whether to run an additional  |
+|                        |        | query when pulling ASN information via    |
+|                        |        | dns, in order to get the ASN description. |
 +------------------------+--------+-------------------------------------------+
 
 .. _whois-output:
@@ -100,6 +104,8 @@ The output dictionary from IPWhois.lookup_whois().
 | asn_date         | String | ASN allocation date in ISO 8601 format.         |
 +------------------+--------+-------------------------------------------------+
 | asn_registry     | String | ASN assigned regional internet registry.        |
++------------------+--------+-------------------------------------------------+
+| asn_description  | String | The ASN description                             |
 +------------------+--------+-------------------------------------------------+
 | nets             | List   | List of network dictionaries.                   |
 |                  |        | See :ref:`whois-network-dictionary`.            |
@@ -199,6 +205,8 @@ Usage Examples
 Basic usage
 -----------
 
+.. OUTPUT_BASIC START
+
 ::
 
     >>>> from ipwhois import IPWhois
@@ -209,35 +217,45 @@ Basic usage
     >>>> pprint(results)
 
     {
-    'asn': '15169',
-    'asn_cidr': '74.125.225.0/24',
-    'asn_country_code': 'US',
-    'asn_date': '2007-03-13',
-    'asn_registry': 'arin',
-    'nets': [{'address': '1600 Amphitheatre Parkway',
-              'cidr': '74.125.0.0/16',
-              'city': 'Mountain View',
-              'country': 'US',
-              'created': '2007-03-13',
-              'description': 'Google Inc.',
-              'emails': [
-                  'arin-contact@google.com',
-                  'network-abuse@google.com'
-              ],
-              'handle': 'NET-74-125-0-0-1',
-              'name': 'GOOGLE',
-              'postal_code': '94043',
-              'range': '74.125.0.0 - 74.125.255.255',
-              'state': 'CA',
-              'updated': '2012-02-24'}],
-    'query': '74.125.225.229',
-    'raw': None,
-    'raw_referral': None,
-    'referral': None
+    "asn": "15169",
+    "asn_cidr": "74.125.225.0/24",
+    "asn_country_code": "US",
+    "asn_date": "2007-03-13",
+    "asn_description": "GOOGLE - Google Inc., US",
+    "asn_registry": "arin",
+    "nets": [
+        {
+            "address": "1600 Amphitheatre Parkway",
+            "cidr": "74.125.0.0/16",
+            "city": "Mountain View",
+            "country": "US",
+            "created": "2007-03-13",
+            "description": "Google Inc.",
+            "emails": [
+                "network-abuse@google.com",
+                "arin-contact@google.com"
+            ],
+            "handle": "NET-74-125-0-0-1",
+            "name": "GOOGLE",
+            "postal_code": "94043",
+            "range": "74.125.0.0 - 74.125.255.255",
+            "state": "CA",
+            "updated": "2012-02-24"
+        }
+    ],
+    "nir": None,
+    "query": "74.125.225.229",
+    "raw": None,
+    "raw_referral": None,
+    "referral": None
     }
+
+.. OUTPUT_BASIC END
 
 Multiple networks listed and referral whois
 -------------------------------------------
+
+.. OUTPUT_MULTI_REF START
 
 ::
 
@@ -249,55 +267,66 @@ Multiple networks listed and referral whois
     >>>> pprint(results)
 
     {
-    'asn': '174',
-    'asn_cidr': '38.0.0.0/8',
-    'asn_country_code': 'US',
-    'asn_date': '',
-    'asn_registry': 'arin',
-    'nets': [{'address': '2450 N Street NW',
-           'cidr': '38.0.0.0/8',
-           'city': 'Washington',
-           'country': 'US',
-           'created': '1991-04-16',
-           'description': 'PSINet, Inc.',
-           'emails': [
-               'noc@cogentco.com',
-               'abuse@cogentco.com',
-               'ipalloc@cogentco.com'
-           ],
-           'handle': 'NET-38-0-0-0-1',
-           'name': 'COGENT-A',
-           'postal_code': '20037',
-           'range': '38.0.0.0 - 38.255.255.255',
-           'state': 'DC',
-           'updated': '2011-05-20'},
-          {'address': '2450 N Street NW',
-           'cidr': '38.112.0.0/13',
-           'city': 'Washington',
-           'country': 'US',
-           'created': '2003-08-20',
-           'description': 'PSINet, Inc.',
-           'emails': [
-               'noc@cogentco.com',
-               'abuse@cogentco.com',
-               'ipalloc@cogentco.com'
-           ],
-           'handle': 'NET-38-112-0-0-1',
-           'name': 'COGENT-NB-0002',
-           'postal_code': '20037',
-           'range': None,
-           'state': 'DC',
-           'updated': '2004-03-11'}],
-    'query': '38.113.198.252',
-    'raw': None,
-    'raw_referral': None,
-    'referral': {'address': '1015 31st St NW',
-                 'city': 'Washington',
-                 'country': 'US',
-                 'description': 'Cogent communications - IPENG',
-                 'name': 'NET4-2671C60017',
-                 'postal_code': '20007',
-                 'state': 'DC',
-                 'updated': '2007-09-18 22:02:09'}
+    "asn": "174",
+    "asn_cidr": "38.0.0.0/8",
+    "asn_country_code": "US",
+    "asn_date": "",
+    "asn_description": "COGENT-174 - Cogent Communications, US",
+    "asn_registry": "arin",
+    "nets": [
+        {
+            "address": "2450 N Street NW",
+            "cidr": "38.0.0.0/8",
+            "city": "Washington",
+            "country": "US",
+            "created": "1991-04-16",
+            "description": "PSINet, Inc.",
+            "emails": [
+                "abuse@cogentco.com",
+                "noc@cogentco.com",
+                "ipalloc@cogentco.com"
+            ],
+            "handle": "NET-38-0-0-0-1",
+            "name": "COGENT-A",
+            "postal_code": "20037",
+            "range": "38.0.0.0 - 38.255.255.255",
+            "state": "DC",
+            "updated": "2011-05-20"
+        },
+        {
+            "address": "2450 N Street NW",
+            "cidr": "38.112.0.0/13",
+            "city": "Washington",
+            "country": "US",
+            "created": "2003-08-20",
+            "description": "PSINet, Inc.",
+            "emails": [
+                "abuse@cogentco.com",
+                "noc@cogentco.com",
+                "ipalloc@cogentco.com"
+            ],
+            "handle": "NET-38-112-0-0-1",
+            "name": "COGENT-NB-0002",
+            "postal_code": "20037",
+            "range": None,
+            "state": "DC",
+            "updated": "2004-03-11"
+        }
+    ],
+    "nir": None,
+    "query": "38.113.198.252",
+    "raw": None,
+    "raw_referral": None,
+    "referral": {
+        "address": "2450 N Street NW",
+        "city": "Washington",
+        "country": "US",
+        "description": "Cogent communications - IPENG",
+        "name": "NET4-2671C60017",
+        "postal_code": "20037",
+        "state": "DC",
+        "updated": "2007-09-18 22:02:09"
+    }
     }
 
+.. OUTPUT_MULTI_REF END

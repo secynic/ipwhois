@@ -11,6 +11,11 @@ Changelog
 - Fixed bug in NIR lookups that caused addresses with multi-line contacts to
   error (#172 - kwheeles)
 - Added IANA Reserved CIDR 198.97.38.0/24 to ipv4_is_defined (#174)
+- Fixed bug in RDAP notices/remarks parsing that would omit partial entries
+  missing one or more of title, description, links (#176)
+- Added new return key asn_description via verbose ASN DNS lookup support and
+  modified ASN whois lookups. New argument get_asn_description to disable
+  additional DNS lookup (#176)
 
 0.15.1 (2017-02-16)
 -------------------
@@ -94,7 +99,7 @@ Changelog
 - Added rate_limit_timeout parameter (issue #99) to Net.get_http_json(),
   IPWhois.lookup_rdap(), and RDAP.lookup(). New exception HTTPRateLimitError.
 - Added new parameter asn_alts to Net.lookup_asn(), IPWhois.lookup_rdap() and
-  IPWhois.lookup(). Takes an array of lookup types to attempt if the
+  IPWhois.lookup(). Takes a list of lookup types to attempt if the
   ASN dns lookup fails. Allow permutations must be enabled. Defaults to all
   ['whois', 'http'] (issue #93).
 - Fixed socket exception handling in Net.get_http_json() for Python 2.6.

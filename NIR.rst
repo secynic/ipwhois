@@ -171,20 +171,22 @@ show the usage and results.
 
     >>>> obj = IPWhois('133.1.2.5')
     >>>> results = obj.lookup_whois(inc_nir=True)
+    >>>> pprint(results)
 
     {
     "asn": "4730",
     "asn_cidr": "133.1.0.0/16",
     "asn_country_code": "JP",
     "asn_date": "",
+    "asn_description": "ODINS Osaka University, JP",
     "asn_registry": "apnic",
     "nets": [
         {
-            "address": "Urbannet-Kanda Bldg 4F, 3-6-2 Uchi-Kanda, Chiyoda-ku, Tokyo 101-0047,Japan",
+            "address": "Urbannet-Kanda Bldg 4F\n3-6-2 Uchi-Kanda\nChiyoda-ku, Tokyo 101-0047,Japan",
             "cidr": "133.0.0.0/8",
-            "city": null,
+            "city": None,
             "country": "JP",
-            "created": null,
+            "created": None,
             "description": "Japan Network Information Center",
             "emails": [
                 "hm-changed@apnic.net",
@@ -193,16 +195,16 @@ show the usage and results.
             ],
             "handle": "JNIC1-AP",
             "name": "JPNIC-NET-JP-ERX",
-            "postal_code": null,
+            "postal_code": None,
             "range": "133.0.0.0 - 133.255.255.255",
-            "state": null,
+            "state": None,
             "updated": "20120828"
         }
     ],
     "nir": {
         "nets": [
             {
-                "address": null,
+                "address": None,
                 "cidr": "133.1.0.0/16",
                 "contacts": {
                     "admin": {
@@ -229,7 +231,7 @@ show the usage and results.
                     }
                 },
                 "country": "JP",
-                "created": null,
+                "created": None,
                 "handle": "OSAKAU-NET",
                 "name": "Osaka University",
                 "nameservers": [
@@ -237,27 +239,29 @@ show the usage and results.
                     "b.osaka-u.ac.jp",
                     "dns-x.sinet.ad.jp"
                 ],
-                "postal_code": null,
+                "postal_code": None,
                 "range": "133.1.0.1 - 133.1.255.255",
                 "updated": "2015-01-14T02:50:03"
             }
         ],
         "query": "133.1.2.5",
-        "raw": null
+        "raw": None
     },
     "query": "133.1.2.5",
-    "raw": null,
-    "raw_referral": null,
-    "referral": null
+    "raw": None,
+    "raw_referral": None,
+    "referral": None
     }
 
     >>>> results = obj.lookup_rdap(depth=1, inc_nir=True)
+    >>>> pprint(results)
 
     {
     "asn": "4730",
     "asn_cidr": "133.1.0.0/16",
     "asn_country_code": "JP",
     "asn_date": "",
+    "asn_description": "ODINS Osaka University, JP",
     "asn_registry": "apnic",
     "entities": [
         "JNIC1-AP"
@@ -269,7 +273,7 @@ show the usage and results.
         "events": [
             {
                 "action": "last changed",
-                "actor": null,
+                "actor": None,
                 "timestamp": "2009-10-30T00:51:09Z"
             }
         ],
@@ -281,6 +285,11 @@ show the usage and results.
         "name": "JPNIC-NET-JP-ERX",
         "notices": [
             {
+                "description": "Objects returned came from source\nAPNIC",
+                "links": None,
+                "title": "Source"
+            },
+            {
                 "description": "This is the APNIC WHOIS Database query service. The objects are in RDAP format.",
                 "links": [
                     "http://www.apnic.net/db/dbcopyright.html"
@@ -288,17 +297,28 @@ show the usage and results.
                 "title": "Terms and Conditions"
             }
         ],
-        "parent_handle": null,
-        "raw": null,
-        "remarks": [],
+        "parent_handle": None,
+        "raw": None,
+        "remarks": [
+            {
+                "description": "Japan Network Information Center",
+                "links": None,
+                "title": "description"
+            },
+            {
+                "description": "133/8 block is an ERX range which transfered from\nARIN to APNIC on 2009-10-30\nThe original allocation date was 1997-03-01\nPlease search whois.nic.ad.jp for more information\nabout this range\n% whois -h whois.nic.ad.jp ***.***.***.***/e",
+                "links": None,
+                "title": "remarks"
+            }
+        ],
         "start_address": "133.0.0.0",
-        "status": null,
+        "status": None,
         "type": "ALLOCATED PORTABLE"
     },
     "nir": {
         "nets": [
             {
-                "address": null,
+                "address": None,
                 "cidr": "133.1.0.0/16",
                 "contacts": {
                     "admin": {
@@ -325,7 +345,7 @@ show the usage and results.
                     }
                 },
                 "country": "JP",
-                "created": null,
+                "created": None,
                 "handle": "OSAKAU-NET",
                 "name": "Osaka University",
                 "nameservers": [
@@ -333,26 +353,26 @@ show the usage and results.
                     "b.osaka-u.ac.jp",
                     "dns-x.sinet.ad.jp"
                 ],
-                "postal_code": null,
+                "postal_code": None,
                 "range": "133.1.0.1 - 133.1.255.255",
                 "updated": "2015-01-14T02:50:03"
             }
         ],
         "query": "133.1.2.5",
-        "raw": null
+        "raw": None
     },
     "objects": {
         "JNIC1-AP": {
             "contact": {
                 "address": [
                     {
-                        "type": null,
-                        "value": "Urbannet-Kanda Bldg 4F\, 3-6-2 Uchi-Kanda\, Chiyoda-ku, Tokyo 101-0047,Japan"
+                        "type": None,
+                        "value": "Urbannet-Kanda Bldg 4F\n3-6-2 Uchi-Kanda\nChiyoda-ku, Tokyo 101-0047,Japan"
                     }
                 ],
                 "email": [
                     {
-                        "type": null,
+                        "type": None,
                         "value": "hostmaster@nic.ad.jp"
                     }
                 ],
@@ -368,28 +388,28 @@ show the usage and results.
                         "value": "+81-3-5297-2312"
                     }
                 ],
-                "role": null,
-                "title": null
+                "role": None,
+                "title": None
             },
-            "entities": null,
-            "events": null,
-            "events_actor": null,
+            "entities": None,
+            "events": None,
+            "events_actor": None,
             "handle": "JNIC1-AP",
             "links": [
                 "http://rdap.apnic.net/entity/JNIC1-AP"
             ],
-            "notices": null,
-            "raw": null,
-            "remarks": null,
+            "notices": None,
+            "raw": None,
+            "remarks": None,
             "roles": [
                 "administrative",
                 "technical"
             ],
-            "status": null
+            "status": None
         }
     },
     "query": "133.1.2.5",
-    "raw": null
+    "raw": None
     }
 
 .. OUTPUT_BASIC END
