@@ -7,6 +7,8 @@ ipwhois
 .. image:: https://coveralls.io/repos/github/secynic/ipwhois/badge.svg?branch=
     master
     :target: https://coveralls.io/github/secynic/ipwhois?branch=master
+.. image:: https://codeclimate.com/github/codeclimate/codeclimate/badges/gpa.svg
+   :target: https://codeclimate.com/github/secynic/ipwhois
 .. image:: https://img.shields.io/badge/license-BSD%202--Clause-blue.svg
     :target: https://github.com/secynic/ipwhois/tree/master/LICENSE.txt
 .. image:: https://img.shields.io/badge/python-2.6%2C%202.7%2C%203.3+-blue.svg
