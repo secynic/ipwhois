@@ -15,3 +15,11 @@ ratings:
    paths:
    - "ipwhois/*.py"
    - "ipwhois/scripts/*.py"
+
+exclude_paths:
+- "ipwhois/data/"
+- "ipwhois/docs/"
+- "ipwhois/examples/"
+- "ipwhois/scripts/docs/"
+- "ipwhois/tests/"
+- "requirements/"
