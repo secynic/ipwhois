@@ -544,7 +544,10 @@ Use a proxy
 
     >>>> from urllib import request
     >>>> from ipwhois import IPWhois
-    >>>> handler = request.ProxyHandler({'http': 'http://192.168.0.1:80/'})
+    >>>> handler = request.ProxyHandler({
+            'http': 'http://192.168.0.1:80/',
+            'https': 'https://192.168.0.1:443/'
+        })
     >>>> opener = request.build_opener(handler)
     >>>> obj = IPWhois('74.125.225.229', proxy_opener = opener)
 
