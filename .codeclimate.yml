@@ -1,0 +1,25 @@
+engines:
+  duplication:
+    enabled: true
+    config:
+      languages:
+        python:
+  fixme:
+    enabled: true
+  pep8:
+    enabled: true
+  radon:
+    enabled: true
+
+ratings:
+   paths:
+   - "ipwhois/*.py"
+   - "ipwhois/scripts/*.py"
+
+exclude_paths:
+- "ipwhois/data/"
+- "ipwhois/docs/"
+- "ipwhois/examples/"
+- "ipwhois/scripts/docs/"
+- "ipwhois/tests/"
+- "requirements/"
