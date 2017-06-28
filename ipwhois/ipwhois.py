@@ -84,7 +84,8 @@ class IPWhois:
     def lookup_whois(self, inc_raw=False, retry_count=3, get_referral=False,
                      extra_blacklist=None, ignore_referral_errors=False,
                      field_list=None, asn_alts=None, extra_org_map=None,
-                     inc_nir=True, nir_field_list=None, asn_methods=None):
+                     inc_nir=True, nir_field_list=None, asn_methods=None,
+                     get_asn_description=True):
         """
         The function for retrieving and parsing whois information for an IP
         address via port 43 (WHOIS).
@@ -103,7 +104,7 @@ class IPWhois:
             field_list: If provided, a list of fields to parse:
                 ['name', 'handle', 'description', 'country', 'state', 'city',
                 'address', 'postal_code', 'emails', 'created', 'updated']
-            asn_alts: Array of additional lookup types to attempt if the
+            asn_alts: List of additional lookup types to attempt if the
                 ASN dns lookup fails. Allow permutations must be enabled.
                 Defaults to all ['whois', 'http']. *WARNING* deprecated in
                 favor of new argument asn_methods.
@@ -121,8 +122,11 @@ class IPWhois:
             nir_field_list: If provided and inc_nir, a list of fields to parse:
                 ['name', 'handle', 'country', 'address', 'postal_code',
                 'nameservers', 'created', 'updated', 'contacts']
-            asn_methods: Array of ASN lookup types to attempt, in order.
+            asn_methods: List of ASN lookup types to attempt, in order.
                 Defaults to all ['dns', 'whois', 'http'].
+            get_asn_description: Boolean for whether to run an additional
+                query when pulling ASN information via dns, in order to get
+                the ASN description.
 
         Returns:
             Dictionary:
@@ -133,6 +137,7 @@ class IPWhois:
             :asn_registry: The assigned ASN registry (String)
             :asn_cidr: The assigned ASN CIDR (String)
             :asn_country_code: The assigned ASN country code (String)
+            :asn_description: The ASN description (String)
             :nets: Dictionaries containing network information which consists
                 of the fields listed in the ipwhois.whois.RIR_WHOIS dictionary.
                 (List)
@@ -155,7 +160,8 @@ class IPWhois:
 
         asn_data = self.ipasn.lookup(
             inc_raw=inc_raw, retry_count=retry_count, asn_alts=asn_alts,
-            extra_org_map=extra_org_map, asn_methods=asn_methods
+            extra_org_map=extra_org_map, asn_methods=asn_methods,
+            get_asn_description=get_asn_description
         )
 
         # Add the ASN information to the return dictionary.
@@ -199,7 +205,8 @@ class IPWhois:
     def lookup_rdap(self, inc_raw=False, retry_count=3, depth=0,
                     excluded_entities=None, bootstrap=False,
                     rate_limit_timeout=120, asn_alts=None, extra_org_map=None,
-                    inc_nir=True, nir_field_list=None, asn_methods=None):
+                    inc_nir=True, nir_field_list=None, asn_methods=None,
+                    get_asn_description=True):
         """
         The function for retrieving and parsing whois information for an IP
         address via HTTP (RDAP).
@@ -220,7 +227,7 @@ class IPWhois:
                 and no output for any of the asn* fields is provided.
             rate_limit_timeout: The number of seconds to wait before retrying
                 when a rate limit notice is returned via rdap+json.
-            asn_alts: Array of additional lookup types to attempt if the
+            asn_alts: List of additional lookup types to attempt if the
                 ASN dns lookup fails. Allow permutations must be enabled.
                 Defaults to all ['whois', 'http']. *WARNING* deprecated in
                 favor of new argument asn_methods.
@@ -238,8 +245,11 @@ class IPWhois:
             nir_field_list: If provided and inc_nir, a list of fields to parse:
                 ['name', 'handle', 'country', 'address', 'postal_code',
                 'nameservers', 'created', 'updated', 'contacts']
-            asn_methods: Array of ASN lookup types to attempt, in order.
+            asn_methods: List of ASN lookup types to attempt, in order.
                 Defaults to all ['dns', 'whois', 'http'].
+            get_asn_description: Boolean for whether to run an additional
+                query when pulling ASN information via dns, in order to get
+                the ASN description.
 
         Returns:
             Dictionary:
@@ -250,6 +260,7 @@ class IPWhois:
             :asn_registry: The assigned ASN registry (String)
             :asn_cidr: The assigned ASN CIDR (String)
             :asn_country_code: The assigned ASN country code (String)
+            :asn_description: The ASN description (String)
             :entities: List of entity handles referred by the top level query.
             :network: Dictionary containing network information which consists
                 of the fields listed in the ipwhois.rdap._RDAPNetwork dict.
@@ -273,7 +284,8 @@ class IPWhois:
             log.debug('ASN lookup for {0}'.format(self.address_str))
             asn_data = self.ipasn.lookup(
                 inc_raw=inc_raw, retry_count=retry_count, asn_alts=asn_alts,
-                extra_org_map=extra_org_map, asn_methods=asn_methods
+                extra_org_map=extra_org_map, asn_methods=asn_methods,
+                get_asn_description=get_asn_description
             )
 
             # Add the ASN information to the return dictionary.

@@ -23,7 +23,8 @@ ipwhois_cli.py [-h] [--whois] [--exclude_nir] [--json] [--hr]
                       [--proxy_https "PROXY_HTTPS"] [--disallow_permutations]
                       [--inc_raw] [--retry_count RETRY_COUNT]
                       [--asn_alts "ASN_ALTS"] [--asn_methods "ASN_METHODS"]
-                      [--extra_org_map "EXTRA_ORG_MAP"] [--depth COLOR_DEPTH]
+                      [--extra_org_map "EXTRA_ORG_MAP"]
+                      [--skip_asn_description] [--depth COLOR_DEPTH]
                       [--excluded_entities "EXCLUDED_ENTITIES"] [--bootstrap]
                       [--rate_limit_timeout RATE_LIMIT_TIMEOUT]
                       [--get_referral] [--extra_blacklist "EXTRA_BLACKLIST"]
@@ -78,9 +79,9 @@ Common settings (RDAP & Legacy Whois):
                         "whois,http". *WARNING* deprecated in favor of new
                         argument asn_methods.
   --asn_methods ASN_METHODS
-                        Array of ASN lookup types to attempt, in order.
+                        List of ASN lookup types to attempt, in order.
                         Defaults to all ['dns', 'whois', 'http'].
-  --extra_org_map ASN_ALTS
+  --extra_org_map EXTRA_ORG_MAP
                         Dictionary mapping org handles to RIRs. This is for
                         limited cases where ARIN REST (ASN fallback HTTP
                         lookup) does not show an RIR as the org handle e.g.,
@@ -88,6 +89,12 @@ Common settings (RDAP & Legacy Whois):
                         {\"DNIC\": \"arin\"}. Valid RIR values are (note the
                         case-sensitive - this is meant to match the REST
                         result): 'ARIN', 'RIPE', 'apnic', 'lacnic', 'afrinic'
+  --skip_asn_description
+                        Don't run an additional query when pulling ASN
+                        information via dns (to get the ASN description). This
+                        is the opposite of the ipwhois get_asn_description
+                        argument, in order to enable get_asn_description by
+                        default in the CLI.
 
 RDAP settings:
   --depth COLOR_DEPTH   If not --whois, how many levels deep to run RDAP

@@ -183,20 +183,39 @@ group.add_argument(
     metavar='"ASN_ALTS"',
     help='A comma delimited list of additional lookup types to attempt if the '
          'ASN dns lookup fails. Allow permutations must be enabled. '
-         'Defaults to all: "whois,http"'
+         'Defaults to all: "whois,http" *WARNING* deprecated in '
+         'favor of new argument asn_methods.'
+)
+group.add_argument(
+    '--asn_methods',
+    type=str,
+    nargs=1,
+    default='dns,whois,http',
+    metavar='"ASN_METHODS"',
+    help='List of ASN lookup types to attempt, in order. '
+         'Defaults to all [\'dns\', \'whois\', \'http\'].'
 )
 group.add_argument(
     '--extra_org_map',
     type=json.loads,
     nargs=1,
     default='{"DNIC": "arin"}',
-    metavar='"ASN_ALTS"',
+    metavar='"EXTRA_ORG_MAP"',
     help='Dictionary mapping org handles to RIRs. This is for limited cases '
          'where ARIN REST (ASN fallback HTTP lookup) does not show an RIR as '
          'the org handle e.g., DNIC (which is now the built in ORG_MAP) e.g., '
          '{\\"DNIC\\": \\"arin\\"}. Valid RIR values are (note the '
          'case-sensitive - this is meant to match the REST result): '
          '\'ARIN\', \'RIPE\', \'apnic\', \'lacnic\', \'afrinic\''
+)
+group.add_argument(
+    '--skip_asn_description',
+    action='store_true',
+    help='Don\'t run an additional query when pulling ASN information via dns '
+         '(to get the ASN description). This is the opposite of the ipwhois '
+         'get_asn_description argument, in order to enable '
+         'get_asn_description by default in the CLI.',
+    default=False
 )
 
 # RDAP
@@ -456,7 +475,7 @@ class IPWhoisCLI:
         # Python 2.6 doesn't support set literal expressions, use explicit
         # set() instead.
         keys = set(['asn', 'asn_cidr', 'asn_country_code', 'asn_date',
-                    'asn_registry']).intersection(json_data)
+                    'asn_registry', 'asn_description']).intersection(json_data)
 
         output = ''
 
@@ -1415,13 +1434,17 @@ if script_args.addr:
                 script_args.field_list and
                 len(script_args.field_list) > 0) else None,
             asn_alts=script_args.asn_alts.split(',') if (
-                script_args.asn_alts and
+                script_args.asn_alts and not script_args.asn_methods and
                 len(script_args.asn_alts) > 0) else None,
             extra_org_map=script_args.extra_org_map,
             inc_nir=(not script_args.exclude_nir),
             nir_field_list=script_args.nir_field_list.split(',') if (
                 script_args.nir_field_list and
-                len(script_args.nir_field_list) > 0) else None
+                len(script_args.nir_field_list) > 0) else None,
+            asn_methods=script_args.asn_methods.split(',') if (
+                script_args.asn_methods and
+                len(script_args.asn_methods) > 0) else None,
+            get_asn_description=(not script_args.skip_asn_description)
         ))
 
     else:
@@ -1439,11 +1462,15 @@ if script_args.addr:
             bootstrap=script_args.bootstrap,
             rate_limit_timeout=script_args.rate_limit_timeout,
             asn_alts=script_args.asn_alts.split(',') if (
-                script_args.asn_alts and
+                script_args.asn_alts and not script_args.asn_methods and
                 len(script_args.asn_alts) > 0) else None,
             extra_org_map=script_args.extra_org_map,
             inc_nir=(not script_args.exclude_nir),
             nir_field_list=script_args.nir_field_list.split(',') if (
                 script_args.nir_field_list and
-                len(script_args.nir_field_list) > 0) else None
+                len(script_args.nir_field_list) > 0) else None,
+            asn_methods=script_args.asn_methods.split(',') if (
+                script_args.asn_methods and
+                len(script_args.asn_methods) > 0) else None,
+            get_asn_description=(not script_args.skip_asn_description)
         ))

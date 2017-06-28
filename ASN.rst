@@ -22,14 +22,14 @@ Arguments supported by IPASN.lookup().
 |                        |        | socket errors, timeouts, connection       |
 |                        |        | resets, etc. are encountered.             |
 +------------------------+--------+-------------------------------------------+
-| asn_alts               | List   | Array of additional lookup types to       |
+| asn_alts               | List   | List of additional lookup types to        |
 |                        |        | attempt if the ASN dns lookup fails.      |
 |                        |        | Allow permutations must be enabled.       |
 |                        |        | Defaults to all ['whois', 'http'].        |
 |                        |        | *WARNING* deprecated in favor of new      |
 |                        |        | argument asn_methods.                     |
 +------------------------+--------+-------------------------------------------+
-| asn_methods            | List   | Array of ASN lookup types to attempt, in  |
+| asn_methods            | List   | List of ASN lookup types to attempt, in   |
 |                        |        | order. Defaults to all                    |
 |                        |        | ['dns', 'whois', 'http'].                 |
 +------------------------+--------+-------------------------------------------+
@@ -42,6 +42,10 @@ Arguments supported by IPASN.lookup().
 |                        |        | (note the case-sensitive - this is meant  |
 |                        |        | to match the REST result): 'ARIN',        |
 |                        |        | 'RIPE', 'apnic', 'lacnic', 'afrinic'      |
++------------------------+--------+-------------------------------------------+
+| get_asn_description    | Bool   | Boolean for whether to run an additional  |
+|                        |        | query when pulling ASN information via    |
+|                        |        | dns, in order to get the ASN description. |
 +------------------------+--------+-------------------------------------------+
 
 .. _ip-asn-output:
@@ -69,6 +73,8 @@ The output dictionary from IPASN.lookup().
 +------------------+--------+-------------------------------------------------+
 | asn_country_code | String | The assigned ASN country code                   |
 +------------------+--------+-------------------------------------------------+
+| asn_description  | String | The ASN description                             |
++------------------+--------+-------------------------------------------------+
 | raw              | String | Raw ASN results if inc_raw is True.             |
 +------------------+--------+-------------------------------------------------+
 
@@ -91,12 +97,14 @@ Basic usage
     >>>> net = Net('2001:43f8:7b0::')
     >>>> obj = IPASN(net)
     >>>> results = obj.lookup()
+    >>>> pprint(results)
 
     {
     "asn": "37578",
     "asn_cidr": "2001:43f8:7b0::/48",
     "asn_country_code": "KE",
     "asn_date": "2013-03-22",
+    "asn_description": "Tespok, KE",
     "asn_registry": "afrinic"
     }
 
@@ -140,7 +148,7 @@ Arguments supported by ASNOrigin.lookup().
 |                        |        | ['description', 'maintainer', 'updated',  |
 |                        |        | 'source']                                 |
 +------------------------+--------+-------------------------------------------+
-| asn_alts               | List   | Array of additional lookup types to       |
+| asn_alts               | List   | List of additional lookup types to        |
 |                        |        | attempt if the ASN whois lookup fails.    |
 |                        |        | Defaults to all ['http'].                 |
 +------------------------+--------+-------------------------------------------+
@@ -209,6 +217,7 @@ Basic usage
     >>>> net = Net('2001:43f8:7b0::')
     >>>> obj = ASNOrigin(net)
     >>>> results = obj.lookup(asn='AS37578')
+    >>>> pprint(results)
 
     {
     "nets": [
@@ -218,10 +227,17 @@ Basic usage
             "maintainer": "TESPOK-MNT",
             "source": "AFRINIC",
             "updated": "***@isoc.org 20160720"
+        },
+        {
+            "cidr": "2001:43f8:7b0::/48",
+            "description": "KIXP Nairobi Management Network",
+            "maintainer": "TESPOK-MNT",
+            "source": "AFRINIC",
+            "updated": "***@isoc.org 20160721"
         }
     ],
     "query": "AS37578",
-    "raw": null
+    "raw": None
     }
 
 .. OUTPUT_ASN_ORIGIN_BASIC END

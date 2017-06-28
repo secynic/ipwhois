@@ -118,6 +118,7 @@ class IPASN:
             :asn_registry: The assigned ASN registry (String)
             :asn_cidr: The assigned ASN CIDR (String)
             :asn_country_code: The assigned ASN country code (String)
+            :asn_description: None, can't retrieve with this method.
 
         Raises:
             ASNRegistryError: The ASN registry is not known.
@@ -142,6 +143,60 @@ class IPASN:
             ret['asn_cidr'] = temp[1].strip(' \n')
             ret['asn_country_code'] = temp[2].strip(' \n').upper()
             ret['asn_date'] = temp[4].strip(' "\n')
+            ret['asn_description'] = None
+
+        except ASNRegistryError:
+
+            raise
+
+        except Exception as e:
+
+            raise ASNParseError('Parsing failed for "{0}" with exception: {1}.'
+                                ''.format(response, e)[:100])
+
+        return ret
+
+    def _parse_fields_verbose_dns(self, response):
+        """
+        The function for parsing ASN fields from a verbose dns response.
+
+        Args:
+            response: The response from the ASN dns server.
+
+        Returns:
+            Dictionary:
+
+            :asn: The Autonomous System Number (String)
+            :asn_date: The ASN Allocation date (String)
+            :asn_registry: The assigned ASN registry (String)
+            :asn_cidr: None, can't retrieve with this method.
+            :asn_country_code: The assigned ASN country code (String)
+            :asn_description: The ASN description (String)
+
+        Raises:
+            ASNRegistryError: The ASN registry is not known.
+            ASNParseError: ASN parsing failed.
+        """
+
+        try:
+
+            temp = response.split('|')
+
+            # Parse out the ASN information.
+            ret = {'asn_registry': temp[2].strip(' \n')}
+
+            if ret['asn_registry'] not in self.rir_whois.keys():
+
+                raise ASNRegistryError(
+                    'ASN registry {0} is not known.'.format(
+                        ret['asn_registry'])
+                )
+
+            ret['asn'] = temp[0].strip(' "\n')
+            ret['asn_cidr'] = None
+            ret['asn_country_code'] = temp[1].strip(' \n').upper()
+            ret['asn_date'] = temp[3].strip(' \n')
+            ret['asn_description'] = temp[4].strip(' "\n')
 
         except ASNRegistryError:
 
@@ -169,6 +224,7 @@ class IPASN:
             :asn_registry: The assigned ASN registry (String)
             :asn_cidr: The assigned ASN CIDR (String)
             :asn_country_code: The assigned ASN country code (String)
+            :asn_description: The ASN description (String)
 
         Raises:
             ASNRegistryError: The ASN registry is not known.
@@ -193,6 +249,7 @@ class IPASN:
             ret['asn_cidr'] = temp[2].strip(' \n')
             ret['asn_country_code'] = temp[3].strip(' \n').upper()
             ret['asn_date'] = temp[5].strip(' \n')
+            ret['asn_description'] = temp[6].strip(' \n')
 
         except ASNRegistryError:
 
@@ -226,6 +283,7 @@ class IPASN:
             :asn_registry: The assigned ASN registry (String)
             :asn_cidr: None, can't retrieve with this method.
             :asn_country_code: None, can't retrieve with this method.
+            :asn_description: None, can't retrieve with this method.
 
         Raises:
             ASNRegistryError: The ASN registry is not known.
@@ -249,7 +307,8 @@ class IPASN:
                 'asn': None,
                 'asn_cidr': None,
                 'asn_country_code': None,
-                'asn_date': None
+                'asn_date': None,
+                'asn_description': None
             }
 
             try:
@@ -292,7 +351,8 @@ class IPASN:
         return asn_data
 
     def lookup(self, inc_raw=False, retry_count=3, asn_alts=None,
-               extra_org_map=None, asn_methods=None):
+               extra_org_map=None, asn_methods=None,
+               get_asn_description=True):
         """
         The wrapper function for retrieving and parsing ASN information for an
         IP address.
@@ -302,7 +362,7 @@ class IPASN:
                 returned dictionary.
             retry_count: The number of times to retry in case socket errors,
                 timeouts, connection resets, etc. are encountered.
-            asn_alts: Array of additional lookup types to attempt if the
+            asn_alts: List of additional lookup types to attempt if the
                 ASN dns lookup fails. Allow permutations must be enabled.
                 Defaults to all ['whois', 'http']. *WARNING* deprecated in
                 favor of new argument asn_methods.
@@ -312,8 +372,11 @@ class IPASN:
                 built in ORG_MAP) e.g., {'DNIC': 'arin'}. Valid RIR values are
                 (note the case-sensitive - this is meant to match the REST
                 result): 'ARIN', 'RIPE', 'apnic', 'lacnic', 'afrinic'
-            asn_methods: Array of ASN lookup types to attempt, in order.
+            asn_methods: List of ASN lookup types to attempt, in order.
                 Defaults to all ['dns', 'whois', 'http'].
+            get_asn_description: Boolean for whether to run an additional
+                query when pulling ASN information via dns, in order to get
+                the ASN description.
 
         Returns:
             Dictionary:
@@ -323,6 +386,7 @@ class IPASN:
             :asn_registry: The assigned ASN registry (String)
             :asn_cidr: The assigned ASN CIDR (String)
             :asn_country_code: The assigned ASN country code (String)
+            :asn_description: The ASN description (String)
             :raw: Raw ASN results if the inc_raw parameter is True. (String)
 
         Raises:
@@ -357,6 +421,7 @@ class IPASN:
 
         response = None
         asn_data = None
+        dns_success = False
         for index, lookup_method in enumerate(lookups):
 
             if index > 0 and not asn_methods and not (
@@ -376,6 +441,7 @@ class IPASN:
                     )
                     response = self._net.get_asn_dns()
                     asn_data = self._parse_fields_dns(response)
+                    dns_success = True
                     break
 
                 except (ASNLookupError, ASNRegistryError) as e:
@@ -417,6 +483,21 @@ class IPASN:
 
             raise ASNRegistryError('ASN lookup failed with no more methods to '
                                    'try.')
+
+        if get_asn_description and dns_success:
+
+            try:
+
+                response = self._net.get_asn_verbose_dns('AS{0}'.format(
+                    asn_data['asn']))
+                asn_verbose_data = self._parse_fields_verbose_dns(response)
+                asn_data['asn_description'] = asn_verbose_data[
+                    'asn_description']
+
+            except (ASNLookupError, ASNRegistryError) as e:  # pragma: no cover
+
+                log.debug('ASN DNS verbose lookup failed: {0}'.format(e))
+                pass
 
         if inc_raw:
 
@@ -590,10 +671,10 @@ class ASNOrigin:
             response: Optional response object, this bypasses the Whois lookup.
             field_list: If provided, a list of fields to parse:
                 ['description', 'maintainer', 'updated', 'source']
-            asn_alts: Array of additional lookup types to attempt if the
+            asn_alts: List of additional lookup types to attempt if the
                 ASN whois lookup fails. Defaults to all ['http'].
                 *WARNING* deprecated in favor of new argument asn_methods.
-            asn_methods: Array of ASN lookup types to attempt, in order.
+            asn_methods: List of ASN lookup types to attempt, in order.
                 Defaults to all ['whois', 'http'].
 
         Returns:
