@@ -46,7 +46,7 @@ def get_bulk_asn_whois(addresses=None, retry_count=3, timeout=120):
         String: The raw ASN bulk data, new line (\n) separated.
 
     Raises:
-        ValueError: addresses argument must be a list of IPv4/v6 address 
+        ValueError: addresses argument must be a list of IPv4/v6 address
             strings.
         ASNLookupError: The ASN bulk lookup failed.
     """
