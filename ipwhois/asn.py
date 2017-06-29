@@ -685,7 +685,7 @@ class ASNOrigin:
                 of the fields listed in the ASN_ORIGIN_WHOIS dictionary. (List)
             :raw: Raw ASN origin whois results if the inc_raw parameter is
                 True. (String)
-                
+
         Raises:
             ValueError: methods argument requires one of whois, http.
             ASNOriginLookupError: ASN origin lookup failed.

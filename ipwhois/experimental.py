@@ -46,7 +46,7 @@ def get_bulk_asn_whois(addresses=None, retry_count=3, timeout=120):
         String: The raw ASN bulk data, new line (\n) separated.
 
     Raises:
-        ValueError: addresses argument must be a list of IPv4/v6 address 
+        ValueError: addresses argument must be a list of IPv4/v6 address
             strings.
         ASNLookupError: The ASN bulk lookup failed.
     """
@@ -66,7 +66,7 @@ def get_bulk_asn_whois(addresses=None, retry_count=3, timeout=120):
 
         # Query the Cymru whois server, and store the results.
         conn.sendall((
-            ' -r -a -c -p -f -o begin\n{0}\nend'.format(
+            ' -r -a -c -p -f begin\n{0}\nend'.format(
                 '\n'.join(addresses))
         ).encode())
 
