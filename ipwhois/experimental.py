@@ -202,7 +202,6 @@ def bulk_lookup_rdap(ip_list=None, inc_raw=False, retry_count=3, depth=0,
 
         try:
 
-            # TODO: Create public wrapper for this private call
             results = ipasn._parse_fields_whois(asn_result)
 
         except ASNRegistryError:
@@ -215,9 +214,6 @@ def bulk_lookup_rdap(ip_list=None, inc_raw=False, retry_count=3, depth=0,
 
     # Set the total lookup count after unique IP and ASN result filtering
     ip_lookup_total = len(asn_parsed_results)
-    
-    # Set the start time, this value is updated when the rate limit is reset
-    old_time = time.time()
 
     # Track the total number of LACNIC queries left. This is tracked in order
     # to ensure the 9 priority LACNIC queries/min don't go into infinite loop
@@ -226,6 +222,18 @@ def bulk_lookup_rdap(ip_list=None, inc_raw=False, retry_count=3, depth=0,
     # Initialize the LACNIC query count for tracking number of LACNIC queries
     # since the last rate limit time reset via old_time
     lacnic_count = 0
+
+    # Set the start time, this value is updated when the rate limit is reset
+    old_time = time.time()
+
+    # TODO: Rate limit tracking dict for all RIRs
+    rate_tracker = {
+        'lacnic': {'time': old_time, 'count': 0},
+        'ripencc': {'time': old_time, 'count': 0},
+        'apnic': {'time': old_time, 'count': 0},
+        'afrinic': {'time': old_time, 'count': 0},
+        'arin': {'time': old_time, 'count': 0}
+    }
 
     # Iterate all of the IPs to perform RDAP lookups until none are left
     while len(asn_parsed_results) > 0:
@@ -238,7 +246,8 @@ def bulk_lookup_rdap(ip_list=None, inc_raw=False, retry_count=3, depth=0,
             # hasn't been reached, skip to find a LACNIC IP to lookup
             if rir != 'lacnic' and lacnic_total_left > 0 and (
                             lacnic_count != 9 or
-                            time.time() - old_time >= rate_limit_timeout):
+                    (time.time() - old_time) >= rate_limit_timeout):
+
                 continue
 
             # If this IP is LACNIC, run some checks
@@ -247,24 +256,29 @@ def bulk_lookup_rdap(ip_list=None, inc_raw=False, retry_count=3, depth=0,
                 # If the LACNIC rate limit has been reached and hasn't expired,
                 # move on to the next non-LACNIC IP
                 if lacnic_count == 9 and (
-                                time.time() - old_time < rate_limit_timeout):
+                        (time.time() - old_time) < rate_limit_timeout):
+
                     continue
 
                 # If the LACNIC rate limit has expired, reset the count/timer
                 # and perform the lookup
-                elif time.time() - old_time >= rate_limit_timeout:
+                elif (time.time() - old_time) >= rate_limit_timeout:
 
                     lacnic_count = 0
                     old_time = time.time()
 
-            # Created a copy of the lookup IP dict so we can modify on
+            # Create a copy of the lookup IP dict so we can modify on
             # successful/failed queries. Loop each IP until it matches the
             # correct RIR in the parent loop, and attempt lookup
             tmp_dict = asn_parsed_results.copy()
+
             for ip, asn_data in tmp_dict.items():
 
                 # Check to see if IP matches parent loop RIR for lookup
                 if asn_data['asn_registry'] == rir:
+
+                    log.debug('Starting lookup for IP: {0} '
+                              'RIR: {1}'.format(ip, rir))
 
                     # LACNIC IP found, add to count for rate-limit tracking
                     if rir == 'lacnic':
@@ -294,6 +308,12 @@ def bulk_lookup_rdap(ip_list=None, inc_raw=False, retry_count=3, depth=0,
 
                         # Remove the IP from the lookup queue
                         del asn_parsed_results[ip]
+
+                        log.debug(
+                            '{0} total lookups left, LACNIC lookups left {1}'
+                            ''.format(str(len(asn_parsed_results)),
+                                      str(lacnic_total_left))
+                        )
 
                         # If this was LACNIC IP, reduce the total left count
                         if rir == 'lacnic':
@@ -352,7 +372,6 @@ def bulk_lookup_rdap(ip_list=None, inc_raw=False, retry_count=3, depth=0,
 
                         # Since rate-limit was reached, reset the timer and
                         # max out the count
-                        # TODO: move these trackers to a dict for all RIRs
                         if rir == 'lacnic':
 
                             old_time = time.time()
