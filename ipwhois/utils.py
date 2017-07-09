@@ -29,6 +29,7 @@ import re
 import copy
 import io
 import csv
+import random
 import logging
 
 if sys.version_info >= (3, 3):  # pragma: no cover
@@ -557,3 +558,53 @@ def unique_addresses(data=None, file_path=None):
                     continue
 
     return ret
+
+
+def ipv4_generate_random(total=100):
+    """
+    The generator to produce random, unique IPv4 addresses that are not
+    defined (can be looked up using ipwhois).
+
+    Args:
+        total: The total number of IPv4 addresses to generate.
+
+    Returns:
+        Generator: Yields a generator object.
+    """
+
+    count = 0
+    yielded = set()
+    while count < total:
+
+        address = str(IPv4Address(random.randint(0, 2**32-1)))
+
+        if not ipv4_is_defined(address)[0] and address not in yielded:
+
+            count += 1
+            yielded.add(address)
+            yield address
+
+
+def ipv6_generate_random(total=100):
+    """
+    The generator to produce random, unique IPv6 addresses that are not
+    defined (can be looked up using ipwhois).
+
+    Args:
+        total: The total number of IPv6 addresses to generate.
+
+    Returns:
+        Generator: Yields a generator object.
+    """
+
+    count = 0
+    yielded = set()
+    while count < total:
+
+        address = str(IPv6Address(random.randint(0, 2**128-1)))
+
+        if not ipv6_is_defined(address)[0] and address not in yielded:
+
+            count += 1
+            yielded.add(address)
+            yield address

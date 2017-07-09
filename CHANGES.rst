@@ -17,6 +17,8 @@ Changelog
   modified ASN whois lookups. New argument get_asn_description to disable
   additional DNS lookup (#176)
 - Fixed some test function naming errors
+- Added new generators to utils.py: ipv4_generate_random and
+  ipv6_generate_random (#183)
 
 0.15.1 (2017-02-16)
 -------------------
