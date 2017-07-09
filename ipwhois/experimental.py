@@ -196,9 +196,16 @@ def bulk_lookup_rdap(ip_list=None, inc_raw=False, retry_count=3, depth=0,
 
         # Not a valid entry, move on to next
         if len(temp) == 1:
+
             continue
 
         ip = temp[1].strip()
+
+        # We need this since ASN bulk lookup is returning duplicates
+        # This is an issue on the Cymru end
+        if ip in asn_parsed_results.keys():
+
+            continue
 
         try:
 
@@ -309,16 +316,16 @@ def bulk_lookup_rdap(ip_list=None, inc_raw=False, retry_count=3, depth=0,
                         # Remove the IP from the lookup queue
                         del asn_parsed_results[ip]
 
-                        log.debug(
-                            '{0} total lookups left, LACNIC lookups left {1}'
-                            ''.format(str(len(asn_parsed_results)),
-                                      str(lacnic_total_left))
-                        )
-
                         # If this was LACNIC IP, reduce the total left count
                         if rir == 'lacnic':
 
                             lacnic_total_left -= 1
+
+                        log.debug(
+                            '{0} total lookups left, {1} LACNIC lookups left'
+                            ''.format(str(len(asn_parsed_results)),
+                                      str(lacnic_total_left))
+                        )
 
                         # If this IP failed previously, remove it from the
                         # failed return dict
