@@ -17,7 +17,7 @@ log = logging.getLogger(__name__)
 
 class TestIPASN(TestCommon):
 
-    def test__IPASN(self):
+    def test_IPASN(self):
 
         self.assertRaises(NetError, IPASN, 'a')
 
@@ -134,7 +134,7 @@ class TestIPASN(TestCommon):
         except Exception as e:
             self.fail('Unexpected exception raised: {0}'.format(e))
 
-    def test__IPASNLookup(self):
+    def test_lookup(self):
         # TODO: need to modify asn.json for this.
         return NotImplemented
 

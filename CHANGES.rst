@@ -16,6 +16,7 @@ Changelog
 - Added new return key asn_description via verbose ASN DNS lookup support and
   modified ASN whois lookups. New argument get_asn_description to disable
   additional DNS lookup (#176)
+- Fixed some test function naming errors
 
 0.15.1 (2017-02-16)
 -------------------

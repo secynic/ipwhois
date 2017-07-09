@@ -15,7 +15,7 @@ log = logging.getLogger(__name__)
 
 class TestWhois(TestCommon):
 
-    def test__WhoisLookup(self):
+    def test_lookup(self):
 
         data_dir = path.abspath(path.join(path.dirname(__file__), '..'))
 

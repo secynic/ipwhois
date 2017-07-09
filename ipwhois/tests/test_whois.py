@@ -14,11 +14,11 @@ log = logging.getLogger(__name__)
 
 class TestWhois(TestCommon):
 
-    def test__Whois(self):
+    def test_Whois(self):
 
         self.assertRaises(NetError, Whois, 'a')
 
-    def test__WhoisLookup(self):
+    def test_lookup(self):
 
         data_dir = path.dirname(__file__)
 
