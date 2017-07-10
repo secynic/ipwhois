@@ -416,8 +416,8 @@ def unique_everseen(iterable, key=None):
         iterable: An iterable to process.
         key: Optional function to run when checking elements (e.g., str.lower)
 
-    Returns:
-        Generator: Yields a generator object.
+    Yields:
+        The next unique element found.
     """
 
     seen = set()
@@ -568,8 +568,8 @@ def ipv4_generate_random(total=100):
     Args:
         total: The total number of IPv4 addresses to generate.
 
-    Returns:
-        Generator: Yields a generator object.
+    Yields:
+        String: The next IPv4 address.
     """
 
     count = 0
@@ -593,8 +593,8 @@ def ipv6_generate_random(total=100):
     Args:
         total: The total number of IPv6 addresses to generate.
 
-    Returns:
-        Generator: Yields a generator object.
+    Yields:
+        String: The next IPv6 address.
     """
 
     count = 0
