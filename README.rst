@@ -26,36 +26,12 @@ Summary
 ipwhois is a Python package focused on retrieving and parsing whois data
 for IPv4 and IPv6 addresses.
 
-.. attention::
-
-    The IPWhois argument allow_permutations and the lookup argument asn_alts
-    have been deprecated in favor of new argument asn_methods.
-
-.. attention::
-
-    NIR (National Internet Registry) lookups are enabled by default as of
-    v0.14.0. This is currently only performed for JPNIC and KRNIC addresses.
-    To disable, set inc_nir=False in your IPWhois.lookup_*() query.
-
-.. attention::
-
-    The 'nets' -> 'emails' key in IPWhois.lookup_whois() was changed from
-    a '\\n' separated string to a list in v0.14.0.
-
-.. important::
-
-    RDAP (IPWhois.lookup_rdap()) is the recommended query method as of v0.11.0.
-    If you are upgrading from earlier than 0.11.0, please see the
-    `upgrade info <https://ipwhois.readthedocs.io/en/v0.15.1/RDAP.html
-    #upgrading-from-0-10-to-0-11>`_.
-
 .. note::
 
     If you are experiencing latency issues, it is likely related to rate
-    limiting. Profiling the tests, I see most time spent attributed to network
-    latency. Rate limiting is based on your source IP, which may be a problem
+    limiting. Rate limiting is based on your source IP, which may be a problem
     with multiple users behind the same proxy. Additionally, LACNIC implements
-    aggressive rate limiting. Bulk query optimization is on the roadmap
+    aggressive rate limiting. Experimental bulk query support is in progress
     (https://github.com/secynic/ipwhois/issues/134)
 
 Features
@@ -118,6 +94,11 @@ Changes
 -------
 
 https://ipwhois.readthedocs.io/en/latest/CHANGES.html
+
+Upgrade Notes
+-------------
+
+https://ipwhois.readthedocs.io/en/latest/UPGRADING.html
 
 Dependencies
 ============

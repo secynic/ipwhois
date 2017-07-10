@@ -14,6 +14,7 @@ for IPv4 and IPv6 addresses.
    License <LICENSE>
    Changes <CHANGES>
    Changes (Archive) <CHANGES.old>
+   Upgrade Notes <UPGRADING>
 
 .. toctree::
    :caption: API Documentation
