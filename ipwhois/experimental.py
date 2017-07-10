@@ -107,7 +107,7 @@ def get_bulk_asn_whois(addresses=None, retry_count=3, timeout=120):
         raise ASNLookupError('ASN bulk lookup failed.')
 
 
-def bulk_lookup_rdap(ip_list=None, inc_raw=False, retry_count=3, depth=0,
+def bulk_lookup_rdap(addresses=None, inc_raw=False, retry_count=3, depth=0,
                      excluded_entities=None, rate_limit_timeout=60,
                      socket_timeout=10, asn_timeout=240):
     """
@@ -118,7 +118,7 @@ def bulk_lookup_rdap(ip_list=None, inc_raw=False, retry_count=3, depth=0,
     rate-limiting RIRs.
 
     Args:
-        ip_list: A list of IP addresse strings to lookup.
+        addresses: A list of IP addresse strings to lookup.
         inc_raw: Boolean for whether to include the raw whois results in
             the returned dictionary.
         retry_count: The number of times to retry in case socket errors,
@@ -139,7 +139,7 @@ def bulk_lookup_rdap(ip_list=None, inc_raw=False, retry_count=3, depth=0,
         :List: A list of IP addresses that failed to lookup.
         :List: A list of IP addresses that were rate-limited at least once.
         :Integer: The number of IP addresses that lookups were originally
-            requested for (ip_list), excluding duplicates.
+            requested for (addresses), excluding duplicates.
         :Integer: The number of IP addresses that lookups were attempted for,
             excluding any that failed ASN registry checks.
         :Dictionary: A dictionary of RIR keys to the number of addresses
@@ -150,9 +150,9 @@ def bulk_lookup_rdap(ip_list=None, inc_raw=False, retry_count=3, depth=0,
             RDAP lookup.
     """
 
-    if not isinstance(ip_list, list):
+    if not isinstance(addresses, list):
 
-        raise ValueError('ip_list must be a list of IP address strings')
+        raise ValueError('addresses must be a list of IP address strings')
 
     # Initialize the dicts/lists
     results = {}
@@ -167,8 +167,8 @@ def bulk_lookup_rdap(ip_list=None, inc_raw=False, retry_count=3, depth=0,
     }
     asn_parsed_results = {}
 
-    # Make sure ip_list is unique
-    unique_ip_list = list(unique_everseen(ip_list))
+    # Make sure addresses is unique
+    unique_ip_list = list(unique_everseen(addresses))
 
     # Get the unique count to return
     ip_unique_total = len(unique_ip_list)
@@ -203,7 +203,7 @@ def bulk_lookup_rdap(ip_list=None, inc_raw=False, retry_count=3, depth=0,
 
         # We need this since ASN bulk lookup is returning duplicates
         # This is an issue on the Cymru end
-        if ip in asn_parsed_results.keys():
+        if ip in asn_parsed_results.keys():  # pragma: no cover
 
             continue
 
@@ -211,7 +211,7 @@ def bulk_lookup_rdap(ip_list=None, inc_raw=False, retry_count=3, depth=0,
 
             results = ipasn._parse_fields_whois(asn_result)
 
-        except ASNRegistryError:
+        except ASNRegistryError:  # pragma: no cover
 
             continue
 
@@ -251,9 +251,12 @@ def bulk_lookup_rdap(ip_list=None, inc_raw=False, retry_count=3, depth=0,
 
             # If there are still LACNIC IPs left to lookup and the rate limit
             # hasn't been reached, skip to find a LACNIC IP to lookup
-            if rir != 'lacnic' and lacnic_total_left > 0 and (
-                            lacnic_count != 9 or
-                    (time.time() - old_time) >= rate_limit_timeout):
+            if (
+                rir != 'lacnic' and lacnic_total_left > 0 and
+                (lacnic_count != 9 or
+                    (time.time() - old_time) >= rate_limit_timeout
+                 )
+               ):  # pragma: no cover
 
                 continue
 
@@ -262,14 +265,17 @@ def bulk_lookup_rdap(ip_list=None, inc_raw=False, retry_count=3, depth=0,
 
                 # If the LACNIC rate limit has been reached and hasn't expired,
                 # move on to the next non-LACNIC IP
-                if lacnic_count == 9 and (
-                        (time.time() - old_time) < rate_limit_timeout):
+                if (
+                    lacnic_count == 9 and (
+                        (time.time() - old_time) < rate_limit_timeout)
+                   ):  # pragma: no cover
 
                     continue
 
                 # If the LACNIC rate limit has expired, reset the count/timer
                 # and perform the lookup
-                elif (time.time() - old_time) >= rate_limit_timeout:
+                elif ((time.time() - old_time) >= rate_limit_timeout
+                      ):  # pragma: no cover
 
                     lacnic_count = 0
                     old_time = time.time()
@@ -329,7 +335,9 @@ def bulk_lookup_rdap(ip_list=None, inc_raw=False, retry_count=3, depth=0,
 
                         # If this IP failed previously, remove it from the
                         # failed return dict
-                        if ip in failed_lookups_dict.keys():
+                        if (
+                            ip in failed_lookups_dict.keys()
+                        ):  # pragma: no cover
 
                             del failed_lookups_dict[ip]
 
@@ -337,7 +345,7 @@ def bulk_lookup_rdap(ip_list=None, inc_raw=False, retry_count=3, depth=0,
                         # the next RIR
                         break
 
-                    except HTTPLookupError:
+                    except HTTPLookupError:  # pragma: no cover
 
                         log.debug('Failed lookup for IP: {0} '
                                   'RIR: {1}'.format(ip, rir))
@@ -366,7 +374,7 @@ def bulk_lookup_rdap(ip_list=None, inc_raw=False, retry_count=3, depth=0,
                         # RIR, we check the next IP for this RIR
                         continue
 
-                    except HTTPRateLimitError:
+                    except HTTPRateLimitError:  # pragma: no cover
 
                         # Add the IP to the rate-limited lookups dict if not
                         # there
