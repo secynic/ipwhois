@@ -25,6 +25,7 @@
 import socket
 import logging
 import time
+from collections import namedtuple
 
 from .exceptions import (ASNLookupError, HTTPLookupError, HTTPRateLimitError,
                          ASNRegistryError)
@@ -42,13 +43,15 @@ def get_bulk_asn_whois(addresses=None, retry_count=3, timeout=120):
     Cymru via port 43/tcp (WHOIS).
 
     Args:
-        addresses: List of IPv4 or IPv6 addresses in string format.
-        retry_count: The number of times to retry in case socket errors,
-            timeouts, connection resets, etc. are encountered.
-        timeout: The default timeout for socket connections in seconds.
+        addresses (:obj:`list` of :obj:`str`): IP addresses to lookup.
+        retry_count (:obj:`int`): The number of times to retry in case socket
+            errors, timeouts, connection resets, etc. are encountered.
+            Defaults to 3.
+        timeout (:obj:`int`): The default timeout for socket connections in
+            seconds. Defaults to 120.
 
     Returns:
-        String: The raw ASN bulk data, new line separated.
+        str: The raw ASN bulk data, new line separated.
 
     Raises:
         ValueError: addresses argument must be a list of IPv4/v6 address
@@ -118,34 +121,63 @@ def bulk_lookup_rdap(addresses=None, inc_raw=False, retry_count=3, depth=0,
     rate-limiting RIRs.
 
     Args:
-        addresses: A list of IP addresse strings to lookup.
-        inc_raw: Boolean for whether to include the raw whois results in
-            the returned dictionary.
-        retry_count: The number of times to retry in case socket errors,
-            timeouts, connection resets, etc. are encountered.
-        depth: How many levels deep to run queries when additional
-            referenced objects are found.
-        excluded_entities: A list of entity handles to not perform lookups.
-        rate_limit_timeout: The number of seconds to wait before retrying
-            when a rate limit notice is returned via rdap+json.
-        socket_timeout: The default timeout for socket connections in seconds.
-        asn_timeout: The default timeout for bulk ASN lookups in seconds.
-        proxy_openers: A list of urllib.request.OpenerDirector objects for
-            single/rotating proxy support or None.
+        addresses (:obj:`list` of :obj:`str`): IP addresses to lookup.
+        inc_raw (:obj:`bool`, optional): Whether to include the raw whois
+            results in the returned dictionary. Defaults to False.
+        retry_count (:obj:`int`): The number of times to retry in case socket
+            errors, timeouts, connection resets, etc. are encountered.
+            Defaults to 3.
+        depth (:obj:`int`): How many levels deep to run queries when additional
+            referenced objects are found. Defaults to 0.
+        excluded_entities (:obj:`list`): Entity handles to not perform
+            lookups. Defaults to None.
+        rate_limit_timeout (:obj:`int`): The number of seconds to wait before
+            retrying when a rate limit notice is returned via rdap+json.
+            Defaults to 60.
+        socket_timeout (:obj:`int`): The default timeout for socket
+            connections in seconds. Defaults to 10.
+        asn_timeout (:obj:`int`): The default timeout for bulk ASN lookups in
+            seconds. Defaults to 240.
+        proxy_openers (:obj:`list` of :obj:`OpenerDirector`): Proxy openers
+            for single/rotating proxy support. Defaults to None.
 
     Returns:
-        Tuple:
+        namedtuple:
 
-        :Dictionary: A dictionary of the IP addresses as keys with the values
-            as dictionaries returned by IPWhois.lookup_rdap().
-        :List: A list of IP addresses that failed to lookup.
-        :List: A list of IP addresses that were rate-limited at least once.
-        :Integer: The number of IP addresses that lookups were originally
-            requested for (addresses), excluding duplicates.
-        :Integer: The number of IP addresses that lookups were attempted for,
-            excluding any that failed ASN registry checks.
-        :Dictionary: A dictionary of RIR keys to the number of addresses
-            looked up for each, determined as a result of ASN lookups.
+        :results (dict): IP address keys with the values as dictionaries
+            returned by IPWhois.lookup_rdap().
+        :stats (dict): Stats for the lookups:
+
+        ::
+
+            {
+                'ip_input_total' (int) - The total number of addresses
+                    originally provided for lookup via the addresses argument.
+                'ip_unique_total' (int) - The total number of unique addresses
+                    found in the addresses argument.
+                'ip_lookup_total' (int) - The total number of addresses that
+                    lookups were attempted for, excluding any that failed ASN
+                    registry checks.
+                'lacnic' (dict) -
+                {
+                    'failed' (list) - The addresses that failed to lookup.
+                        Excludes any that failed initially, but succeeded after
+                        futher retries.
+                    'rate_limited' (list) - The addresses that encountered
+                        rate-limiting. Unless an address is also in 'failed',
+                        it eventually succeeded.
+                    'total' (int) - The total number of addresses belonging to
+                        this RIR that lookups were attempted for.
+                }
+                'ripencc' (dict) - Same as 'lacnic' above.
+                'apnic' (dict) - Same as 'lacnic' above.
+                'afrinic' (dict) - Same as 'lacnic' above.
+                'arin' (dict) - Same as 'lacnic' above.
+                'unallocated_addresses' (list) - The addresses that are
+                    unallocated/failed ASN lookups. These can be addresses that
+                    are not listed for one of the 5 RIRs (other). No attempt
+                    was made to perform an RDAP lookup for these.
+            }
 
     Raises:
         ASNLookupError: The ASN bulk lookup failed, cannot proceed with bulk
@@ -160,12 +192,16 @@ def bulk_lookup_rdap(addresses=None, inc_raw=False, retry_count=3, depth=0,
     results = {}
     failed_lookups_dict = {}
     rated_lookups = []
-    rir_stats = {
-        'lacnic': 0,
-        'ripencc': 0,
-        'apnic': 0,
-        'afrinic': 0,
-        'arin': 0
+    stats = {
+        'ip_input_total': len(addresses),
+        'ip_unique_total': 0,
+        'ip_lookup_total': 0,
+        'lacnic': {'failed': [], 'rate_limited': [], 'total': 0},
+        'ripencc': {'failed': [], 'rate_limited': [], 'total': 0},
+        'apnic': {'failed': [], 'rate_limited': [], 'total': 0},
+        'afrinic': {'failed': [], 'rate_limited': [], 'total': 0},
+        'arin': {'failed': [], 'rate_limited': [], 'total': 0},
+        'unallocated_addresses': []
     }
     asn_parsed_results = {}
 
@@ -179,7 +215,7 @@ def bulk_lookup_rdap(addresses=None, inc_raw=False, retry_count=3, depth=0,
     unique_ip_list = list(unique_everseen(addresses))
 
     # Get the unique count to return
-    ip_unique_total = len(unique_ip_list)
+    stats['ip_unique_total'] = len(unique_ip_list)
 
     # This is needed for iteration order
     rir_keys_ordered = ['lacnic', 'ripencc', 'apnic', 'afrinic', 'arin']
@@ -225,23 +261,23 @@ def bulk_lookup_rdap(addresses=None, inc_raw=False, retry_count=3, depth=0,
 
         # Add valid IP ASN result to asn_parsed_results for RDAP lookup
         asn_parsed_results[ip] = results
-        rir_stats[results['asn_registry']] += 1
+        stats[results['asn_registry']]['total'] += 1
+
+    # Set the list of IPs that are not allocated/failed ASN lookup
+    stats['unallocated_addresses'] = list(k for k in addresses if k not in
+                                          asn_parsed_results)
 
     # Set the total lookup count after unique IP and ASN result filtering
-    ip_lookup_total = len(asn_parsed_results)
+    stats['ip_lookup_total'] = len(asn_parsed_results)
 
     # Track the total number of LACNIC queries left. This is tracked in order
     # to ensure the 9 priority LACNIC queries/min don't go into infinite loop
-    lacnic_total_left = rir_stats['lacnic']
-
-    # Initialize the LACNIC query count for tracking number of LACNIC queries
-    # since the last rate limit time reset via old_time
-    lacnic_count = 0
+    lacnic_total_left = stats['lacnic']['total']
 
     # Set the start time, this value is updated when the rate limit is reset
     old_time = time.time()
 
-    # TODO: Rate limit tracking dict for all RIRs
+    # Rate limit tracking dict for all RIRs
     rate_tracker = {
         'lacnic': {'time': old_time, 'count': 0},
         'ripencc': {'time': old_time, 'count': 0},
@@ -261,32 +297,31 @@ def bulk_lookup_rdap(addresses=None, inc_raw=False, retry_count=3, depth=0,
             # hasn't been reached, skip to find a LACNIC IP to lookup
             if (
                 rir != 'lacnic' and lacnic_total_left > 0 and
-                (lacnic_count != 9 or
-                    (time.time() - old_time) >= rate_limit_timeout
+                (rate_tracker['lacnic']['count'] != 9 or
+                    (time.time() - rate_tracker['lacnic']['time']
+                     ) >= rate_limit_timeout
                  )
                ):  # pragma: no cover
 
                 continue
 
-            # If this IP is LACNIC, run some checks
-            if rir == 'lacnic' and lacnic_total_left > 0:
+            # If the RIR rate limit has been reached and hasn't expired,
+            # move on to the next RIR
+            if (
+                rate_tracker[rir]['count'] == 9 and (
+                    (time.time() - rate_tracker[rir]['time']
+                     ) < rate_limit_timeout)
+               ):  # pragma: no cover
 
-                # If the LACNIC rate limit has been reached and hasn't expired,
-                # move on to the next non-LACNIC IP
-                if (
-                    lacnic_count == 9 and (
-                        (time.time() - old_time) < rate_limit_timeout)
-                   ):  # pragma: no cover
+                continue
 
-                    continue
+            # If the RIR rate limit has expired, reset the count/timer
+            # and perform the lookup
+            elif ((time.time() - rate_tracker[rir]['time']
+                   ) >= rate_limit_timeout):  # pragma: no cover
 
-                # If the LACNIC rate limit has expired, reset the count/timer
-                # and perform the lookup
-                elif ((time.time() - old_time) >= rate_limit_timeout
-                      ):  # pragma: no cover
-
-                    lacnic_count = 0
-                    old_time = time.time()
+                rate_tracker[rir]['count'] = 0
+                rate_tracker[rir]['time'] = time.time()
 
             # Create a copy of the lookup IP dict so we can modify on
             # successful/failed queries. Loop each IP until it matches the
@@ -301,10 +336,12 @@ def bulk_lookup_rdap(addresses=None, inc_raw=False, retry_count=3, depth=0,
                     log.debug('Starting lookup for IP: {0} '
                               'RIR: {1}'.format(ip, rir))
 
-                    # LACNIC IP found, add to count for rate-limit tracking
+                    # Add to count for rate-limit tracking only for LACNIC,
+                    # since we have not seen aggressive rate-limiting from the
+                    # other RIRs yet
                     if rir == 'lacnic':
 
-                        lacnic_count += 1
+                        rate_tracker[rir]['count'] += 1
 
                     # Get the next proxy opener to use, or None
                     try:
@@ -385,6 +422,7 @@ def bulk_lookup_rdap(addresses=None, inc_raw=False, retry_count=3, depth=0,
                             if failed_lookups_dict[ip] == retry_count:
 
                                 del asn_parsed_results[ip]
+                                stats[rir]['failed'].append(ip)
 
                                 if rir == 'lacnic':
 
@@ -401,23 +439,19 @@ def bulk_lookup_rdap(addresses=None, inc_raw=False, retry_count=3, depth=0,
                         if ip not in rated_lookups:
 
                             rated_lookups.append(ip)
+                            stats[rir]['rate_limited'].append(ip)
 
                         log.debug('Rate limiting triggered for IP: {0} '
                                   'RIR: {1}'.format(ip, rir))
 
                         # Since rate-limit was reached, reset the timer and
                         # max out the count
-                        if rir == 'lacnic':
-
-                            old_time = time.time()
-                            lacnic_count = 9
+                        rate_tracker[rir]['time'] = time.time()
+                        rate_tracker[rir]['count'] = 9
 
                         # Break out of the IP list loop, we need to change to
                         # the next RIR
                         break
 
-    # Failed lookup counts will always be == retry_count, so make this a list
-    failed_lookups = list(failed_lookups_dict.keys())
-
-    return (results, failed_lookups, rated_lookups, ip_lookup_total, 
-            ip_unique_total, rir_stats)
+    return_tuple = namedtuple('return_tuple', ['results', 'stats'])
+    return return_tuple(results, stats)
