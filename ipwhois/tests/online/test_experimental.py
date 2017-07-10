@@ -39,6 +39,19 @@ class TestExperimental(TestCommon):
 
     def test_bulk_lookup_rdap(self):
 
+        try:
+            from urllib.request import (OpenerDirector,
+                                        ProxyHandler,
+                                        build_opener)
+        except ImportError:
+            from urllib2 import (OpenerDirector,
+                                 ProxyHandler,
+                                 build_opener)
+
+        handler = ProxyHandler()
+        opener = build_opener(handler)
+        bulk_lookup_rdap(addresses=['74.125.225.229'], proxy_openers=[opener])
+
         ips = [
             '74.125.225.229',  # ARIN
             '2001:4860:4860::8888',

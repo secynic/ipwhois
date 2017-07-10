@@ -109,7 +109,7 @@ def get_bulk_asn_whois(addresses=None, retry_count=3, timeout=120):
 
 def bulk_lookup_rdap(addresses=None, inc_raw=False, retry_count=3, depth=0,
                      excluded_entities=None, rate_limit_timeout=60,
-                     socket_timeout=10, asn_timeout=240):
+                     socket_timeout=10, asn_timeout=240, proxy_openers=None):
     """
     The function for bulk retrieving and parsing whois information for a list
     of IP addresses via HTTP (RDAP). This bulk lookup method uses bulk
@@ -130,6 +130,8 @@ def bulk_lookup_rdap(addresses=None, inc_raw=False, retry_count=3, depth=0,
             when a rate limit notice is returned via rdap+json.
         socket_timeout: The default timeout for socket connections in seconds.
         asn_timeout: The default timeout for bulk ASN lookups in seconds.
+        proxy_openers: A list of urllib.request.OpenerDirector objects for
+            single/rotating proxy support or None.
 
     Returns:
         Tuple:
@@ -166,6 +168,12 @@ def bulk_lookup_rdap(addresses=None, inc_raw=False, retry_count=3, depth=0,
         'arin': 0
     }
     asn_parsed_results = {}
+
+    if proxy_openers is None:
+
+        proxy_openers = [None]
+
+    proxy_openers_copy = iter(proxy_openers)
 
     # Make sure addresses is unique
     unique_ip_list = list(unique_everseen(addresses))
@@ -298,13 +306,25 @@ def bulk_lookup_rdap(addresses=None, inc_raw=False, retry_count=3, depth=0,
 
                         lacnic_count += 1
 
+                    # Get the next proxy opener to use, or None
+                    try:
+
+                        opener = next(proxy_openers_copy)
+
+                    # Start at the beginning if all have been used
+                    except StopIteration:
+
+                        proxy_openers_copy = iter(proxy_openers)
+                        opener = next(proxy_openers_copy)
+
                     # Instantiate the objects needed for the RDAP lookup
-                    net = Net(ip, timeout=socket_timeout)
+                    net = Net(ip, timeout=socket_timeout, proxy_opener=opener)
                     rdap = RDAP(net)
 
                     try:
 
-                        # Perform the RDAP lookup
+                        # Perform the RDAP lookup. retry_count is set to 0
+                        # here since we handle that in this function
                         results = rdap.lookup(
                             inc_raw=inc_raw, retry_count=0, asn_data=asn_data,
                             depth=depth, excluded_entities=excluded_entities
