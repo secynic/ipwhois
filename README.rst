@@ -31,8 +31,8 @@ for IPv4 and IPv6 addresses.
     If you are experiencing latency issues, it is likely related to rate
     limiting. Rate limiting is based on your source IP, which may be a problem
     with multiple users behind the same proxy. Additionally, LACNIC implements
-    aggressive rate limiting. Experimental bulk query support is in progress
-    (https://github.com/secynic/ipwhois/issues/134)
+    aggressive rate limiting. Experimental bulk query support is new as of
+    v1.0.0.
 
 Features
 ========
@@ -49,6 +49,7 @@ Features
 * Supports IP to ASN and ASN origin queries
 * Python 2.6+ and 3.3+ supported
 * Useful set of utilities
+* Experimental bulk query support
 * BSD license
 * 100% core code coverage (See '# pragma: no cover' for exclusions)
 * Human readable field translations
@@ -247,6 +248,21 @@ Scripts
 CLI documentation:
 
 https://ipwhois.readthedocs.io/en/latest/CLI.html
+
+Experimental Functions
+----------------------
+
+.. caution::
+
+    Functions in experimental.py contain new functionality that has not yet
+    been widely tested. Bulk lookup support contained here can result in
+    significant system/network resource utilization. Additionally, abuse of
+    this functionality may get you banned by the various services queried by
+    this library. Use at your own discretion.
+
+Experimental functions documentation:
+
+https://ipwhois.readthedocs.io/en/latest/EXPERIMENTAL.html
 
 Contributing
 ============

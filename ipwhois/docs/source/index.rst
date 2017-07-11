@@ -26,6 +26,7 @@ for IPv4 and IPv6 addresses.
    ASN (Autonomous System Number) <ASN>
    Utilities <UTILS>
    CLI <CLI>
+   Experimental Functions <EXPERIMENTAL>
 
 .. toctree::
    :caption: Code
