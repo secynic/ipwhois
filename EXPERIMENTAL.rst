@@ -13,6 +13,9 @@ Experimental Functions
 Bulk ASN Lookups
 ================
 
+The function for retrieving ASN information for multiple IP addresses from
+Cymru via port 43/tcp (WHOIS).
+
 .. _get_bulk_asn_whois-input:
 
 Input
@@ -55,6 +58,11 @@ Basic usage
 
 Bulk RDAP Lookups
 =================
+
+The function for bulk retrieving and parsing whois information for a list of
+IP addresses via HTTP (RDAP). This bulk lookup method uses bulk ASN Whois
+lookups first to retrieve the ASN for each IP. It then optimizes RDAP queries
+to achieve the fastest overall time, accounting for rate-limiting RIRs.
 
 .. _bulk_lookup_rdap-input:
 
