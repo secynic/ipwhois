@@ -6,8 +6,8 @@ Version upgrade notes, warnings, and critical changes will be displayed here.
 This does not supplement the changelog, but serves to provide information on
 any changes that may affect user experience when upgrading to a new release.
 
-This page is new as of version 1.0.0. Any information here on older versions is
-likely missing or imcomplete.
+This page is new as of version 1.0.0. Any information on older versions is
+likely missing or incomplete.
 
 ******
 v1.0.0
