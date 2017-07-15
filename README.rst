@@ -290,3 +290,8 @@ Special Thanks
 
 Thank you JetBrains for the `PyCharm <https://www.jetbrains.com/pycharm/>`_
 open source support!
+
+Thank you Chris Wells (`@cdubz <https://github.com/cdubz>`_) for your
+extensive testing on the experimental functions!
+
+Last but not least, thank you to all the issue submitters and contributors.
