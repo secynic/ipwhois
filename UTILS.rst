@@ -129,3 +129,40 @@ addresses/networks. Summarizes ports with sub-counts.
      '74.125.0.0/16': {'count': 1, 'ports': {}},
      '74.125.225.229': {'count': 2, 'ports': {'80': 1}}}
 
+Generate random IP addresses
+----------------------------
+Generate random, unique IPv4/IPv6 addresses that are not defined (can be
+looked up using ipwhois).
+
+::
+
+    >>>> from ipwhois.utils import ipv4_generate_random
+    >>>> for address in ipv4_generate_random(10):
+    >>>>     print(address)
+
+    71.58.89.10
+    17.206.180.200
+    156.94.166.94
+    36.92.169.70
+    52.214.0.208
+    174.254.156.179
+    33.184.228.52
+    17.58.3.61
+    101.151.158.16
+    61.162.38.154
+
+    >>>> from ipwhois.utils import ipv6_generate_random
+    >>>> for address in ipv6_generate_random(10):
+    >>>>     print(address)
+
+    218e:a9ad:aae4:431c:ff16:eb94:f063:47f7
+    24ba:3185:a26f:fd30:5756:16d5:b4ab:771b
+    38ad:f797:360a:d98e:4f3b:b1c8:5811:8425
+    2c0e:9add:6b48:96c4:d22:2674:8067:2de9
+    3b72:414b:c387:4650:c4a6:eed3:21a8:ba9b
+    3d24:4053:dd81:d269:2cdc:91c9:b0f8:830e
+    32a4:8ef8:807:1bf0:e866:c8d7:d69e:2a52
+    2a2b:eb87:d368:89ee:6861:555:32c6:d552
+    2ee6:5445:f1ff:b1c6:d68f:3ee1:1e31:fe34
+    2c6b:393f:ae7:a0f7:1c2:2e19:bab1:af9c
+

@@ -7,7 +7,7 @@ Changelog
 - Deprecated asn_alts, allow_permutations in favor of new asn_methods (#158)
 - Added new exception ASNOriginLookupError (#158)
 - KRNIC lookups changed to HTTPS (#166)
-- Added experimental functions - get_bulk_asn_whois (#134)
+- Added experimental functions - get_bulk_asn_whois, bulk_lookup_rdap (#134)
 - Fixed bug in NIR lookups that caused addresses with multi-line contacts to
   error (#172 - kwheeles)
 - Added IANA Reserved CIDR 198.97.38.0/24 to ipv4_is_defined (#174)
@@ -16,6 +16,12 @@ Changelog
 - Added new return key asn_description via verbose ASN DNS lookup support and
   modified ASN whois lookups. New argument get_asn_description to disable
   additional DNS lookup (#176)
+- Fixed some test function naming errors
+- Added new generators to utils.py: ipv4_generate_random and
+  ipv6_generate_random (#183)
+- Moved upgrade notes to new UPGRADING.rst
+- Deprecated unnecessary protected class functions, changed to public in
+  asn.py, nir.py, and whois.py (#184)
 
 0.15.1 (2017-02-16)
 -------------------

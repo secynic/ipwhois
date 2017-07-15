@@ -15,7 +15,7 @@ log = logging.getLogger(__name__)
 
 class TestIPASN(TestCommon):
 
-    def test__TestIPASNLookup(self):
+    def test_lookup(self):
 
         net = Net('74.125.225.229')
         ipasn = IPASN(net)
@@ -49,7 +49,7 @@ class TestIPASN(TestCommon):
 
 class TestASNOrigin(TestCommon):
 
-    def test__TestASNOriginLookup(self):
+    def test_lookup(self):
 
         data_dir = path.abspath(path.join(path.dirname(__file__), '..'))
 

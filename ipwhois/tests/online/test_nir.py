@@ -13,9 +13,9 @@ logging.basicConfig(level=logging.DEBUG, format=LOG_FORMAT)
 log = logging.getLogger(__name__)
 
 
-class TestNIR(TestCommon):
+class TestNIRWhois(TestCommon):
 
-    def test__NIRWhoisLookup(self):
+    def test_lookup(self):
 
         data_dir = path.abspath(path.join(path.dirname(__file__), '..'))
 

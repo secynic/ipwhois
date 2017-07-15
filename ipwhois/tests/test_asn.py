@@ -17,7 +17,7 @@ log = logging.getLogger(__name__)
 
 class TestIPASN(TestCommon):
 
-    def test__IPASN(self):
+    def test_IPASN(self):
 
         self.assertRaises(NetError, IPASN, 'a')
 
@@ -39,24 +39,24 @@ class TestIPASN(TestCommon):
         data = ''
         self.assertRaises(ASNParseError, ipasn._parse_fields_dns, data)
 
-    def test__parse_fields_verbose_dns(self):
+    def test_parse_fields_verbose_dns(self):
 
         data = '"15169 | US | arin | 2007-03-13 | GOOGLE - Google Inc., US"'
         net = Net('74.125.225.229')
         ipasn = IPASN(net)
         try:
-            self.assertIsInstance(ipasn._parse_fields_verbose_dns(data), dict)
+            self.assertIsInstance(ipasn.parse_fields_verbose_dns(data), dict)
         except AssertionError as e:
             raise e
         except Exception as e:
             self.fail('Unexpected exception raised: {0}'.format(e))
 
         data = '"15169 | US | random | 2007-03-13 | GOOGLE - Google Inc., US"'
-        self.assertRaises(ASNRegistryError, ipasn._parse_fields_verbose_dns,
+        self.assertRaises(ASNRegistryError, ipasn.parse_fields_verbose_dns,
                           data)
 
         data = ''
-        self.assertRaises(ASNParseError, ipasn._parse_fields_verbose_dns, data)
+        self.assertRaises(ASNParseError, ipasn.parse_fields_verbose_dns, data)
 
     def test__parse_fields_whois(self):
 
@@ -134,7 +134,7 @@ class TestIPASN(TestCommon):
         except Exception as e:
             self.fail('Unexpected exception raised: {0}'.format(e))
 
-    def test__IPASNLookup(self):
+    def test_lookup(self):
         # TODO: need to modify asn.json for this.
         return NotImplemented
 

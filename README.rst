@@ -7,7 +7,7 @@ ipwhois
 .. image:: https://coveralls.io/repos/github/secynic/ipwhois/badge.svg?branch=
     master
     :target: https://coveralls.io/github/secynic/ipwhois?branch=master
-.. image:: https://codeclimate.com/github/codeclimate/codeclimate/badges/gpa.svg
+.. image:: https://codeclimate.com/github/secynic/ipwhois/badges/issue_count.svg
    :target: https://codeclimate.com/github/secynic/ipwhois
 .. image:: https://img.shields.io/badge/license-BSD%202--Clause-blue.svg
     :target: https://github.com/secynic/ipwhois/tree/master/LICENSE.txt
@@ -26,37 +26,13 @@ Summary
 ipwhois is a Python package focused on retrieving and parsing whois data
 for IPv4 and IPv6 addresses.
 
-.. attention::
-
-    The IPWhois argument allow_permutations and the lookup argument asn_alts
-    have been deprecated in favor of new argument asn_methods.
-
-.. attention::
-
-    NIR (National Internet Registry) lookups are enabled by default as of
-    v0.14.0. This is currently only performed for JPNIC and KRNIC addresses.
-    To disable, set inc_nir=False in your IPWhois.lookup_*() query.
-
-.. attention::
-
-    The 'nets' -> 'emails' key in IPWhois.lookup_whois() was changed from
-    a '\\n' separated string to a list in v0.14.0.
-
-.. important::
-
-    RDAP (IPWhois.lookup_rdap()) is the recommended query method as of v0.11.0.
-    If you are upgrading from earlier than 0.11.0, please see the
-    `upgrade info <https://ipwhois.readthedocs.io/en/v0.15.1/RDAP.html
-    #upgrading-from-0-10-to-0-11>`_.
-
 .. note::
 
     If you are experiencing latency issues, it is likely related to rate
-    limiting. Profiling the tests, I see most time spent attributed to network
-    latency. Rate limiting is based on your source IP, which may be a problem
+    limiting. Rate limiting is based on your source IP, which may be a problem
     with multiple users behind the same proxy. Additionally, LACNIC implements
-    aggressive rate limiting. Bulk query optimization is on the roadmap
-    (https://github.com/secynic/ipwhois/issues/134)
+    aggressive rate limiting. Experimental bulk query support is new as of
+    v1.0.0.
 
 Features
 ========
@@ -73,6 +49,7 @@ Features
 * Supports IP to ASN and ASN origin queries
 * Python 2.6+ and 3.3+ supported
 * Useful set of utilities
+* Experimental bulk query support
 * BSD license
 * 100% core code coverage (See '# pragma: no cover' for exclusions)
 * Human readable field translations
@@ -118,6 +95,11 @@ Changes
 -------
 
 https://ipwhois.readthedocs.io/en/latest/CHANGES.html
+
+Upgrade Notes
+-------------
+
+https://ipwhois.readthedocs.io/en/latest/UPGRADING.html
 
 Dependencies
 ============
@@ -267,6 +249,21 @@ CLI documentation:
 
 https://ipwhois.readthedocs.io/en/latest/CLI.html
 
+Experimental Functions
+----------------------
+
+.. caution::
+
+    Functions in experimental.py contain new functionality that has not yet
+    been widely tested. Bulk lookup support contained here can result in
+    significant system/network resource utilization. Additionally, abuse of
+    this functionality may get you banned by the various services queried by
+    this library. Use at your own discretion.
+
+Experimental functions documentation:
+
+https://ipwhois.readthedocs.io/en/latest/EXPERIMENTAL.html
+
 Contributing
 ============
 
@@ -293,3 +290,8 @@ Special Thanks
 
 Thank you JetBrains for the `PyCharm <https://www.jetbrains.com/pycharm/>`_
 open source support!
+
+Thank you Chris Wells (`@cdubz <https://github.com/cdubz>`_) for your
+extensive testing on the experimental functions!
+
+Last but not least, thank you to all the issue submitters and contributors.

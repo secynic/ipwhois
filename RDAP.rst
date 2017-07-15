@@ -264,20 +264,6 @@ Common to lists in :ref:`rdap-network-dictionary` and
 | links       | List   | List of HTTP/HTTPS links provided for a notice. |
 +-------------+--------+-------------------------------------------------+
 
-.. _rdap-upgrading-from-0-10-to-0-11:
-
-Upgrading from 0.10 to 0.11
-===========================
-
-Considerable changes were made between v0.10.3 and v0.11.0. The new RDAP return
-format was introduced and split off from the legacy whois return format. Using
-RDAP lookup is the recommended method to maximize indexable values.
-
-RDAP return data is different in nearly every way from the legacy whois data.
-
-For information on raw RDAP responses, please see the RFC:
-https://tools.ietf.org/html/rfc7483
-
 .. _rdap-usage-examples:
 
 Usage Examples

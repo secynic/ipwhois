@@ -8,7 +8,9 @@ from ipwhois.utils import (ipv4_lstrip_zeros,
                            ipv4_is_defined,
                            ipv6_is_defined,
                            unique_everseen,
-                           unique_addresses)
+                           unique_addresses,
+                           ipv4_generate_random,
+                           ipv6_generate_random)
 
 LOG_FORMAT = ('[%(asctime)s] [%(levelname)s] [%(filename)s:%(lineno)s] '
               '[%(funcName)s()] %(message)s')
@@ -255,4 +257,12 @@ class TestFunctions(TestCommon):
                     'count': 1, 'ports': {}}}
 
             self.assertEqual(unique_addresses(file_path=fp),
-                                 fp_expected_result)
+                             fp_expected_result)
+
+    def test_ipv4_generate_random(self):
+
+        self.assertEquals(len(list(ipv4_generate_random(1000))), 1000)
+
+    def test_ipv6_generate_random(self):
+
+        self.assertEquals(len(list(ipv6_generate_random(1000))), 1000)

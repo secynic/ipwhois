@@ -14,7 +14,7 @@ log = logging.getLogger(__name__)
 
 class TestRDAP(TestCommon):
 
-    def test__RDAPLookup(self):
+    def test_lookup(self):
 
         data_dir = path.abspath(path.join(path.dirname(__file__), '..'))
 

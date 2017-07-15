@@ -40,3 +40,7 @@ Library Structure
 .. automodule:: ipwhois.hr
    :members:
    :private-members:
+
+.. automodule:: ipwhois.experimental
+   :members:
+   :private-members:

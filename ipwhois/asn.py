@@ -103,7 +103,7 @@ class IPASN:
         self.org_map = ORG_MAP
         self.rir_whois = RIR_WHOIS
 
-    def _parse_fields_dns(self, response):
+    def parse_fields_dns(self, response):
         """
         The function for parsing ASN fields from a dns response.
 
@@ -156,7 +156,17 @@ class IPASN:
 
         return ret
 
-    def _parse_fields_verbose_dns(self, response):
+    def _parse_fields_dns(self, *args, **kwargs):
+        """
+        Deprecated. This will be removed in a future release.
+        """
+
+        from warnings import warn
+        warn('IPASN._parse_fields_dns() has been deprecated and will be '
+             'removed. You should now use IPASN.parse_fields_dns().')
+        return self.parse_fields_dns(*args, **kwargs)
+
+    def parse_fields_verbose_dns(self, response):
         """
         The function for parsing ASN fields from a verbose dns response.
 
@@ -209,7 +219,7 @@ class IPASN:
 
         return ret
 
-    def _parse_fields_whois(self, response):
+    def parse_fields_whois(self, response):
         """
         The function for parsing ASN fields from a whois response.
 
@@ -262,7 +272,17 @@ class IPASN:
 
         return ret
 
-    def _parse_fields_http(self, response, extra_org_map=None):
+    def _parse_fields_whois(self, *args, **kwargs):
+        """
+        Deprecated. This will be removed in a future release.
+        """
+
+        from warnings import warn
+        warn('IPASN._parse_fields_whois() has been deprecated and will be '
+             'removed. You should now use IPASN.parse_fields_whois().')
+        return self.parse_fields_whois(*args, **kwargs)
+
+    def parse_fields_http(self, response, extra_org_map=None):
         """
         The function for parsing ASN fields from a http response.
 
@@ -349,6 +369,16 @@ class IPASN:
                                 ''.format(response, e)[:100])
 
         return asn_data
+
+    def _parse_fields_http(self, *args, **kwargs):
+        """
+        Deprecated. This will be removed in a future release.
+        """
+
+        from warnings import warn
+        warn('IPASN._parse_fields_http() has been deprecated and will be '
+             'removed. You should now use IPASN.parse_fields_http().')
+        return self.parse_fields_http(*args, **kwargs)
 
     def lookup(self, inc_raw=False, retry_count=3, asn_alts=None,
                extra_org_map=None, asn_methods=None,
@@ -490,7 +520,7 @@ class IPASN:
 
                 response = self._net.get_asn_verbose_dns('AS{0}'.format(
                     asn_data['asn']))
-                asn_verbose_data = self._parse_fields_verbose_dns(response)
+                asn_verbose_data = self.parse_fields_verbose_dns(response)
                 asn_data['asn_description'] = asn_verbose_data[
                     'asn_description']
 
@@ -532,8 +562,8 @@ class ASNOrigin:
             raise NetError('The provided net parameter is not an instance of '
                            'ipwhois.net.Net')
 
-    def _parse_fields(self, response, fields_dict, net_start=None,
-                      net_end=None, field_list=None):
+    def parse_fields(self, response, fields_dict, net_start=None,
+                     net_end=None, field_list=None):
         """
         The function for parsing ASN whois fields from a data input.
 
@@ -615,7 +645,17 @@ class ASNOrigin:
 
         return ret
 
-    def _get_nets_radb(self, response, is_http=False):
+    def _parse_fields(self, *args, **kwargs):
+        """
+        Deprecated. This will be removed in a future release.
+        """
+
+        from warnings import warn
+        warn('ASNOrigin._parse_fields() has been deprecated and will be '
+             'removed. You should now use ASNOrigin.parse_fields().')
+        return self.parse_fields(*args, **kwargs)
+
+    def get_nets_radb(self, response, is_http=False):
         """
         The function for parsing network blocks from ASN origin data.
 
@@ -655,6 +695,16 @@ class ASNOrigin:
                 pass
 
         return nets
+
+    def _get_nets_radb(self, *args, **kwargs):
+        """
+        Deprecated. This will be removed in a future release.
+        """
+
+        from warnings import warn
+        warn('ASNOrigin._get_nets_radb() has been deprecated and will be '
+             'removed. You should now use ASNOrigin.get_nets_radb().')
+        return self.get_nets_radb(*args, **kwargs)
 
     def lookup(self, asn=None, inc_raw=False, retry_count=3, response=None,
                field_list=None, asn_alts=None, asn_methods=None):
