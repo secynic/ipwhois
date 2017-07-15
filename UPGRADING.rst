@@ -13,6 +13,12 @@ likely missing or incomplete.
 v1.0.0
 ******
 
+- HTTPS (port 443) requirement added for KRNIC lookups.
+- Experimental bulk functions added: experimental.get_bulk_asn_whois and
+  experimental.bulk_lookup_rdap.
+- Added new return key asn_description to net.Net.get_asn_whois,
+  experimental.get_bulk_asn_whois, and hr.py. New argument get_asn_description
+  to disable additional DNS lookups added to CLI.
 - The IPWhois argument allow_permutations and the lookup argument asn_alts
   have been deprecated in favor of new argument asn_methods.
 - Deprecated unnecessary protected class functions, changed to public in
@@ -23,7 +29,8 @@ v1.0.0
   nir.NIRWhois._get_nets_krnic, nir.NIRWhois._get_contact,
   whois.Whois._parse_fields, whois.Whois._get_nets_arin,
   whois.Whois._get_nets_lacnic, whois.Whois._get_nets_other
-- TODO
+- New IP generators added: utils.ipv4_generate_random and
+  utils.ipv6_generate_random
 
 *******
 v0.14.0
