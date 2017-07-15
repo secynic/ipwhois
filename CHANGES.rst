@@ -19,6 +19,9 @@ Changelog
 - Fixed some test function naming errors
 - Added new generators to utils.py: ipv4_generate_random and
   ipv6_generate_random (#183)
+- Moved upgrade notes to new UPGRADING.rst
+- Deprecated unnecessary protected class functions, changed to public in
+  asn.py, nir.py, and whois.py (#184)
 
 0.15.1 (2017-02-16)
 -------------------

@@ -253,7 +253,7 @@ def bulk_lookup_rdap(addresses=None, inc_raw=False, retry_count=3, depth=0,
 
         try:
 
-            results = ipasn._parse_fields_whois(asn_result)
+            results = ipasn.parse_fields_whois(asn_result)
 
         except ASNRegistryError:  # pragma: no cover
 

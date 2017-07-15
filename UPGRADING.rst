@@ -15,6 +15,14 @@ v1.0.0
 
 - The IPWhois argument allow_permutations and the lookup argument asn_alts
   have been deprecated in favor of new argument asn_methods.
+- Deprecated unnecessary protected class functions, changed to public in
+  asn.py, nir.py, and whois.py (#184): asn.IPASN._parse_fields_dns,
+  asn.IPASN._parse_fields_whois, asn.IPASN._parse_fields_http,
+  asn.ASNOrigin._parse_fields, asn.ASNOrigin._get_nets_radb,
+  nir.NIRWhois._parse_fields, nir.NIRWhois._get_nets_jpnic,
+  nir.NIRWhois._get_nets_krnic, nir.NIRWhois._get_contact,
+  whois.Whois._parse_fields, whois.Whois._get_nets_arin,
+  whois.Whois._get_nets_lacnic, whois.Whois._get_nets_other
 - TODO
 
 *******

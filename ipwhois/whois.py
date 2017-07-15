@@ -209,8 +209,8 @@ class Whois:
             raise NetError('The provided net parameter is not an instance of '
                            'ipwhois.net.Net')
 
-    def _parse_fields(self, response, fields_dict, net_start=None,
-                      net_end=None, dt_format=None, field_list=None):
+    def parse_fields(self, response, fields_dict, net_start=None,
+                     net_end=None, dt_format=None, field_list=None):
         """
         The function for parsing whois fields from a data input.
 
@@ -316,7 +316,17 @@ class Whois:
 
         return ret
 
-    def _get_nets_arin(self, response):
+    def _parse_fields(self, *args, **kwargs):
+        """
+        Deprecated. This will be removed in a future release.
+        """
+
+        from warnings import warn
+        warn('Whois._parse_fields() has been deprecated and will be '
+             'removed. You should now use Whois.parse_fields().')
+        return self.parse_fields(*args, **kwargs)
+
+    def get_nets_arin(self, response):
         """
         The function for parsing network blocks from ARIN whois data.
 
@@ -379,7 +389,17 @@ class Whois:
 
         return nets
 
-    def _get_nets_lacnic(self, response):
+    def _get_nets_arin(self, *args, **kwargs):
+        """
+        Deprecated. This will be removed in a future release.
+        """
+
+        from warnings import warn
+        warn('Whois._get_nets_arin() has been deprecated and will be '
+             'removed. You should now use Whois.get_nets_arin().')
+        return self.get_nets_arin(*args, **kwargs)
+
+    def get_nets_lacnic(self, response):
         """
         The function for parsing network blocks from LACNIC whois data.
 
@@ -430,7 +450,17 @@ class Whois:
 
         return nets
 
-    def _get_nets_other(self, response):
+    def _get_nets_lacnic(self, *args, **kwargs):
+        """
+        Deprecated. This will be removed in a future release.
+        """
+
+        from warnings import warn
+        warn('Whois._get_nets_lacnic() has been deprecated and will be '
+             'removed. You should now use Whois.get_nets_lacnic().')
+        return self.get_nets_lacnic(*args, **kwargs)
+
+    def get_nets_other(self, response):
         """
         The function for parsing network blocks from generic whois data.
 
@@ -482,6 +512,16 @@ class Whois:
                 pass
 
         return nets
+
+    def _get_nets_other(self, *args, **kwargs):
+        """
+        Deprecated. This will be removed in a future release.
+        """
+
+        from warnings import warn
+        warn('Whois._get_nets_other() has been deprecated and will be '
+             'removed. You should now use Whois.get_nets_other().')
+        return self.get_nets_other(*args, **kwargs)
 
     def lookup(self, inc_raw=False, retry_count=3, response=None,
                get_referral=False, extra_blacklist=None,
