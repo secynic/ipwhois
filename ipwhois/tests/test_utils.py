@@ -263,12 +263,6 @@ class TestFunctions(TestCommon):
 
         self.assertEquals(len(list(ipv4_generate_random(1000))), 1000)
 
-        for address in ipv4_generate_random(10):
-            print(address)
-
     def test_ipv6_generate_random(self):
 
         self.assertEquals(len(list(ipv6_generate_random(1000))), 1000)
-
-        for address in ipv6_generate_random(10):
-            print(address)
