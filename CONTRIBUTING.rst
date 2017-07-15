@@ -2,6 +2,12 @@
 Contributing
 ============
 
+.. note::
+
+    If you are looking for items to contribute, start by looking at current
+    open `issues <https://github.com/secynic/ipwhois/issues>`_ and search the
+    source code for "TODO" items.
+
 ****************
 Issue submission
 ****************
@@ -78,6 +84,18 @@ Aside from the core code changes, it is helpful to provide the following
 - Sphinx configuration changes in /docs
 - Requirements (python2.txt, python3.txt, docs/requirements.txt)
 
+GitFlow Model
+=============
+
+This library follows the GitFlow model. As a contributor, this is simply
+accomplished by the following steps:
+
+1. Create an issue (if there isn't one already)
+2. Branch from dev (not master), try to name your branch to reference the issue
+   (e.g., issue_123_feature, issue_123_bugfix).
+3. Merge pull requests to dev (not master). Hotfix merges to master will
+   only be allowed under extreme/time sensitive circumstances.
+
 Guidelines
 ==========
 
@@ -100,3 +118,4 @@ Guidelines
   ::
 
      --exclude stress
+
