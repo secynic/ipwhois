@@ -116,7 +116,9 @@ The output namedtuple from ipwhois.experimental.bulk_lookup_rdap().
 | **Key**          |**Type**| **Description**                                 |
 +------------------+--------+-------------------------------------------------+
 | results          | Dict   | IP address keys with the values as dictionaries |
-|                  |        | returned by IPWhois.lookup_rdap().              |
+|                  |        | returned by `IPWhois.lookup_rdap()              |
+|                  |        | <https://ipwhois.readthedocs.io/en/latest/      |
+|                  |        | RDAP.html#results-dictionary>`_                 |
 +------------------+--------+-------------------------------------------------+
 | stats            | Dict   | Stats for the lookup containing the keys        |
 |                  |        | identified in :ref:`bulk_lookup_rdap-stats`     |
