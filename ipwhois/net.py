@@ -26,6 +26,7 @@ import sys
 import socket
 import dns.resolver
 import json
+from collections import namedtuple
 import logging
 from time import sleep
 
@@ -799,7 +800,12 @@ class Net:
                 timeouts, connection resets, etc. are encountered.
 
         Returns:
-            Tuple: hostname, aliaslist, ipaddrlist
+            namedtuple:
+
+            :hostname (str): The hostname returned mapped to the given IP
+                address.
+            :aliaslist (list): Alternate names for the given IP address.
+            :ipaddrlist (list): IPv4/v6 addresses mapped to the same hostname.
 
         Raises:
             HostLookupError: The host lookup failed.
@@ -820,7 +826,9 @@ class Net:
 
                 socket.setdefaulttimeout(None)
 
-            return ret
+            results = namedtuple('get_host_results', 'hostname, aliaslist, '
+                                                     'ipaddrlist')
+            return results(ret)
 
         except (socket.timeout, socket.error) as e:
 

@@ -30,6 +30,7 @@ import copy
 import io
 import csv
 import random
+from collections import namedtuple
 import logging
 
 if sys.version_info >= (3, 3):  # pragma: no cover
@@ -269,85 +270,92 @@ def ipv4_is_defined(address):
         address: An IPv4 address in string format.
 
     Returns:
-        Tuple:
+        namedtuple:
 
-        :Boolean: True if given address is defined, otherwise False
-        :String: IETF assignment name if given address is defined, otherwise ''
-        :String: IETF assignment RFC if given address is defined, otherwise ''
+        :is_defined (bool): True if given address is defined, otherwise
+            False
+        :ietf_name (str): IETF assignment name if given address is
+            defined, otherwise ''
+        :ietf_rfc (str): IETF assignment RFC if given address is defined,
+            otherwise ''
     """
 
     # Initialize the IP address object.
     query_ip = IPv4Address(str(address))
 
+    # Initialize the results named tuple
+    results = namedtuple('ipv4_is_defined_results', 'is_defined, ietf_name, '
+                                                    'ietf_rfc')
+
     # This Network
     if query_ip in IPv4Network('0.0.0.0/8'):
 
-        return True, 'This Network', 'RFC 1122, Section 3.2.1.3'
+        return results(True, 'This Network', 'RFC 1122, Section 3.2.1.3')
 
     # Loopback
     elif query_ip.is_loopback:
 
-        return True, 'Loopback', 'RFC 1122, Section 3.2.1.3'
+        return results(True, 'Loopback', 'RFC 1122, Section 3.2.1.3')
 
     # Link Local
     elif query_ip.is_link_local:
 
-        return True, 'Link Local', 'RFC 3927'
+        return results(True, 'Link Local', 'RFC 3927')
 
     # IETF Protocol Assignments
     elif query_ip in IPv4Network('192.0.0.0/24'):
 
-        return True, 'IETF Protocol Assignments', 'RFC 5736'
+        return results(True, 'IETF Protocol Assignments', 'RFC 5736')
 
     # TEST-NET-1
     elif query_ip in IPv4Network('192.0.2.0/24'):
 
-        return True, 'TEST-NET-1', 'RFC 5737'
+        return results(True, 'TEST-NET-1', 'RFC 5737')
 
     # 6to4 Relay Anycast
     elif query_ip in IPv4Network('192.88.99.0/24'):
 
-        return True, '6to4 Relay Anycast', 'RFC 3068'
+        return results(True, '6to4 Relay Anycast', 'RFC 3068')
 
     # Network Interconnect Device Benchmark Testing
     elif query_ip in IPv4Network('198.18.0.0/15'):
 
-        return (True,
+        return (results(True,
                 'Network Interconnect Device Benchmark Testing',
-                'RFC 2544')
+                'RFC 2544'))
 
     # TEST-NET-2
     elif query_ip in IPv4Network('198.51.100.0/24'):
 
-        return True, 'TEST-NET-2', 'RFC 5737'
+        return results(True, 'TEST-NET-2', 'RFC 5737')
 
     # TEST-NET-3
     elif query_ip in IPv4Network('203.0.113.0/24'):
 
-        return True, 'TEST-NET-3', 'RFC 5737'
+        return results(True, 'TEST-NET-3', 'RFC 5737')
 
     # Multicast
     elif query_ip.is_multicast:
 
-        return True, 'Multicast', 'RFC 3171'
+        return results(True, 'Multicast', 'RFC 3171')
 
     # Limited Broadcast
     elif query_ip in IPv4Network('255.255.255.255/32'):
 
-        return True, 'Limited Broadcast', 'RFC 919, Section 7'
+        return results(True, 'Limited Broadcast', 'RFC 919, Section 7')
 
     # Private-Use Networks
     elif query_ip.is_private:
 
-        return True, 'Private-Use Networks', 'RFC 1918'
+        return results(True, 'Private-Use Networks', 'RFC 1918')
 
     # New IANA Reserved
     # TODO: Someone needs to find the RFC for this
     elif query_ip in IPv4Network('198.97.38.0/24'):
 
-        return True, 'IANA Reserved', ''
+        return results(True, 'IANA Reserved', '')
 
-    return False, '', ''
+    return results(False, '', '')
 
 
 def ipv6_is_defined(address):
@@ -359,52 +367,58 @@ def ipv6_is_defined(address):
         address: An IPv6 address in string format.
 
     Returns:
-        Tuple:
+        namedtuple:
 
-        :Boolean: True if address is defined, otherwise False
-        :String: IETF assignment name if address is defined, otherwise ''
-        :String: IETF assignment RFC if address is defined, otherwise ''
+        :is_defined (bool): True if given address is defined, otherwise
+            False
+        :ietf_name (str): IETF assignment name if given address is
+            defined, otherwise ''
+        :ietf_rfc (str): IETF assignment RFC if given address is defined,
+            otherwise ''
     """
 
     # Initialize the IP address object.
     query_ip = IPv6Address(str(address))
 
+    # Initialize the results named tuple
+    results = namedtuple('ipv6_is_defined_results', 'is_defined, ietf_name, '
+                                                    'ietf_rfc')
     # Multicast
     if query_ip.is_multicast:
 
-        return True, 'Multicast', 'RFC 4291, Section 2.7'
+        return results(True, 'Multicast', 'RFC 4291, Section 2.7')
 
     # Unspecified
     elif query_ip.is_unspecified:
 
-        return True, 'Unspecified', 'RFC 4291, Section 2.5.2'
+        return results(True, 'Unspecified', 'RFC 4291, Section 2.5.2')
 
     # Loopback.
     elif query_ip.is_loopback:
 
-        return True, 'Loopback', 'RFC 4291, Section 2.5.3'
+        return results(True, 'Loopback', 'RFC 4291, Section 2.5.3')
 
     # Reserved
     elif query_ip.is_reserved:
 
-        return True, 'Reserved', 'RFC 4291'
+        return results(True, 'Reserved', 'RFC 4291')
 
     # Link-Local
     elif query_ip.is_link_local:
 
-        return True, 'Link-Local', 'RFC 4291, Section 2.5.6'
+        return results(True, 'Link-Local', 'RFC 4291, Section 2.5.6')
 
     # Site-Local
     elif query_ip.is_site_local:
 
-        return True, 'Site-Local', 'RFC 4291, Section 2.5.7'
+        return results(True, 'Site-Local', 'RFC 4291, Section 2.5.7')
 
     # Unique Local Unicast
     elif query_ip.is_private:
 
-        return True, 'Unique Local Unicast', 'RFC 4193'
+        return results(True, 'Unique Local Unicast', 'RFC 4193')
 
-    return False, '', ''
+    return results(False, '', '')
 
 
 def unique_everseen(iterable, key=None):

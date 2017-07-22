@@ -22,6 +22,8 @@ Changelog
 - Moved upgrade notes to new UPGRADING.rst
 - Deprecated unnecessary protected class functions, changed to public in
   asn.py, nir.py, and whois.py (#184)
+- net.Net.get_host(), utils.ipv4_is_defined(), and utils.ipv6_is_defined now
+  return namedtuple instead of tuple.
 
 0.15.1 (2017-02-16)
 -------------------

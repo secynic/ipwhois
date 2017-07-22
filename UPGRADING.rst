@@ -31,6 +31,8 @@ v1.0.0
   whois.Whois._get_nets_lacnic, whois.Whois._get_nets_other
 - New IP generators added: utils.ipv4_generate_random and
   utils.ipv6_generate_random
+- net.Net.get_host(), utils.ipv4_is_defined(), and utils.ipv6_is_defined now
+  return namedtuple instead of tuple.
 
 *******
 v0.14.0
