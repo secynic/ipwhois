@@ -68,19 +68,6 @@ class IPWhois:
             self.address_str, str(self.timeout), repr(self.net.opener)
         )
 
-    def lookup(self, *args, **kwargs):
-        """
-        Temporary wrapper for legacy whois lookups (moved to
-        IPWhois.lookup_whois()). This will be removed in a future
-        release (1.0.0).
-        """
-
-        from warnings import warn
-        warn('IPWhois.lookup() has been deprecated and will be removed. '
-             'You should now use IPWhois.lookup_whois() for legacy whois '
-             'lookups.')
-        return self.lookup_whois(*args, **kwargs)
-
     def lookup_whois(self, inc_raw=False, retry_count=3, get_referral=False,
                      extra_blacklist=None, ignore_referral_errors=False,
                      field_list=None, asn_alts=None, extra_org_map=None,

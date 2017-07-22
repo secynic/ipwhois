@@ -13,6 +13,8 @@ likely missing or incomplete.
 v1.0.0
 ******
 
+- Removed deprecated IPWhois.lookup() - This was moved to
+  IPWhois.lookup_whois()
 - HTTPS (port 443) requirement added for KRNIC lookups.
 - Experimental bulk functions added: experimental.get_bulk_asn_whois and
   experimental.bulk_lookup_rdap.

@@ -46,8 +46,8 @@ class TestIPWhois(TestCommon):
 
             try:
                 # TODO: keep until deprecated lookup is removed, for coverage
-                self.assertIsInstance(result.lookup(retry_count=retry_count),
-                                      dict)
+                self.assertIsInstance(result.lookup_whois(
+                    retry_count=retry_count), dict)
             except (ASNLookupError, ASNRegistryError, WhoisLookupError,
                     HTTPLookupError):
                 pass

@@ -24,6 +24,9 @@ Changelog
   asn.py, nir.py, and whois.py (#184)
 - net.Net.get_host(), utils.ipv4_is_defined(), and utils.ipv6_is_defined now
   return namedtuple instead of tuple.
+- Changed docstrings to Google standard for better napoleon parsing (#185)
+- Removed deprecated IPWhois.lookup() - This was moved to
+  IPWhois.lookup_whois()
 
 0.15.1 (2017-02-16)
 -------------------
