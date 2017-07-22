@@ -261,7 +261,7 @@ class IPWhois:
                 the ASN description. Defaults to True.
 
         Returns:
-            dict: The IP whois lookup results
+            dict: The IP RDAP lookup results
 
             ::
 
