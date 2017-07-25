@@ -186,7 +186,7 @@ class Whois:
     The class for parsing via whois
 
     Args:
-        net: A ipwhois.net.Net object.
+        net (:obj:`ipwhois.net.Net`): The network object.
 
     Raises:
         NetError: The parameter provided is not an instance of
@@ -215,19 +215,27 @@ class Whois:
         The function for parsing whois fields from a data input.
 
         Args:
-            response: The response from the whois/rwhois server.
-            fields_dict: The dictionary of fields -> regex search values.
-            net_start: The starting point of the network (if parsing multiple
-                networks).
-            net_end: The ending point of the network (if parsing multiple
-                networks).
-            dt_format: The format of datetime fields if known.
-            field_list: If provided, a list of fields to parse:
-                ['name', 'handle', 'description', 'country', 'state', 'city',
-                'address', 'postal_code', 'emails', 'created', 'updated']
+            response (:obj:`str`): The response from the whois/rwhois server.
+            fields_dict (:obj:`dict`): The mapping of fields to regex search
+                values (required).
+            net_start (:obj:`int`): The starting point of the network (if
+                parsing multiple networks). Defaults to None.
+            net_end (:obj:`int`): The ending point of the network (if parsing
+                multiple networks). Defaults to None.
+            dt_format (:obj:`str`): The format of datetime fields if known.
+                Defaults to None.
+            field_list (:obj:`list` of :obj:`str`): If provided, fields to
+                parse. Defaults to:
+
+                ::
+
+                    ['name', 'handle', 'description', 'country', 'state',
+                    'city', 'address', 'postal_code', 'emails', 'created',
+                    'updated']
 
         Returns:
-            Dictionary: A dictionary of fields provided in fields_dict.
+            dict: A dictionary of fields provided in fields_dict, mapping to
+                the results of the regex searches.
         """
 
         ret = {}
@@ -331,10 +339,18 @@ class Whois:
         The function for parsing network blocks from ARIN whois data.
 
         Args:
-            response: The response from the ARIN whois server.
+            response (:obj:`str`): The response from the ARIN whois server.
 
         Returns:
-            List: A of dictionaries containing keys: cidr, start, end.
+            list of dict: Mapping of networks with start and end positions.
+
+            ::
+
+                [{
+                    'cidr' (str) - The network routing block
+                    'start' (int) - The starting point of the network
+                    'end' (int) - The endpoint point of the network
+                }]
         """
 
         nets = []
@@ -404,10 +420,18 @@ class Whois:
         The function for parsing network blocks from LACNIC whois data.
 
         Args:
-            response: The response from the LACNIC whois server.
+            response (:obj:`str`): The response from the LACNIC whois server.
 
         Returns:
-            List: A of dictionaries containing keys: cidr, start, end.
+            list of dict: Mapping of networks with start and end positions.
+
+            ::
+
+                [{
+                    'cidr' (str) - The network routing block
+                    'start' (int) - The starting point of the network
+                    'end' (int) - The endpoint point of the network
+                }]
         """
 
         nets = []
@@ -465,10 +489,18 @@ class Whois:
         The function for parsing network blocks from generic whois data.
 
         Args:
-            response: The response from the whois/rwhois server.
+            response (:obj:`str`): The response from the whois/rwhois server.
 
         Returns:
-            List: A of dictionaries containing keys: cidr, start, end.
+            list of dict: Mapping of networks with start and end positions.
+
+            ::
+
+                [{
+                    'cidr' (str) - The network routing block
+                    'start' (int) - The starting point of the network
+                    'end' (int) - The endpoint point of the network
+                }]
         """
 
         nets = []
@@ -532,42 +564,60 @@ class Whois:
         address via port 43/tcp (WHOIS).
 
         Args:
-            inc_raw: Boolean for whether to include the raw results in the
-                returned dictionary.
-            retry_count: The number of times to retry in case socket errors,
-                timeouts, connection resets, etc. are encountered.
-            response: Optional response object, this bypasses the Whois lookup.
-            get_referral: Boolean for whether to retrieve referral whois
-                information, if available.
-            extra_blacklist: A list of blacklisted whois servers in addition to
-                the global BLACKLIST.
-            ignore_referral_errors: Boolean for whether to ignore and continue
-                when an exception is encountered on referral whois lookups.
-            asn_data: Optional ASN result object, this bypasses the ASN lookup.
-            field_list: If provided, a list of fields to parse:
-                ['name', 'handle', 'description', 'country', 'state', 'city',
-                'address', 'postal_code', 'emails', 'created', 'updated']
-            is_offline: Boolean for whether to perform lookups offline. If
+            inc_raw (:obj:`bool`, optional): Whether to include the raw
+                results in the returned dictionary. Defaults to False.
+            retry_count (:obj:`int`): The number of times to retry in case
+                socket errors, timeouts, connection resets, etc. are
+                encountered. Defaults to 3.
+            response (:obj:`str`): Optional response object, this bypasses the
+                NIR lookup. Required when is_offline=True.
+            get_referral (:obj:`bool`): Whether to retrieve referral whois
+                information, if available. Defaults to False.
+            extra_blacklist (:obj:`list`): Blacklisted whois servers in
+                addition to the global BLACKLIST. Defaults to None.
+            ignore_referral_errors (:obj:`bool`): Whether to ignore and
+                continue when an exception is encountered on referral whois
+                lookups. Defaults to False.
+            asn_data (:obj:`dict`): Result from
+                :obj:`ipwhois.asn.IPASN.lookup` (required).
+            field_list (:obj:`list` of :obj:`str`): If provided, fields to
+                parse. Defaults to:
+
+                ::
+
+                    ['name', 'handle', 'description', 'country', 'state',
+                    'city', 'address', 'postal_code', 'emails', 'created',
+                    'updated']
+
+            is_offline (:obj:`bool`): Whether to perform lookups offline. If
                 True, response and asn_data must be provided. Primarily used
-                for testing.
+                for testing. Defaults to False.
 
         Returns:
-            Dictionary:
+            dict: The IP whois lookup results
 
-            :query: The IP address (String)
-            :asn: The Autonomous System Number (String)
-            :asn_date: The ASN Allocation date (String)
-            :asn_registry: The assigned ASN registry (String)
-            :asn_cidr: The assigned ASN CIDR (String)
-            :asn_country_code: The assigned ASN country code (String)
-            :nets: Dictionaries containing network information which consists
-                of the fields listed in the NIC_WHOIS dictionary. (List)
-            :raw: Raw whois results if the inc_raw parameter is True. (String)
-            :referral: Dictionary of referral whois information if get_referral
-                is True and the server isn't blacklisted. Consists of fields
-                listed in the RWHOIS dictionary.
-            :raw_referral: Raw referral whois results if the inc_raw parameter
-                is True. (String)
+            ::
+
+                {
+                    'query' (str) - The IP address
+                    'asn' (str) - The Autonomous System Number
+                    'asn_date' (str) - The ASN Allocation date
+                    'asn_registry' (str) - The assigned ASN registry
+                    'asn_cidr' (str) - The assigned ASN CIDR
+                    'asn_country_code' (str) - The assigned ASN country code
+                    'asn_description' (str) - The ASN description
+                    'nets' (list) - Dictionaries containing network
+                        information which consists of the fields listed in the
+                        ipwhois.whois.RIR_WHOIS dictionary.
+                    'raw' (str) - Raw whois results if the inc_raw parameter
+                        is True.
+                    'referral' (dict) - Referral whois information if
+                        get_referral is True and the server is not blacklisted.
+                        Consists of fields listed in the ipwhois.whois.RWHOIS
+                        dictionary.
+                    'raw_referral' (str) - Raw referral whois results if the
+                        inc_raw parameter is True.
+                }
         """
 
         # Create the return dictionary.
