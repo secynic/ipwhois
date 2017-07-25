@@ -325,15 +325,19 @@ def generate_output(line='0', short=None, name=None, value=None,
     The function for formatting CLI output results.
 
     Args:
-        line: The line number (0-4). Determines indentation.
-        short: The abbreviated name for a field. See hr.py for values.
-        name: The name for a field. See hr.py for values.
-        value: The field data.
-        is_parent: Set to True if the field value has sub-items (dicts/lists).
-        colorize: Colorize the console output with ANSI colors.
+        line (:obj:`str`): The line number (0-4). Determines indentation.
+            Defaults to '0'.
+        short (:obj:`str`): The optional abbreviated name for a field.
+            See hr.py for values.
+        name (:obj:`str`): The optional name for a field. See hr.py for values.
+        value (:obj:`str`): The field data (required).
+        is_parent (:obj:`bool`): Set to True if the field value has sub-items
+            (dicts/lists). Defaults to False.
+        colorize (:obj:`bool`): Colorize the console output with ANSI colors.
+            Defaults to True.
 
     Returns:
-        String: The generated output string.
+        str: The generated output.
     """
 
     # TODO: so ugly
@@ -360,16 +364,17 @@ class IPWhoisCLI:
     The CLI wrapper class for outputting formatted IPWhois results.
 
     Args:
-        addr: An IPv4 or IPv6 address as a string, integer, IPv4Address, or
-            IPv6Address.
-        timeout: The default timeout for socket connections in seconds.
-        proxy_http: The urllib.request.ProxyHandler dictionary for proxy
-            HTTP support or None.
-        proxy_https: The urllib.request.ProxyHandler dictionary for proxy
-            HTTPS support or None.
-        allow_permutations: allow net.Net() to use additional methods if DNS
-            lookups to Cymru fail. *WARNING* deprecated in favor of new
-            argument asn_methods.
+        addr (:obj:`str`/:obj:`int`/:obj:`IPv4Address`/:obj:`IPv6Address`):
+            An IPv4 or IPv6 address
+        timeout (:obj:`int`): The default timeout for socket connections in
+            seconds. Defaults to 5.
+        proxy_http (:obj:`urllib.request.OpenerDirector`): The request for
+            proxy HTTP support or None.
+        proxy_https (:obj:`urllib.request.OpenerDirector`): The request for
+            proxy HTTPS support or None.
+        allow_permutations (:obj:`bool`): Allow net.Net() to use additional
+            methods if DNS lookups to Cymru fail. *WARNING* deprecated in
+            favor of new argument asn_methods. Defaults to True.
     """
 
     def __init__(
@@ -419,10 +424,11 @@ class IPWhoisCLI:
         The function for generating the CLI output header.
 
         Args:
-            query_type: The IPWhois query type.
+            query_type (:obj:`str`): The IPWhois query type. Defaults to
+                'RDAP'.
 
         Returns:
-            String: The generated output string.
+            str: The generated output.
         """
 
         output = '\n{0}{1}{2} query for {3}:{4}\n\n'.format(
@@ -440,11 +446,13 @@ class IPWhoisCLI:
         The function for generating a CLI output new line.
 
         Args:
-            line: The line number (0-4). Determines indentation.
-            colorize: Colorize the console output with ANSI colors.
+            line (:obj:`str`): The line number (0-4). Determines indentation.
+                Defaults to '0'.
+            colorize (:obj:`bool`): Colorize the console output with ANSI
+                colors. Defaults to True.
 
         Returns:
-            String: The generated output string.
+            str: The generated output.
         """
 
         return generate_output(
@@ -459,14 +467,16 @@ class IPWhoisCLI:
         The function for generating CLI output ASN results.
 
         Args:
-            json_data: The data dictionary to process.
-            hr: Enable human readable key translations.
-            show_name: Show human readable name (default is to only show
-                short).
-            colorize: Colorize the console output with ANSI colors.
+            json_data (:obj:`dict`): The data to process. Defaults to None.
+            hr (:obj:`bool`): Enable human readable key translations. Defaults
+                to True.
+            show_name (:obj:`bool`): Show human readable name (default is to
+                only show short). Defaults to False.
+            colorize (:obj:`bool`): Colorize the console output with ANSI
+                colors. Defaults to True.
 
         Returns:
-            String: The generated output string.
+            str: The generated output.
         """
 
         if json_data is None:
@@ -500,14 +510,16 @@ class IPWhoisCLI:
         The function for generating CLI output RDAP entity results.
 
         Args:
-            json_data: The data dictionary to process.
-            hr: Enable human readable key translations.
-            show_name: Show human readable name (default is to only show
-                short).
-            colorize: Colorize the console output with ANSI colors.
+            json_data (:obj:`dict`): The data to process. Defaults to None.
+            hr (:obj:`bool`): Enable human readable key translations. Defaults
+                to True.
+            show_name (:obj:`bool`): Show human readable name (default is to
+                only show short). Defaults to False.
+            colorize (:obj:`bool`): Colorize the console output with ANSI
+                colors. Defaults to True.
 
         Returns:
-            String: The generated output string.
+            str: The generated output.
         """
 
         output = ''
@@ -543,17 +555,22 @@ class IPWhoisCLI:
         The function for generating CLI output RDAP events results.
 
         Args:
-            source: The parent key (network or objects).
-            key: The event key (events or events_actor).
-            val: The event dictionary.
-            line: The line number (0-4). Determines indentation.
-            hr: Enable human readable key translations.
-            show_name: Show human readable name (default is to only show
-                short).
-            colorize: Colorize the console output with ANSI colors.
+            source (:obj:`str`): The parent key 'network' or 'objects'
+                (required).
+            key (:obj:`str`): The event key 'events' or 'events_actor'
+                (required).
+            val (:obj:`dict`): The event dictionary (required).
+            line (:obj:`str`): The line number (0-4). Determines indentation.
+                Defaults to '0'.
+            hr (:obj:`bool`): Enable human readable key translations. Defaults
+                to True.
+            show_name (:obj:`bool`): Show human readable name (default is to
+                only show short). Defaults to False.
+            colorize (:obj:`bool`): Colorize the console output with ANSI
+                colors. Defaults to True.
 
         Returns:
-            String: The generated output string.
+            str: The generated output.
         """
 
         output = generate_output(
@@ -634,17 +651,22 @@ class IPWhoisCLI:
         The function for generating CLI output RDAP list results.
 
         Args:
-            source: The parent key (network or objects).
-            key: The event key (events or events_actor).
-            val: The event dictionary.
-            line: The line number (0-4). Determines indentation.
-            hr: Enable human readable key translations.
-            show_name: Show human readable name (default is to only show
-                short).
-            colorize: Colorize the console output with ANSI colors.
+            source (:obj:`str`): The parent key 'network' or 'objects'
+                (required).
+            key (:obj:`str`): The event key 'events' or 'events_actor'
+                (required).
+            val (:obj:`dict`): The event dictionary (required).
+            line (:obj:`str`): The line number (0-4). Determines indentation.
+                Defaults to '0'.
+            hr (:obj:`bool`): Enable human readable key translations. Defaults
+                to True.
+            show_name (:obj:`bool`): Show human readable name (default is to
+                only show short). Defaults to False.
+            colorize (:obj:`bool`): Colorize the console output with ANSI
+                colors. Defaults to True.
 
         Returns:
-            String: The generated output string.
+            str: The generated output.
         """
 
         output = generate_output(
@@ -674,17 +696,22 @@ class IPWhoisCLI:
         The function for generating CLI output RDAP notices results.
 
         Args:
-            source: The parent key (network or objects).
-            key: The event key (events or events_actor).
-            val: The event dictionary.
-            line: The line number (0-4). Determines indentation.
-            hr: Enable human readable key translations.
-            show_name: Show human readable name (default is to only show
-                short).
-            colorize: Colorize the console output with ANSI colors.
+            source (:obj:`str`): The parent key 'network' or 'objects'
+                (required).
+            key (:obj:`str`): The event key 'events' or 'events_actor'
+                (required).
+            val (:obj:`dict`): The event dictionary (required).
+            line (:obj:`str`): The line number (0-4). Determines indentation.
+                Defaults to '0'.
+            hr (:obj:`bool`): Enable human readable key translations. Defaults
+                to True.
+            show_name (:obj:`bool`): Show human readable name (default is to
+                only show short). Defaults to False.
+            colorize (:obj:`bool`): Colorize the console output with ANSI
+                colors. Defaults to True.
 
         Returns:
-            String: The generated output string.
+            str: The generated output.
         """
 
         output = generate_output(
@@ -756,14 +783,16 @@ class IPWhoisCLI:
         The function for generating CLI output RDAP network results.
 
         Args:
-            json_data: The data dictionary to process.
-            hr: Enable human readable key translations.
-            show_name: Show human readable name (default is to only show
-                short).
-            colorize: Colorize the console output with ANSI colors.
+            json_data (:obj:`dict`): The data to process. Defaults to None.
+            hr (:obj:`bool`): Enable human readable key translations. Defaults
+                to True.
+            show_name (:obj:`bool`): Show human readable name (default is to
+                only show short). Defaults to False.
+            colorize (:obj:`bool`): Colorize the console output with ANSI
+                colors. Defaults to True.
 
         Returns:
-            String: The generated output string.
+            str: The generated output.
         """
 
         if json_data is None:
@@ -834,14 +863,16 @@ class IPWhoisCLI:
         The function for generating CLI output RDAP object results.
 
         Args:
-            json_data: The data dictionary to process.
-            hr: Enable human readable key translations.
-            show_name: Show human readable name (default is to only show
-                short).
-            colorize: Colorize the console output with ANSI colors.
+            json_data (:obj:`dict`): The data to process. Defaults to None.
+            hr (:obj:`bool`): Enable human readable key translations. Defaults
+                to True.
+            show_name (:obj:`bool`): Show human readable name (default is to
+                only show short). Defaults to False.
+            colorize (:obj:`bool`): Colorize the console output with ANSI
+                colors. Defaults to True.
 
         Returns:
-            String: The generated output string.
+            str: The generated output.
         """
 
         if json_data is None:
@@ -1010,14 +1041,16 @@ class IPWhoisCLI:
         formatted CLI output.
 
         Args:
-            hr: Enable human readable key translations.
-            show_name: Show human readable name (default is to only show
-                short).
-            colorize: Colorize the console output with ANSI colors.
+            hr (:obj:`bool`): Enable human readable key translations. Defaults
+                to True.
+            show_name (:obj:`bool`): Show human readable name (default is to
+                only show short). Defaults to False.
+            colorize (:obj:`bool`): Colorize the console output with ANSI
+                colors. Defaults to True.
             kwargs: Arguments to pass to IPWhois.lookup_rdap().
 
         Returns:
-            String: The generated output string.
+            str: The generated output.
         """
 
         # Perform the RDAP lookup
@@ -1073,14 +1106,16 @@ class IPWhoisCLI:
         The function for generating CLI output Legacy Whois networks results.
 
         Args:
-            json_data: The data dictionary to process.
-            hr: Enable human readable key translations.
-            show_name: Show human readable name (default is to only show
-                short).
-            colorize: Colorize the console output with ANSI colors.
+            json_data (:obj:`dict`): The data to process. Defaults to None.
+            hr (:obj:`bool`): Enable human readable key translations. Defaults
+                to True.
+            show_name (:obj:`bool`): Show human readable name (default is to
+                only show short). Defaults to False.
+            colorize (:obj:`bool`): Colorize the console output with ANSI
+                colors. Defaults to True.
 
         Returns:
-            String: The generated output string.
+            str: The generated output.
         """
 
         if json_data is None:
@@ -1152,14 +1187,16 @@ class IPWhoisCLI:
         The function for generating CLI output Legacy Whois referral results.
 
         Args:
-            json_data: The data dictionary to process.
-            hr: Enable human readable key translations.
-            show_name: Show human readable name (default is to only show
-                short).
-            colorize: Colorize the console output with ANSI colors.
+            json_data (:obj:`dict`): The data to process. Defaults to None.
+            hr (:obj:`bool`): Enable human readable key translations. Defaults
+                to True.
+            show_name (:obj:`bool`): Show human readable name (default is to
+                only show short). Defaults to False.
+            colorize (:obj:`bool`): Colorize the console output with ANSI
+                colors. Defaults to True.
 
         Returns:
-            String: The generated output string.
+            str: The generated output.
         """
 
         if json_data is None:
@@ -1218,14 +1255,16 @@ class IPWhoisCLI:
         The function for generating CLI output NIR network results.
 
         Args:
-            json_data: The data dictionary to process.
-            hr: Enable human readable key translations.
-            show_name: Show human readable name (default is to only show
-                short).
-            colorize: Colorize the console output with ANSI colors.
+            json_data (:obj:`dict`): The data to process. Defaults to None.
+            hr (:obj:`bool`): Enable human readable key translations. Defaults
+                to True.
+            show_name (:obj:`bool`): Show human readable name (default is to
+                only show short). Defaults to False.
+            colorize (:obj:`bool`): Colorize the console output with ANSI
+                colors. Defaults to True.
 
         Returns:
-            String: The generated output string.
+            str: The generated output.
         """
 
         if json_data is None:
@@ -1352,14 +1391,16 @@ class IPWhoisCLI:
         formatted CLI output.
 
         Args:
-            hr: Enable human readable key translations.
-            show_name: Show human readable name (default is to only show
-                short).
-            colorize: Colorize the console output with ANSI colors.
+            hr (:obj:`bool`): Enable human readable key translations. Defaults
+                to True.
+            show_name (:obj:`bool`): Show human readable name (default is to
+                only show short). Defaults to False.
+            colorize (:obj:`bool`): Colorize the console output with ANSI
+                colors. Defaults to True.
             kwargs: Arguments to pass to IPWhois.lookup_whois().
 
         Returns:
-            String: The generated output string.
+            str: The generated output.
         """
 
         # Perform the RDAP lookup
