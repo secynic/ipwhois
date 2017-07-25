@@ -119,10 +119,10 @@ def ipv4_lstrip_zeros(address):
     The function to strip leading zeros in each octet of an IPv4 address.
 
     Args:
-        address: An IPv4 address in string format.
+        address (:obj:`str`): An IPv4 address.
 
     Returns:
-        String: The modified IPv4 address string.
+        str: The modified IPv4 address.
     """
 
     # Split  the octets.
@@ -143,11 +143,11 @@ def calculate_cidr(start_address, end_address):
     The function to calculate a CIDR range(s) from a start and end IP address.
 
     Args:
-        start_address: The starting IP address in string format.
-        end_address: The ending IP address in string format.
+        start_address (:obj:`str`): The starting IP address.
+        end_address (:obj:`str`): The ending IP address.
 
     Returns:
-        List: A list of calculated CIDR ranges.
+        list of str: The calculated CIDR ranges.
     """
 
     tmp_addrs = []
@@ -181,12 +181,12 @@ def get_countries(is_legacy_xml=False):
     to names.
 
     Args:
-        is_legacy_xml: Boolean for whether to use the older country code
+        is_legacy_xml (:obj:`bool`): Whether to use the older country code
             list (iso_3166-1_list_en.xml).
 
     Returns:
-        Dictionary: A dictionary with the country codes as the keys and the
-            country names as the values.
+        dict: A mapping of country codes as the keys to the country names as
+            the values.
     """
 
     # Initialize the countries dictionary.
@@ -267,7 +267,7 @@ def ipv4_is_defined(address):
     be resolved).
 
     Args:
-        address: An IPv4 address in string format.
+        address (:obj:`str`): An IPv4 address.
 
     Returns:
         namedtuple:
@@ -322,7 +322,7 @@ def ipv4_is_defined(address):
 
         return (results(True,
                 'Network Interconnect Device Benchmark Testing',
-                'RFC 2544'))
+                        'RFC 2544'))
 
     # TEST-NET-2
     elif query_ip in IPv4Network('198.51.100.0/24'):
@@ -364,7 +364,7 @@ def ipv6_is_defined(address):
     be resolved).
 
     Args:
-        address: An IPv6 address in string format.
+        address (:obj:`str`): An IPv6 address.
 
     Returns:
         namedtuple:
@@ -427,8 +427,9 @@ def unique_everseen(iterable, key=None):
     elements ever seen. This was taken from the itertools recipes.
 
     Args:
-        iterable: An iterable to process.
-        key: Optional function to run when checking elements (e.g., str.lower)
+        iterable (:obj:`iter`): An iterable to process.
+        key (:obj:`callable`): Optional function to run when checking
+            elements (e.g., str.lower)
 
     Yields:
         The next unique element found.
@@ -463,17 +464,23 @@ def unique_addresses(data=None, file_path=None):
     If both a string and file_path are provided, it will process them both.
 
     Args:
-        data: A string to process.
-        file_path: An optional file path to process.
+        data (:obj:`str`): The data to process.
+        file_path (:obj:`str`): An optional file path to process.
 
     Returns:
-        Dictionary:
+        dict: The addresses/networks mapped to ports and counts:
 
-        :ip address/network: Each address or network found is a dictionary w/\:
+        ::
 
-            :count: Total number of times seen (Integer)
-            :ports: Dictionary with port numbers as keys and the number of
-                times seen for this ip as values (Dictionary)
+            {
+                '1.2.3.4' (dict) - Each address or network found is a
+                    dictionary:
+                    {
+                        'count' (int) - Total number of times seen.
+                        'ports' (dict) - Mapping of port numbers as keys and
+                            the number of times seen for this ip as values.
+                    }
+            }
 
     Raises:
         ValueError: Arguments provided are invalid.
@@ -580,10 +587,10 @@ def ipv4_generate_random(total=100):
     defined (can be looked up using ipwhois).
 
     Args:
-        total: The total number of IPv4 addresses to generate.
+        total (:obj:`int`): The total number of IPv4 addresses to generate.
 
     Yields:
-        String: The next IPv4 address.
+        str: The next IPv4 address.
     """
 
     count = 0
@@ -605,10 +612,10 @@ def ipv6_generate_random(total=100):
     defined (can be looked up using ipwhois).
 
     Args:
-        total: The total number of IPv6 addresses to generate.
+        total (:obj:`int`): The total number of IPv6 addresses to generate.
 
     Yields:
-        String: The next IPv6 address.
+        str: The next IPv6 address.
     """
 
     count = 0
