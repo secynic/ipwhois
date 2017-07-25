@@ -78,7 +78,7 @@ class IPASN:
     The class for parsing ASN data for an IP address.
 
     Args:
-        net: A ipwhois.net.Net object.
+        net (:obj:`ipwhois.net.Net`): A ipwhois.net.Net object.
 
     Raises:
         NetError: The parameter provided is not an instance of
@@ -108,17 +108,22 @@ class IPASN:
         The function for parsing ASN fields from a dns response.
 
         Args:
-            response: The response from the ASN dns server.
+            response (:obj:`str`): The response from the ASN dns server.
 
         Returns:
-            Dictionary:
+            dict: The ASN lookup results
 
-            :asn: The Autonomous System Number (String)
-            :asn_date: The ASN Allocation date (String)
-            :asn_registry: The assigned ASN registry (String)
-            :asn_cidr: The assigned ASN CIDR (String)
-            :asn_country_code: The assigned ASN country code (String)
-            :asn_description: None, can't retrieve with this method.
+            ::
+
+                {
+                    'asn' (str) - The Autonomous System Number
+                    'asn_date' (str) - The ASN Allocation date
+                    'asn_registry' (str) - The assigned ASN registry
+                    'asn_cidr' (str) - The assigned ASN CIDR
+                    'asn_country_code' (str) - The assigned ASN country code
+                    'asn_description' (None) - Cannot retrieve with this
+                        method.
+                }
 
         Raises:
             ASNRegistryError: The ASN registry is not known.
@@ -171,17 +176,21 @@ class IPASN:
         The function for parsing ASN fields from a verbose dns response.
 
         Args:
-            response: The response from the ASN dns server.
+            response (:obj:`str`): The response from the ASN dns server.
 
         Returns:
-            Dictionary:
+            dict: The ASN lookup results
 
-            :asn: The Autonomous System Number (String)
-            :asn_date: The ASN Allocation date (String)
-            :asn_registry: The assigned ASN registry (String)
-            :asn_cidr: None, can't retrieve with this method.
-            :asn_country_code: The assigned ASN country code (String)
-            :asn_description: The ASN description (String)
+            ::
+
+                {
+                    'asn' (str) - The Autonomous System Number
+                    'asn_date' (str) - The ASN Allocation date
+                    'asn_registry' (str) - The assigned ASN registry
+                    'asn_cidr' (None) - Cannot retrieve with this method.
+                    'asn_country_code' (str) - The assigned ASN country code
+                    'asn_description' (str) - The ASN description
+                }
 
         Raises:
             ASNRegistryError: The ASN registry is not known.
@@ -224,17 +233,21 @@ class IPASN:
         The function for parsing ASN fields from a whois response.
 
         Args:
-            response: The response from the ASN whois server.
+            response (:obj:`str`): The response from the ASN whois server.
 
         Returns:
-            Dictionary:
+            dict: The ASN lookup results
 
-            :asn: The Autonomous System Number (String)
-            :asn_date: The ASN Allocation date (String)
-            :asn_registry: The assigned ASN registry (String)
-            :asn_cidr: The assigned ASN CIDR (String)
-            :asn_country_code: The assigned ASN country code (String)
-            :asn_description: The ASN description (String)
+            ::
+
+                {
+                    'asn' (str) - The Autonomous System Number
+                    'asn_date' (str) - The ASN Allocation date
+                    'asn_registry' (str) - The assigned ASN registry
+                    'asn_cidr' (str) - The assigned ASN CIDR
+                    'asn_country_code' (str) - The assigned ASN country code
+                    'asn_description' (str) - The ASN description
+                }
 
         Raises:
             ASNRegistryError: The ASN registry is not known.
@@ -287,23 +300,30 @@ class IPASN:
         The function for parsing ASN fields from a http response.
 
         Args:
-            response: The response from the ASN http server.
-            extra_org_map: Dictionary mapping org handles to RIRs. This is for
-                limited cases where ARIN REST (ASN fallback HTTP lookup) does
-                not show an RIR as the org handle e.g., DNIC (which is now the
-                built in ORG_MAP) e.g., {'DNIC': 'arin'}. Valid RIR values are
-                (note the case-sensitive - this is meant to match the REST
-                result): 'ARIN', 'RIPE', 'apnic', 'lacnic', 'afrinic'
+            response (:obj:`str`): The response from the ASN http server.
+            extra_org_map (:obj:`dict`): Dictionary mapping org handles to
+                RIRs. This is for limited cases where ARIN REST (ASN fallback
+                HTTP lookup) does not show an RIR as the org handle e.g., DNIC
+                (which is now the built in ORG_MAP) e.g., {'DNIC': 'arin'}.
+                Valid RIR values are (note the case-sensitive - this is meant
+                to match the REST result): 'ARIN', 'RIPE', 'apnic', 'lacnic',
+                'afrinic'. Defaults to None.
 
         Returns:
-            Dictionary:
+            dict: The ASN lookup results
 
-            :asn: None, can't retrieve with this method.
-            :asn_date: None, can't retrieve with this method.
-            :asn_registry: The assigned ASN registry (String)
-            :asn_cidr: None, can't retrieve with this method.
-            :asn_country_code: None, can't retrieve with this method.
-            :asn_description: None, can't retrieve with this method.
+            ::
+
+                {
+                    'asn' (None) - Cannot retrieve with this method.
+                    'asn_date' (None) - Cannot retrieve with this method.
+                    'asn_registry' (str) - The assigned ASN registry
+                    'asn_cidr' (None) - Cannot retrieve with this method.
+                    'asn_country_code' (None) - Cannot retrieve with this
+                        method.
+                    'asn_description' (None) - Cannot retrieve with this
+                        method.
+                }
 
         Raises:
             ASNRegistryError: The ASN registry is not known.
@@ -388,36 +408,43 @@ class IPASN:
         IP address.
 
         Args:
-            inc_raw: Boolean for whether to include the raw results in the
-                returned dictionary.
-            retry_count: The number of times to retry in case socket errors,
-                timeouts, connection resets, etc. are encountered.
-            asn_alts: List of additional lookup types to attempt if the
+            inc_raw (:obj:`bool`): Whether to include the raw results in the
+                returned dictionary. Defaults to False.
+            retry_count (:obj:`int`): The number of times to retry in case
+                socket errors, timeouts, connection resets, etc. are
+                encountered. Defaults to 3.
+            asn_alts (:obj:`list`): Additional lookup types to attempt if the
                 ASN dns lookup fails. Allow permutations must be enabled.
                 Defaults to all ['whois', 'http']. *WARNING* deprecated in
-                favor of new argument asn_methods.
-            extra_org_map: Dictionary mapping org handles to RIRs. This is for
-                limited cases where ARIN REST (ASN fallback HTTP lookup) does
-                not show an RIR as the org handle e.g., DNIC (which is now the
-                built in ORG_MAP) e.g., {'DNIC': 'arin'}. Valid RIR values are
-                (note the case-sensitive - this is meant to match the REST
-                result): 'ARIN', 'RIPE', 'apnic', 'lacnic', 'afrinic'
-            asn_methods: List of ASN lookup types to attempt, in order.
-                Defaults to all ['dns', 'whois', 'http'].
-            get_asn_description: Boolean for whether to run an additional
+                favor of new argument asn_methods. Defaults to None.
+            extra_org_map (:obj:`dict`): Mapping org handles to RIRs. This is
+                for limited cases where ARIN REST (ASN fallback HTTP lookup)
+                does not show an RIR as the org handle e.g., DNIC (which is
+                now the built in ORG_MAP) e.g., {'DNIC': 'arin'}. Valid RIR
+                values are (note the case-sensitive - this is meant to match
+                the REST result): 'ARIN', 'RIPE', 'apnic', 'lacnic', 'afrinic'
+                Defaults to None.
+            asn_methods (:obj:`list`): ASN lookup types to attempt, in order.
+                If None, defaults to all: ['dns', 'whois', 'http'].
+            get_asn_description (:obj:`bool`): Whether to run an additional
                 query when pulling ASN information via dns, in order to get
-                the ASN description.
+                the ASN description. Defaults to True.
 
         Returns:
-            Dictionary:
+            dict: The ASN lookup results
 
-            :asn: The Autonomous System Number (String)
-            :asn_date: The ASN Allocation date (String)
-            :asn_registry: The assigned ASN registry (String)
-            :asn_cidr: The assigned ASN CIDR (String)
-            :asn_country_code: The assigned ASN country code (String)
-            :asn_description: The ASN description (String)
-            :raw: Raw ASN results if the inc_raw parameter is True. (String)
+            ::
+
+                {
+                    'asn' (str) - The Autonomous System Number
+                    'asn_date' (str) - The ASN Allocation date
+                    'asn_registry' (str) - The assigned ASN registry
+                    'asn_cidr' (str) - The assigned ASN CIDR
+                    'asn_country_code' (str) - The assigned ASN country code
+                    'asn_description' (str) - The ASN description
+                    'raw' (str) - Raw ASN results if the inc_raw parameter is
+                        True.
+                }
 
         Raises:
             ValueError: methods argument requires one of dns, whois, http.
@@ -541,7 +568,7 @@ class ASNOrigin:
     The class for parsing ASN origin whois data
 
     Args:
-        net: A ipwhois.net.Net object.
+        net (:obj:`ipwhois.net.Net`): A ipwhois.net.Net object.
 
     Raises:
         NetError: The parameter provided is not an instance of
@@ -568,17 +595,18 @@ class ASNOrigin:
         The function for parsing ASN whois fields from a data input.
 
         Args:
-            response: The response from the whois/rwhois server.
-            fields_dict: The dictionary of fields -> regex search values.
-            net_start: The starting point of the network (if parsing multiple
-                networks).
-            net_end: The ending point of the network (if parsing multiple
-                networks).
-            field_list: If provided, a list of fields to parse:
+            response (:obj:`str`): The response from the whois/rwhois server.
+            fields_dict (:obj:`dict`): Mapping of fields->regex search values.
+            net_start (:obj:`int`): The starting point of the network (if
+                parsing multiple networks). Defaults to None.
+            net_end (:obj:`int`): The ending point of the network (if parsing
+                multiple networks). Defaults to None.
+            field_list (:obj:`list`): If provided, a list of fields to parse:
                 ['description', 'maintainer', 'updated', 'source']
+                If None, defaults to all fields.
 
         Returns:
-            Dictionary: A dictionary of fields provided in fields_dict.
+            dict: A dictionary of fields provided in fields_dict.
         """
 
         ret = {}
@@ -660,11 +688,23 @@ class ASNOrigin:
         The function for parsing network blocks from ASN origin data.
 
         Args:
-            response: The response from the RADB whois/http server.
-            is_http: If the query is RADB HTTP instead of whois, set to True.
+            response (:obj:`str`): The response from the RADB whois/http
+                server.
+            is_http (:obj:`bool`): If the query is RADB HTTP instead of whois,
+                set to True. Defaults to False.
 
         Returns:
-            List: A of dictionaries containing keys: cidr, start, end.
+            list: A list of network block dictionaries
+
+            ::
+
+                [{
+                    'cidr' (str) - The assigned CIDR
+                    'start' (int) - The index for the start of the parsed
+                        network block
+                    'end' (int) - The index for the end of the parsed network
+                        block
+                }]
         """
 
         nets = []
@@ -713,28 +753,36 @@ class ASNOrigin:
         via port 43/tcp (WHOIS).
 
         Args:
-            asn: The ASN string (required).
-            inc_raw: Boolean for whether to include the raw results in the
-                returned dictionary.
-            retry_count: The number of times to retry in case socket errors,
-                timeouts, connection resets, etc. are encountered.
-            response: Optional response object, this bypasses the Whois lookup.
-            field_list: If provided, a list of fields to parse:
+            asn (:obj:`str`): The ASN (required).
+            inc_raw (:obj:`bool`): Whether to include the raw results in the
+                returned dictionary. Defaults to False.
+            retry_count (:obj:`int`): The number of times to retry in case
+                socket errors, timeouts, connection resets, etc. are
+                encountered. Defaults to 3.
+            response (:obj:`str`): Optional response object, this bypasses the
+                Whois lookup. Defaults to None.
+            field_list (:obj:`list`): If provided, fields to parse:
                 ['description', 'maintainer', 'updated', 'source']
-            asn_alts: List of additional lookup types to attempt if the
-                ASN whois lookup fails. Defaults to all ['http'].
+                If None, defaults to all.
+            asn_alts (:obj:`list`): Additional lookup types to attempt if the
+                ASN whois lookup fails. If None, defaults to all ['http'].
                 *WARNING* deprecated in favor of new argument asn_methods.
-            asn_methods: List of ASN lookup types to attempt, in order.
-                Defaults to all ['whois', 'http'].
+            asn_methods (:obj:`list`): ASN lookup types to attempt, in order.
+                If None, defaults to all ['whois', 'http'].
 
         Returns:
-            Dictionary:
+            dict: The ASN origin lookup results
 
-            :query: The Autonomous System Number (String)
-            :nets: Dictionaries containing network information which consists
-                of the fields listed in the ASN_ORIGIN_WHOIS dictionary. (List)
-            :raw: Raw ASN origin whois results if the inc_raw parameter is
-                True. (String)
+            ::
+
+                {
+                    'query' (str) - The Autonomous System Number
+                    'nets' (list) - Dictionaries containing network
+                        information which consists of the fields listed in the
+                        ASN_ORIGIN_WHOIS dictionary.
+                    'raw' (str) - Raw ASN origin whois results if the inc_raw
+                        parameter is True.
+                }
 
         Raises:
             ValueError: methods argument requires one of whois, http.

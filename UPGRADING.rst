@@ -13,6 +13,8 @@ likely missing or incomplete.
 v1.0.0
 ******
 
+- Removed deprecated IPWhois.lookup() - This was moved to
+  IPWhois.lookup_whois()
 - HTTPS (port 443) requirement added for KRNIC lookups.
 - Experimental bulk functions added: experimental.get_bulk_asn_whois and
   experimental.bulk_lookup_rdap.
@@ -31,6 +33,8 @@ v1.0.0
   whois.Whois._get_nets_lacnic, whois.Whois._get_nets_other
 - New IP generators added: utils.ipv4_generate_random and
   utils.ipv6_generate_random
+- net.Net.get_host(), utils.ipv4_is_defined(), and utils.ipv6_is_defined now
+  return namedtuple instead of tuple.
 
 *******
 v0.14.0

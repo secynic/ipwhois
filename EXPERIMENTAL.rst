@@ -16,12 +16,16 @@ Bulk ASN Lookups
 The function for retrieving ASN information for multiple IP addresses from
 Cymru via port 43/tcp (WHOIS).
 
+`ipwhois.experimental.get_bulk_asn_whois()
+<https://ipwhois.readthedocs.io/en/latest/ipwhois.html#ipwhois.experimental.
+get_bulk_asn_whois>`_
+
 .. _get_bulk_asn_whois-input:
 
 Input
 -----
 
-Arguments supported by ipwhois.experimental.get_bulk_asn_whois().
+Arguments supported:
 
 +--------------------+--------+-----------------------------------------------+
 | **Key**            |**Type**| **Description**                               |
@@ -64,12 +68,16 @@ IP addresses via HTTP (RDAP). This bulk lookup method uses bulk ASN Whois
 lookups first to retrieve the ASN for each IP. It then optimizes RDAP queries
 to achieve the fastest overall time, accounting for rate-limiting RIRs.
 
+`ipwhois.experimental.bulk_lookup_rdap()
+<https://ipwhois.readthedocs.io/en/latest/ipwhois.html#ipwhois.experimental.
+bulk_lookup_rdap>`_
+
 .. _bulk_lookup_rdap-input:
 
 Input
 -----
 
-Arguments supported by ipwhois.experimental.bulk_lookup_rdap().
+Arguments supported:
 
 +--------------------+--------+-----------------------------------------------+
 | **Key**            |**Type**| **Description**                               |
@@ -116,7 +124,9 @@ The output namedtuple from ipwhois.experimental.bulk_lookup_rdap().
 | **Key**          |**Type**| **Description**                                 |
 +------------------+--------+-------------------------------------------------+
 | results          | Dict   | IP address keys with the values as dictionaries |
-|                  |        | returned by IPWhois.lookup_rdap().              |
+|                  |        | returned by `IPWhois.lookup_rdap()              |
+|                  |        | <https://ipwhois.readthedocs.io/en/latest/      |
+|                  |        | RDAP.html#results-dictionary>`_                 |
 +------------------+--------+-------------------------------------------------+
 | stats            | Dict   | Stats for the lookup containing the keys        |
 |                  |        | identified in :ref:`bulk_lookup_rdap-stats`     |
