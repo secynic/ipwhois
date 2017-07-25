@@ -600,7 +600,7 @@ class ASNOrigin:
             net_start (:obj:`int`): The starting point of the network (if
                 parsing multiple networks). Defaults to None.
             net_end (:obj:`int`): The ending point of the network (if parsing
-                multiple ks). Defaults to None.
+                multiple networks). Defaults to None.
             field_list (:obj:`list`): If provided, a list of fields to parse:
                 ['description', 'maintainer', 'updated', 'source']
                 If None, defaults to all fields.
