@@ -143,7 +143,7 @@ class NIRWhois:
     based on NIR specific whois formatting.
 
     Args:
-        net: A ipwhois.net.Net object.
+        net (:obj:`ipwhois.net.Net`): The network object.
 
     Raises:
         NetError: The parameter provided is not an instance of
@@ -173,21 +173,27 @@ class NIRWhois:
         The function for parsing whois fields from a data input.
 
         Args:
-            response: The response from the whois/rwhois server.
-            fields_dict: The dictionary of fields -> regex search values.
-            net_start: The starting point of the network (if parsing multiple
-                networks).
-            net_end: The ending point of the network (if parsing multiple
-                networks).
-            dt_format: The format of datetime fields if known.
-            field_list: If provided, a list of fields to parse:
-                ['name', 'handle', 'country', 'address', 'postal_code',
-                'nameservers', 'created', 'updated', 'contacts']
-            hourdelta: The timezone delta for created/updated fields.
-            is_contact: If True, uses contact information field parsing.
+            response (:obj:`str`): The response from the whois/rwhois server.
+            fields_dict (:obj:`dict`): The mapping of fields to regex search
+                values (required).
+            net_start (:obj:`int`): The starting point of the network (if
+                parsing multiple networks). Defaults to None.
+            net_end (:obj:`int`): The ending point of the network (if parsing
+                multiple networks). Defaults to None.
+            dt_format (:obj:`str`): The format of datetime fields if known.
+                Defaults to None.
+            field_list (:obj:`list` of :obj:`str`): If provided, fields to
+                parse. Defaults to :obj:`ipwhois.nir.BASE_NET` if is_contact
+                is False. Otherwise, defaults to
+                :obj:`ipwhois.nir.BASE_CONTACT`.
+            hourdelta (:obj:`int`): The timezone delta for created/updated
+                fields. Defaults to 0.
+            is_contact (:obj:`bool`): If True, uses contact information
+                field parsing. Defaults to False.
 
         Returns:
-            Dictionary: A dictionary of fields provided in fields_dict.
+            dict: A dictionary of fields provided in fields_dict, mapping to
+                the results of the regex searches.
         """
 
         response = '{0}\n'.format(response)
@@ -295,10 +301,18 @@ class NIRWhois:
         The function for parsing network blocks from jpnic whois data.
 
         Args:
-            response: The response from the jpnic server.
+            response (:obj:`str`): The response from the jpnic server.
 
         Returns:
-            List: A of dictionaries containing keys: cidr, start, end.
+            list of dict: Mapping of networks with start and end positions.
+
+            ::
+
+                [{
+                    'cidr' (str) - The network routing block
+                    'start' (int) - The starting point of the network
+                    'end' (int) - The endpoint point of the network
+                }]
         """
 
         nets = []
@@ -360,10 +374,18 @@ class NIRWhois:
         The function for parsing network blocks from krnic whois data.
 
         Args:
-            response: The response from the krnic server.
+            response (:obj:`str`): The response from the krnic server.
 
         Returns:
-            List: A of dictionaries containing keys: cidr, start, end.
+            list of dict: Mapping of networks with start and end positions.
+
+            ::
+
+                [{
+                    'cidr' (str) - The network routing block
+                    'start' (int) - The starting point of the network
+                    'end' (int) - The endpoint point of the network
+                }]
         """
 
         nets = []
@@ -423,22 +445,28 @@ class NIRWhois:
         return self.get_nets_krnic(*args, **kwargs)
 
     def get_contact(self, response=None, nir=None, handle=None,
-                    retry_count=None, dt_format=None):
+                    retry_count=3, dt_format=None):
         """
         The function for retrieving and parsing NIR whois data based on
         NIR_WHOIS contact_fields.
 
         Args:
-            response: Optional response object, this bypasses the lookup.
-            nir: The NIR to query ('jpnic' or 'krnic').
-            handle: For NIRs that have seperate contact queries (JPNIC),
-                this is the contact handle to use in the query.
-            retry_count: The number of times to retry in case socket errors,
-                timeouts, connection resets, etc. are encountered.
-            dt_format: The format of datetime fields if known.
+            response (:obj:`str`): Optional response object, this bypasses the
+                lookup.
+            nir (:obj:`str`): The NIR to query ('jpnic' or 'krnic'). Required
+                if response is None.
+            handle (:obj:`str`): For NIRs that have separate contact queries
+                (JPNIC), this is the contact handle to use in the query.
+                Defaults to None.
+            retry_count (:obj:`int`): The number of times to retry in case
+                socket errors, timeouts, connection resets, etc. are
+                encountered. Defaults to 3.
+            dt_format (:obj:`str`): The format of datetime fields if known.
+                Defaults to None.
 
         Returns:
-            Dictionary: A dictionary of fields provided in contact_fields.
+            dict: Mapping of the fields provided in contact_fields, to their
+                parsed results.
         """
 
         if response or nir == 'krnic':
@@ -480,28 +508,34 @@ class NIRWhois:
         address via HTTP (HTML scraping).
 
         Args:
-            nir: The NIR to query ('jpnic' or 'krnic').
-            inc_raw: Boolean for whether to include the raw results in the
-                returned dictionary.
-            retry_count: The number of times to retry in case socket errors,
-                timeouts, connection resets, etc. are encountered.
-            response: Optional response object, this bypasses the NIR lookup.
-                Required when is_offline=True.
-            field_list: If provided, a list of fields to parse:
-                ['name', 'handle', 'country', 'address', 'postal_code',
-                'nameservers', 'created', 'updated', 'contacts']
-            is_offline: Boolean for whether to perform lookups offline. If
+            nir (:obj:`str`): The NIR to query ('jpnic' or 'krnic'). Required
+                if response is None.
+            inc_raw (:obj:`bool`, optional): Whether to include the raw
+                results in the returned dictionary. Defaults to False.
+            retry_count (:obj:`int`): The number of times to retry in case
+                socket errors, timeouts, connection resets, etc. are
+                encountered. Defaults to 3.
+            response (:obj:`str`): Optional response object, this bypasses the
+                NIR lookup. Required when is_offline=True.
+            field_list (:obj:`list` of :obj:`str`): If provided, fields to
+                parse. Defaults to :obj:`ipwhois.nir.BASE_NET`.
+            is_offline (:obj:`bool`): Whether to perform lookups offline. If
                 True, response and asn_data must be provided. Primarily used
                 for testing.
 
         Returns:
-            Dictionary:
+            dict: The NIR whois results:
 
-            :query: The IP address (String)
-            :nets: List of dictionaries containing network information which
-                consists of the fields listed in the NIR_WHOIS dictionary.
-            :raw: Raw NIR whois results if the inc_raw parameter is True.
-                (String)
+            ::
+
+                {
+                    'query' (str) - The IP address.
+                    'nets' (list of dict) - Network information which consists
+                        of the fields listed in the ipwhois.nir.NIR_WHOIS
+                        dictionary.
+                    'raw' (str) - Raw NIR whois results if the inc_raw
+                        parameter is True.
+                }
         """
 
         if nir not in NIR_WHOIS.keys():
