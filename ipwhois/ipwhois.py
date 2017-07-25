@@ -142,12 +142,13 @@ class IPWhois:
                     'raw' (str) - Raw whois results if the inc_raw parameter
                         is True.
                     'referral' (dict) - Referral whois information if
-                    get_referral is True and the server is not blacklisted.
+                        get_referral is True and the server is not blacklisted.
                         Consists of fields listed in the ipwhois.whois.RWHOIS
                         dictionary.
                     'raw_referral' (str) - Raw referral whois results if the
                         inc_raw parameter is True.
-                    'nir' (dict) - nir.NIRWhois() results if inc_nir is True.
+                    'nir' (dict) - ipwhois.nir.NIRWhois() results if inc_nir
+                        is True.
                 }
         """
 
