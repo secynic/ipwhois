@@ -129,8 +129,8 @@ def bulk_lookup_rdap(addresses=None, inc_raw=False, retry_count=3, depth=0,
             Defaults to 3.
         depth (:obj:`int`): How many levels deep to run queries when additional
             referenced objects are found. Defaults to 0.
-        excluded_entities (:obj:`list`): Entity handles to not perform
-            lookups. Defaults to None.
+        excluded_entities (:obj:`list` of :obj:`str`): Entity handles to not
+            perform lookups. Defaults to None.
         rate_limit_timeout (:obj:`int`): The number of seconds to wait before
             retrying when a rate limit notice is returned via rdap+json.
             Defaults to 60.
