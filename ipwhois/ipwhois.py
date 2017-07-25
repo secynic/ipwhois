@@ -280,10 +280,13 @@ class IPWhois:
                         dict.
                     'objects' (dict) - Mapping of entity handle->entity dict
                         which consists of the fields listed in the
-                        ipwhois.rdap._RDAPEntity dict.
+                        ipwhois.rdap._RDAPEntity dict. The raw result is
+                        included for each object if the inc_raw parameter
+                        is True.
                     'raw' (dict) - Whois results in json format if the inc_raw
                         parameter is True.
-                    'nir' (dict) - nir.NIRWhois() results if inc_nir is True.
+                    'nir' (dict) - ipwhois.nir.NIRWhois results if inc_nir is
+                        True.
                 }
         """
 
