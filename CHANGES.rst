@@ -27,6 +27,7 @@ Changelog
 - Changed docstrings to Google standard for better napoleon parsing (#185)
 - Removed deprecated IPWhois.lookup() - This was moved to
   IPWhois.lookup_whois()
+- Fixed 'nets'->'range' bug for legacy whois CIDR net_range values (#188)
 
 0.15.1 (2017-02-16)
 -------------------
