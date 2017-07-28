@@ -389,7 +389,17 @@ class Whois:
 
                 if net_range is not None:
                     if net_range_start < match.start() or len(nets) > 0:
-                        net['range'] = net_range
+
+                        try:
+
+                            net['range'] = '{0} - {1}'.format(
+                                ip_network(net_range)[0].__str__(),
+                                ip_network(net_range)[-1].__str__()
+                            ) if '/' in net_range else net_range
+
+                        except ValueError:  # pragma: no cover
+
+                            net['range'] = net_range
 
                 net['cidr'] = ', '.join(
                     [ip_network(c.strip()).__str__()
@@ -447,10 +457,21 @@ class Whois:
             try:
 
                 net = copy.deepcopy(BASE_NET)
-                net['range'] = match.group(2).strip()
+                net_range = match.group(2).strip()
+
+                try:
+
+                    net['range'] = net['range'] = '{0} - {1}'.format(
+                        ip_network(net_range)[0].__str__(),
+                        ip_network(net_range)[-1].__str__()
+                    ) if '/' in net_range else net_range
+
+                except ValueError:  # pragma: no cover
+
+                    net['range'] = net_range
 
                 temp = []
-                for addr in match.group(2).strip().split(', '):
+                for addr in net_range.split(', '):
 
                     count = addr.count('.')
                     if count is not 0 and count < 4:
@@ -517,7 +538,18 @@ class Whois:
             try:
 
                 net = copy.deepcopy(BASE_NET)
-                net['range'] = match.group(2)
+                net_range = match.group(2).strip()
+
+                try:
+
+                    net['range'] = net['range'] = '{0} - {1}'.format(
+                        ip_network(net_range)[0].__str__(),
+                        ip_network(net_range)[-1].__str__()
+                    ) if '/' in net_range else net_range
+
+                except ValueError:  # pragma: no cover
+
+                    net['range'] = net_range
 
                 if match.group(3) and match.group(4):
 
@@ -532,7 +564,7 @@ class Whois:
 
                 else:
 
-                    cidr = ip_network(match.group(2).strip()).__str__()
+                    cidr = ip_network(net_range).__str__()
 
                 net['cidr'] = cidr
                 net['start'] = match.start()
