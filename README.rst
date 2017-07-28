@@ -13,9 +13,7 @@ ipwhois
     :target: https://github.com/secynic/ipwhois/tree/master/LICENSE.txt
 .. image:: https://img.shields.io/badge/python-2.6%2C%202.7%2C%203.3+-blue.svg
     :target: https://docs.python.org
-.. image:: https://img.shields.io/badge/docs-release%20v0.15.1-green.svg?style=flat
-    :target: https://ipwhois.readthedocs.io/en/v0.15.1
-.. image:: https://readthedocs.org/projects/pip/badge/?version=latest
+.. image:: https://img.shields.io/badge/docs-latest-green.svg?style=flat
     :target: https://ipwhois.readthedocs.io/en/latest
 .. image:: https://img.shields.io/badge/docs-dev-yellow.svg?style=flat
     :target: https://ipwhois.readthedocs.io/en/dev
