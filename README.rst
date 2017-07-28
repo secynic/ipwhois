@@ -59,12 +59,7 @@ Links
 Documentation
 -------------
 
-Release v0.15.1
-^^^^^^^^^^^^^^^
-
-https://ipwhois.readthedocs.io/en/v0.15.1
-
-GitHub master
+GitHub latest
 ^^^^^^^^^^^^^
 
 https://ipwhois.readthedocs.io/en/latest
