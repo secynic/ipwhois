@@ -69,6 +69,12 @@ ipwhois `documentation <https://ipwhois.readthedocs.io/en/latest>`_ and the
 `issue tracker <https://github.com/secynic/ipwhois/issues>`_ before asking a
 question.
 
+Questions can be submitted as issues. Past questions can be searched by
+filtering the label "question".
+
+You can also message me on IRC. I am usually idle on freenode in the
+`Python channels <https://www.python.org/community/irc/>`_
+
 *************
 Pull Requests
 *************

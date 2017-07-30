@@ -240,7 +240,7 @@ class Net:
         Cymru via port 53 (DNS).
 
         Returns:
-            str: The raw ASN data.
+            list: The raw ASN data.
 
         Raises:
             ASNLookupError: The ASN lookup failed.
@@ -250,7 +250,7 @@ class Net:
 
             log.debug('ASN query for {0}'.format(self.dns_zone))
             data = self.dns_resolver.query(self.dns_zone, 'TXT')
-            return str(data[0])
+            return list(data)
 
         except (dns.resolver.NXDOMAIN, dns.resolver.NoNameservers,
                 dns.resolver.NoAnswer, dns.exception.Timeout) as e:

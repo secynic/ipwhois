@@ -28,6 +28,8 @@ Changelog
 - Removed deprecated IPWhois.lookup() - This was moved to
   IPWhois.lookup_whois()
 - Fixed 'nets'->'range' bug for legacy whois CIDR net_range values (#188)
+- Fixed a bug in IPASN/Net that caused the ASN result to vary if Cymru has
+  more than one ASN listed for an IP (#190)
 
 0.15.1 (2017-02-16)
 -------------------

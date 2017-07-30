@@ -28,7 +28,7 @@ class TestNet(TestCommon):
     def test_get_asn_dns(self):
         result = Net('74.125.225.229')
         try:
-            self.assertIsInstance(result.get_asn_dns(), str)
+            self.assertIsInstance(result.get_asn_dns(), list)
         except ASNLookupError:
             pass
         except AssertionError as e:
