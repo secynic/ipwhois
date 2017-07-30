@@ -105,7 +105,7 @@ args = parser.parse_args()
 
 # Common es mapping.
 DEFAULT_MAPPING = {
-    'date_detection': 1,
+    'date_detection': 'true',
     'properties': {
         '@version': {
             'type': 'string',
@@ -113,7 +113,7 @@ DEFAULT_MAPPING = {
         },
         'updated': {
             'type': 'date',
-            'format': 'yyyy-MM-dd\'T\'HH:mm:ssZ',
+            'format': 'date_time_no_millis',
             'ignore_malformed': 'false'
         }
     },
@@ -124,13 +124,7 @@ DEFAULT_MAPPING = {
                 'match': '*',
                 'match_mapping_type': 'string',
                 'mapping': {
-                    'type': 'multi_field',
-                    'fields': {
-                        '{name}': {
-                            'type': 'string',
-                            'index': 'not_analyzed'
-                        }
-                    }
+                    'type': 'keyword'
                 }
             }
         }
@@ -186,49 +180,44 @@ def create_index():
 
     # base doc type mapping
     mapping = DEFAULT_MAPPING.copy()
-    mapping.update({
-        'properties': {
-            'asn_date': {
-                'type': 'date',
-                'format': 'date',
-                'ignore_malformed': 'true'
-            },
-            'network_events_timestamp': {
-                'type': 'date',
-                'format': 'yyyy-MM-dd\'T\'HH:mm:ssZ',
-                'ignore_malformed': 'false'
-            },
-            'query': {
-                'type': 'ip',
-                'store': True,
-                'ignore_malformed': True
-            },
-            'query_geo': {
-                'type': 'geo_point',
-                'lat_lon': True,
-                'geohash': True
-            },
-            'network': {
-                'properties': {
-                    'country_geo': {
-                        'type': 'geo_point',
-                        'lat_lon': True,
-                        'geohash': True
-                    },
-                    'start_address': {
-                        'type': 'ip',
-                        'store': True,
-                        'ignore_malformed': True
-                    },
-                    'end_address': {
-                        'type': 'ip',
-                        'store': True,
-                        'ignore_malformed': True
-                    }
+    mapping['properties'].update({
+        'asn_date': {
+            'type': 'date',
+            'format': 'date',
+            'ignore_malformed': 'true'
+        },
+        'network_events_timestamp': {
+            'type': 'date',
+            'format': 'date_time_no_millis',
+            'ignore_malformed': 'false'
+        },
+        'query': {
+            'type': 'ip',
+            'store': 'true',
+            'ignore_malformed': 'true'
+        },
+        'query_geo': {
+            'type': 'geo_point'
+        },
+        'network': {
+            'properties': {
+                'country_geo': {
+                    'type': 'geo_point'
+                },
+                'start_address': {
+                    'type': 'ip',
+                    'store': 'true',
+                    'ignore_malformed': 'true'
+                },
+                'end_address': {
+                    'type': 'ip',
+                    'store': 'true',
+                    'ignore_malformed': 'true'
                 }
             }
         }
     })
+
     es.indices.put_mapping(
         index='ipwhois',
         doc_type='base',
@@ -238,20 +227,16 @@ def create_index():
 
     # entity doc type mapping
     mapping = DEFAULT_MAPPING.copy()
-    mapping.update({
-        'properties': {
-            'contact': {
-                'properties': {
-                    'address': {
-                        'properties': {
-                            'geo': {
-                                'type': 'geo_point',
-                                'lat_lon': True,
-                                'geohash': True
-                            },
-                            'value': {
-                                'type': 'string',
-                            }
+    mapping['properties'].update({
+        'contact': {
+            'properties': {
+                'address': {
+                    'properties': {
+                        'geo': {
+                            'type': 'geo_point'
+                        },
+                        'value': {
+                            'type': 'string',
                         }
                     }
                 }

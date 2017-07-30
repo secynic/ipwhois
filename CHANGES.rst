@@ -30,6 +30,7 @@ Changelog
 - Fixed 'nets'->'range' bug for legacy whois CIDR net_range values (#188)
 - Fixed a bug in IPASN/Net that caused the ASN result to vary if Cymru has
   more than one ASN listed for an IP (#190)
+- Updated ElasticSearch example for ES v5.5.1 (#138)
 
 0.15.1 (2017-02-16)
 -------------------

@@ -19,8 +19,8 @@ Dependencies
 
 Tested using::
 
-    ElasticSearch 2.3.5
-    Kibana 4.5.4
+    ElasticSearch 5.5.1
+    Kibana 5.5.1
 
 Python 2.6 (requirements26.txt - geopy is not supported)::
 
