@@ -23,8 +23,16 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import re
+import sys
 import copy
 import logging
+
+if sys.version_info >= (3, 3):  # pragma: no cover
+    from ipaddress import ip_network
+
+else:  # pragma: no cover
+    from ipaddr import IPNetwork as ip_network
+
 from .exceptions import (NetError, ASNRegistryError, ASNParseError,
                          ASNLookupError, HTTPLookupError, WhoisLookupError,
                          WhoisRateLimitError, ASNOriginLookupError)
@@ -497,7 +505,29 @@ class IPASN:
                         )
                     )
                     response = self._net.get_asn_dns()
-                    asn_data = self._parse_fields_dns(response)
+                    asn_data_list = []
+                    for asn_entry in response:
+
+                        asn_data_list.append(self._parse_fields_dns(
+                            str(asn_entry)))
+
+                    # Iterate through the parsed ASN results to find the
+                    # smallest CIDR
+                    asn_data = asn_data_list.pop(0)
+                    try:
+
+                        prefix_len = ip_network(asn_data['asn_cidr']).prefixlen
+                        for asn_parsed in asn_data_list:
+                            prefix_len_comp = ip_network(
+                                asn_parsed['asn_cidr']).prefixlen
+                            if prefix_len_comp > prefix_len:
+                                asn_data = asn_parsed
+                                prefix_len = prefix_len_comp
+
+                    except (KeyError, ValueError):  # pragma: no cover
+
+                        pass
+
                     dns_success = True
                     break
 

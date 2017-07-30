@@ -35,6 +35,7 @@ v1.0.0
   utils.ipv6_generate_random
 - net.Net.get_host(), utils.ipv4_is_defined(), and utils.ipv6_is_defined now
   return namedtuple instead of tuple.
+- net.Net.get_asn_dns now returns a list rather than a str
 
 *******
 v0.14.0
