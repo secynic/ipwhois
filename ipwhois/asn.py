@@ -27,15 +27,15 @@ import sys
 import copy
 import logging
 
+from .exceptions import (NetError, ASNRegistryError, ASNParseError,
+                         ASNLookupError, HTTPLookupError, WhoisLookupError,
+                         WhoisRateLimitError, ASNOriginLookupError)
+
 if sys.version_info >= (3, 3):  # pragma: no cover
     from ipaddress import ip_network
 
 else:  # pragma: no cover
     from ipaddr import IPNetwork as ip_network
-
-from .exceptions import (NetError, ASNRegistryError, ASNParseError,
-                         ASNLookupError, HTTPLookupError, WhoisLookupError,
-                         WhoisRateLimitError, ASNOriginLookupError)
 
 log = logging.getLogger(__name__)
 
