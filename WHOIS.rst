@@ -282,9 +282,9 @@ Multiple networks listed and referral whois
             "created": "1991-04-16",
             "description": "PSINet, Inc.",
             "emails": [
+                "ipalloc@cogentco.com",
                 "abuse@cogentco.com",
-                "noc@cogentco.com",
-                "ipalloc@cogentco.com"
+                "noc@cogentco.com"
             ],
             "handle": "NET-38-0-0-0-1",
             "name": "COGENT-A",
@@ -301,9 +301,9 @@ Multiple networks listed and referral whois
             "created": "2003-08-20",
             "description": "PSINet, Inc.",
             "emails": [
+                "ipalloc@cogentco.com",
                 "abuse@cogentco.com",
-                "noc@cogentco.com",
-                "ipalloc@cogentco.com"
+                "noc@cogentco.com"
             ],
             "handle": "NET-38-112-0-0-1",
             "name": "COGENT-NB-0002",

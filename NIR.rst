@@ -402,8 +402,8 @@ show the usage and results.
             "raw": None,
             "remarks": None,
             "roles": [
-                "administrative",
-                "technical"
+                "technical",
+                "administrative"
             ],
             "status": None
         }
