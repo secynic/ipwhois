@@ -14,7 +14,7 @@ install:
   - if [[ $TRAVIS_PYTHON_VERSION == 3.6* ]]; then pip install -r requirements/python3.txt; fi
   - pip install coveralls
   - pip install codeclimate-test-reporter
-  - python setup.py -q install
+  - pip install -e .
 script:
   - nosetests -v -w ipwhois --include=online --exclude=stress --with-coverage --cover-package=ipwhois
 after_success:
