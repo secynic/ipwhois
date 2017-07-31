@@ -7,6 +7,8 @@ python:
   - 3.5
   - 3.6
 install:
+  - pip install setuptools
+  - pip install --upgrade pip
   - if [[ $TRAVIS_PYTHON_VERSION == 2* ]]; then pip install -r requirements/python2.txt; fi
   - if [[ $TRAVIS_PYTHON_VERSION == 3.3* ]]; then pip install -r requirements/python3.txt; fi
   - if [[ $TRAVIS_PYTHON_VERSION == 3.4* ]]; then pip install -r requirements/python3.txt; fi
