@@ -18,39 +18,37 @@ Arguments supported by IPWhois.lookup_rdap().
 +--------------------+--------+-----------------------------------------------+
 | **Key**            |**Type**| **Description**                               |
 +--------------------+--------+-----------------------------------------------+
-| inc_raw            | Bool   | Boolean for whether to include the raw whois  |
-|                    |        | results in the returned dictionary.           |
+| inc_raw            | bool   | Whether to include the raw whois results in   |
+|                    |        | the returned dictionary. Defaults to False.   |
 +--------------------+--------+-----------------------------------------------+
-| retry_count        | Int    | The number of times to retry in case socket   |
+| retry_count        | int    | The number of times to retry in case socket   |
 |                    |        | errors, timeouts, connection resets, etc. are |
-|                    |        | encountered.                                  |
+|                    |        | encountered. Defaults to 3.                   |
 +--------------------+--------+-----------------------------------------------+
-| depth              | Int    | How many levels deep to run queries when      |
+| depth              | int    | How many levels deep to run queries when      |
 |                    |        | additional referenced objects are found.      |
+|                    |        | Defaults to 0.                                |
 +--------------------+--------+-----------------------------------------------+
-| excluded_entities  | List   | A list of entity handles to not perform       |
-|                    |        | lookups.                                      |
+| excluded_entities  | list   | Entity handles to not perform lookups.        |
+|                    |        | Defaults to None.                             |
 +--------------------+--------+-----------------------------------------------+
-| bootstrap          | Bool   | If True, performs lookups via ARIN bootstrap  |
+| bootstrap          | bool   | If True, performs lookups via ARIN bootstrap  |
 |                    |        | rather than lookups based on ASN data. ASN    |
 |                    |        | lookups are not performed and no output for   |
-|                    |        | any of the asn* fields is provided.           |
+|                    |        | any of the asn* fields is provided. Defaults  |
+|                    |        | to False.                                     |
 +--------------------+--------+-----------------------------------------------+
-| rate_limit_timeout | Int    | The number of seconds to wait before retrying |
-|                    |        | when a rate limit notice isreturned via       |
-|                    |        | rdap+json.                                    |
+| rate_limit_timeout | int    | The number of seconds to wait before retrying |
+|                    |        | when a rate limit notice is returned via      |
+|                    |        | rdap+json. Defaults to 120.                   |
 +--------------------+--------+-----------------------------------------------+
-| asn_alts           | List   | List of additional lookup types to attempt if |
-|                    |        | the ASN dns lookup fails. Allow permutations  |
-|                    |        | must be enabled. Defaults to all              |
+| asn_alts           | list   | Additional lookup types to attempt if the ASN |
+|                    |        | dns lookup fails. Allow permutations must be  |
+|                    |        | enabled. If None, defaults to all             |
 |                    |        | ['whois', 'http']. *WARNING* deprecated in    |
 |                    |        | favor of new argument asn_methods.            |
 +--------------------+--------+-----------------------------------------------+
-| asn_methods        | List   | List of ASN lookup types to attempt, in       |
-|                    |        | order. Defaults to all                        |
-|                    |        | ['dns', 'whois', 'http'].                     |
-+--------------------+--------+-----------------------------------------------+
-| extra_org_map      | Dict   | Dictionary mapping org handles to RIRs.       |
+| extra_org_map      | dict   | Dictionary mapping org handles to RIRs.       |
 |                    |        | This is for limited cases where ARIN REST     |
 |                    |        | (ASN fallback HTTP lookup) does not show an   |
 |                    |        | RIR as the org handle e.g., DNIC (which       |
@@ -59,10 +57,27 @@ Arguments supported by IPWhois.lookup_rdap().
 |                    |        | values are (note the case-sensitive - this is |
 |                    |        | meant to match the REST result):              |
 |                    |        | 'ARIN', 'RIPE', 'apnic', 'lacnic', 'afrinic'  |
+|                    |        | Defaults to None.                             |
 +--------------------+--------+-----------------------------------------------+
-| get_asn_description| Bool   | Boolean for whether to run an additional      |
-|                    |        | query when pulling ASN information via        |
-|                    |        | dns, in order to get the ASN description.     |
+| inc_nir            | bool   | Whether to retrieve NIR (National Internet    |
+|                    |        | Registry) information, if registry is JPNIC   |
+|                    |        | (Japan) or KRNIC (Korea). If True, extra      |
+|                    |        | network requests will be required. If False,  |
+|                    |        | the information returned for JP or KR IPs is  |
+|                    |        | severely restricted. Defaults to True.        |
++--------------------+--------+-----------------------------------------------+
+| nir_field_list     | list   | If provided and inc_nir, a list of            |
+|                    |        | fields to parse: ['name', 'handle', 'country',|
+|                    |        | 'address', 'postal_code', 'nameservers',      |
+|                    |        | 'created', 'updated', 'contacts']             |
+|                    |        | If None, defaults to all.                     |
++--------------------+--------+-----------------------------------------------+
+| asn_methods        | list   | ASN lookup types to attempt, in order. If     |
+|                    |        | None, defaults to all ['dns', 'whois', 'http']|
++--------------------+--------+-----------------------------------------------+
+| get_asn_description| bool   | Whether to run an additional query when       |
+|                    |        | pulling ASN information via dns, in order to  |
+|                    |        | get the ASN description. Defaults to True.    |
 +--------------------+--------+-----------------------------------------------+
 
 .. _rdap-output:
@@ -81,36 +96,41 @@ and dictionaries, detailed below this section.
 +------------------+--------+-------------------------------------------------+
 | **Key**          |**Type**| **Description**                                 |
 +------------------+--------+-------------------------------------------------+
-| query            | String | The IP address input                            |
+| query            | str    | The IP address                                  |
 +------------------+--------+-------------------------------------------------+
-| asn              | String | Globally unique identifier used for routing     |
+| asn              | str    | Globally unique identifier used for routing     |
 |                  |        | information exchange with Autonomous Systems.   |
 +------------------+--------+-------------------------------------------------+
-| asn_cidr         | String | Network routing block assigned to an ASN.       |
+| asn_cidr         | str    | Network routing block assigned to an ASN.       |
 +------------------+--------+-------------------------------------------------+
-| asn_country_code | String | ASN assigned country code in ISO 3166-1 format. |
+| asn_country_code | str    | ASN assigned country code in ISO 3166-1 format. |
 +------------------+--------+-------------------------------------------------+
-| asn_date         | String | ASN allocation date in ISO 8601 format.         |
+| asn_date         | str    | ASN allocation date in ISO 8601 format.         |
 +------------------+--------+-------------------------------------------------+
-| asn_registry     | String | ASN assigned regional internet registry.        |
+| asn_registry     | str    | ASN assigned regional internet registry.        |
 +------------------+--------+-------------------------------------------------+
-| asn_description  | String | The ASN description                             |
+| asn_description  | str    | The ASN description                             |
 +------------------+--------+-------------------------------------------------+
-| network          | Dict   | The assigned network for an IP address. May be  |
+| network          | dict   | The assigned network for an IP address. May be  |
 |                  |        | a parent or child network. See                  |
 |                  |        | :ref:`rdap-network-dictionary`.                 |
 +------------------+--------+-------------------------------------------------+
-| entities         | List   | List of object names referenced by an RIR       |
+| entities         | list   | list of object names referenced by an RIR       |
 |                  |        | network. Map these to the objects dict keys.    |
 +------------------+--------+-------------------------------------------------+
-| objects          | Dict   | The objects (entities) referenced by an RIR     |
+| objects          | dict   | The objects (entities) referenced by an RIR     |
 |                  |        | network or by other entities (depending on      |
 |                  |        | depth parameter). Keys are the object names     |
 |                  |        | with values as                                  |
 |                  |        | :ref:`rdap-objects-dictionary`.                 |
 +------------------+--------+-------------------------------------------------+
-| raw              | Dict   | The raw results dictionary (JSON) if            |
+| raw              | dict   | The raw results dictionary (JSON) if            |
 |                  |        | inc_raw is True.                                |
++------------------+--------+-------------------------------------------------+
+| nir              | dict   | The National Internet Registry results if       |
+|                  |        | inc_nir is True. See `NIR result <https://      |
+|                  |        | ipwhois.readthedocs.io/en/latest/NIR.html       |
+|                  |        | #results-dictionary>`_                          |
 +------------------+--------+-------------------------------------------------+
 
 .. _rdap-network-dictionary:
@@ -124,39 +144,39 @@ The dictionary mapped to the network key in the objects list within
 +---------------+--------+----------------------------------------------------+
 | **Key**       |**Type**| **Description**                                    |
 +---------------+--------+----------------------------------------------------+
-| cidr          | String | Network routing block an IP address belongs to.    |
+| cidr          | str    | Network routing block an IP address belongs to.    |
 +---------------+--------+----------------------------------------------------+
-| country       | String | Country code registered with the RIR in            |
+| country       | str    | Country code registered with the RIR in            |
 |               |        | ISO 3166-1 format.                                 |
 +---------------+--------+----------------------------------------------------+
-| end_address   | String | The last IP address in a network block.            |
+| end_address   | str    | The last IP address in a network block.            |
 +---------------+--------+----------------------------------------------------+
-| events        | List   | List of event dictionaries. See                    |
+| events        | list   | List of event dictionaries. See                    |
 |               |        | :ref:`rdap-events-dictionary`.                     |
 +---------------+--------+----------------------------------------------------+
-| handle        | String | Unique identifier for a registered object.         |
+| handle        | str    | Unique identifier for a registered object.         |
 +---------------+--------+----------------------------------------------------+
-| ip_version    | String | IP protocol version (v4 or v6) of an IP address.   |
+| ip_version    | str    | IP protocol version (v4 or v6) of an IP address.   |
 +---------------+--------+----------------------------------------------------+
-| links         | List   | HTTP/HTTPS links provided for an RIR object.       |
+| links         | list   | HTTP/HTTPS links provided for an RIR object.       |
 +---------------+--------+----------------------------------------------------+
-| name          | String | The identifier assigned to the network             |
+| name          | str    | The identifier assigned to the network             |
 |               |        | registration for an IP address.                    |
 +---------------+--------+----------------------------------------------------+
-| notices       | List   | List of notice dictionaries. See                   |
+| notices       | list   | List of notice dictionaries. See                   |
 |               |        | :ref:`rdap-notices-dictionary`.                    |
 +---------------+--------+----------------------------------------------------+
-| parent_handle | String | Unique identifier for the parent network of a      |
+| parent_handle | str    | Unique identifier for the parent network of a      |
 |               |        | registered network.                                |
 +---------------+--------+----------------------------------------------------+
-| remarks       | List   | List of remark (notice) dictionaries. See          |
+| remarks       | list   | List of remark (notice) dictionaries. See          |
 |               |        | :ref:`rdap-notices-dictionary`.                    |
 +---------------+--------+----------------------------------------------------+
-| start_address | String | The first IP address in a network block.           |
+| start_address | str    | The first IP address in a network block.           |
 +---------------+--------+----------------------------------------------------+
-| status        | List   | List indicating the state of a registered object.  |
+| status        | list   | List indicating the state of a registered object.  |
 +---------------+--------+----------------------------------------------------+
-| type          | String | The RIR classification of a registered network.    |
+| type          | str    | The RIR classification of a registered network.    |
 +---------------+--------+----------------------------------------------------+
 
 .. _rdap-objects-dictionary:
@@ -170,32 +190,32 @@ The dictionary mapped to the object (entity) key in the objects list within
 +--------------+--------+-----------------------------------------------------+
 | **Key**      |**Type**| **Description**                                     |
 +--------------+--------+-----------------------------------------------------+
-| contact      | Dict   | Contact information registered with an RIR object.  |
+| contact      | dict   | Contact information registered with an RIR object.  |
 |              |        | See                                                 |
 |              |        | :ref:`rdap-objects-contact-dictionary`.             |
 +--------------+--------+-----------------------------------------------------+
-| entities     | List   | List of object names referenced by an RIR object.   |
+| entities     | list   | List of object names referenced by an RIR object.   |
 |              |        | Map these to other objects dictionary keys.         |
 +--------------+--------+-----------------------------------------------------+
-| events       | List   | List of event dictionaries. See                     |
+| events       | list   | List of event dictionaries. See                     |
 |              |        | :ref:`rdap-events-dictionary`.                      |
 +--------------+--------+-----------------------------------------------------+
-| events_actor | List   | List of event (no actor) dictionaries. See          |
+| events_actor | list   | List of event (no actor) dictionaries. See          |
 |              |        | :ref:`rdap-events-dictionary`.                      |
 +--------------+--------+-----------------------------------------------------+
-| handle       | String | Unique identifier for a registered object.          |
+| handle       | str    | Unique identifier for a registered object.          |
 +--------------+--------+-----------------------------------------------------+
-| links        | List   | List of HTTP/HTTPS links provided for an RIR object.|
+| links        | list   | List of HTTP/HTTPS links provided for an RIR object.|
 +--------------+--------+-----------------------------------------------------+
-| notices      | List   | List of notice dictionaries. See                    |
+| notices      | list   | List of notice dictionaries. See                    |
 |              |        | :ref:`rdap-notices-dictionary`.                     |
 +--------------+--------+-----------------------------------------------------+
-| remarks      | List   | List of remark (notice) dictionaries. See           |
+| remarks      | list   | List of remark (notice) dictionaries. See           |
 |              |        | :ref:`rdap-notices-dictionary`.                     |
 +--------------+--------+-----------------------------------------------------+
-| roles        | List   | List of roles assigned to a registered object.      |
+| roles        | list   | List of roles assigned to a registered object.      |
 +--------------+--------+-----------------------------------------------------+
-| status       | List   | List indicating the state of a registered object.   |
+| status       | list   | List indicating the state of a registered object.   |
 +--------------+--------+-----------------------------------------------------+
 
 .. _rdap-objects-contact-dictionary:
@@ -209,22 +229,22 @@ contact key contained in :ref:`rdap-objects-dictionary`.
 +---------+--------+----------------------------------------------------------+
 | **Key** |**Type**| **Description**                                          |
 +---------+--------+----------------------------------------------------------+
-| address | List   | List of contact postal address dictionaries. Contains key|
+| address | list   | List of contact postal address dictionaries. Contains key|
 |         |        | type and value.                                          |
 +---------+--------+----------------------------------------------------------+
-| email   | List   | List of contact email address dictionaries. Contains key |
+| email   | list   | List of contact email address dictionaries. Contains key |
 |         |        | type and value.                                          |
 +---------+--------+----------------------------------------------------------+
-| kind    | String | The contact information kind (individual, group, org).   |
+| kind    | str    | The contact information kind (individual, group, org).   |
 +---------+--------+----------------------------------------------------------+
-| name    | String | The contact name.                                        |
+| name    | str    | The contact name.                                        |
 +---------+--------+----------------------------------------------------------+
-| phone   | List   | List of contact phone number dictionaries. Contains key  |
+| phone   | list   | List of contact phone number dictionaries. Contains key  |
 |         |        | type and value.                                          |
 +---------+--------+----------------------------------------------------------+
-| role    | String | The contact's role.                                      |
+| role    | str    | The contact's role.                                      |
 +---------+--------+----------------------------------------------------------+
-| title   | String | The contact's position or job title.                     |
+| title   | str    | The contact's position or job title.                     |
 +---------+--------+----------------------------------------------------------+
 
 .. _rdap-events-dictionary:
@@ -239,11 +259,11 @@ Contained in events and events_actor (no actor).
 +-----------+--------+-------------------------------------------------+
 | **Key**   |**Type**| **Description**                                 |
 +-----------+--------+-------------------------------------------------+
-| action    | String | The reason for an event.                        |
+| action    | str    | The reason for an event.                        |
 +-----------+--------+-------------------------------------------------+
-| timestamp | String | The date an event occured in ISO 8601 format.   |
+| timestamp | str    | The date an event occured in ISO 8601 format.   |
 +-----------+--------+-------------------------------------------------+
-| actor     | String | The identifier for an event initiator (if any). |
+| actor     | str    | The identifier for an event initiator (if any). |
 +-----------+--------+-------------------------------------------------+
 
 .. _rdap-notices-dictionary:
@@ -257,11 +277,11 @@ Common to lists in :ref:`rdap-network-dictionary` and
 +-------------+--------+-------------------------------------------------+
 | **Key**     |**Type**| **Description**                                 |
 +-------------+--------+-------------------------------------------------+
-| title       | String | The title/header for a notice.                  |
+| title       | str    | The title/header for a notice.                  |
 +-------------+--------+-------------------------------------------------+
-| description | String | The description/body of a notice.               |
+| description | str    | The description/body of a notice.               |
 +-------------+--------+-------------------------------------------------+
-| links       | List   | List of HTTP/HTTPS links provided for a notice. |
+| links       | list   | list of HTTP/HTTPS links provided for a notice. |
 +-------------+--------+-------------------------------------------------+
 
 .. _rdap-usage-examples:
@@ -568,15 +588,6 @@ This is the number of times to retry a query in the case of failure. If a
 rate limit error (HTTPRateLimitError) is raised, the lookup will wait for
 rate_limit_timeout seconds before retrying. A combination of adjusting
 retry_count and rate_limit_timeout is needed to optimize bulk queries.
-
-When performing bulk IP lookups, the goal should be to acquire as much data, as
-fast as possible. If you have multiple IP lookups, in a row, that belong to the
-same RIR (generally LACNIC), the chance to hit rate limiting errors increases
-(also depending on bootstrap, depth, network speeds).
-
-One option to increase bulk query performance is to disable retries and store
-the errored IPs in a list for the next round of lookups (loop your bulk queries
-until all IPs resolve). Disable retries by setting retry_count=0
 
 rate_limit_timeout
 ^^^^^^^^^^^^^^^^^^

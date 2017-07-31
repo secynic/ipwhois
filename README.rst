@@ -168,19 +168,19 @@ Input
 +--------------------+--------+-----------------------------------------------+
 | **Key**            |**Type**| **Description**                               |
 +--------------------+--------+-----------------------------------------------+
-| address            | String | An IPv4 or IPv6 address as a string, integer, |
+| address            | str    | An IPv4 or IPv6 address as a string, integer, |
 |                    |        | IPv4Address, or IPv6Address.                  |
 +--------------------+--------+-----------------------------------------------+
-| timeout            | Int    | The default timeout for socket connections    |
-|                    |        | in seconds.                                   |
+| timeout            | int    | The default timeout for socket connections    |
+|                    |        | in seconds. Defaults to 5.                    |
 +--------------------+--------+-----------------------------------------------+
-| proxy_opener       | Object | The urllib.request.OpenerDirector request for |
+| proxy_opener       | object | The urllib.request.OpenerDirector request for |
 |                    |        | proxy support or None.                        |
 +--------------------+--------+-----------------------------------------------+
-| allow_permutations | Bool   | Allow net.Net() to use additional methods if  |
+| allow_permutations | bool   | Allow net.Net() to use additional methods if  |
 |                    |        | DNS lookups to Cymru fail. *WARNING*          |
 |                    |        | deprecated in favor of new argument           |
-|                    |        | asn_methods.                                  |
+|                    |        | asn_methods. Defaults to True.                |
 +--------------------+--------+-----------------------------------------------+
 
 RDAP (HTTP)

@@ -15,37 +15,41 @@ Arguments supported by IPASN.lookup().
 +------------------------+--------+-------------------------------------------+
 | **Key**                |**Type**| **Description**                           |
 +------------------------+--------+-------------------------------------------+
-| inc_raw                | Bool   | Boolean for whether to include the raw    |
-|                        |        | whois results in the returned dictionary. |
+| inc_raw                | bool   | Whether to include the raw whois results  |
+|                        |        | in the returned dictionary. Defaults to   |
+|                        |        | False.                                    |
 +------------------------+--------+-------------------------------------------+
-| retry_count            | Int    | The number of times to retry in case      |
+| retry_count            | int    | The number of times to retry in case      |
 |                        |        | socket errors, timeouts, connection       |
 |                        |        | resets, etc. are encountered.             |
+|                        |        | Defaults to 3.                            |
 +------------------------+--------+-------------------------------------------+
-| asn_alts               | List   | List of additional lookup types to        |
-|                        |        | attempt if the ASN dns lookup fails.      |
-|                        |        | Allow permutations must be enabled.       |
-|                        |        | Defaults to all ['whois', 'http'].        |
-|                        |        | *WARNING* deprecated in favor of new      |
-|                        |        | argument asn_methods.                     |
+| asn_alts               | list   | Additional lookup types to attempt if the |
+|                        |        | ASN dns lookup fails. Allow permutations  |
+|                        |        | must be enabled. If None, defaults to all |
+|                        |        | ['whois', 'http']. *WARNING* deprecated   |
+|                        |        | in favor of new argument asn_methods.     |
 +------------------------+--------+-------------------------------------------+
-| asn_methods            | List   | List of ASN lookup types to attempt, in   |
-|                        |        | order. Defaults to all                    |
-|                        |        | ['dns', 'whois', 'http'].                 |
+| extra_org_map          | dict   | Dictionary mapping org handles to RIRs.   |
+|                        |        | This is for limited cases where ARIN      |
+|                        |        | REST (ASN fallback HTTP lookup) does not  |
+|                        |        | show an RIR as the org handle e.g., DNIC  |
+|                        |        | (which is now built in ORG_MAP)           |
+|                        |        | e.g., {'DNIC': 'arin'}                    |
+|                        |        | Valid RIR values are (note the            |
+|                        |        | case-sensitive - this is meant to match   |
+|                        |        | the REST result):  'ARIN', 'RIPE',        |
+|                        |        | 'apnic', 'lacnic', 'afrinic'              |
+|                        |        | Defaults to None.                         |
 +------------------------+--------+-------------------------------------------+
-| extra_org_map          | List   | Dictionary mapping org handles to RIRs.   |
-|                        |        | This is for limited cases where ARIN REST |
-|                        |        | (ASN fallback HTTP lookup) does not show  |
-|                        |        | an RIR as the org handle e.g., DNIC       |
-|                        |        | (which is now the built in ORG_MAP) e.g., |
-|                        |        | {'DNIC': 'arin'}. Valid RIR values are    |
-|                        |        | (note the case-sensitive - this is meant  |
-|                        |        | to match the REST result): 'ARIN',        |
-|                        |        | 'RIPE', 'apnic', 'lacnic', 'afrinic'      |
+| asn_methods            | list   | ASN lookup types to attempt, in order. If |
+|                        |        | None, defaults to all ['dns', 'whois',    |
+|                        |        | 'http'].                                  |
 +------------------------+--------+-------------------------------------------+
-| get_asn_description    | Bool   | Boolean for whether to run an additional  |
-|                        |        | query when pulling ASN information via    |
-|                        |        | dns, in order to get the ASN description. |
+| get_asn_description    | bool   | Whether to run an additional query when   |
+|                        |        | pulling ASN information via dns, in order |
+|                        |        | to get the ASN description. Defaults to   |
+|                        |        | True.                                     |
 +------------------------+--------+-------------------------------------------+
 
 .. _ip-asn-output:
@@ -63,19 +67,19 @@ The output dictionary from IPASN.lookup().
 +------------------+--------+-------------------------------------------------+
 | **Key**          |**Type**| **Description**                                 |
 +------------------+--------+-------------------------------------------------+
-| asn              | String | The Autonomous System Number                    |
+| asn              | str    | The Autonomous System Number                    |
 +------------------+--------+-------------------------------------------------+
-| asn_date         | String | The ASN Allocation date                         |
+| asn_date         | str    | The ASN Allocation date                         |
 +------------------+--------+-------------------------------------------------+
-| asn_registry     | String | The assigned ASN registry                       |
+| asn_registry     | str    | The assigned ASN registry                       |
 +------------------+--------+-------------------------------------------------+
-| asn_cidr         | String | The assigned ASN CIDR                           |
+| asn_cidr         | str    | The assigned ASN CIDR                           |
 +------------------+--------+-------------------------------------------------+
-| asn_country_code | String | The assigned ASN country code                   |
+| asn_country_code | str    | The assigned ASN country code                   |
 +------------------+--------+-------------------------------------------------+
-| asn_description  | String | The ASN description                             |
+| asn_description  | str    | The ASN description                             |
 +------------------+--------+-------------------------------------------------+
-| raw              | String | Raw ASN results if inc_raw is True.             |
+| raw              | str    | Raw ASN results if inc_raw is True.             |
 +------------------+--------+-------------------------------------------------+
 
 .. _ip-asn-usage-examples:
@@ -134,23 +138,33 @@ Arguments supported by ASNOrigin.lookup().
 +------------------------+--------+-------------------------------------------+
 | **Key**                |**Type**| **Description**                           |
 +------------------------+--------+-------------------------------------------+
-| asn                    | String | The autonomous system number (ASN) to     |
+| asn                    | str    | The autonomous system number (ASN) to     |
 |                        |        | lookup. May be in format '1234'/'AS1234'  |
 +------------------------+--------+-------------------------------------------+
-| inc_raw                | Bool   | Boolean for whether to include the raw    |
-|                        |        | whois results in the returned dictionary. |
+| inc_raw                | bool   | Whether to include the raw whois results  |
+|                        |        | in the returned dictionary. Defaults to   |
+|                        |        | False.                                    |
 +------------------------+--------+-------------------------------------------+
-| retry_count            | Int    | The number of times to retry in case      |
+| retry_count            | int    | The number of times to retry in case      |
 |                        |        | socket errors, timeouts, connection       |
 |                        |        | resets, etc. are encountered.             |
+|                        |        | Defaults to 3.                            |
 +------------------------+--------+-------------------------------------------+
-| field_list             | List   | If provided, a list of fields to parse:   |
+| response               | str    | Optional response object, this bypasses   |
+|                        |        | the Whois lookup. Defaults to None.       |
++------------------------+--------+-------------------------------------------+
+| field_list             | list   | If provided, fields to parse:             |
 |                        |        | ['description', 'maintainer', 'updated',  |
-|                        |        | 'source']                                 |
+|                        |        | 'source']. If None, defaults to all.      |
 +------------------------+--------+-------------------------------------------+
-| asn_alts               | List   | List of additional lookup types to        |
-|                        |        | attempt if the ASN whois lookup fails.    |
-|                        |        | Defaults to all ['http'].                 |
+| asn_alts               | list   | Additional lookup types to attempt if the |
+|                        |        | ASN dns lookup fails. Allow permutations  |
+|                        |        | must be enabled. If None, defaults to all |
+|                        |        | ['http']. *WARNING* deprecated            |
+|                        |        | in favor of new argument asn_methods.     |
++------------------------+--------+-------------------------------------------+
+| asn_methods            | list   | ASN lookup types to attempt, in order. If |
+|                        |        | None, defaults to all ['whois', 'http'].  |
 +------------------------+--------+-------------------------------------------+
 
 .. _asn-origin-output:
@@ -168,12 +182,12 @@ The output dictionary from ASNOrigin.lookup().
 +------------------+--------+-------------------------------------------------+
 | **Key**          |**Type**| **Description**                                 |
 +------------------+--------+-------------------------------------------------+
-| query            | String | The ASN input                                   |
+| query            | str    | The ASN input                                   |
 +------------------+--------+-------------------------------------------------+
-| nets             | List   | List of network dictionaries.                   |
+| nets             | list   | List of network dictionaries.                   |
 |                  |        | See :ref:`asn-origin-network-dictionary`.       |
 +------------------+--------+-------------------------------------------------+
-| raw              | String | Raw ASN origin whois results if inc_raw is True.|
+| raw              | str    | Raw ASN origin whois results if inc_raw is True.|
 +------------------+--------+-------------------------------------------------+
 
 .. _asn-origin-network-dictionary:
@@ -187,15 +201,15 @@ The dictionary mapped to the nets key in the
 +-------------+--------+------------------------------------------------------+
 | **Key**     |**Type**| **Description**                                      |
 +-------------+--------+------------------------------------------------------+
-| cidr        | String | Network routing block an IP address belongs to.      |
+| cidr        | str    | Network routing block an IP address belongs to.      |
 +-------------+--------+------------------------------------------------------+
-| description | String | Description for a registered network.                |
+| description | str    | Description for a registered network.                |
 +-------------+--------+------------------------------------------------------+
-| maintainer  | String | The entity that maintains this network.              |
+| maintainer  | str    | The entity that maintains this network.              |
 +-------------+--------+------------------------------------------------------+
-| updated     | String | Network registration updated information.            |
+| updated     | str    | Network registration updated information.            |
 +-------------+--------+------------------------------------------------------+
-| source      | String | The source of this network information.              |
+| source      | str    | The source of this network information.              |
 +-------------+--------+------------------------------------------------------+
 
 .. _asn-origin-usage-examples:

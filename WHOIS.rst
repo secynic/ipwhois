@@ -27,41 +27,39 @@ Arguments supported by IPWhois.lookup_whois().
 +------------------------+--------+-------------------------------------------+
 | **Key**                |**Type**| **Description**                           |
 +------------------------+--------+-------------------------------------------+
-| inc_raw                | Bool   | Boolean for whether to include the raw    |
-|                        |        | whois results in the returned dictionary. |
+| inc_raw                | bool   | Whether to include the raw whois results  |
+|                        |        | in the returned dictionary. Defaults to   |
+|                        |        | False.                                    |
 +------------------------+--------+-------------------------------------------+
-| retry_count            | Int    | The number of times to retry in case      |
+| retry_count            | int    | The number of times to retry in case      |
 |                        |        | socket errors, timeouts, connection       |
 |                        |        | resets, etc. are encountered.             |
+|                        |        | Defaults to 3.                            |
 +------------------------+--------+-------------------------------------------+
-| get_referral           | Bool   | Boolean for whether to retrieve           |
-|                        |        | referral whois information, if available. |
+| get_referral           | bool   | Whether to retrieve referral whois        |
+|                        |        | information, if available. Defaults to    |
+|                        |        | False.                                    |
 +------------------------+--------+-------------------------------------------+
-| extra_blacklist        | List   | A list of blacklisted whois servers in    |
-|                        |        | addition to the global BLACKLIST.         |
+| extra_blacklist        | list   | Blacklisted whois servers in addition to  |
+|                        |        | the global BLACKLIST. Defaults to None.   |
 +------------------------+--------+-------------------------------------------+
-| ignore_referral_errors | Bool   | Boolean for whether to ignore and         |
-|                        |        | continue when an exception is encountered |
-|                        |        | on referral whois lookups.                |
+| ignore_referral_errors | bool   | Whether to ignore and continue when an    |
+|                        |        | exception is encountered on referral whois|
+|                        |        | lookups. Defaults to False.               |
 +------------------------+--------+-------------------------------------------+
-| field_list             | List   | If provided, a list of fields to parse:   |
+| field_list             | list   | If provided, a list of fields to parse:   |
 |                        |        | ['name', 'handle', 'description',         |
 |                        |        | 'country', 'state', 'city', 'address',    |
 |                        |        | 'postal_code', 'emails', 'created',       |
-|                        |        | 'updated']                                |
+|                        |        | 'updated']. If None, defaults to all.     |
 +------------------------+--------+-------------------------------------------+
-| asn_alts               | List   | List of additional lookup types to        |
-|                        |        | attempt if the ASN dns lookup fails.      |
-|                        |        | Allow permutations must be enabled.       |
-|                        |        | Defaults to all ['whois', 'http'].        |
-|                        |        | *WARNING* deprecated in favor of new      |
-|                        |        | argument asn_methods.                     |
+| asn_alts               | list   | Additional lookup types to attempt if the |
+|                        |        | ASN dns lookup fails. Allow permutations  |
+|                        |        | must be enabled. If None, defaults to all |
+|                        |        | ['whois', 'http']. *WARNING* deprecated   |
+|                        |        | in favor of new argument asn_methods.     |
 +------------------------+--------+-------------------------------------------+
-| asn_methods            | List   | List of ASN lookup types to attempt, in   |
-|                        |        | order. Defaults to all                    |
-|                        |        | ['dns', 'whois', 'http'].                 |
-+------------------------+--------+-------------------------------------------+
-| extra_org_map          | Dict   | Dictionary mapping org handles to RIRs.   |
+| extra_org_map          | dict   | Dictionary mapping org handles to RIRs.   |
 |                        |        | This is for limited cases where ARIN      |
 |                        |        | REST (ASN fallback HTTP lookup) does not  |
 |                        |        | show an RIR as the org handle e.g., DNIC  |
@@ -71,10 +69,30 @@ Arguments supported by IPWhois.lookup_whois().
 |                        |        | case-sensitive - this is meant to match   |
 |                        |        | the REST result):  'ARIN', 'RIPE',        |
 |                        |        | 'apnic', 'lacnic', 'afrinic'              |
+|                        |        | Defaults to None.                         |
 +------------------------+--------+-------------------------------------------+
-| get_asn_description    | Bool   | Boolean for whether to run an additional  |
-|                        |        | query when pulling ASN information via    |
-|                        |        | dns, in order to get the ASN description. |
+| inc_nir                | bool   | Whether to retrieve NIR (National Internet|
+|                        |        | Registry) information, if registry is     |
+|                        |        | JPNIC (Japan) or KRNIC (Korea). If True,  |
+|                        |        | extra network requests will be required.  |
+|                        |        | If False, the information returned for JP |
+|                        |        | or KR IPs is severely restricted.         |
+|                        |        | Defaults to True.                         |
++------------------------+--------+-------------------------------------------+
+| nir_field_list         | list   | If provided and inc_nir, a list of fields |
+|                        |        | to parse: ['name', 'handle', 'country',   |
+|                        |        | 'address', 'postal_code', 'nameservers',  |
+|                        |        | 'created', 'updated', 'contacts']         |
+|                        |        | If None, defaults to all.                 |
++------------------------+--------+-------------------------------------------+
+| asn_methods            | list   | ASN lookup types to attempt, in order. If |
+|                        |        | None, defaults to all ['dns', 'whois',    |
+|                        |        | 'http'].                                  |
++------------------------+--------+-------------------------------------------+
+| get_asn_description    | bool   | Whether to run an additional query when   |
+|                        |        | pulling ASN information via dns, in order |
+|                        |        | to get the ASN description. Defaults to   |
+|                        |        | True.                                     |
 +------------------------+--------+-------------------------------------------+
 
 .. _whois-output:
@@ -92,32 +110,37 @@ The output dictionary from IPWhois.lookup_whois().
 +------------------+--------+-------------------------------------------------+
 | **Key**          |**Type**| **Description**                                 |
 +------------------+--------+-------------------------------------------------+
-| query            | String | The IP address input                            |
+| query            | str    | The IP address input                            |
 +------------------+--------+-------------------------------------------------+
-| asn              | String | Globally unique identifier used for routing     |
+| asn              | str    | Globally unique identifier used for routing     |
 |                  |        | information exchange with Autonomous Systems.   |
 +------------------+--------+-------------------------------------------------+
-| asn_cidr         | String | Network routing block assigned to an ASN.       |
+| asn_cidr         | str    | Network routing block assigned to an ASN.       |
 +------------------+--------+-------------------------------------------------+
-| asn_country_code | String | ASN assigned country code in ISO 3166-1 format. |
+| asn_country_code | str    | ASN assigned country code in ISO 3166-1 format. |
 +------------------+--------+-------------------------------------------------+
-| asn_date         | String | ASN allocation date in ISO 8601 format.         |
+| asn_date         | str    | ASN allocation date in ISO 8601 format.         |
 +------------------+--------+-------------------------------------------------+
-| asn_registry     | String | ASN assigned regional internet registry.        |
+| asn_registry     | str    | ASN assigned regional internet registry.        |
 +------------------+--------+-------------------------------------------------+
-| asn_description  | String | The ASN description                             |
+| asn_description  | str    | The ASN description                             |
 +------------------+--------+-------------------------------------------------+
-| nets             | List   | List of network dictionaries.                   |
+| nets             | list   | List of network dictionaries.                   |
 |                  |        | See :ref:`whois-network-dictionary`.            |
 +------------------+--------+-------------------------------------------------+
-| raw              | String | Raw whois results if inc_raw is True.           |
+| raw              | str    | Raw whois results if inc_raw is True.           |
 +------------------+--------+-------------------------------------------------+
-| referral         | Dict   | Referral whois information if get_referral      |
+| referral         | dict   | Referral whois information if get_referral      |
 |                  |        | is True and the server isn't blacklisted. See   |
 |                  |        | :ref:`whois-referral-dictionary`.               |
 +------------------+--------+-------------------------------------------------+
-| raw_referral     | String | Raw referral whois results if the inc_raw       |
+| raw_referral     | str    | Raw referral whois results if the inc_raw       |
 |                  |        | parameter is True.                              |
++------------------+--------+-------------------------------------------------+
+| nir              | dict   | The National Internet Registry results if       |
+|                  |        | inc_nir is True. See `NIR result <https://      |
+|                  |        | ipwhois.readthedocs.io/en/latest/NIR.html       |
+|                  |        | #results-dictionary>`_                          |
 +------------------+--------+-------------------------------------------------+
 
 .. _whois-network-dictionary:
@@ -131,33 +154,33 @@ The dictionary mapped to the nets key in the
 +-------------+--------+------------------------------------------------------+
 | **Key**     |**Type**| **Description**                                      |
 +-------------+--------+------------------------------------------------------+
-| cidr        | String | Network routing block an IP address belongs to.      |
+| cidr        | str    | Network routing block an IP address belongs to.      |
 +-------------+--------+------------------------------------------------------+
-| range       | String | Network range an IP address belongs to.              |
+| range       | str    | Network range an IP address belongs to.              |
 +-------------+--------+------------------------------------------------------+
-| name        | String | The identifier assigned to the network registration  |
+| name        | str    | The identifier assigned to the network registration  |
 |             |        | for an IP address.                                   |
 +-------------+--------+------------------------------------------------------+
-| handle      | String | Unique identifier for a registered network.          |
+| handle      | str    | Unique identifier for a registered network.          |
 +-------------+--------+------------------------------------------------------+
-| description | String | Description for a registered network.                |
+| description | str    | Description for a registered network.                |
 +-------------+--------+------------------------------------------------------+
-| country     | String | Country code registered with the RIR in              |
+| country     | str    | Country code registered with the RIR in              |
 |             |        | ISO 3166-1 format.                                   |
 +-------------+--------+------------------------------------------------------+
-| state       | String | State for a registered network (if applicable).      |
+| state       | str    | State for a registered network (if applicable).      |
 +-------------+--------+------------------------------------------------------+
-| city        | String | City for a registered network (if applicable).       |
+| city        | str    | City for a registered network (if applicable).       |
 +-------------+--------+------------------------------------------------------+
-| address     | String | The mailing address for a registered network.        |
+| address     | str    | The mailing address for a registered network.        |
 +-------------+--------+------------------------------------------------------+
-| postal_code | String | The postal code for a registered network.            |
+| postal_code | str    | The postal code for a registered network.            |
 +-------------+--------+------------------------------------------------------+
-| emails      | List   | The email addresses listed for a registered network. |
+| emails      | list   | The email addresses listed for a registered network. |
 +-------------+--------+------------------------------------------------------+
-| created     | String | Network registration date in ISO 8601 format.        |
+| created     | str    | Network registration date in ISO 8601 format.        |
 +-------------+--------+------------------------------------------------------+
-| updated     | String | Network registration updated date in ISO 8601 format.|
+| updated     | str    | Network registration updated date in ISO 8601 format.|
 +-------------+--------+------------------------------------------------------+
 
 .. _whois-referral-dictionary:
@@ -171,30 +194,30 @@ The dictionary mapped to the referral key in the
 +-------------+--------+------------------------------------------------------+
 | **Key**     |**Type**| **Description**                                      |
 +-------------+--------+------------------------------------------------------+
-| cidr        | String | Network routing block an IP address belongs to.      |
+| cidr        | str    | Network routing block an IP address belongs to.      |
 +-------------+--------+------------------------------------------------------+
-| range       | String | Network range an IP address belongs to.              |
+| range       | str    | Network range an IP address belongs to.              |
 +-------------+--------+------------------------------------------------------+
-| name        | String | The identifier assigned to the network registration  |
+| name        | str    | The identifier assigned to the network registration  |
 |             |        | for an IP address.                                   |
 +-------------+--------+------------------------------------------------------+
-| description | String | Description for a registered network.                |
+| description | str    | Description for a registered network.                |
 +-------------+--------+------------------------------------------------------+
-| country     | String | Country code registered in ISO 3166-1 format.        |
+| country     | str    | Country code registered in ISO 3166-1 format.        |
 +-------------+--------+------------------------------------------------------+
-| state       | String | State for a registered network (if applicable).      |
+| state       | str    | State for a registered network (if applicable).      |
 +-------------+--------+------------------------------------------------------+
-| city        | String | City for a registered network (if applicable).       |
+| city        | str    | City for a registered network (if applicable).       |
 +-------------+--------+------------------------------------------------------+
-| address     | String | The mailing address for a registered network.        |
+| address     | str    | The mailing address for a registered network.        |
 +-------------+--------+------------------------------------------------------+
-| postal_code | String | The postal code for a registered network.            |
+| postal_code | str    | The postal code for a registered network.            |
 +-------------+--------+------------------------------------------------------+
-| emails      | List   | The email addresses listed for a registered network. |
+| emails      | list   | The email addresses listed for a registered network. |
 +-------------+--------+------------------------------------------------------+
-| created     | String | Network registration date in ISO 8601 format.        |
+| created     | str    | Network registration date in ISO 8601 format.        |
 +-------------+--------+------------------------------------------------------+
-| updated     | String | Network registration updated date in ISO 8601 format.|
+| updated     | str    | Network registration updated date in ISO 8601 format.|
 +-------------+--------+------------------------------------------------------+
 
 .. _whois-usage-examples:

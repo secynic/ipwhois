@@ -30,13 +30,13 @@ Arguments supported:
 +--------------------+--------+-----------------------------------------------+
 | **Key**            |**Type**| **Description**                               |
 +--------------------+--------+-----------------------------------------------+
-| addresses          | List   | List of IP address strings to lookup.         |
+| addresses          | list   | List of IP address strings to lookup.         |
 +--------------------+--------+-----------------------------------------------+
-| retry_count        | Int    | The number of times to retry in case socket   |
+| retry_count        | int    | The number of times to retry in case socket   |
 |                    |        | errors, timeouts, connection resets, etc. are |
 |                    |        | encountered. Defaults to 3.                   |
 +--------------------+--------+-----------------------------------------------+
-| timeout            | Int    | The default timeout for socket connections in |
+| timeout            | int    | The default timeout for socket connections in |
 |                    |        | seconds. Defaults to 120.                     |
 +--------------------+--------+-----------------------------------------------+
 
@@ -108,33 +108,33 @@ Arguments supported:
 +--------------------+--------+-----------------------------------------------+
 | **Key**            |**Type**| **Description**                               |
 +--------------------+--------+-----------------------------------------------+
-| addresses          | List   | List of IP address strings to lookup.         |
+| addresses          | list   | List of IP address strings to lookup.         |
 +--------------------+--------+-----------------------------------------------+
-| inc_raw            | Bool   | Whether to include the raw whois results in   |
+| inc_raw            | bool   | Whether to include the raw whois results in   |
 |                    |        | the returned dictionary. Defaults to False.   |
 +--------------------+--------+-----------------------------------------------+
-| retry_count        | Int    | The number of times to retry in case socket   |
+| retry_count        | int    | The number of times to retry in case socket   |
 |                    |        | errors, timeouts, connection resets, etc. are |
 |                    |        | encountered. Defaults to 3.                   |
 +--------------------+--------+-----------------------------------------------+
-| depth              | Int    | How many levels deep to run queries when      |
+| depth              | int    | How many levels deep to run queries when      |
 |                    |        | additional referenced objects are found.      |
 |                    |        | Defaults to 0.                                |
 +--------------------+--------+-----------------------------------------------+
-| excluded_entities  | List   | Entity handles to not perform lookups.        |
+| excluded_entities  | list   | Entity handles to not perform lookups.        |
 |                    |        | Defaults to None.                             |
 +--------------------+--------+-----------------------------------------------+
-| rate_limit_timeout | Int    | The number of seconds to wait before retrying |
+| rate_limit_timeout | int    | The number of seconds to wait before retrying |
 |                    |        | when a rate limit notice isreturned via       |
 |                    |        | rdap+json. Defaults to 60.                    |
 +--------------------+--------+-----------------------------------------------+
-| socket_timeout     | Int    | The default timeout for socket connections in |
+| socket_timeout     | int    | The default timeout for socket connections in |
 |                    |        | seconds. Defaults to 10.                      |
 +--------------------+--------+-----------------------------------------------+
-| asn_timeout        | Int    | The default timeout for bulk ASN lookups in   |
+| asn_timeout        | int    | The default timeout for bulk ASN lookups in   |
 |                    |        | seconds. Defaults to 240.                     |
 +--------------------+--------+-----------------------------------------------+
-| proxy_openers      | List   | List of urllib.request.OpenerDirector proxy   |
+| proxy_openers      | list   | List of urllib.request.OpenerDirector proxy   |
 |                    |        | openers for single/rotating proxy support.    |
 |                    |        | Defaults to None.                             |
 +--------------------+--------+-----------------------------------------------+
@@ -149,12 +149,12 @@ The output namedtuple from ipwhois.experimental.bulk_lookup_rdap().
 +------------------+--------+-------------------------------------------------+
 | **Key**          |**Type**| **Description**                                 |
 +------------------+--------+-------------------------------------------------+
-| results          | Dict   | IP address keys with the values as dictionaries |
+| results          | dict   | IP address keys with the values as dictionaries |
 |                  |        | returned by `IPWhois.lookup_rdap()              |
 |                  |        | <https://ipwhois.readthedocs.io/en/latest/      |
 |                  |        | RDAP.html#results-dictionary>`_                 |
 +------------------+--------+-------------------------------------------------+
-| stats            | Dict   | Stats for the lookup containing the keys        |
+| stats            | dict   | Stats for the lookup containing the keys        |
 |                  |        | identified in :ref:`bulk_lookup_rdap-stats`     |
 +------------------+--------+-------------------------------------------------+
 

@@ -34,25 +34,26 @@ arguments for that function call:
 +-------------+--------+------------------------------------------------------+
 | **Key**     |**Type**| **Description**                                      |
 +-------------+--------+------------------------------------------------------+
-| nir         | String | The NIR to query ('jpnic' or 'krnic').               |
+| nir         | str    | The NIR to query ('jpnic' or 'krnic').               |
 +-------------+--------+------------------------------------------------------+
-| inc_raw     | Bool   | Boolean for whether to include the raw NIR whois     |
-|             |        | results in the returned dictionary.                  |
+| inc_raw     | bool   | Whether to include the raw whois results in          |
+|             |        | the returned dictionary. Defaults to False.          |
 +-------------+--------+------------------------------------------------------+
-| retry_count | Int    | The number of times to retry in case socket errors,  |
+| retry_count | int    | The number of times to retry in case socket errors,  |
 |             |        | timeouts, connection resets, etc. are encountered.   |
+|             |        | Defaults to 3.                                       |
 +-------------+--------+------------------------------------------------------+
-| response    | String | Optional response object, this bypasses the NIR      |
+| response    | str    | Optional response object, this bypasses the NIR      |
 |             |        | lookup.                                              |
 +-------------+--------+------------------------------------------------------+
-| field_list  | List   | If provided, a list of fields to parse:              |
+| field_list  | list   | If provided, a list of fields to parse:              |
 |             |        | ['name', 'handle', 'country', 'address',             |
 |             |        | 'postal_code', 'nameservers', 'created',             |
-|             |        | 'updated', 'contacts']                               |
+|             |        | 'updated', 'contacts']. If None, defaults to all.    |
 +-------------+--------+------------------------------------------------------+
-| is_offline  | Bool   | Boolean for whether to perform lookups offline.      |
+| is_offline  | bool   | Whether to perform lookups offline.                  |
 |             |        | If True, response and asn_data must be provided.     |
-|             |        | Primarily used for testing.                          |
+|             |        | Primarily used for testing. Defaults to False.       |
 +-------------+--------+------------------------------------------------------+
 
 .. _nir-output:
@@ -74,12 +75,12 @@ IPWhois.lookup_whois() results.
 +------------------+--------+-------------------------------------------------+
 | **Key**          |**Type**| **Description**                                 |
 +------------------+--------+-------------------------------------------------+
-| query            | String | The IP address input                            |
+| query            | str    | The IP address input                            |
 +------------------+--------+-------------------------------------------------+
-| nets             | List   | List of network dictionaries.                   |
+| nets             | list   | List of network dictionaries.                   |
 |                  |        | See :ref:`nir-network-dictionary`.              |
 +------------------+--------+-------------------------------------------------+
-| raw              | String | Raw NIR whois results if inc_raw is True.       |
+| raw              | str    | Raw NIR whois results if inc_raw is True.       |
 +------------------+--------+-------------------------------------------------+
 
 .. _nir-network-dictionary:
@@ -93,29 +94,29 @@ The dictionary mapped to the nets key in the
 +-------------+--------+------------------------------------------------------+
 | **Key**     |**Type**| **Description**                                      |
 +-------------+--------+------------------------------------------------------+
-| cidr        | String | Network routing block an IP address belongs to.      |
+| cidr        | str    | Network routing block an IP address belongs to.      |
 +-------------+--------+------------------------------------------------------+
-| range       | String | Network range an IP address belongs to.              |
+| range       | str    | Network range an IP address belongs to.              |
 +-------------+--------+------------------------------------------------------+
-| name        | String | The identifier assigned to the network registration  |
+| name        | str    | The identifier assigned to the network registration  |
 |             |        | for an IP address.                                   |
 +-------------+--------+------------------------------------------------------+
-| handle      | String | Unique identifier for a registered network.          |
+| handle      | str    | Unique identifier for a registered network.          |
 +-------------+--------+------------------------------------------------------+
-| country     | String | Country code registered with the NIR in ISO 3166-1   |
+| country     | str    | Country code registered with the NIR in ISO 3166-1   |
 |             |        | format.                                              |
 +-------------+--------+------------------------------------------------------+
-| address     | String | The mailing address for a registered network.        |
+| address     | str    | The mailing address for a registered network.        |
 +-------------+--------+------------------------------------------------------+
-| postal_code | String | The postal code for a registered network.            |
+| postal_code | str    | The postal code for a registered network.            |
 +-------------+--------+------------------------------------------------------+
-| nameservers | List   | The nameservers listed for a registered network.     |
+| nameservers | list   | The nameservers listed for a registered network.     |
 +-------------+--------+------------------------------------------------------+
-| created     | String | Network registration date in ISO 8601 format.        |
+| created     | str    | Network registration date in ISO 8601 format.        |
 +-------------+--------+------------------------------------------------------+
-| updated     | String | Network registration updated date in ISO 8601 format.|
+| updated     | str    | Network registration updated date in ISO 8601 format.|
 +-------------+--------+------------------------------------------------------+
-| contacts    | Dict   | Dictionary with keys: admin, tech. Values map to     |
+| contacts    | dict   | Dictionary with keys: admin, tech. Values map to     |
 |             |        | contact dictionaries if found. See                   |
 |             |        | :ref:`nir-contact-dictionary`.                       |
 +-------------+--------+------------------------------------------------------+
@@ -132,23 +133,23 @@ The contact information dictionary registered to a NIR network object. This is
 +--------------+--------+-----------------------------------------------------+
 | **Key**      |**Type**| **Description**                                     |
 +--------------+--------+-----------------------------------------------------+
-| name         | String | The contact's name.                                 |
+| name         | str    | The contact's name.                                 |
 +--------------+--------+-----------------------------------------------------+
-| organization | String | The contact's organization.                         |
+| organization | str    | The contact's organization.                         |
 +--------------+--------+-----------------------------------------------------+
-| division     | String | The contact's division of the organization.         |
+| division     | str    | The contact's division of the organization.         |
 +--------------+--------+-----------------------------------------------------+
-| email        | String | Contact email address.                              |
+| email        | str    | Contact email address.                              |
 +--------------+--------+-----------------------------------------------------+
-| reply_email  | String | Contact reply email address.                        |
+| reply_email  | str    | Contact reply email address.                        |
 +--------------+--------+-----------------------------------------------------+
-| updated      | String | Updated date in ISO 8601 format.                    |
+| updated      | str    | Updated date in ISO 8601 format.                    |
 +--------------+--------+-----------------------------------------------------+
-| phone        | String | Contact phone number.                               |
+| phone        | str    | Contact phone number.                               |
 +--------------+--------+-----------------------------------------------------+
-| fax          | String | Contact fax number.                                 |
+| fax          | str    | Contact fax number.                                 |
 +--------------+--------+-----------------------------------------------------+
-| title        | String | The contact's position or job title.                |
+| title        | str    | The contact's position or job title.                |
 +--------------+--------+-----------------------------------------------------+
 
 .. _nir-usage-examples:
