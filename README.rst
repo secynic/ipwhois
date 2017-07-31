@@ -82,7 +82,7 @@ https://github.com/secynic/ipwhois
 Pypi
 ----
 
-https://pypi.python.org/pypi/ipwhois
+https://pypi.org/project/ipwhois
 
 Changes
 -------
@@ -198,9 +198,6 @@ https://ipwhois.readthedocs.io/en/latest/RDAP.html
 
 Legacy Whois
 ------------
-
-IPWhois.lookup() is deprecated as of v0.12.0 and will be removed. Legacy whois
-lookups were moved to IPWhois.lookup_whois().
 
 Legacy Whois documentation:
 
