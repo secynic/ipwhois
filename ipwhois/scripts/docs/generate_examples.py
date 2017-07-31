@@ -29,6 +29,7 @@ import json
 import logging
 import re
 from ipwhois import IPWhois
+from ipwhois.experimental import (get_bulk_asn_whois, bulk_lookup_rdap)
 from ipwhois.net import Net
 from ipwhois.asn import (ASNOrigin, IPASN)
 from ipwhois.utils import unique_everseen
@@ -110,6 +111,74 @@ RST_FILES = {
                 '0': lambda: ASNOrigin(Net('2001:43f8:7b0::')).lookup(
                     asn='AS37578'
                 ),
+            }
+        }
+    },
+    'EXPERIMENTAL.rst': {
+        'GET_BULK_ASN_WHOIS_OUTPUT_BASIC': {
+            'content': (
+                '::\n\n'
+                '    >>>> from ipwhois.experimental import get_bulk_asn_whois'
+                '\n'
+                '    >>>> from pprint import pprint\n\n'
+                '    >>>> ip_list = [\'74.125.225.229\', '
+                '\'2001:4860:4860::8888\', \'62.239.237.1\', '
+                '\'2a00:2381:ffff::1\', \'210.107.73.73\', '
+                '\'2001:240:10c:1::ca20:9d1d\', \'200.57.141.161\', '
+                '\'2801:10:c000::\', \'196.11.240.215\', \'2001:43f8:7b0::\', '
+                '\'133.1.2.5\', \'115.1.2.3\']\n'
+                '    >>>> results = get_bulk_asn_whois(addresses=ip_list)\n'
+                '    >>>> pprint(results.split(\'\\\\n\'))\n\n'
+                '    {0}'
+            ),
+            'queries': {
+                '0': lambda: get_bulk_asn_whois([
+                    '74.125.225.229',  # ARIN
+                    '2001:4860:4860::8888',
+                    '62.239.237.1',  # RIPE
+                    '2a00:2381:ffff::1',
+                    '210.107.73.73',  # APNIC
+                    '2001:240:10c:1::ca20:9d1d',
+                    '200.57.141.161',  # LACNIC
+                    '2801:10:c000::',
+                    '196.11.240.215',  # AFRINIC
+                    '2001:43f8:7b0::',
+                    '133.1.2.5',  # JPNIC
+                    '115.1.2.3'  # KRNIC
+                ]).split('\n'),
+            }
+        },
+        'BULK_LOOKUP_RDAP_OUTPUT_BASIC': {
+            'content': (
+                '::\n\n'
+                '    >>>> from ipwhois.experimental import bulk_lookup_rdap\n'
+                '    >>>> from pprint import pprint\n\n'
+                '    >>>> ip_list = [\'74.125.225.229\', '
+                '\'2001:4860:4860::8888\', \'62.239.237.1\', '
+                '\'2a00:2381:ffff::1\', \'210.107.73.73\', '
+                '\'2001:240:10c:1::ca20:9d1d\', \'200.57.141.161\', '
+                '\'2801:10:c000::\', \'196.11.240.215\', \'2001:43f8:7b0::\', '
+                '\'133.1.2.5\', \'115.1.2.3\']\n'
+                '    >>>> results, stats = bulk_lookup_rdap(addresses=ip_list)'
+                '\n'
+                '    >>>> pprint(stats)\n\n'
+                '    {0}'
+            ),
+            'queries': {
+                '0': lambda: bulk_lookup_rdap(addresses=[
+                    '74.125.225.229',  # ARIN
+                    '2001:4860:4860::8888',
+                    '62.239.237.1',  # RIPE
+                    '2a00:2381:ffff::1',
+                    '210.107.73.73',  # APNIC
+                    '2001:240:10c:1::ca20:9d1d',
+                    '200.57.141.161',  # LACNIC
+                    '2801:10:c000::',
+                    '196.11.240.215',  # AFRINIC
+                    '2001:43f8:7b0::',
+                    '133.1.2.5',  # JPNIC
+                    '115.1.2.3'  # KRNIC
+                ])[1],
             }
         }
     },

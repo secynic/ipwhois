@@ -30,13 +30,13 @@ Arguments supported:
 +--------------------+--------+-----------------------------------------------+
 | **Key**            |**Type**| **Description**                               |
 +--------------------+--------+-----------------------------------------------+
-| addresses          | List   | List of IP address strings to lookup.         |
+| addresses          | list   | List of IP address strings to lookup.         |
 +--------------------+--------+-----------------------------------------------+
-| retry_count        | Int    | The number of times to retry in case socket   |
+| retry_count        | int    | The number of times to retry in case socket   |
 |                    |        | errors, timeouts, connection resets, etc. are |
 |                    |        | encountered. Defaults to 3.                   |
 +--------------------+--------+-----------------------------------------------+
-| timeout            | Int    | The default timeout for socket connections in |
+| timeout            | int    | The default timeout for socket connections in |
 |                    |        | seconds. Defaults to 120.                     |
 +--------------------+--------+-----------------------------------------------+
 
@@ -57,6 +57,32 @@ Basic usage
 ^^^^^^^^^^^
 
 .. GET_BULK_ASN_WHOIS_OUTPUT_BASIC START
+
+::
+
+    >>>> from ipwhois.experimental import get_bulk_asn_whois
+    >>>> from pprint import pprint
+
+    >>>> ip_list = ['74.125.225.229', '2001:4860:4860::8888', '62.239.237.1', '2a00:2381:ffff::1', '210.107.73.73', '2001:240:10c:1::ca20:9d1d', '200.57.141.161', '2801:10:c000::', '196.11.240.215', '2001:43f8:7b0::', '133.1.2.5', '115.1.2.3']
+    >>>> results = get_bulk_asn_whois(addresses=ip_list)
+    >>>> pprint(results.split('\n'))
+
+    [
+    "Bulk mode; whois.cymru.com [2017-07-30 23:02:21 +0000]",
+    "15169   | 74.125.225.229   | 74.125.225.0/24     | US | arin     | 2007-03-13 | GOOGLE - Google Inc., US",
+    "15169   | 2001:4860:4860::8888                     | 2001:4860::/32      | US | arin     | 2005-03-14 | GOOGLE - Google Inc., US",
+    "2856    | 62.239.237.1     | 62.239.0.0/16       | GB | ripencc  | 2001-01-02 | BT-UK-AS BTnet UK Regional network, GB",
+    "2856    | 2a00:2381:ffff::1                        | 2a00:2380::/25      | GB | ripencc  | 2007-08-29 | BT-UK-AS BTnet UK Regional network, GB",
+    "3786    | 210.107.73.73    | 210.107.0.0/17      | KR | apnic    |            | LGDACOM LG DACOM Corporation, KR",
+    "2497    | 2001:240:10c:1::ca20:9d1d                | 2001:240::/32       | JP | apnic    | 2000-03-08 | IIJ Internet Initiative Japan Inc., JP",
+    "19373   | 200.57.141.161   | 200.57.128.0/20     | MX | lacnic   | 2000-12-04 | Triara.com, S.A. de C.V., MX",
+    "NA      | 2801:10:c000::                           | NA                  | CO | lacnic   | 2013-10-29 | NA",
+    "12091   | 196.11.240.215   | 196.11.240.0/24     | ZA | afrinic  |            | MTNNS-1, ZA",
+    "37578   | 2001:43f8:7b0::                          | 2001:43f8:7b0::/48  | KE | afrinic  | 2013-03-22 | Tespok, KE",
+    "4730    | 133.1.2.5        | 133.1.0.0/16        | JP | apnic    |            | ODINS Osaka University, JP",
+    "4134    | 115.1.2.3        | 115.0.0.0/14        | KR | apnic    | 2008-07-01 | CHINANET-BACKBONE No.31,Jin-rong Street, CN",
+    ""
+    }
 
 .. GET_BULK_ASN_WHOIS_OUTPUT_BASIC END
 
@@ -82,33 +108,33 @@ Arguments supported:
 +--------------------+--------+-----------------------------------------------+
 | **Key**            |**Type**| **Description**                               |
 +--------------------+--------+-----------------------------------------------+
-| addresses          | List   | List of IP address strings to lookup.         |
+| addresses          | list   | List of IP address strings to lookup.         |
 +--------------------+--------+-----------------------------------------------+
-| inc_raw            | Bool   | Whether to include the raw whois results in   |
+| inc_raw            | bool   | Whether to include the raw whois results in   |
 |                    |        | the returned dictionary. Defaults to False.   |
 +--------------------+--------+-----------------------------------------------+
-| retry_count        | Int    | The number of times to retry in case socket   |
+| retry_count        | int    | The number of times to retry in case socket   |
 |                    |        | errors, timeouts, connection resets, etc. are |
 |                    |        | encountered. Defaults to 3.                   |
 +--------------------+--------+-----------------------------------------------+
-| depth              | Int    | How many levels deep to run queries when      |
+| depth              | int    | How many levels deep to run queries when      |
 |                    |        | additional referenced objects are found.      |
 |                    |        | Defaults to 0.                                |
 +--------------------+--------+-----------------------------------------------+
-| excluded_entities  | List   | Entity handles to not perform lookups.        |
+| excluded_entities  | list   | Entity handles to not perform lookups.        |
 |                    |        | Defaults to None.                             |
 +--------------------+--------+-----------------------------------------------+
-| rate_limit_timeout | Int    | The number of seconds to wait before retrying |
+| rate_limit_timeout | int    | The number of seconds to wait before retrying |
 |                    |        | when a rate limit notice isreturned via       |
 |                    |        | rdap+json. Defaults to 60.                    |
 +--------------------+--------+-----------------------------------------------+
-| socket_timeout     | Int    | The default timeout for socket connections in |
+| socket_timeout     | int    | The default timeout for socket connections in |
 |                    |        | seconds. Defaults to 10.                      |
 +--------------------+--------+-----------------------------------------------+
-| asn_timeout        | Int    | The default timeout for bulk ASN lookups in   |
+| asn_timeout        | int    | The default timeout for bulk ASN lookups in   |
 |                    |        | seconds. Defaults to 240.                     |
 +--------------------+--------+-----------------------------------------------+
-| proxy_openers      | List   | List of urllib.request.OpenerDirector proxy   |
+| proxy_openers      | list   | List of urllib.request.OpenerDirector proxy   |
 |                    |        | openers for single/rotating proxy support.    |
 |                    |        | Defaults to None.                             |
 +--------------------+--------+-----------------------------------------------+
@@ -123,12 +149,12 @@ The output namedtuple from ipwhois.experimental.bulk_lookup_rdap().
 +------------------+--------+-------------------------------------------------+
 | **Key**          |**Type**| **Description**                                 |
 +------------------+--------+-------------------------------------------------+
-| results          | Dict   | IP address keys with the values as dictionaries |
+| results          | dict   | IP address keys with the values as dictionaries |
 |                  |        | returned by `IPWhois.lookup_rdap()              |
 |                  |        | <https://ipwhois.readthedocs.io/en/latest/      |
 |                  |        | RDAP.html#results-dictionary>`_                 |
 +------------------+--------+-------------------------------------------------+
-| stats            | Dict   | Stats for the lookup containing the keys        |
+| stats            | dict   | Stats for the lookup containing the keys        |
 |                  |        | identified in :ref:`bulk_lookup_rdap-stats`     |
 +------------------+--------+-------------------------------------------------+
 
@@ -179,5 +205,48 @@ Basic usage
 ^^^^^^^^^^^
 
 .. BULK_LOOKUP_RDAP_OUTPUT_BASIC START
+
+::
+
+    >>>> from ipwhois.experimental import bulk_lookup_rdap
+    >>>> from pprint import pprint
+
+    >>>> ip_list = ['74.125.225.229', '2001:4860:4860::8888', '62.239.237.1', '2a00:2381:ffff::1', '210.107.73.73', '2001:240:10c:1::ca20:9d1d', '200.57.141.161', '2801:10:c000::', '196.11.240.215', '2001:43f8:7b0::', '133.1.2.5', '115.1.2.3']
+    >>>> results, stats = bulk_lookup_rdap(addresses=ip_list)
+    >>>> pprint(stats)
+
+    {
+    "afrinic": {
+        "failed": [],
+        "rate_limited": [],
+        "total": 2
+    },
+    "apnic": {
+        "failed": [
+            "115.1.2.3"
+        ],
+        "rate_limited": [],
+        "total": 4
+    },
+    "arin": {
+        "failed": [],
+        "rate_limited": [],
+        "total": 2
+    },
+    "ip_input_total": 12,
+    "ip_lookup_total": 12,
+    "ip_unique_total": 12,
+    "lacnic": {
+        "failed": [],
+        "rate_limited": [],
+        "total": 2
+    },
+    "ripencc": {
+        "failed": [],
+        "rate_limited": [],
+        "total": 2
+    },
+    "unallocated_addresses": []
+    }
 
 .. BULK_LOOKUP_RDAP_OUTPUT_BASIC END
