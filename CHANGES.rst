@@ -14,8 +14,7 @@ Changelog
 - Fixed bug in RDAP notices/remarks parsing that would omit partial entries
   missing one or more of title, description, links (#176)
 - Added new return key asn_description via verbose ASN DNS lookup support and
-  modified ASN whois lookups. New argument get_asn_description to disable
-  additional DNS lookup (#176)
+  modified ASN whois lookups. New argument get_asn_description (#176)
 - Fixed some test function naming errors
 - Added new generators to utils.py: ipv4_generate_random and
   ipv6_generate_random (#183)
