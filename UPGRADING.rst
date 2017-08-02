@@ -19,8 +19,7 @@ v1.0.0
 - Experimental bulk functions added: experimental.get_bulk_asn_whois and
   experimental.bulk_lookup_rdap.
 - Added new return key asn_description to net.Net.get_asn_whois,
-  experimental.get_bulk_asn_whois, and hr.py. New argument get_asn_description
-  to disable additional DNS lookups added to CLI.
+  experimental.get_bulk_asn_whois, and hr.py. New argument get_asn_description.
 - The IPWhois argument allow_permutations and the lookup argument asn_alts
   have been deprecated in favor of new argument asn_methods.
 - Deprecated unnecessary protected class functions, changed to public in
