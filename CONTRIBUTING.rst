@@ -98,7 +98,7 @@ accomplished by the following steps:
 
 1. Create an issue (if there isn't one already)
 2. Branch from dev (not master), try to name your branch to reference the issue
-   (e.g., issue_123_feature, issue_123_bugfix).
+   number (e.g., 123/somedescription).
 3. Merge pull requests to dev (not master). Hotfix merges to master will
    only be allowed under extreme/time sensitive circumstances.
 
