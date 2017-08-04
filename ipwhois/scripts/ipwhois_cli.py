@@ -25,6 +25,7 @@
 # CLI python script interface for ipwhois.IPWhois lookups.
 
 import argparse
+from collections import namedtuple
 import json
 from os import path
 from ipwhois import IPWhois
@@ -317,6 +318,43 @@ script_args = parser.parse_args()
 
 # Get the current working directory.
 CUR_DIR = path.dirname(__file__)
+
+
+def output_rdap_generic(source, key, val, hr=True, show_name=False):
+    """
+    The function processing and returning common RDAP output values.
+
+    Args:
+        source (:obj:`dict`): The event source (required).
+        key (:obj:`str`): The event data key (required).
+        val (:obj:`dict`): The event data value (required).
+        hr (:obj:`bool`): Enable human readable key translations. Defaults
+                to True.
+        show_name (:obj:`bool`): Show human readable name (default is to
+            only show short). Defaults to False.
+
+    Returns:
+        namedtuple:
+
+        :short (:obj:`str`): The abbreviated name for a field. See hr.py for
+            values.
+        :name (:obj:`str`): The name for a field. See hr.py for values.
+        :is_parent (:obj:`bool`):
+        :result (:obj:`str`): The result value.
+    """
+
+    short = HR_RDAP[source][key]['_short'] if hr else key,
+    name = HR_RDAP[source][key]['_name'] if (hr and show_name) else None,
+    is_parent = False if (val is None or
+                          len(val) == 0) else True,
+    result = 'None' if (val is None or
+                        len(val) == 0) else val,
+
+    # Initialize the results named tuple
+    output = namedtuple('generate_output_rdap_generic',
+                        'short, name, is_parent, result')
+
+    return output(short, name, is_parent, result)
 
 
 def generate_output(line='0', short=None, name=None, value=None,
@@ -668,14 +706,16 @@ class IPWhoisCLI:
             str: The generated output.
         """
 
+        short_eval, name_eval, is_parent, value_eval = output_rdap_generic(
+            source=source, key=key, val=val, hr=hr, show_name=show_name
+        )
+
         output = generate_output(
             line=line,
-            short=HR_RDAP[source][key]['_short'] if hr else key,
-            name=HR_RDAP[source][key]['_name'] if (hr and show_name) else None,
-            is_parent=False if (val is None or
-                                len(val) == 0) else True,
-            value='None' if (val is None or
-                             len(val) == 0) else None,
+            short=short_eval,
+            name=name_eval,
+            value=value_eval,
+            is_parent=is_parent,
             colorize=colorize
         )
 
@@ -764,14 +804,16 @@ class IPWhoisCLI:
             str: The generated output.
         """
 
+        short_eval, name_eval, is_parent, value_eval = output_rdap_generic(
+            source=source, key=key, val=val, hr=hr, show_name=show_name
+        )
+
         output = generate_output(
             line=line,
-            short=HR_RDAP[source][key]['_short'] if hr else key,
-            name=HR_RDAP[source][key]['_name'] if (hr and show_name) else None,
-            is_parent=False if (val is None or
-                                len(val) == 0) else True,
-            value='None' if (val is None or
-                             len(val) == 0) else None,
+            short=short_eval,
+            name=name_eval,
+            value=value_eval,
+            is_parent=is_parent,
             colorize=colorize
         )
 
@@ -809,14 +851,16 @@ class IPWhoisCLI:
             str: The generated output.
         """
 
+        short_eval, name_eval, is_parent, value_eval = output_rdap_generic(
+            source=source, key=key, val=val, hr=hr, show_name=show_name
+        )
+
         output = generate_output(
             line=line,
-            short=HR_RDAP[source][key]['_short'] if hr else key,
-            name=HR_RDAP[source][key]['_name'] if (hr and show_name) else None,
-            is_parent=False if (val is None or
-                                len(val) == 0) else True,
-            value='None' if (val is None or
-                             len(val) == 0) else None,
+            short=short_eval,
+            name=name_eval,
+            value=value_eval,
+            is_parent=is_parent,
             colorize=colorize
         )
 
