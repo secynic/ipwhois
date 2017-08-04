@@ -4,7 +4,8 @@ Changelog
 1.1.0 (TBD)
 -----------
 
-- Fixed code duplication in ipwhois_cli.py -- partial (#181)
+- Fixed code duplication in ipwhois_cli.py, ipwhois_utils_cli.py -- partial
+  (#181)
 
 1.0.0 (2017-07-30)
 ------------------

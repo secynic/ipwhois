@@ -114,6 +114,43 @@ group.add_argument(
 # Get the args
 script_args = parser.parse_args()
 
+
+def generate_output_is_defined(result_list=''):
+    """
+    The function for formatting CLI output results.
+
+    Args:
+        result_list (:obj:`list`): The ipv*_is_defined result to output.
+
+    Returns:
+        str: The generated output.
+    """
+
+    try:
+
+        if result:
+
+            output = ('{0}{1} is defined{2}:\n{3}'.format(
+                ANSI['green'] if script_args.colorize else '',
+                result_list,
+                ANSI['end'] if script_args.colorize else '',
+                'Name: {0}\nRFC: {1}'.format(result[1], result[2])
+            ))
+
+        else:
+
+            output = ('{0}{1} is not defined{2}'.format(
+                ANSI['yellow'] if script_args.colorize else '',
+                result_list,
+                ANSI['end'] if script_args.colorize else ''
+            ))
+
+    except Exception as e:
+
+        output = ('{0}Error{1}: {2}'.format(ANSI['red'], ANSI['end'], str(e)))
+
+    return output
+
 if script_args.ipv4_lstrip_zeros:
 
     print(ipv4_lstrip_zeros(address=script_args.ipv4_lstrip_zeros[0]))
@@ -178,51 +215,11 @@ elif script_args.get_country:
 
 elif script_args.ipv4_is_defined:
 
-    try:
-
-        result = ipv4_is_defined(address=script_args.ipv4_is_defined[0])
-
-        if result[0]:
-            print('{0}{1} is defined{2}:\n{3}'.format(
-                ANSI['green'] if script_args.colorize else '',
-                script_args.ipv4_is_defined[0],
-                ANSI['end'] if script_args.colorize else '',
-                'Name: {0}\nRFC: {1}'.format(result[1], result[2])
-            ))
-        else:
-            print('{0}{1} is not defined{2}'.format(
-                ANSI['yellow'] if script_args.colorize else '',
-                script_args.ipv4_is_defined[0],
-                ANSI['end'] if script_args.colorize else ''
-            ))
-
-    except Exception as e:
-
-        print('{0}Error{1}: {2}'.format(ANSI['red'], ANSI['end'], str(e)))
+    generate_output_is_defined(result_list=script_args.ipv4_is_defined[0])
 
 elif script_args.ipv6_is_defined:
 
-    try:
-
-        result = ipv6_is_defined(address=script_args.ipv6_is_defined[0])
-
-        if result[0]:
-            print('{0}{1} is defined{2}:\n{3}'.format(
-                ANSI['green'] if script_args.colorize else '',
-                script_args.ipv6_is_defined[0],
-                ANSI['end'] if script_args.colorize else '',
-                'Name: {0}\nRFC: {1}'.format(result[1], result[2])
-            ))
-        else:
-            print('{0}{1} is not defined{2}'.format(
-                ANSI['yellow'] if script_args.colorize else '',
-                script_args.ipv6_is_defined[0],
-                ANSI['end'] if script_args.colorize else ''
-            ))
-
-    except Exception as e:
-
-        print('{0}Error{1}: {2}'.format(ANSI['red'], ANSI['end'], str(e)))
+    generate_output_is_defined(result_list=script_args.ipv6_is_defined[0])
 
 elif script_args.unique_everseen:
 
