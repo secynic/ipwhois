@@ -40,6 +40,11 @@ from .whois import RIR_WHOIS
 from .asn import ASN_ORIGIN_WHOIS
 from .utils import ipv4_is_defined, ipv6_is_defined
 
+from .ASNOrigin import get_asn_origin_whois as _get_asn_origin_whois
+from .ASNOrigin import get_http_raw as _get_http_raw
+
+from warnings import warn
+
 if sys.version_info >= (3, 3):  # pragma: no cover
     from ipaddress import (ip_address,
                            IPv4Address,
@@ -451,94 +456,18 @@ class Net:
             WhoisRateLimitError: The ASN origin Whois request rate limited and
                 retries were exhausted.
         """
+        log.warning("Net.get_asn_origin_whois() has been deprecated and will be removed. You should now use ASNOrigin.get_asn_origin_whois().")
+        warn("Net.get_asn_origin_whois() has been deprecated and will be removed. You should now use ASNOrigin.get_asn_origin_whois().",
+             DeprecationWarning)
+        return _get_asn_origin_whois(
+                            asn_registry=asn_registry,
+                            asn=asn,
+                            retry_count=retry_count,
+                            server=server,
+                            port=port,
+                            timeout=self.timeout,
+                            )
 
-        try:
-
-            if server is None:
-                server = ASN_ORIGIN_WHOIS[asn_registry]['server']
-
-            # Create the connection for the whois query.
-            conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            conn.settimeout(self.timeout)
-            log.debug('ASN origin WHOIS query for {0} at {1}:{2}'.format(
-                asn, server, port))
-            conn.connect((server, port))
-
-            # Prep the query.
-            query = ' -i origin {0}{1}'.format(asn, '\r\n')
-
-            # Query the whois server, and store the results.
-            conn.send(query.encode())
-
-            response = ''
-            while True:
-
-                d = conn.recv(4096).decode()
-
-                response += d
-
-                if not d:
-
-                    break
-
-            conn.close()
-
-            # TODO: this was taken from get_whois(). Need to test rate limiting
-            if 'Query rate limit exceeded' in response:  # pragma: no cover
-
-                if retry_count > 0:
-
-                    log.debug('ASN origin WHOIS query rate limit exceeded. '
-                              'Waiting...')
-                    sleep(1)
-                    return self.get_asn_origin_whois(
-                        asn_registry=asn_registry, asn=asn,
-                        retry_count=retry_count-1,
-                        server=server, port=port
-                    )
-
-                else:
-
-                    raise WhoisRateLimitError(
-                        'ASN origin Whois lookup failed for {0}. Rate limit '
-                        'exceeded, wait and try again (possibly a '
-                        'temporary block).'.format(asn))
-
-            elif ('error 501' in response or 'error 230' in response
-                  ):  # pragma: no cover
-
-                log.debug('ASN origin WHOIS query error: {0}'.format(response))
-                raise ValueError
-
-            return str(response)
-
-        except (socket.timeout, socket.error) as e:
-
-            log.debug('ASN origin WHOIS query socket error: {0}'.format(e))
-            if retry_count > 0:
-
-                log.debug('ASN origin WHOIS query retrying (count: {0})'
-                          ''.format(str(retry_count)))
-                return self.get_asn_origin_whois(
-                    asn_registry=asn_registry, asn=asn,
-                    retry_count=retry_count-1, server=server, port=port
-                )
-
-            else:
-
-                raise WhoisLookupError(
-                    'ASN origin WHOIS lookup failed for {0}.'.format(asn)
-                )
-
-        except WhoisRateLimitError:  # pragma: no cover
-
-            raise
-
-        except:  # pragma: no cover
-
-            raise WhoisLookupError(
-                'ASN origin WHOIS lookup failed for {0}.'.format(asn)
-            )
 
     def get_whois(self, asn_registry='arin', retry_count=3, server=None,
                   port=43, extra_blacklist=None):
@@ -885,70 +814,14 @@ class Net:
         Raises:
             HTTPLookupError: The HTTP lookup failed.
         """
-
-        if headers is None:
-            headers = {'Accept': 'text/html'}
-
-        enc_form_data = None
-        if form_data:
-            enc_form_data = urlencode(form_data)
-            try:
-                # Py 2 inspection will alert on the encoding arg, no harm done.
-                enc_form_data = bytes(enc_form_data, encoding='ascii')
-            except TypeError:  # pragma: no cover
-                pass
-
-        try:
-
-            # Create the connection for the HTTP query.
-            log.debug('HTTP query for {0} at {1}'.format(
-                self.address_str, url))
-            try:
-                # Py 2 inspection alert bypassed by using kwargs dict.
-                conn = Request(url=url, data=enc_form_data, headers=headers,
-                               **{'method': request_type})
-            except TypeError:  # pragma: no cover
-                conn = Request(url=url, data=enc_form_data, headers=headers)
-            data = self.opener.open(conn, timeout=self.timeout)
-
-            try:
-                d = data.readall().decode('ascii', 'ignore')
-            except AttributeError:  # pragma: no cover
-                d = data.read().decode('ascii', 'ignore')
-
-            return str(d)
-
-        except (URLError, socket.timeout, socket.error) as e:
-
-            # Check needed for Python 2.6, also why URLError is caught.
-            try:  # pragma: no cover
-                if not isinstance(e.reason, (socket.timeout, socket.error)):
-                    raise HTTPLookupError('HTTP lookup failed for {0}.'
-                                          ''.format(url))
-            except AttributeError:  # pragma: no cover
-
-                pass
-
-            log.debug('HTTP query socket error: {0}'.format(e))
-            if retry_count > 0:
-
-                log.debug('HTTP query retrying (count: {0})'.format(
-                    str(retry_count)))
-
-                return self.get_http_raw(
-                    url=url, retry_count=retry_count - 1, headers=headers,
-                    request_type=request_type, form_data=form_data
-                )
-
-            else:
-
-                raise HTTPLookupError('HTTP lookup failed for {0}.'.format(
-                    url))
-
-        except HTTPLookupError as e:  # pragma: no cover
-
-            raise e
-
-        except Exception:  # pragma: no cover
-
-            raise HTTPLookupError('HTTP lookup failed for {0}.'.format(url))
+        warn(
+            "Net.get_http_raw() has been deprecated and will be removed. You should now use ASNOrigin.get_http_raw().",
+            DeprecationWarning)
+        return _get_http_raw(url=url,
+                             retry_count=retry_count,
+                             headers=headers,
+                             request_type=request_type,
+                             form_data=form_data,
+                             timeout=self.timeout,
+                             proxy_opener=self.opener
+                             )
