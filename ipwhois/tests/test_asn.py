@@ -141,9 +141,9 @@ class TestIPASN(TestCommon):
 
 class TestASNOrigin(TestCommon):
 
-    def test__ASNOrigin(self):
-
-        self.assertRaises(NetError, ASNOrigin, 'a')
+    # def test__ASNOrigin(self):
+    #
+    #     self.assertRaises(NetError, ASNOrigin, 'a') there is no ASNOrigin class any more.
 
     def test__ASNOriginLookup(self):
 
