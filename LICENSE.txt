@@ -1,4 +1,5 @@
-Copyright (c) 2013-2017 Philip Hane
+Original work Copyright (c) 2013-2017 Philip Hane
+Modified work Copyright (c) 2017 Ling Wang
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without

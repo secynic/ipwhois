@@ -14,7 +14,7 @@ without -T it will return both v4 and v6
 
 """
 # Original work Copyright (c) 2013-2017 Philip Hane
-# Modifed work Copyright (c) 2017 Ling Wang
+# Modified work Copyright (c) 2017 Ling Wang
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
