@@ -508,7 +508,7 @@ class IPASN:
                     asn_data_list = []
                     for asn_entry in response:
 
-                        asn_data_list.append(self._parse_fields_dns(
+                        asn_data_list.append(self.parse_fields_dns(
                             str(asn_entry)))
 
                     # Iterate through the parsed ASN results to find the
@@ -541,7 +541,7 @@ class IPASN:
                 try:
 
                     response = self._net.get_asn_whois(retry_count)
-                    asn_data = self._parse_fields_whois(
+                    asn_data = self.parse_fields_whois(
                         response)  # pragma: no cover
                     break
 
@@ -557,7 +557,7 @@ class IPASN:
                     response = self._net.get_asn_http(
                         retry_count=retry_count
                     )
-                    asn_data = self._parse_fields_http(response,
+                    asn_data = self.parse_fields_http(response,
                                                        extra_org_map)
                     break
 
