@@ -508,7 +508,7 @@ class IPASN:
                     asn_data_list = []
                     for asn_entry in response:
 
-                        asn_data_list.append(self._parse_fields_dns(
+                        asn_data_list.append(self.parse_fields_dns(
                             str(asn_entry)))
 
                     # Iterate through the parsed ASN results to find the
