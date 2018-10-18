@@ -72,10 +72,10 @@ ASN_ORIGIN_HTTP = {
             '-i option': 'origin'
         },
         'fields': {
-            'description': r'(descr):[^\S\n]+(?P<val>.+?)\<br\>',
-            'maintainer': r'(mnt-by):[^\S\n]+(?P<val>.+?)\<br\>',
-            'updated': r'(changed):[^\S\n]+(?P<val>.+?)\<br\>',
-            'source': r'(source):[^\S\n]+(?P<val>.+?)\<br\>',
+            'description': r'(descr):[^\S\n]+(?P<val>.+?)\n',
+            'maintainer': r'(mnt-by):[^\S\n]+(?P<val>.+?)\n',
+            'updated': r'(changed):[^\S\n]+(?P<val>.+?)\n',
+            'source': r'(source):[^\S\n]+(?P<val>.+?)\n',
         }
     },
 }
@@ -739,10 +739,7 @@ class ASNOrigin:
 
         nets = []
 
-        if is_http:
-            regex = r'route(?:6)?:[^\S\n]+(?P<val>.+?)<br>'
-        else:
-            regex = r'^route(?:6)?:[^\S\n]+(?P<val>.+|.+)$'
+        regex = r'^route(?:6)?:[^\S\n]+(?P<val>.+|.+)$'
 
         # Iterate through all of the networks found, storing the CIDR value
         # and the start and end positions.
