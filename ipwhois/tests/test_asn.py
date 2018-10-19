@@ -242,7 +242,10 @@ class TestASNOrigin(TestCommon):
         obj._get_nets_radb(multi_net_response)
 
         self.assertEqual(obj._get_nets_radb(multi_net_response, is_http=True),
-                         [])
+                         [{'cidr': '66.249.64.0/20', 'description': None, 'maintainer': None, 'updated': None,
+                           'source': None, 'start': 2, 'end': 29},
+                          {'cidr': '66.249.80.0/20', 'description': None, 'maintainer': None, 'updated': None,
+                           'source': None, 'start': 175, 'end': 202}])
 
         net = Net('2001:43f8:7b0::')
         obj = ASNOrigin(net)
