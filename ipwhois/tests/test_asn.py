@@ -21,23 +21,23 @@ class TestIPASN(TestCommon):
 
         self.assertRaises(NetError, IPASN, 'a')
 
-    def test__parse_fields_dns(self):
+    def test_parse_fields_dns(self):
 
         data = '"15169 | 74.125.225.0/24 | US | arin | 2007-03-13"'
         net = Net('74.125.225.229')
         ipasn = IPASN(net)
         try:
-            self.assertIsInstance(ipasn._parse_fields_dns(data), dict)
+            self.assertIsInstance(ipasn.parse_fields_dns(data), dict)
         except AssertionError as e:
             raise e
         except Exception as e:
             self.fail('Unexpected exception raised: {0}'.format(e))
 
         data = '"15169 | 74.125.225.0/24 | US | random | 2007-03-13"'
-        self.assertRaises(ASNRegistryError, ipasn._parse_fields_dns, data)
+        self.assertRaises(ASNRegistryError, ipasn.parse_fields_dns, data)
 
         data = ''
-        self.assertRaises(ASNParseError, ipasn._parse_fields_dns, data)
+        self.assertRaises(ASNParseError, ipasn.parse_fields_dns, data)
 
     def test_parse_fields_verbose_dns(self):
 

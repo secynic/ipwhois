@@ -127,7 +127,7 @@ class TestNIRWhois(TestCommon):
             'IPv4 Address       : asd'
         ))
 
-    def test__get_contact(self):
+    def test_get_contact(self):
 
         net = Net('115.1.2.3')
         obj = NIRWhois(net)
@@ -139,7 +139,7 @@ class TestNIRWhois(TestCommon):
         )
 
         # No exception raised.
-        obj._get_contact(
+        obj.get_contact(
             response=contact_response,
             handle=None,
             nir='krnic',
