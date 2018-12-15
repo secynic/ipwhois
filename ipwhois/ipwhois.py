@@ -48,7 +48,7 @@ class IPWhois:
     """
 
     def __init__(self, address, timeout=5, proxy_opener=None,
-                 allow_permutations=True):
+                 allow_permutations=False):
 
         self.net = Net(
             address=address, timeout=timeout, proxy_opener=proxy_opener,

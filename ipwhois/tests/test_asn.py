@@ -58,14 +58,14 @@ class TestIPASN(TestCommon):
         data = ''
         self.assertRaises(ASNParseError, ipasn.parse_fields_verbose_dns, data)
 
-    def test__parse_fields_whois(self):
+    def test_parse_fields_whois(self):
 
         data = ('15169   | 74.125.225.229   | 74.125.225.0/24     | US | arin'
                 '     | 2007-03-13 | GOOGLE - Google Inc., US')
         net = Net('74.125.225.229')
         ipasn = IPASN(net)
         try:
-            self.assertIsInstance(ipasn._parse_fields_whois(data), dict)
+            self.assertIsInstance(ipasn.parse_fields_whois(data), dict)
         except AssertionError as e:
             raise e
         except Exception as e:
@@ -73,12 +73,12 @@ class TestIPASN(TestCommon):
 
         data = ('15169   | 74.125.225.229   | 74.125.225.0/24     | US | rdm'
                 '     | 2007-03-13 | GOOGLE - Google Inc., US')
-        self.assertRaises(ASNRegistryError, ipasn._parse_fields_whois, data)
+        self.assertRaises(ASNRegistryError, ipasn.parse_fields_whois, data)
 
         data = '15169   | 74.125.225.229   | 74.125.225.0/24     | US'
-        self.assertRaises(ASNParseError, ipasn._parse_fields_whois, data)
+        self.assertRaises(ASNParseError, ipasn.parse_fields_whois, data)
 
-    def test__parse_fields_http(self):
+    def test_parse_fields_http(self):
 
         data = {
             'nets': {
@@ -92,7 +92,7 @@ class TestIPASN(TestCommon):
         net = Net('1.2.3.4')
         ipasn = IPASN(net)
         try:
-            self.assertIsInstance(ipasn._parse_fields_http(response=data),
+            self.assertIsInstance(ipasn.parse_fields_http(response=data),
                                   dict)
         except AssertionError as e:
             raise e
@@ -101,7 +101,7 @@ class TestIPASN(TestCommon):
 
         data['nets']['net']['orgRef']['@handle'] = 'RIPE'
         try:
-            self.assertIsInstance(ipasn._parse_fields_http(response=data),
+            self.assertIsInstance(ipasn.parse_fields_http(response=data),
                                   dict)
         except AssertionError as e:
             raise e
@@ -110,7 +110,7 @@ class TestIPASN(TestCommon):
 
         data['nets']['net']['orgRef']['@handle'] = 'DNIC'
         try:
-            self.assertIsInstance(ipasn._parse_fields_http(response=data),
+            self.assertIsInstance(ipasn.parse_fields_http(response=data),
                                   dict)
         except AssertionError as e:
             raise e
@@ -119,7 +119,7 @@ class TestIPASN(TestCommon):
 
         data['nets']['net']['orgRef']['@handle'] = 'INVALID'
         try:
-            self.assertRaises(ASNRegistryError, ipasn._parse_fields_http,
+            self.assertRaises(ASNRegistryError, ipasn.parse_fields_http,
                               response=data)
         except AssertionError as e:
             raise e
@@ -128,7 +128,7 @@ class TestIPASN(TestCommon):
 
         data = ''
         try:
-            self.assertIsInstance(ipasn._parse_fields_http(response=data), dict)
+            self.assertIsInstance(ipasn.parse_fields_http(response=data), dict)
         except AssertionError as e:
             raise e
         except Exception as e:
@@ -174,7 +174,7 @@ class TestASNOrigin(TestCommon):
 
                 self.fail('Unexpected exception raised: {0}'.format(e))
 
-    def test__parse_fields(self):
+    def test_parse_fields(self):
 
         net = Net('74.125.225.229')
         obj = ASNOrigin(net)
@@ -183,12 +183,12 @@ class TestASNOrigin(TestCommon):
         # groups are messed up.
         tmp_dict = ASN_ORIGIN_WHOIS['radb']['fields']
         tmp_dict['route'] = r'(route):[^\S\n]+(?P<val1>.+?)\n'
-        obj._parse_fields(
+        obj.parse_fields(
             response="\nroute:        66.249.64.0/20\n",
             fields_dict=tmp_dict
         )
 
-        obj._parse_fields(
+        obj.parse_fields(
             response="\nchanged:        noc@google.com 20110301\n",
             fields_dict=ASN_ORIGIN_WHOIS['radb']['fields']
         )
@@ -210,7 +210,7 @@ class TestASNOrigin(TestCommon):
             '\nsource:     RADB'
             '\n\n'
         )
-        obj._parse_fields(
+        obj.parse_fields(
             response=multi_net_response,
             fields_dict=ASN_ORIGIN_WHOIS['radb']['fields']
         )
@@ -239,9 +239,9 @@ class TestASNOrigin(TestCommon):
             '\nsource:     RADB'
             '\n\n'
         )
-        obj._get_nets_radb(multi_net_response)
+        obj.get_nets_radb(multi_net_response)
 
-        self.assertEqual(obj._get_nets_radb(multi_net_response, is_http=True),
+        self.assertEqual(obj.get_nets_radb(multi_net_response, is_http=True),
                          [])
 
         net = Net('2001:43f8:7b0::')
@@ -258,7 +258,7 @@ class TestASNOrigin(TestCommon):
             '\n\n'
         )
         self.assertEquals(
-            obj._get_nets_radb(multi_net_response),
+            obj.get_nets_radb(multi_net_response),
             [{
                 'updated': None,
                 'maintainer': None,
