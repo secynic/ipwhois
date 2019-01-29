@@ -483,7 +483,7 @@ class NIRWhois:
                 request_type=NIR_WHOIS[nir]['request_type']
             )
 
-        return self._parse_fields(
+        return self.parse_fields(
             response=contact_response,
             fields_dict=NIR_WHOIS[nir]['contact_fields'],
             dt_format=dt_format,
@@ -582,11 +582,11 @@ class NIRWhois:
         nets_response = None
         if nir == 'jpnic':
 
-            nets_response = self._get_nets_jpnic(response)
+            nets_response = self.get_nets_jpnic(response)
 
         elif nir == 'krnic':
 
-            nets_response = self._get_nets_krnic(response)
+            nets_response = self.get_nets_krnic(response)
 
         nets.extend(nets_response)
 
@@ -609,7 +609,7 @@ class NIRWhois:
 
                 dt_format = None
 
-            temp_net = self._parse_fields(
+            temp_net = self.parse_fields(
                 response=response,
                 fields_dict=NIR_WHOIS[nir]['fields'],
                 net_start=section_end,
@@ -659,7 +659,7 @@ class NIRWhois:
                                     tmp_response = None
                                     tmp_handle = contact
 
-                                temp_net['contacts'][key] = self._get_contact(
+                                temp_net['contacts'][key] = self.get_contact(
                                     response=tmp_response,
                                     handle=tmp_handle,
                                     nir=nir,

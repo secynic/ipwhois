@@ -113,7 +113,7 @@ class Net:
     """
 
     def __init__(self, address, timeout=5, proxy_opener=None,
-                 allow_permutations=True):
+                 allow_permutations=False):
 
         # IPv4Address or IPv6Address
         if isinstance(address, IPv4Address) or isinstance(

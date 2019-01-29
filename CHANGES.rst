@@ -10,6 +10,7 @@ Changelog
 - Fixed bug in ASN HTTP lookup where the ARIN results were reversed, and
   parsing would fail on the first item (#220)
 - Removed support for Python 2.6/3.3, added support for 3.7 (#221)
+- Fixed deprecation warnings in core code (#203 - cstranex)
 
 1.0.0 (2017-07-30)
 ------------------
