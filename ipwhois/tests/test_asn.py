@@ -128,7 +128,8 @@ class TestIPASN(TestCommon):
 
         data = ''
         try:
-            self.assertIsInstance(ipasn._parse_fields_http(response=data), dict)
+            self.assertRaises(ASNRegistryError, ipasn._parse_fields_http,
+                              response=data)
         except AssertionError as e:
             raise e
         except Exception as e:

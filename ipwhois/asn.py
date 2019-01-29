@@ -371,7 +371,7 @@ class IPASN:
                 log.debug('No networks found')
                 net_list = []
 
-            for n in net_list:
+            for n in reversed(net_list):
 
                 try:
 
@@ -383,9 +383,14 @@ class IPASN:
 
                     log.debug('Could not parse ASN registry via HTTP: '
                               '{0}'.format(str(e)))
-                    raise ASNRegistryError('ASN registry lookup failed.')
+                    continue
 
                 break
+
+            if not asn_data['asn_registry']:
+
+                log.debug('Could not parse ASN registry via HTTP')
+                raise ASNRegistryError('ASN registry lookup failed.')
 
         except ASNRegistryError:
 

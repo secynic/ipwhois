@@ -1,6 +1,15 @@
 Changelog
 =========
 
+1.1.0 (TBD)
+-----------
+
+- Exceptions now inherit a new BaseIpwhoisException rather than Exception
+  (#205 - Darkheir)
+- Fixed list output for generate_examples.py (#196)
+- Fixed bug in ASN HTTP lookup where the ARIN results were reversed, and
+  parsing would fail on the first item (#220)
+
 1.0.0 (2017-07-30)
 ------------------
 
