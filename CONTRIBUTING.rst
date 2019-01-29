@@ -110,7 +110,7 @@ Guidelines
 - Follow the `Google docstring style guide
   <https://google.github.io/styleguide/pyguide.html#Comments>`_ for
   comments
-- Must be compatible with Python 2.6, 2.7, and 3.3+
+- Must be compatible with Python 2.7 and 3.4+
 - Break out reusable code to functions
 - Make your code easy to read and comment where necessary
 - Reference the GitHub issue number in the description (e.g., Issue #01)

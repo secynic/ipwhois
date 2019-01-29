@@ -768,15 +768,6 @@ class Net:
 
         except (URLError, socket.timeout, socket.error) as e:
 
-            # Check needed for Python 2.6, also why URLError is caught.
-            try:  # pragma: no cover
-                if not isinstance(e.reason, (socket.timeout, socket.error)):
-                    raise HTTPLookupError('HTTP lookup failed for {0}.'
-                                          ''.format(url))
-            except AttributeError:  # pragma: no cover
-
-                pass
-
             log.debug('HTTP query socket error: {0}'.format(e))
             if retry_count > 0:
 
@@ -919,15 +910,6 @@ class Net:
             return str(d)
 
         except (URLError, socket.timeout, socket.error) as e:
-
-            # Check needed for Python 2.6, also why URLError is caught.
-            try:  # pragma: no cover
-                if not isinstance(e.reason, (socket.timeout, socket.error)):
-                    raise HTTPLookupError('HTTP lookup failed for {0}.'
-                                          ''.format(url))
-            except AttributeError:  # pragma: no cover
-
-                pass
 
             log.debug('HTTP query socket error: {0}'.format(e))
             if retry_count > 0:

@@ -1,4 +1,0 @@
-ipwhois
-elasticsearch
-geoip2
-argparse

@@ -22,14 +22,7 @@ Tested using::
     ElasticSearch 5.5.1
     Kibana 5.5.1
 
-Python 2.6 (requirements26.txt - geopy is not supported)::
-
-    ipwhois
-    elasticsearch
-    geoip2
-    argparse
-
-Python 2.7, 3.3+ (requirements.txt)::
+Python 2.7, 3.4+ (requirements.txt)::
 
     ipwhois
     elasticsearch
