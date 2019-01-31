@@ -14,6 +14,7 @@ Changelog
 - Fixed bug in host argument for elastic_search.py example (#202)
 - Set user agent in elastic_search.py example to avoid default user agent
 - Updated elastic_search.py example for ES 6.6.0
+- Readme update for RDAP vs Legacy Whois output (#204)
 
 1.0.0 (2017-07-30)
 ------------------

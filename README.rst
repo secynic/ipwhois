@@ -193,6 +193,17 @@ https://ipwhois.readthedocs.io/en/latest/RDAP.html
 Legacy Whois
 ------------
 
+.. note::
+
+    Legacy Whois output is different from RDAP. See the below JSON outputs for
+    a comparison:
+
+    Legacy Whois:
+    https://ipwhois.readthedocs.io/en/latest/WHOIS.html#basic-usage
+
+    RDAP:
+    https://ipwhois.readthedocs.io/en/latest/RDAP.html#basic-usage
+
 Legacy Whois documentation:
 
 https://ipwhois.readthedocs.io/en/latest/WHOIS.html
