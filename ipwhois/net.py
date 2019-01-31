@@ -105,7 +105,7 @@ class Net:
             proxy support. Defaults to None.
         allow_permutations (:obj:`bool`): Allow net.Net() to use additional
             methods if DNS lookups to Cymru fail. *WARNING* deprecated in
-            favor of new argument asn_methods. Defaults to True.
+            favor of new argument asn_methods. Defaults to False.
 
     Raises:
         IPDefinedError: The address provided is defined (does not need to be

@@ -10,6 +10,15 @@ This page is new as of version 1.0.0. Any information on older versions is
 likely missing or incomplete.
 
 ******
+v1.1.0
+******
+
+- Exceptions now inherit a new BaseIpwhoisException rather than Exception
+- Removed support for Python 2.6/3.3, added support for 3.7
+- Removed the disallow_permutations argument from ipwhois_cli.py. Use
+  ans_methods instead.
+
+******
 v1.0.0
 ******
 
