@@ -15,6 +15,7 @@ Changelog
 - Set user agent in elastic_search.py example to avoid default user agent
 - Updated elastic_search.py example for ES 6.6.0
 - Readme update for RDAP vs Legacy Whois output (#204)
+- Removed the disallow_permutations argument from ipwhois_cli.py (#226)
 
 1.0.0 (2017-07-30)
 ------------------
