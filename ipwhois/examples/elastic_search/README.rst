@@ -14,13 +14,18 @@ I do not re-distribute the GeoLite2 database. For geolite2 data, download the
 GeoLite2 database GeoLite2-City.mmdb and place in the data directory:
 https://dev.maxmind.com/geoip/geoip2/geolite2/
 
+.. note::
+
+    I have not updated the kibana.json since the ES 5.5.1 example. --kimport
+    and --kexport will not work with it for ES 6.x.
+
 Dependencies
 ============
 
 Tested using::
 
-    ElasticSearch 5.5.1
-    Kibana 5.5.1
+    ElasticSearch 6.6.0
+    Kibana 6.6.0
 
 Python 2.7, 3.4+ (requirements.txt)::
 
