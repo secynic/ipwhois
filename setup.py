@@ -4,7 +4,7 @@ from setuptools import setup
 import io
 
 NAME = 'ipwhois'
-VERSION = '1.0.0'
+VERSION = '1.1.0'
 AUTHOR = 'Philip Hane'
 AUTHOR_EMAIL = 'secynic@gmail.com'
 DESCRIPTION = 'Retrieve and parse whois data for IPv4 and IPv6 addresses.'
@@ -52,13 +52,12 @@ CLASSIFIERS = [
     'Operating System :: OS Independent',
     'Programming Language :: Python',
     'Programming Language :: Python :: 2',
-    'Programming Language :: Python :: 2.6',
     'Programming Language :: Python :: 2.7',
     'Programming Language :: Python :: 3',
-    'Programming Language :: Python :: 3.3',
     'Programming Language :: Python :: 3.4',
     'Programming Language :: Python :: 3.5',
     'Programming Language :: Python :: 3.6',
+    'Programming Language :: Python :: 3.7',
     'Topic :: Internet',
     'Topic :: Software Development',
 ]

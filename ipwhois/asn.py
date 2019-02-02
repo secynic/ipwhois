@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2017 Philip Hane
+# Copyright (c) 2013-2019 Philip Hane
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -371,7 +371,7 @@ class IPASN:
                 log.debug('No networks found')
                 net_list = []
 
-            for n in net_list:
+            for n in reversed(net_list):
 
                 try:
 
@@ -383,9 +383,14 @@ class IPASN:
 
                     log.debug('Could not parse ASN registry via HTTP: '
                               '{0}'.format(str(e)))
-                    raise ASNRegistryError('ASN registry lookup failed.')
+                    continue
 
                 break
+
+            if not asn_data['asn_registry']:
+
+                log.debug('Could not parse ASN registry via HTTP')
+                raise ASNRegistryError('ASN registry lookup failed.')
 
         except ASNRegistryError:
 
@@ -475,9 +480,7 @@ class IPASN:
 
         else:
 
-            # Python 2.6 doesn't support set literal expressions, use explicit
-            # set() instead.
-            if set(['dns', 'whois', 'http']).isdisjoint(asn_methods):
+            if {'dns', 'whois', 'http'}.isdisjoint(asn_methods):
 
                 raise ValueError('methods argument requires at least one of '
                                  'dns, whois, http.')
@@ -508,7 +511,7 @@ class IPASN:
                     asn_data_list = []
                     for asn_entry in response:
 
-                        asn_data_list.append(self._parse_fields_dns(
+                        asn_data_list.append(self.parse_fields_dns(
                             str(asn_entry)))
 
                     # Iterate through the parsed ASN results to find the
@@ -541,7 +544,7 @@ class IPASN:
                 try:
 
                     response = self._net.get_asn_whois(retry_count)
-                    asn_data = self._parse_fields_whois(
+                    asn_data = self.parse_fields_whois(
                         response)  # pragma: no cover
                     break
 
@@ -557,7 +560,7 @@ class IPASN:
                     response = self._net.get_asn_http(
                         retry_count=retry_count
                     )
-                    asn_data = self._parse_fields_http(response,
+                    asn_data = self.parse_fields_http(response,
                                                        extra_org_map)
                     break
 
@@ -839,9 +842,7 @@ class ASNOrigin:
 
         else:
 
-            # Python 2.6 doesn't support set literal expressions, use explicit
-            # set() instead.
-            if set(['whois', 'http']).isdisjoint(asn_methods):
+            if {'whois', 'http'}.isdisjoint(asn_methods):
 
                 raise ValueError('methods argument requires at least one of '
                                  'whois, http.')
@@ -915,7 +916,7 @@ class ASNOrigin:
             results['raw'] = response
 
         nets = []
-        nets_response = self._get_nets_radb(response, is_http)
+        nets_response = self.get_nets_radb(response, is_http)
 
         nets.extend(nets_response)
 
@@ -935,7 +936,7 @@ class ASNOrigin:
 
                 section_end = nets[index + 1]['start']
 
-            temp_net = self._parse_fields(
+            temp_net = self.parse_fields(
                 response,
                 fields['radb']['fields'],
                 section_end,

@@ -57,7 +57,7 @@ class TestNIRWhois(TestCommon):
         self.assertRaises(KeyError, obj.lookup)
         self.assertRaises(KeyError, obj.lookup, **dict(nir='a'))
 
-    def test__parse_fields(self):
+    def test_parse_fields(self):
 
         net = Net('133.1.2.5')
         obj = NIRWhois(net)
@@ -66,13 +66,13 @@ class TestNIRWhois(TestCommon):
         # groups are messed up.
         tmp_dict = NIR_WHOIS['jpnic']['fields']
         tmp_dict['name'] = r'(NetName):[^\S\n]+(?P<val1>.+?)\n'
-        obj._parse_fields(
+        obj.parse_fields(
             response='\nNetName:        TEST\n',
             fields_dict=tmp_dict,
             dt_format=NIR_WHOIS['jpnic']['dt_format']
         )
 
-        obj._parse_fields(
+        obj.parse_fields(
             response='\nUpdated:        2012-02-24\n',
             fields_dict=NIR_WHOIS['jpnic']['fields'],
             dt_format=NIR_WHOIS['jpnic']['dt_format']
@@ -81,13 +81,13 @@ class TestNIRWhois(TestCommon):
         log.debug(
             'Testing field parse error. This should be followed by a '
             'debug log.')
-        obj._parse_fields(
+        obj.parse_fields(
             response='\nUpdated:        2012-02-244\n',
             fields_dict=NIR_WHOIS['jpnic']['fields'],
             dt_format=NIR_WHOIS['jpnic']['dt_format']
         )
 
-    def test__get_nets_jpnic(self):
+    def test_get_nets_jpnic(self):
 
         net = Net('133.1.2.5')
         obj = NIRWhois(net)
@@ -98,9 +98,9 @@ class TestNIRWhois(TestCommon):
             'a. [Network Number] asd>133.1.0.0/16</A>'
             'a. [Network Number] asd>133.1.0.0/24</A>'
         )
-        obj._get_nets_jpnic(multi_net_response)
+        obj.get_nets_jpnic(multi_net_response)
 
-        self.assertFalse(obj._get_nets_jpnic(
+        self.assertFalse(obj.get_nets_jpnic(
             'a. [Network Number] asd>asd/16</A>'
         ))
 
@@ -115,19 +115,19 @@ class TestNIRWhois(TestCommon):
             'IPv4 Address       : 115.0.0.0 - 115.23.255.255 (/12+/13)'
             'IPv4 Address       : 115.1.2.0 - 115.1.2.63 (/26)'
         )
-        obj._get_nets_krnic(multi_net_response)
+        obj.get_nets_krnic(multi_net_response)
 
         # ip_network ValueError
-        self.assertFalse(obj._get_nets_krnic(
+        self.assertFalse(obj.get_nets_krnic(
             'IPv4 Address       : asd - asd (/12+/13)'
         ))
 
         # Expected IP range regex not found, but some value found
-        self.assertFalse(obj._get_nets_krnic(
+        self.assertFalse(obj.get_nets_krnic(
             'IPv4 Address       : asd'
         ))
 
-    def test__get_contact(self):
+    def test_get_contact(self):
 
         net = Net('115.1.2.3')
         obj = NIRWhois(net)
@@ -139,7 +139,7 @@ class TestNIRWhois(TestCommon):
         )
 
         # No exception raised.
-        obj._get_contact(
+        obj.get_contact(
             response=contact_response,
             handle=None,
             nir='krnic',

@@ -15,13 +15,7 @@ Tested using::
 
     Redis 3.2.1
 
-Python 2.6 (requirements26.txt)::
-
-    ipwhois
-    redis
-    argparse
-
-Python 2.7, 3.3+ (requirements.txt)::
+Python 2.7, 3.4+ (requirements.txt)::
 
     ipwhois
     redis

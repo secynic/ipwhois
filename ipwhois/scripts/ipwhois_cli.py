@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2017 Philip Hane
+# Copyright (c) 2013-2019 Philip Hane
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -149,15 +149,6 @@ group.add_argument(
     help='The proxy HTTPS address passed to request.ProxyHandler. User auth'
          'can be passed like "https://user:pass@192.168.0.1:443"',
     required=False
-)
-group.add_argument(
-    '--disallow_permutations',
-    action='store_true',
-    help='Disable additional methods if DNS lookups to Cymru fail. This is the'
-         ' opposite of the ipwhois allow_permutations, in order to enable '
-         'allow_permutations by default in the CLI. *WARNING* deprecated in '
-         'favor of new argument asn_methods.',
-    default=False
 )
 
 # Common (RDAP & Legacy Whois)
@@ -372,9 +363,6 @@ class IPWhoisCLI:
             proxy HTTP support or None.
         proxy_https (:obj:`urllib.request.OpenerDirector`): The request for
             proxy HTTPS support or None.
-        allow_permutations (:obj:`bool`): Allow net.Net() to use additional
-            methods if DNS lookups to Cymru fail. *WARNING* deprecated in
-            favor of new argument asn_methods. Defaults to True.
     """
 
     def __init__(
@@ -382,8 +370,7 @@ class IPWhoisCLI:
         addr,
         timeout,
         proxy_http,
-        proxy_https,
-        allow_permutations
+        proxy_https
     ):
 
         self.addr = addr
@@ -412,12 +399,9 @@ class IPWhoisCLI:
             handler = ProxyHandler(handler_dict)
             self.opener = build_opener(handler)
 
-        self.allow_permutations = allow_permutations
-
         self.obj = IPWhois(address=self.addr,
                            timeout=self.timeout,
-                           proxy_opener=self.opener,
-                           allow_permutations=self.allow_permutations)
+                           proxy_opener=self.opener)
 
     def generate_output_header(self, query_type='RDAP'):
         """
@@ -482,10 +466,8 @@ class IPWhoisCLI:
         if json_data is None:
             json_data = {}
 
-        # Python 2.6 doesn't support set literal expressions, use explicit
-        # set() instead.
-        keys = set(['asn', 'asn_cidr', 'asn_country_code', 'asn_date',
-                    'asn_registry', 'asn_description']).intersection(json_data)
+        keys = {'asn', 'asn_cidr', 'asn_country_code', 'asn_date',
+                'asn_registry', 'asn_description'}.intersection(json_data)
 
         output = ''
 
@@ -1444,6 +1426,7 @@ class IPWhoisCLI:
 
         return output
 
+
 if script_args.addr:
 
     results = IPWhoisCLI(
@@ -1454,8 +1437,7 @@ if script_args.addr:
         ) else None,
         proxy_https=script_args.proxy_https if (
             script_args.proxy_https and len(script_args.proxy_https) > 0
-        ) else None,
-        allow_permutations=(not script_args.disallow_permutations)
+        ) else None
     )
 
     if script_args.whois:

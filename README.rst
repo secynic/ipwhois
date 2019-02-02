@@ -11,7 +11,7 @@ ipwhois
    :target: https://codeclimate.com/github/secynic/ipwhois
 .. image:: https://img.shields.io/badge/license-BSD%202--Clause-blue.svg
     :target: https://github.com/secynic/ipwhois/tree/master/LICENSE.txt
-.. image:: https://img.shields.io/badge/python-2.6%2C%202.7%2C%203.3+-blue.svg
+.. image:: https://img.shields.io/badge/python-2.7%2C%203.4+-blue.svg
     :target: https://docs.python.org
 .. image:: https://img.shields.io/badge/docs-latest-green.svg?style=flat
     :target: https://ipwhois.readthedocs.io/en/latest
@@ -45,11 +45,10 @@ Features
 * Recursive network parsing for IPs with parent/children networks listed
 * National Internet Registry support for JPNIC and KRNIC
 * Supports IP to ASN and ASN origin queries
-* Python 2.6+ and 3.3+ supported
+* Python 2.7 and 3.4+ supported
 * Useful set of utilities
 * Experimental bulk query support
 * BSD license
-* 100% core code coverage (See '# pragma: no cover' for exclusions)
 * Human readable field translations
 * Full CLI for IPWhois with optional ANSI colored console output.
 
@@ -97,18 +96,12 @@ https://ipwhois.readthedocs.io/en/latest/UPGRADING.html
 Dependencies
 ============
 
-Python 2.6::
-
-    dnspython
-    ipaddr
-    argparse (required only for CLI)
-
 Python 2.7::
 
     dnspython
     ipaddr
 
-Python 3.3+::
+Python 3.4+::
 
     dnspython
 
@@ -180,7 +173,7 @@ Input
 | allow_permutations | bool   | Allow net.Net() to use additional methods if  |
 |                    |        | DNS lookups to Cymru fail. *WARNING*          |
 |                    |        | deprecated in favor of new argument           |
-|                    |        | asn_methods. Defaults to True.                |
+|                    |        | asn_methods. Defaults to False.               |
 +--------------------+--------+-----------------------------------------------+
 
 RDAP (HTTP)
@@ -198,6 +191,17 @@ https://ipwhois.readthedocs.io/en/latest/RDAP.html
 
 Legacy Whois
 ------------
+
+.. note::
+
+    Legacy Whois output is different from RDAP. See the below JSON outputs for
+    a comparison:
+
+    Legacy Whois:
+    https://ipwhois.readthedocs.io/en/latest/WHOIS.html#basic-usage
+
+    RDAP:
+    https://ipwhois.readthedocs.io/en/latest/RDAP.html#basic-usage
 
 Legacy Whois documentation:
 

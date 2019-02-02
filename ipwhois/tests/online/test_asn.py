@@ -35,16 +35,14 @@ class TestIPASN(TestCommon):
         ipasn.lookup(asn_methods=['dns', 'whois', 'http'])
         ipasn.lookup(asn_methods=['http'])
 
-        net = Net(address='74.125.225.229', timeout=0,
-                  allow_permutations=False)
+        net = Net(address='74.125.225.229', timeout=0)
         ipasn = IPASN(net)
         self.assertRaises(ASNRegistryError, ipasn.lookup)
 
-        net = Net(address='74.125.225.229', timeout=0,
-                  allow_permutations=True)
+        net = Net(address='74.125.225.229', timeout=0)
         ipasn = IPASN(net)
         self.assertRaises(ASNRegistryError, ipasn.lookup, **dict(
-            asn_alts=['http']))
+            asn_methods=['http']))
 
 
 class TestASNOrigin(TestCommon):
@@ -86,12 +84,11 @@ class TestASNOrigin(TestCommon):
 
                 self.fail('Unexpected exception raised: {0}'.format(e))
 
-        net = Net(address='74.125.225.229', timeout=0,
-                  allow_permutations=True)
+        net = Net(address='74.125.225.229', timeout=0)
         asnorigin = ASNOrigin(net)
         self.assertRaises(ASNOriginLookupError, asnorigin.lookup, **dict(
             asn='15169',
-            asn_alts=['http']))
+            asn_methods=['http']))
 
         self.assertRaises(ValueError, asnorigin.lookup, **dict(
             asn='15169',
