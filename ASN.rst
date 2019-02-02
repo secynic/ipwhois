@@ -24,12 +24,6 @@ Arguments supported by IPASN.lookup().
 |                        |        | resets, etc. are encountered.             |
 |                        |        | Defaults to 3.                            |
 +------------------------+--------+-------------------------------------------+
-| asn_alts               | list   | Additional lookup types to attempt if the |
-|                        |        | ASN dns lookup fails. Allow permutations  |
-|                        |        | must be enabled. If None, defaults to all |
-|                        |        | ['whois', 'http']. *WARNING* deprecated   |
-|                        |        | in favor of new argument asn_methods.     |
-+------------------------+--------+-------------------------------------------+
 | extra_org_map          | dict   | Dictionary mapping org handles to RIRs.   |
 |                        |        | This is for limited cases where ARIN      |
 |                        |        | REST (ASN fallback HTTP lookup) does not  |
@@ -156,12 +150,6 @@ Arguments supported by ASNOrigin.lookup().
 | field_list             | list   | If provided, fields to parse:             |
 |                        |        | ['description', 'maintainer', 'updated',  |
 |                        |        | 'source']. If None, defaults to all.      |
-+------------------------+--------+-------------------------------------------+
-| asn_alts               | list   | Additional lookup types to attempt if the |
-|                        |        | ASN dns lookup fails. Allow permutations  |
-|                        |        | must be enabled. If None, defaults to all |
-|                        |        | ['http']. *WARNING* deprecated            |
-|                        |        | in favor of new argument asn_methods.     |
 +------------------------+--------+-------------------------------------------+
 | asn_methods            | list   | ASN lookup types to attempt, in order. If |
 |                        |        | None, defaults to all ['whois', 'http'].  |

@@ -22,7 +22,7 @@ ipwhois_cli.py [-h] [--whois] [--exclude_nir] [--json] [--hr]
                       [--proxy_http "PROXY_HTTP"]
                       [--proxy_https "PROXY_HTTPS"]
                       [--inc_raw] [--retry_count RETRY_COUNT]
-                      [--asn_alts "ASN_ALTS"] [--asn_methods "ASN_METHODS"]
+                      [--asn_methods "ASN_METHODS"]
                       [--extra_org_map "EXTRA_ORG_MAP"]
                       [--skip_asn_description] [--depth COLOR_DEPTH]
                       [--excluded_entities "EXCLUDED_ENTITIES"] [--bootstrap]
@@ -66,12 +66,6 @@ Common settings (RDAP & Legacy Whois):
   --retry_count RETRY_COUNT
                         The number of times to retry in case socket errors,
                         timeouts, connection resets, etc. are encountered.
-  --asn_alts ASN_ALTS
-                        A comma delimited list of additional lookup types to
-                        attempt if the ASN dns lookup fails. Allow
-                        permutations must be enabled. Defaults to all:
-                        "whois,http". *WARNING* deprecated in favor of new
-                        argument asn_methods.
   --asn_methods ASN_METHODS
                         List of ASN lookup types to attempt, in order.
                         Defaults to all ['dns', 'whois', 'http'].

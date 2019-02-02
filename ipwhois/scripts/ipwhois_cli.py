@@ -167,17 +167,6 @@ group.add_argument(
          'connection resets, etc. are encountered.'
 )
 group.add_argument(
-    '--asn_alts',
-    type=str,
-    nargs=1,
-    default='whois,http',
-    metavar='"ASN_ALTS"',
-    help='A comma delimited list of additional lookup types to attempt if the '
-         'ASN dns lookup fails. Allow permutations must be enabled. '
-         'Defaults to all: "whois,http" *WARNING* deprecated in '
-         'favor of new argument asn_methods.'
-)
-group.add_argument(
     '--asn_methods',
     type=str,
     nargs=1,
@@ -1456,9 +1445,6 @@ if script_args.addr:
             field_list=script_args.field_list.split(',') if (
                 script_args.field_list and
                 len(script_args.field_list) > 0) else None,
-            asn_alts=script_args.asn_alts.split(',') if (
-                script_args.asn_alts and not script_args.asn_methods and
-                len(script_args.asn_alts) > 0) else None,
             extra_org_map=script_args.extra_org_map,
             inc_nir=(not script_args.exclude_nir),
             nir_field_list=script_args.nir_field_list.split(',') if (
@@ -1484,9 +1470,6 @@ if script_args.addr:
                 len(script_args.excluded_entities) > 0) else None,
             bootstrap=script_args.bootstrap,
             rate_limit_timeout=script_args.rate_limit_timeout,
-            asn_alts=script_args.asn_alts.split(',') if (
-                script_args.asn_alts and not script_args.asn_methods and
-                len(script_args.asn_alts) > 0) else None,
             extra_org_map=script_args.extra_org_map,
             inc_nir=(not script_args.exclude_nir),
             nir_field_list=script_args.nir_field_list.split(',') if (

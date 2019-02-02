@@ -10,6 +10,20 @@ This page is new as of version 1.0.0. Any information on older versions is
 likely missing or incomplete.
 
 ******
+v1.2.0
+******
+
+- Removed deprecated functions: asn.IPASN._parse_fields_http,
+  asn.IPASN._parse_fields_dns, asn.IPASN._parse_fields_whois,
+  asn.ASNOrigin._parse_fields, asn.ASNOrigin._get_nets_radb,
+  net.Net.lookup_asn, whois.Whois._parse_fields, whois.Whois._get_nets_arin
+  whois.Whois._get_nets_lacnic, whois.Whois._get_nets_other,
+  nir.NIRWhois._parse_fields, nir.NIRWhois._get_nets_jpnic
+  nir.NIRWhois._get_nets_krnic, nir.NIRWhois._get_contact
+- Removed deprecated asn_alts parameter
+- Removed deprecated allow_permutations parameter
+
+******
 v1.1.0
 ******
 

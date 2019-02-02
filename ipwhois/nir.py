@@ -286,16 +286,6 @@ class NIRWhois:
 
         return ret
 
-    def _parse_fields(self, *args, **kwargs):
-        """
-        Deprecated. This will be removed in a future release.
-        """
-
-        from warnings import warn
-        warn('NIRWhois._parse_fields() has been deprecated and will be '
-             'removed. You should now use NIRWhois.parse_fields().')
-        return self.parse_fields(*args, **kwargs)
-
     def get_nets_jpnic(self, response):
         """
         The function for parsing network blocks from jpnic whois data.
@@ -358,16 +348,6 @@ class NIRWhois:
                 pass
 
         return nets
-
-    def _get_nets_jpnic(self, *args, **kwargs):
-        """
-        Deprecated. This will be removed in a future release.
-        """
-
-        from warnings import warn
-        warn('NIRWhois._get_nets_jpnic() has been deprecated and will be '
-             'removed. You should now use NIRWhois.get_nets_jpnic().')
-        return self.get_nets_jpnic(*args, **kwargs)
 
     def get_nets_krnic(self, response):
         """
@@ -434,16 +414,6 @@ class NIRWhois:
 
         return nets
 
-    def _get_nets_krnic(self, *args, **kwargs):
-        """
-        Deprecated. This will be removed in a future release.
-        """
-
-        from warnings import warn
-        warn('NIRWhois._get_nets_krnic() has been deprecated and will be '
-             'removed. You should now use NIRWhois.get_nets_krnic().')
-        return self.get_nets_krnic(*args, **kwargs)
-
     def get_contact(self, response=None, nir=None, handle=None,
                     retry_count=3, dt_format=None):
         """
@@ -490,16 +460,6 @@ class NIRWhois:
             hourdelta=int(NIR_WHOIS[nir]['dt_hourdelta']),
             is_contact=True
         )
-
-    def _get_contact(self, *args, **kwargs):
-        """
-        Deprecated. This will be removed in a future release.
-        """
-
-        from warnings import warn
-        warn('NIRWhois._get_contact() has been deprecated and will be '
-             'removed. You should now use NIRWhois.get_contact().')
-        return self.get_contact(*args, **kwargs)
 
     def lookup(self, nir=None, inc_raw=False, retry_count=3, response=None,
                field_list=None, is_offline=False):

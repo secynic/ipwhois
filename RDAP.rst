@@ -42,12 +42,6 @@ Arguments supported by IPWhois.lookup_rdap().
 |                    |        | when a rate limit notice is returned via      |
 |                    |        | rdap+json. Defaults to 120.                   |
 +--------------------+--------+-----------------------------------------------+
-| asn_alts           | list   | Additional lookup types to attempt if the ASN |
-|                    |        | dns lookup fails. Allow permutations must be  |
-|                    |        | enabled. If None, defaults to all             |
-|                    |        | ['whois', 'http']. *WARNING* deprecated in    |
-|                    |        | favor of new argument asn_methods.            |
-+--------------------+--------+-----------------------------------------------+
 | extra_org_map      | dict   | Dictionary mapping org handles to RIRs.       |
 |                    |        | This is for limited cases where ARIN REST     |
 |                    |        | (ASN fallback HTTP lookup) does not show an   |

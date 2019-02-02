@@ -170,11 +170,6 @@ Input
 | proxy_opener       | object | The urllib.request.OpenerDirector request for |
 |                    |        | proxy support or None.                        |
 +--------------------+--------+-----------------------------------------------+
-| allow_permutations | bool   | Allow net.Net() to use additional methods if  |
-|                    |        | DNS lookups to Cymru fail. *WARNING*          |
-|                    |        | deprecated in favor of new argument           |
-|                    |        | asn_methods. Defaults to False.               |
-+--------------------+--------+-----------------------------------------------+
 
 RDAP (HTTP)
 -----------
