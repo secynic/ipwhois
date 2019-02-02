@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2017 Philip Hane
+# Copyright (c) 2013-2019 Philip Hane
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -223,7 +223,7 @@ class Net:
         """
         Temporary wrapper for IP ASN lookups (moved to
         asn.IPASN.lookup()). This will be removed in a future
-        release (1.0.0).
+        release.
         """
 
         from warnings import warn
