@@ -17,6 +17,7 @@ v1.1.0
 - Removed support for Python 2.6/3.3, added support for 3.7
 - Removed the disallow_permutations argument from ipwhois_cli.py. Use
   ans_methods instead.
+- Fixed deprecation warnings in core code
 
 ******
 v1.0.0
