@@ -49,7 +49,6 @@ Features
 * Useful set of utilities
 * Experimental bulk query support
 * BSD license
-* 100% core code coverage (See '# pragma: no cover' for exclusions)
 * Human readable field translations
 * Full CLI for IPWhois with optional ANSI colored console output.
 
@@ -174,7 +173,7 @@ Input
 | allow_permutations | bool   | Allow net.Net() to use additional methods if  |
 |                    |        | DNS lookups to Cymru fail. *WARNING*          |
 |                    |        | deprecated in favor of new argument           |
-|                    |        | asn_methods. Defaults to False.                |
+|                    |        | asn_methods. Defaults to False.               |
 +--------------------+--------+-----------------------------------------------+
 
 RDAP (HTTP)
