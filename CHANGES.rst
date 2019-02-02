@@ -1,8 +1,8 @@
 Changelog
 =========
 
-1.1.0 (TBD)
------------
+1.1.0 (2019-02-01)
+------------------
 
 - Exceptions now inherit a new BaseIpwhoisException rather than Exception
   (#205 - Darkheir)

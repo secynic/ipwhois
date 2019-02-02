@@ -223,7 +223,7 @@ class Net:
         """
         Temporary wrapper for IP ASN lookups (moved to
         asn.IPASN.lookup()). This will be removed in a future
-        release (1.0.0).
+        release.
         """
 
         from warnings import warn
