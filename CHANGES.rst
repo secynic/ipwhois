@@ -1,6 +1,19 @@
 Changelog
 =========
 
+1.2.0 (TBD)
+------------------
+
+- Removed deprecated functions: asn.IPASN._parse_fields_http,
+  asn.IPASN._parse_fields_dns, asn.IPASN._parse_fields_whois,
+  asn.ASNOrigin._parse_fields, asn.ASNOrigin._get_nets_radb,
+  net.Net.lookup_asn, whois.Whois._parse_fields, whois.Whois._get_nets_arin
+  whois.Whois._get_nets_lacnic, whois.Whois._get_nets_other,
+  nir.NIRWhois._parse_fields, nir.NIRWhois._get_nets_jpnic
+  nir.NIRWhois._get_nets_krnic, nir.NIRWhois._get_contact (#230)
+- Removed deprecated asn_alts parameter (#230)
+- Removed deprecated allow_permutations parameter (#230)
+
 1.1.0 (2019-02-01)
 ------------------
 
