@@ -135,8 +135,30 @@ class TestIPASN(TestCommon):
             self.fail('Unexpected exception raised: {0}'.format(e))
 
     def test_lookup(self):
-        # TODO: need to modify asn.json for this.
-        return NotImplemented
+        data_dir = path.dirname(__file__)
+
+        with io.open(str(data_dir) + '/asn.json', 'r') as \
+                data_file:
+            data = json.load(data_file)
+
+        for key, val in data.items():
+
+            log.debug('Testing: {0}'.format(key))
+            net = Net(key)
+            obj = IPASN(net)
+
+            try:
+
+                self.assertIsInstance(obj.lookup(), dict)
+                self.assertIsInstance(obj.lookup(asn_alts=['http']), dict)
+
+            except AssertionError as e:
+
+                raise e
+
+            except Exception as e:
+
+                self.fail('Unexpected exception raised: {0}'.format(e))
 
 
 class TestASNOrigin(TestCommon):

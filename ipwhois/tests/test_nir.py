@@ -45,6 +45,11 @@ class TestNIRWhois(TestCommon):
                                                 inc_raw=True),
                                       dict)
 
+                self.assertIsInstance(obj.lookup(
+                    nir=val['nir'],
+                    response=val['response']),
+                    dict)
+
             except AssertionError as e:
 
                 raise e
