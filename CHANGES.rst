@@ -1,6 +1,35 @@
 Changelog
 =========
 
+1.2.0 (TBD)
+------------------
+
+- Removed deprecated functions: asn.IPASN._parse_fields_http,
+  asn.IPASN._parse_fields_dns, asn.IPASN._parse_fields_whois,
+  asn.ASNOrigin._parse_fields, asn.ASNOrigin._get_nets_radb,
+  net.Net.lookup_asn, whois.Whois._parse_fields, whois.Whois._get_nets_arin
+  whois.Whois._get_nets_lacnic, whois.Whois._get_nets_other,
+  nir.NIRWhois._parse_fields, nir.NIRWhois._get_nets_jpnic
+  nir.NIRWhois._get_nets_krnic, nir.NIRWhois._get_contact (#230)
+- Removed deprecated asn_alts parameter (#230)
+- Removed deprecated allow_permutations parameter (#230)
+
+1.1.0 (2019-02-01)
+------------------
+
+- Exceptions now inherit a new BaseIpwhoisException rather than Exception
+  (#205 - Darkheir)
+- Fixed list output for generate_examples.py (#196)
+- Fixed bug in ASN HTTP lookup where the ARIN results were reversed, and
+  parsing would fail on the first item (#220)
+- Removed support for Python 2.6/3.3, added support for 3.7 (#221)
+- Fixed deprecation warnings in core code (#203 - cstranex)
+- Fixed bug in host argument for elastic_search.py example (#202)
+- Set user agent in elastic_search.py example to avoid default user agent
+- Updated elastic_search.py example for ES 6.6.0
+- Readme update for RDAP vs Legacy Whois output (#204)
+- Removed the disallow_permutations argument from ipwhois_cli.py (#226)
+
 1.0.0 (2017-07-30)
 ------------------
 

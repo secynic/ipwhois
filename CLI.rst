@@ -20,9 +20,9 @@ Usage
 ipwhois_cli.py [-h] [--whois] [--exclude_nir] [--json] [--hr]
                       [--show_name] [--colorize] [--timeout TIMEOUT]
                       [--proxy_http "PROXY_HTTP"]
-                      [--proxy_https "PROXY_HTTPS"] [--disallow_permutations]
+                      [--proxy_https "PROXY_HTTPS"]
                       [--inc_raw] [--retry_count RETRY_COUNT]
-                      [--asn_alts "ASN_ALTS"] [--asn_methods "ASN_METHODS"]
+                      [--asn_methods "ASN_METHODS"]
                       [--extra_org_map "EXTRA_ORG_MAP"]
                       [--skip_asn_description] [--depth COLOR_DEPTH]
                       [--excluded_entities "EXCLUDED_ENTITIES"] [--bootstrap]
@@ -60,24 +60,12 @@ IPWhois settings:
                         The proxy HTTPS address passed to
                         request.ProxyHandler. User auth can be passed like
                         "https://user:pass@192.168.0.1:443"
-  --disallow_permutations
-                        Disable additional methods if DNS lookups to Cymru
-                        fail. This is the opposite of the ipwhois
-                        allow_permutations, in order to enable
-                        allow_permutations by default in the CLI. *WARNING*
-                        deprecated in favor of new argument asn_methods.
 
 Common settings (RDAP & Legacy Whois):
   --inc_raw             Include the raw whois results in the output.
   --retry_count RETRY_COUNT
                         The number of times to retry in case socket errors,
                         timeouts, connection resets, etc. are encountered.
-  --asn_alts ASN_ALTS
-                        A comma delimited list of additional lookup types to
-                        attempt if the ASN dns lookup fails. Allow
-                        permutations must be enabled. Defaults to all:
-                        "whois,http". *WARNING* deprecated in favor of new
-                        argument asn_methods.
   --asn_methods ASN_METHODS
                         List of ASN lookup types to attempt, in order.
                         Defaults to all ['dns', 'whois', 'http'].

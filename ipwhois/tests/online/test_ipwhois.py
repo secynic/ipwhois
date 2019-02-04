@@ -174,8 +174,3 @@ class TestIPWhois(TestCommon):
         result = IPWhois(address='74.125.225.229', timeout=0,
                          proxy_opener=opener)
         self.assertRaises(ASNRegistryError, result.lookup_rdap)
-
-        log.debug('Testing allow_permutations')
-        result = IPWhois(address='74.125.225.229', timeout=0,
-                         allow_permutations=False)
-        self.assertRaises(ASNRegistryError, result.lookup_rdap)

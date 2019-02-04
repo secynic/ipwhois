@@ -3,6 +3,7 @@ from ipwhois.tests import TestCommon
 from ipwhois.exceptions import (ASNLookupError, ASNRegistryError,
                                 BlacklistError, WhoisLookupError,
                                 HTTPLookupError, HostLookupError)
+from ipwhois.asn import IPASN
 from ipwhois.net import Net
 
 LOG_FORMAT = ('[%(asctime)s] [%(levelname)s] [%(filename)s:%(lineno)s] '
@@ -14,10 +15,12 @@ log = logging.getLogger(__name__)
 class TestNet(TestCommon):
 
     def test_lookup_asn(self):
-        # TODO: keep until deprecated lookup is removed, for coverage
+
         net = Net('74.125.225.229')
+        ipasn = IPASN(net)
+
         try:
-            self.assertIsInstance(net.lookup_asn(), tuple)
+            self.assertIsInstance(ipasn.lookup(), dict)
         except HTTPLookupError:
             pass
         except AssertionError as e:

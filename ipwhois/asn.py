@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2017 Philip Hane
+# Copyright (c) 2013-2019 Philip Hane
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -169,16 +169,6 @@ class IPASN:
 
         return ret
 
-    def _parse_fields_dns(self, *args, **kwargs):
-        """
-        Deprecated. This will be removed in a future release.
-        """
-
-        from warnings import warn
-        warn('IPASN._parse_fields_dns() has been deprecated and will be '
-             'removed. You should now use IPASN.parse_fields_dns().')
-        return self.parse_fields_dns(*args, **kwargs)
-
     def parse_fields_verbose_dns(self, response):
         """
         The function for parsing ASN fields from a verbose dns response.
@@ -293,16 +283,6 @@ class IPASN:
 
         return ret
 
-    def _parse_fields_whois(self, *args, **kwargs):
-        """
-        Deprecated. This will be removed in a future release.
-        """
-
-        from warnings import warn
-        warn('IPASN._parse_fields_whois() has been deprecated and will be '
-             'removed. You should now use IPASN.parse_fields_whois().')
-        return self.parse_fields_whois(*args, **kwargs)
-
     def parse_fields_http(self, response, extra_org_map=None):
         """
         The function for parsing ASN fields from a http response.
@@ -371,7 +351,7 @@ class IPASN:
                 log.debug('No networks found')
                 net_list = []
 
-            for n in net_list:
+            for n in reversed(net_list):
 
                 try:
 
@@ -383,9 +363,14 @@ class IPASN:
 
                     log.debug('Could not parse ASN registry via HTTP: '
                               '{0}'.format(str(e)))
-                    raise ASNRegistryError('ASN registry lookup failed.')
+                    continue
 
                 break
+
+            if not asn_data['asn_registry']:
+
+                log.debug('Could not parse ASN registry via HTTP')
+                raise ASNRegistryError('ASN registry lookup failed.')
 
         except ASNRegistryError:
 
@@ -398,19 +383,8 @@ class IPASN:
 
         return asn_data
 
-    def _parse_fields_http(self, *args, **kwargs):
-        """
-        Deprecated. This will be removed in a future release.
-        """
-
-        from warnings import warn
-        warn('IPASN._parse_fields_http() has been deprecated and will be '
-             'removed. You should now use IPASN.parse_fields_http().')
-        return self.parse_fields_http(*args, **kwargs)
-
-    def lookup(self, inc_raw=False, retry_count=3, asn_alts=None,
-               extra_org_map=None, asn_methods=None,
-               get_asn_description=True):
+    def lookup(self, inc_raw=False, retry_count=3, extra_org_map=None,
+               asn_methods=None, get_asn_description=True):
         """
         The wrapper function for retrieving and parsing ASN information for an
         IP address.
@@ -421,10 +395,6 @@ class IPASN:
             retry_count (:obj:`int`): The number of times to retry in case
                 socket errors, timeouts, connection resets, etc. are
                 encountered. Defaults to 3.
-            asn_alts (:obj:`list`): Additional lookup types to attempt if the
-                ASN dns lookup fails. Allow permutations must be enabled.
-                Defaults to all ['whois', 'http']. *WARNING* deprecated in
-                favor of new argument asn_methods. Defaults to None.
             extra_org_map (:obj:`dict`): Mapping org handles to RIRs. This is
                 for limited cases where ARIN REST (ASN fallback HTTP lookup)
                 does not show an RIR as the org handle e.g., DNIC (which is
@@ -461,23 +431,11 @@ class IPASN:
 
         if asn_methods is None:
 
-            if asn_alts is None:
-
-                lookups = ['dns', 'whois', 'http']
-
-            else:
-
-                from warnings import warn
-                warn('IPASN.lookup() asn_alts argument has been deprecated '
-                     'and will be removed. You should now use the asn_methods '
-                     'argument.')
-                lookups = ['dns'] + asn_alts
+            lookups = ['dns', 'whois', 'http']
 
         else:
 
-            # Python 2.6 doesn't support set literal expressions, use explicit
-            # set() instead.
-            if set(['dns', 'whois', 'http']).isdisjoint(asn_methods):
+            if {'dns', 'whois', 'http'}.isdisjoint(asn_methods):
 
                 raise ValueError('methods argument requires at least one of '
                                  'dns, whois, http.')
@@ -489,8 +447,7 @@ class IPASN:
         dns_success = False
         for index, lookup_method in enumerate(lookups):
 
-            if index > 0 and not asn_methods and not (
-                    self._net.allow_permutations):
+            if index > 0 and not asn_methods:
 
                 raise ASNRegistryError('ASN registry lookup failed. '
                                        'Permutations not allowed.')
@@ -508,7 +465,7 @@ class IPASN:
                     asn_data_list = []
                     for asn_entry in response:
 
-                        asn_data_list.append(self._parse_fields_dns(
+                        asn_data_list.append(self.parse_fields_dns(
                             str(asn_entry)))
 
                     # Iterate through the parsed ASN results to find the
@@ -541,7 +498,7 @@ class IPASN:
                 try:
 
                     response = self._net.get_asn_whois(retry_count)
-                    asn_data = self._parse_fields_whois(
+                    asn_data = self.parse_fields_whois(
                         response)  # pragma: no cover
                     break
 
@@ -557,7 +514,7 @@ class IPASN:
                     response = self._net.get_asn_http(
                         retry_count=retry_count
                     )
-                    asn_data = self._parse_fields_http(response,
+                    asn_data = self.parse_fields_http(response,
                                                        extra_org_map)
                     break
 
@@ -703,16 +660,6 @@ class ASNOrigin:
 
         return ret
 
-    def _parse_fields(self, *args, **kwargs):
-        """
-        Deprecated. This will be removed in a future release.
-        """
-
-        from warnings import warn
-        warn('ASNOrigin._parse_fields() has been deprecated and will be '
-             'removed. You should now use ASNOrigin.parse_fields().')
-        return self.parse_fields(*args, **kwargs)
-
     def get_nets_radb(self, response, is_http=False):
         """
         The function for parsing network blocks from ASN origin data.
@@ -766,18 +713,8 @@ class ASNOrigin:
 
         return nets
 
-    def _get_nets_radb(self, *args, **kwargs):
-        """
-        Deprecated. This will be removed in a future release.
-        """
-
-        from warnings import warn
-        warn('ASNOrigin._get_nets_radb() has been deprecated and will be '
-             'removed. You should now use ASNOrigin.get_nets_radb().')
-        return self.get_nets_radb(*args, **kwargs)
-
     def lookup(self, asn=None, inc_raw=False, retry_count=3, response=None,
-               field_list=None, asn_alts=None, asn_methods=None):
+               field_list=None, asn_methods=None):
         """
         The function for retrieving and parsing ASN origin whois information
         via port 43/tcp (WHOIS).
@@ -794,9 +731,6 @@ class ASNOrigin:
             field_list (:obj:`list`): If provided, fields to parse:
                 ['description', 'maintainer', 'updated', 'source']
                 If None, defaults to all.
-            asn_alts (:obj:`list`): Additional lookup types to attempt if the
-                ASN whois lookup fails. If None, defaults to all ['http'].
-                *WARNING* deprecated in favor of new argument asn_methods.
             asn_methods (:obj:`list`): ASN lookup types to attempt, in order.
                 If None, defaults to all ['whois', 'http'].
 
@@ -825,23 +759,11 @@ class ASNOrigin:
 
         if asn_methods is None:
 
-            if asn_alts is None:
-
-                lookups = ['whois', 'http']
-
-            else:
-
-                from warnings import warn
-                warn('ASNOrigin.lookup() asn_alts argument has been deprecated'
-                     ' and will be removed. You should now use the asn_methods'
-                     ' argument.')
-                lookups = ['whois'] + asn_alts
+            lookups = ['whois', 'http']
 
         else:
 
-            # Python 2.6 doesn't support set literal expressions, use explicit
-            # set() instead.
-            if set(['whois', 'http']).isdisjoint(asn_methods):
+            if {'whois', 'http'}.isdisjoint(asn_methods):
 
                 raise ValueError('methods argument requires at least one of '
                                  'whois, http.')
@@ -915,7 +837,7 @@ class ASNOrigin:
             results['raw'] = response
 
         nets = []
-        nets_response = self._get_nets_radb(response, is_http)
+        nets_response = self.get_nets_radb(response, is_http)
 
         nets.extend(nets_response)
 
@@ -935,7 +857,7 @@ class ASNOrigin:
 
                 section_end = nets[index + 1]['start']
 
-            temp_net = self._parse_fields(
+            temp_net = self.parse_fields(
                 response,
                 fields['radb']['fields'],
                 section_end,

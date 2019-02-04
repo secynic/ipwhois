@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2017 Philip Hane
+# Copyright (c) 2013-2019 Philip Hane
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -310,8 +310,9 @@ for filename, sections in (
         tmp_query_results = {}
         for query_key, query in section_config['queries'].items():
 
+            result = query()
             new_str = json.dumps(
-                query(), indent=4, sort_keys=True
+                result, indent=4, sort_keys=True
             ).replace(': null', ': None')
 
             new_str = re.sub(
@@ -333,7 +334,9 @@ for filename, sections in (
                 r'\\\\n',
                 new_str,
                 flags=re.DOTALL
-            )[:-1] + '    }'
+            )[:-1] + '    {0}'.format(
+                '}' if isinstance(result, dict) else ']'
+            )
 
         output_str = section_config['content'].format(
             *tmp_query_results.values()

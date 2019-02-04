@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2017 Philip Hane
+# Copyright (c) 2013-2019 Philip Hane
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -150,15 +150,6 @@ group.add_argument(
          'can be passed like "https://user:pass@192.168.0.1:443"',
     required=False
 )
-group.add_argument(
-    '--disallow_permutations',
-    action='store_true',
-    help='Disable additional methods if DNS lookups to Cymru fail. This is the'
-         ' opposite of the ipwhois allow_permutations, in order to enable '
-         'allow_permutations by default in the CLI. *WARNING* deprecated in '
-         'favor of new argument asn_methods.',
-    default=False
-)
 
 # Common (RDAP & Legacy Whois)
 group = parser.add_argument_group('Common settings (RDAP & Legacy Whois)')
@@ -174,17 +165,6 @@ group.add_argument(
     metavar='RETRY_COUNT',
     help='The number of times to retry in case socket errors, timeouts, '
          'connection resets, etc. are encountered.'
-)
-group.add_argument(
-    '--asn_alts',
-    type=str,
-    nargs=1,
-    default='whois,http',
-    metavar='"ASN_ALTS"',
-    help='A comma delimited list of additional lookup types to attempt if the '
-         'ASN dns lookup fails. Allow permutations must be enabled. '
-         'Defaults to all: "whois,http" *WARNING* deprecated in '
-         'favor of new argument asn_methods.'
 )
 group.add_argument(
     '--asn_methods',
@@ -372,9 +352,6 @@ class IPWhoisCLI:
             proxy HTTP support or None.
         proxy_https (:obj:`urllib.request.OpenerDirector`): The request for
             proxy HTTPS support or None.
-        allow_permutations (:obj:`bool`): Allow net.Net() to use additional
-            methods if DNS lookups to Cymru fail. *WARNING* deprecated in
-            favor of new argument asn_methods. Defaults to True.
     """
 
     def __init__(
@@ -382,8 +359,7 @@ class IPWhoisCLI:
         addr,
         timeout,
         proxy_http,
-        proxy_https,
-        allow_permutations
+        proxy_https
     ):
 
         self.addr = addr
@@ -412,12 +388,9 @@ class IPWhoisCLI:
             handler = ProxyHandler(handler_dict)
             self.opener = build_opener(handler)
 
-        self.allow_permutations = allow_permutations
-
         self.obj = IPWhois(address=self.addr,
                            timeout=self.timeout,
-                           proxy_opener=self.opener,
-                           allow_permutations=self.allow_permutations)
+                           proxy_opener=self.opener)
 
     def generate_output_header(self, query_type='RDAP'):
         """
@@ -482,10 +455,8 @@ class IPWhoisCLI:
         if json_data is None:
             json_data = {}
 
-        # Python 2.6 doesn't support set literal expressions, use explicit
-        # set() instead.
-        keys = set(['asn', 'asn_cidr', 'asn_country_code', 'asn_date',
-                    'asn_registry', 'asn_description']).intersection(json_data)
+        keys = {'asn', 'asn_cidr', 'asn_country_code', 'asn_date',
+                'asn_registry', 'asn_description'}.intersection(json_data)
 
         output = ''
 
@@ -1444,6 +1415,7 @@ class IPWhoisCLI:
 
         return output
 
+
 if script_args.addr:
 
     results = IPWhoisCLI(
@@ -1454,8 +1426,7 @@ if script_args.addr:
         ) else None,
         proxy_https=script_args.proxy_https if (
             script_args.proxy_https and len(script_args.proxy_https) > 0
-        ) else None,
-        allow_permutations=(not script_args.disallow_permutations)
+        ) else None
     )
 
     if script_args.whois:
@@ -1474,9 +1445,6 @@ if script_args.addr:
             field_list=script_args.field_list.split(',') if (
                 script_args.field_list and
                 len(script_args.field_list) > 0) else None,
-            asn_alts=script_args.asn_alts.split(',') if (
-                script_args.asn_alts and not script_args.asn_methods and
-                len(script_args.asn_alts) > 0) else None,
             extra_org_map=script_args.extra_org_map,
             inc_nir=(not script_args.exclude_nir),
             nir_field_list=script_args.nir_field_list.split(',') if (
@@ -1502,9 +1470,6 @@ if script_args.addr:
                 len(script_args.excluded_entities) > 0) else None,
             bootstrap=script_args.bootstrap,
             rate_limit_timeout=script_args.rate_limit_timeout,
-            asn_alts=script_args.asn_alts.split(',') if (
-                script_args.asn_alts and not script_args.asn_methods and
-                len(script_args.asn_alts) > 0) else None,
             extra_org_map=script_args.extra_org_map,
             inc_nir=(not script_args.exclude_nir),
             nir_field_list=script_args.nir_field_list.split(',') if (

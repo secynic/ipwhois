@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2017 Philip Hane
+# Copyright (c) 2013-2019 Philip Hane
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -286,16 +286,6 @@ class NIRWhois:
 
         return ret
 
-    def _parse_fields(self, *args, **kwargs):
-        """
-        Deprecated. This will be removed in a future release.
-        """
-
-        from warnings import warn
-        warn('NIRWhois._parse_fields() has been deprecated and will be '
-             'removed. You should now use NIRWhois.parse_fields().')
-        return self.parse_fields(*args, **kwargs)
-
     def get_nets_jpnic(self, response):
         """
         The function for parsing network blocks from jpnic whois data.
@@ -358,16 +348,6 @@ class NIRWhois:
                 pass
 
         return nets
-
-    def _get_nets_jpnic(self, *args, **kwargs):
-        """
-        Deprecated. This will be removed in a future release.
-        """
-
-        from warnings import warn
-        warn('NIRWhois._get_nets_jpnic() has been deprecated and will be '
-             'removed. You should now use NIRWhois.get_nets_jpnic().')
-        return self.get_nets_jpnic(*args, **kwargs)
 
     def get_nets_krnic(self, response):
         """
@@ -434,16 +414,6 @@ class NIRWhois:
 
         return nets
 
-    def _get_nets_krnic(self, *args, **kwargs):
-        """
-        Deprecated. This will be removed in a future release.
-        """
-
-        from warnings import warn
-        warn('NIRWhois._get_nets_krnic() has been deprecated and will be '
-             'removed. You should now use NIRWhois.get_nets_krnic().')
-        return self.get_nets_krnic(*args, **kwargs)
-
     def get_contact(self, response=None, nir=None, handle=None,
                     retry_count=3, dt_format=None):
         """
@@ -483,23 +453,13 @@ class NIRWhois:
                 request_type=NIR_WHOIS[nir]['request_type']
             )
 
-        return self._parse_fields(
+        return self.parse_fields(
             response=contact_response,
             fields_dict=NIR_WHOIS[nir]['contact_fields'],
             dt_format=dt_format,
             hourdelta=int(NIR_WHOIS[nir]['dt_hourdelta']),
             is_contact=True
         )
-
-    def _get_contact(self, *args, **kwargs):
-        """
-        Deprecated. This will be removed in a future release.
-        """
-
-        from warnings import warn
-        warn('NIRWhois._get_contact() has been deprecated and will be '
-             'removed. You should now use NIRWhois.get_contact().')
-        return self.get_contact(*args, **kwargs)
 
     def lookup(self, nir=None, inc_raw=False, retry_count=3, response=None,
                field_list=None, is_offline=False):
@@ -582,11 +542,11 @@ class NIRWhois:
         nets_response = None
         if nir == 'jpnic':
 
-            nets_response = self._get_nets_jpnic(response)
+            nets_response = self.get_nets_jpnic(response)
 
         elif nir == 'krnic':
 
-            nets_response = self._get_nets_krnic(response)
+            nets_response = self.get_nets_krnic(response)
 
         nets.extend(nets_response)
 
@@ -609,7 +569,7 @@ class NIRWhois:
 
                 dt_format = None
 
-            temp_net = self._parse_fields(
+            temp_net = self.parse_fields(
                 response=response,
                 fields_dict=NIR_WHOIS[nir]['fields'],
                 net_start=section_end,
@@ -659,7 +619,7 @@ class NIRWhois:
                                     tmp_response = None
                                     tmp_handle = contact
 
-                                temp_net['contacts'][key] = self._get_contact(
+                                temp_net['contacts'][key] = self.get_contact(
                                     response=tmp_response,
                                     handle=tmp_handle,
                                     nir=nir,
