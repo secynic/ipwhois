@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2017 Philip Hane
+# Copyright (c) 2013-2019 Philip Hane
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -105,7 +105,7 @@ class Net:
             proxy support. Defaults to None.
         allow_permutations (:obj:`bool`): Allow net.Net() to use additional
             methods if DNS lookups to Cymru fail. *WARNING* deprecated in
-            favor of new argument asn_methods. Defaults to True.
+            favor of new argument asn_methods. Defaults to False.
 
     Raises:
         IPDefinedError: The address provided is defined (does not need to be
@@ -113,7 +113,7 @@ class Net:
     """
 
     def __init__(self, address, timeout=5, proxy_opener=None,
-                 allow_permutations=True):
+                 allow_permutations=False):
 
         # IPv4Address or IPv6Address
         if isinstance(address, IPv4Address) or isinstance(
@@ -223,7 +223,7 @@ class Net:
         """
         Temporary wrapper for IP ASN lookups (moved to
         asn.IPASN.lookup()). This will be removed in a future
-        release (1.0.0).
+        release.
         """
 
         from warnings import warn
@@ -768,15 +768,6 @@ class Net:
 
         except (URLError, socket.timeout, socket.error) as e:
 
-            # Check needed for Python 2.6, also why URLError is caught.
-            try:  # pragma: no cover
-                if not isinstance(e.reason, (socket.timeout, socket.error)):
-                    raise HTTPLookupError('HTTP lookup failed for {0}.'
-                                          ''.format(url))
-            except AttributeError:  # pragma: no cover
-
-                pass
-
             log.debug('HTTP query socket error: {0}'.format(e))
             if retry_count > 0:
 
@@ -919,15 +910,6 @@ class Net:
             return str(d)
 
         except (URLError, socket.timeout, socket.error) as e:
-
-            # Check needed for Python 2.6, also why URLError is caught.
-            try:  # pragma: no cover
-                if not isinstance(e.reason, (socket.timeout, socket.error)):
-                    raise HTTPLookupError('HTTP lookup failed for {0}.'
-                                          ''.format(url))
-            except AttributeError:  # pragma: no cover
-
-                pass
 
             log.debug('HTTP query socket error: {0}'.format(e))
             if retry_count > 0:

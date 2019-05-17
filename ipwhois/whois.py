@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2017 Philip Hane
+# Copyright (c) 2013-2019 Philip Hane
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -740,7 +740,7 @@ class Whois:
 
                     results['raw_referral'] = response_ref
 
-                temp_rnet = self._parse_fields(
+                temp_rnet = self.parse_fields(
                     response_ref,
                     RWHOIS['fields'],
                     field_list=field_list
@@ -758,15 +758,15 @@ class Whois:
 
         if asn_data['asn_registry'] == 'arin':
 
-            nets_response = self._get_nets_arin(response)
+            nets_response = self.get_nets_arin(response)
 
         elif asn_data['asn_registry'] == 'lacnic':
 
-            nets_response = self._get_nets_lacnic(response)
+            nets_response = self.get_nets_lacnic(response)
 
         else:
 
-            nets_response = self._get_nets_other(response)
+            nets_response = self.get_nets_other(response)
 
         nets.extend(nets_response)
 
@@ -788,7 +788,7 @@ class Whois:
 
                 dt_format = None
 
-            temp_net = self._parse_fields(
+            temp_net = self.parse_fields(
                 response,
                 RIR_WHOIS[asn_data['asn_registry']]['fields'],
                 section_end,

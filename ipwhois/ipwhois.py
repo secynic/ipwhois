@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2017 Philip Hane
+# Copyright (c) 2013-2019 Philip Hane
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -44,11 +44,11 @@ class IPWhois:
             proxy support. Defaults to None.
         allow_permutations (:obj:`bool`): Allow net.Net() to use additional
             methods if DNS lookups to Cymru fail. *WARNING* deprecated in
-            favor of new argument asn_methods. Defaults to True.
+            favor of new argument asn_methods. Defaults to False.
     """
 
     def __init__(self, address, timeout=5, proxy_opener=None,
-                 allow_permutations=True):
+                 allow_permutations=False):
 
         self.net = Net(
             address=address, timeout=timeout, proxy_opener=proxy_opener,

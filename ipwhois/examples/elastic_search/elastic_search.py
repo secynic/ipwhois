@@ -9,6 +9,7 @@ import elasticsearch
 from elasticsearch.helpers import scan
 from ipwhois import IPWhois
 from ipwhois.utils import get_countries
+from ipwhois import __version__
 from datetime import datetime
 import geoip2.database
 import json
@@ -16,14 +17,11 @@ import io
 import sys
 from os import path
 
-# geopy does not support lower than Python 2.7
-if sys.version_info >= (2, 7):
+from geopy.geocoders import Nominatim
+from geopy.exc import (GeocoderQueryError, GeocoderTimedOut)
 
-    from geopy.geocoders import Nominatim
-    from geopy.exc import (GeocoderQueryError, GeocoderTimedOut)
-
-    # Used to convert addresses to geo locations.
-    GEOLOCATOR = Nominatim()
+# Used to convert addresses to geo locations.
+GEOLOCATOR = Nominatim(user_agent='ipwhois/{0}'.format(__version__))
 
 # Setup the arg parser.
 parser = argparse.ArgumentParser(
@@ -89,7 +87,7 @@ parser.add_argument(
     type=str,
     nargs=1,
     metavar='"HOST"',
-    default='localhost',
+    default=['localhost'],
     help='The ElasticSearch host to connect to. Default: "localhost".'
 )
 parser.add_argument(
@@ -108,8 +106,8 @@ DEFAULT_MAPPING = {
     'date_detection': 'true',
     'properties': {
         '@version': {
-            'type': 'string',
-            'index': 'not_analyzed'
+            'type': 'text',
+            'index': False
         },
         'updated': {
             'type': 'date',
@@ -117,7 +115,6 @@ DEFAULT_MAPPING = {
             'ignore_malformed': 'false'
         }
     },
-    '_all': {'enabled': 'true'},
     'dynamic_templates': [
         {
             'string_fields': {
@@ -142,7 +139,7 @@ with io.open(str(CUR_DIR) + '/data/geo_coord.json', 'r') as data_file:
 COUNTRIES = get_countries()
 
 # Default: localhost:9200
-es = elasticsearch.Elasticsearch(host=args.host, port=args.port)
+es = elasticsearch.Elasticsearch(host=args.host[0], port=args.port)
 
 
 def delete_index():
@@ -150,7 +147,16 @@ def delete_index():
     try:
 
         # Delete existing entries
-        es.indices.delete(index='ipwhois')
+        es.indices.delete(index='ipwhois_base')
+
+    except elasticsearch.exceptions.NotFoundError:
+
+        pass
+
+    try:
+
+        # Delete existing entries
+        es.indices.delete(index='ipwhois_entity')
 
     except elasticsearch.exceptions.NotFoundError:
 
@@ -159,8 +165,27 @@ def delete_index():
 
 def create_index():
 
-    # Create the ipwhois index
-    es.indices.create(index='ipwhois', ignore=400, body={
+    # Create the ipwhois_base index
+    es.indices.create(index='ipwhois_base', ignore=400, body={
+        'settings': {
+            'index.refresh_interval': '5s',
+            'analysis': {
+                'analyzer': {
+                    'base': {
+                        'type': 'standard',
+                        'stopwords': '_none_'
+                    },
+                    'entity': {
+                        'type': 'standard',
+                        'stopwords': '_none_'
+                    }
+                }
+            }
+        }
+    })
+
+    # Create the ipwhois_entity index
+    es.indices.create(index='ipwhois_entity', ignore=400, body={
         'settings': {
             'index.refresh_interval': '5s',
             'analysis': {
@@ -219,7 +244,7 @@ def create_index():
     })
 
     es.indices.put_mapping(
-        index='ipwhois',
+        index='ipwhois_base',
         doc_type='base',
         body=mapping,
         allow_no_indices=True
@@ -236,7 +261,7 @@ def create_index():
                             'type': 'geo_point'
                         },
                         'value': {
-                            'type': 'string',
+                            'type': 'text',
                         }
                     }
                 }
@@ -244,7 +269,7 @@ def create_index():
         }
     })
     es.indices.put_mapping(
-        index='ipwhois',
+        index='ipwhois_entity',
         doc_type='entity',
         body=mapping,
         allow_no_indices=True
@@ -258,7 +283,7 @@ def insert(input_ip='', update=True, expires=7, depth=1):
         try:
             # Only update if older than x days.
             tmp = es.search(
-                index='ipwhois',
+                index='ipwhois_base',
                 doc_type='base',
                 body={
                     'query': {
@@ -303,7 +328,7 @@ def insert(input_ip='', update=True, expires=7, depth=1):
 
                 # Only update if older than 7 days.
                 es_tmp = es.search(
-                    index='ipwhois',
+                    index='ipwhois_entity',
                     doc_type='entity',
                     body={
                         'query': {
@@ -369,7 +394,7 @@ def insert(input_ip='', update=True, expires=7, depth=1):
             try:
 
                 ent_search = es.search(
-                    index='ipwhois',
+                    index='ipwhois_entity',
                     doc_type='entity',
                     body={
                         'query': {
@@ -382,7 +407,7 @@ def insert(input_ip='', update=True, expires=7, depth=1):
 
                 for hit in ent_search['hits']['hits']:
 
-                    es.delete(index='ipwhois', doc_type='entity',
+                    es.delete(index='ipwhois_entity', doc_type='entity',
                               id=hit['_id'])
 
             except KeyError:
@@ -390,10 +415,10 @@ def insert(input_ip='', update=True, expires=7, depth=1):
                 pass
 
         # Index the entity in elasticsearch.
-        es.index(index='ipwhois', doc_type='entity', body=ent)
+        es.index(index='ipwhois_entity', doc_type='entity', body=ent)
 
         # Refresh the index for searching duplicates.
-        es.indices.refresh(index='ipwhois')
+        es.indices.refresh(index='ipwhois_entity')
 
     # Don't need the objects key since that data has been entered as the
     # entities doc_type.
@@ -451,7 +476,7 @@ def insert(input_ip='', update=True, expires=7, depth=1):
         try:
 
             ip_search = es.search(
-                index='ipwhois',
+                index='ipwhois_base',
                 doc_type='base',
                 body={
                     'query': {
@@ -464,17 +489,18 @@ def insert(input_ip='', update=True, expires=7, depth=1):
 
             for hit in ip_search['hits']['hits']:
 
-                es.delete(index='ipwhois', doc_type='base', id=hit['_id'])
+                es.delete(index='ipwhois_base', doc_type='base', id=hit['_id'])
 
         except KeyError:
 
             pass
 
     # Index the base in elasticsearch.
-    es.index(index='ipwhois', doc_type='base', body=ret)
+    es.index(index='ipwhois_base', doc_type='base', body=ret)
 
-    # Refresh the index for searching duplicates.
-    es.indices.refresh(index='ipwhois')
+    # Refresh the indices for searching duplicates.
+    es.indices.refresh(index='ipwhois_base')
+    es.indices.refresh(index='ipwhois_entity')
 
 if args.delete:
 
@@ -501,7 +527,7 @@ if args.kexport:
         client=es,
         index='.kibana',
         doc_type='index-pattern',
-        query={'query': {'match': {'_id': 'ipwhois'}}}
+        query={'query': {'match': {'_id': 'ipwhois*'}}}
     ))
 
     # Dump exports to json file.
