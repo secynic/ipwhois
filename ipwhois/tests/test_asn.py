@@ -145,8 +145,8 @@ class TestIPASN(TestCommon):
         for key, val in data.items():
 
             log.debug('Testing: {0}'.format(key))
-        net = Net(key)
-        obj = IPASN(net)
+            net = Net(key)
+            obj = IPASN(net)
 
         try:
 
