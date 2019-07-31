@@ -13,6 +13,8 @@ Changelog
   nir.NIRWhois._get_nets_krnic, nir.NIRWhois._get_contact (#230)
 - Removed deprecated asn_alts parameter (#230)
 - Removed deprecated allow_permutations parameter (#230)
+- Fixed ASNOrigin lookups (#216)
+- Fixed bug in ASNOrigin lookups when multiple asn_methods provided (#216)
 
 1.1.0 (2019-02-01)
 ------------------

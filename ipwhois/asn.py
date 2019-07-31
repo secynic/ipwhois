@@ -61,21 +61,21 @@ ASN_ORIGIN_WHOIS = {
 
 ASN_ORIGIN_HTTP = {
     'radb': {
-        'url': 'http://www.radb.net/query/',
+        'url': 'http://www.radb.net/query',
         'form_data_asn_field': 'keywords',
         'form_data': {
             'advanced_query': '1',
             'query': 'Query',
-            '-T option': 'inet-rtr',
+            # '-T option': 'inet-rtr',
             'ip_option': '',
             '-i': '1',
             '-i option': 'origin'
         },
         'fields': {
-            'description': r'(descr):[^\S\n]+(?P<val>.+?)\<br\>',
-            'maintainer': r'(mnt-by):[^\S\n]+(?P<val>.+?)\<br\>',
-            'updated': r'(changed):[^\S\n]+(?P<val>.+?)\<br\>',
-            'source': r'(source):[^\S\n]+(?P<val>.+?)\<br\>',
+            'description': r'(descr):[^\S\n]+(?P<val>.+?)\n',
+            'maintainer': r'(mnt-by):[^\S\n]+(?P<val>.+?)\n',
+            'updated': r'(changed):[^\S\n]+(?P<val>.+?)\n',
+            'source': r'(source):[^\S\n]+(?P<val>.+?)\<',
         }
     },
 }
@@ -796,6 +796,8 @@ class ASNOrigin:
                             asn=asn, retry_count=retry_count
                         )
 
+                        break
+
                     except (WhoisLookupError, WhoisRateLimitError) as e:
 
                         log.debug('ASN origin WHOIS lookup failed: {0}'
@@ -809,16 +811,21 @@ class ASNOrigin:
                         log.debug('Response not given, perform ASN origin '
                                   'HTTP lookup for: {0}'.format(asn))
 
-                        tmp = ASN_ORIGIN_HTTP['radb']['form_data']
-                        tmp[str(ASN_ORIGIN_HTTP['radb']['form_data_asn_field']
-                                )] = asn
+                        # tmp = ASN_ORIGIN_HTTP['radb']['form_data']
+                        # tmp[str(
+                        # ASN_ORIGIN_HTTP['radb']['form_data_asn_field']
+                        # )] = asn
                         response = self._net.get_http_raw(
-                            url=ASN_ORIGIN_HTTP['radb']['url'],
+                            url=('{0}?advanced_query=1&keywords={1}&-T+option'
+                                 '=&ip_option=&-i=1&-i+option=origin'
+                                 ).format(ASN_ORIGIN_HTTP['radb']['url'], asn),
                             retry_count=retry_count,
-                            request_type='POST',
-                            form_data=tmp
+                            request_type='GET',
+                            # form_data=tmp
                         )
                         is_http = True   # pragma: no cover
+
+                        break
 
                     except HTTPLookupError as e:
 
