@@ -687,7 +687,7 @@ class ASNOrigin:
         nets = []
 
         if is_http:
-            regex = r'route(?:6)?:[^\S\n]+(?P<val>.+?)<br>'
+            regex = r'route(?:6)?:[^\S\n]+(?P<val>.+?)\n'
         else:
             regex = r'^route(?:6)?:[^\S\n]+(?P<val>.+|.+)$'
 
