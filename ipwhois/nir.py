@@ -108,9 +108,14 @@ NIR_WHOIS = {
     },
     'krnic': {
         'country_code': 'KR',
-        'url': 'https://whois.kisa.or.kr/eng/whois.jsc',
+        'url': 'https://xn--c79as89aj0e29b77z.xn--3e0b707e/eng/whois.jsc',
         'request_type': 'POST',
-        'request_headers': {'Accept': 'text/html'},
+        'request_headers': {
+            'Accept': 'text/html',
+            'Referer': (
+                'https://xn--c79as89aj0e29b77z.xn--3e0b707e/eng/whois.jsp'
+            ),
+        },
         'form_data_ip_field': 'query',
         'fields': {
             'name': r'(Organization Name)[\s]+\:[^\S\n]+(?P<val>.+?)\n',
