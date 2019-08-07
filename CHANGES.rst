@@ -15,6 +15,7 @@ Changelog
 - Removed deprecated allow_permutations parameter (#230)
 - Fixed ASNOrigin lookups (#216)
 - Fixed bug in ASNOrigin lookups when multiple asn_methods provided (#216)
+- Fixed bug in KRNIC queries due to a change in their service (#243)
 
 1.1.0 (2019-02-01)
 ------------------
