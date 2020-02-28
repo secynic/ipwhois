@@ -50,8 +50,7 @@ if sys.version_info >= (3, 3):  # pragma: no cover
 else:  # pragma: no cover
     from ipaddr import (IPAddress as ip_address,
                         IPv4Address,
-                        IPv6Address
-                        )
+                        IPv6Address)
 
 try:  # pragma: no cover
     from urllib.request import (OpenerDirector,
