@@ -20,21 +20,17 @@ class TestNet(TestCommon):
         self.assertRaises(ValueError, Net, 'fe::80::/10')
 
     def test_ip_defined(self):
-        if sys.version_info >= (3, 3):
-            from ipaddress import (IPv4Address, IPv6Address, 
-                    IPv4Network, IPv6Network)
-        else:
-            from ipaddr import (IPv4Address, IPv6Address,
-                    IPv4Network, IPv6Network)
+        from ipaddress import (IPv4Address, IPv6Address, 
+                IPv4Network, IPv6Network)
 
         self.assertRaises(IPDefinedError, Net, '192.168.0.1')
         self.assertRaises(IPDefinedError, Net, 'fe80::')
-        self.assertRaises(IPDefinedError, Net, IPv4Address('192.168.0.1'))
-        self.assertRaises(IPDefinedError, Net, IPv6Address('fe80::'))
+        self.assertRaises(IPDefinedError, Net, IPv4Address(u'192.168.0.1'))
+        self.assertRaises(IPDefinedError, Net, IPv6Address(u'fe80::'))
         self.assertRaises(IPDefinedError, Net, '192.168.0.0/16')
         self.assertRaises(IPDefinedError, Net, 'fe80::/10')
-        self.assertRaises(IPDefinedError, Net, IPv4Network('192.168.0.0/16'))
-        self.assertRaises(IPDefinedError, Net, IPv6Network('fe80::/10'))
+        self.assertRaises(IPDefinedError, Net, IPv4Network(u'192.168.0.0/16'))
+        self.assertRaises(IPDefinedError, Net, IPv6Network(u'fe80::/10'))
 
     def test_ip_version(self):
         result = Net('74.125.225.229')
