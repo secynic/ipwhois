@@ -67,7 +67,7 @@ RIR_WHOIS = {
             'name': r'(NetName):[^\S\n]+(?P<val>.+?)\n',
             'handle': r'(NetHandle):[^\S\n]+(?P<val>.+?)\n',
             'description': r'(OrgName|CustName):[^\S\n]+(?P<val>.+?)'
-                    '(?=(\n\S):?)',
+                    '(?=(\n\\S):?)',
             'country': r'(Country):[^\S\n]+(?P<val>.+?)\n',
             'state': r'(StateProv):[^\S\n]+(?P<val>.+?)\n',
             'city': r'(City):[^\S\n]+(?P<val>.+?)\n',
@@ -75,7 +75,7 @@ RIR_WHOIS = {
             'postal_code': r'(PostalCode):[^\S\n]+(?P<val>.+?)\n',
             'emails': (
                 r'.+?:.*?[^\S\n]+(?P<val>[\w\-\.]+?@[\w\-\.]+\.[\w\-]+)('
-                '[^\S\n]+.*?)*?\n'
+                '[^\\S\n]+.*?)*?\n'
             ),
             'created': r'(RegDate):[^\S\n]+(?P<val>.+?)\n',
             'updated': r'(Updated):[^\S\n]+(?P<val>.+?)\n',
@@ -92,7 +92,7 @@ RIR_WHOIS = {
             'address': r'(address):[^\S\n]+(?P<val>.+?)(?=(\n\S):?)',
             'emails': (
                 r'.+?:.*?[^\S\n]+(?P<val>[\w\-\.]+?@[\w\-\.]+\.[\w\-]+)('
-                '[^\S\n]+.*?)*?\n'
+                '[^\\S\n]+.*?)*?\n'
             ),
             'created': (
                 r'(created):[^\S\n]+(?P<val>[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]'
@@ -115,7 +115,7 @@ RIR_WHOIS = {
             'address': r'(address):[^\S\n]+(?P<val>.+?)(?=(\n\S):?)',
             'emails': (
                 r'.+?:.*?[^\S\n]+(?P<val>[\w\-\.]+?@[\w\-\.]+\.[\w\-]+)('
-                '[^\S\n]+.*?)*?\n'
+                '[^\\S\n]+.*?)*?\n'
             ),
             'updated': r'(changed):[^\S\n]+.*(?P<val>[0-9]{8}).*?\n'
         },
@@ -129,7 +129,7 @@ RIR_WHOIS = {
             'country': r'(country):[^\S\n]+(?P<val>.+?)\n',
             'emails': (
                 r'.+?:.*?[^\S\n]+(?P<val>[\w\-\.]+?@[\w\-\.]+\.[\w\-]+)('
-                '[^\S\n]+.*?)*?\n'
+                '[^\\S\n]+.*?)*?\n'
             ),
             'created': r'(created):[^\S\n]+(?P<val>[0-9]{8}).*?\n',
             'updated': r'(changed):[^\S\n]+(?P<val>[0-9]{8}).*?\n'
@@ -146,7 +146,7 @@ RIR_WHOIS = {
             'address': r'(address):[^\S\n]+(?P<val>.+?)(?=(\n\S):?)',
             'emails': (
                 r'.+?:.*?[^\S\n]+(?P<val>[\w\-\.]+?@[\w\-\.]+\.[\w\-]+)('
-                '[^\S\n]+.*?)*?\n'
+                '[^\\S\n]+.*?)*?\n'
             ),
         }
     }
@@ -166,7 +166,7 @@ RWHOIS = {
         'postal_code': r'(network:Postal-Code):(?P<val>.+?)\n',
         'emails': (
             r'.+?:.*?[^\S\n]+(?P<val>[\w\-\.]+?@[\w\-\.]+\.[\w\-]+)('
-            '[^\S\n]+.*?)*?\n'
+            '[^\\S\n]+.*?)*?\n'
         ),
         'created': r'(network:Created):(?P<val>.+?)\n',
         'updated': r'(network:Updated):(?P<val>.+?)\n'
@@ -474,7 +474,7 @@ class Whois:
                 for addr in net_range.split(', '):
 
                     count = addr.count('.')
-                    if count is not 0 and count < 4:
+                    if count != 0 and count < 4:
 
                         addr_split = addr.strip().split('/')
                         for i in range(count + 1, 4):
@@ -667,7 +667,7 @@ class Whois:
 
         # Only fetch the response if we haven't already.
         if response is None or (not is_offline and
-                                asn_data['asn_registry'] is not 'arin'):
+                                asn_data['asn_registry'] != 'arin'):
 
             log.debug('Response not given, perform WHOIS lookup for {0}'
                       .format(self._net.address_str))
