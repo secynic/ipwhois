@@ -551,8 +551,12 @@ class _RDAPNetwork(_RDAPCommon):
 
             try:
 
-                self.vars[v] = self.json[v].strip()
+                if self.json[v] is None:
 
+                    self.vars[v] = None
+                else:
+
+                    self.vars[v] = self.json[v].strip()
             except (KeyError, ValueError):
 
                 pass
