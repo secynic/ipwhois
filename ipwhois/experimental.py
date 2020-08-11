@@ -373,7 +373,8 @@ def bulk_lookup_rdap(addresses=None, inc_raw=False, retry_count=3, depth=0,
                         # Lookup was successful, add to result. Set the nir
                         # key to None as this is not supported
                         # (yet - requires more queries)
-                        results[ip] = rdap_result
+                        results[ip]['asn'] = asn_data
+                        results[ip]['rdap'] = rdap_result
                         results[ip]['nir'] = None
 
                         # Remove the IP from the lookup queue
