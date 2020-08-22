@@ -56,6 +56,8 @@ RIR_RDAP = {
     }
 }
 
+def count_nulls(keys):
+    return sum(x is not None for x in keys)
 
 class _RDAPContact:
     """
@@ -551,12 +553,9 @@ class _RDAPNetwork(_RDAPCommon):
 
             try:
 
-                if self.json[v] is None:
-
-                    self.vars[v] = None
-                else:
-
+                if self.json[v]:
                     self.vars[v] = self.json[v].strip()
+
             except (KeyError, ValueError):
 
                 pass
@@ -786,117 +785,70 @@ class RDAP:
         results['entities'] = []
         results['objects'] = {}
         roles = {}
+        to_be_queried = []
 
         # Iterate through and parse the root level entities.
         log.debug('Parsing RDAP root level entities')
         try:
-
             for ent in response['entities']:
-
-                if ent['handle'] not in [results['entities'],
-                                         excluded_entities]:
-
+                if ent['handle'] not in [results['entities']]:
                     result_ent = _RDAPEntity(ent)
                     result_ent.parse()
-
-                    results['objects'][ent['handle']] = result_ent.vars
-
-                    results['entities'].append(ent['handle'])
-
-                    try:
-
-                        for tmp in ent['entities']:
-
-                            roles[tmp['handle']] = tmp['roles']
-
-                    except KeyError:
-
-                        pass
+                    if count_nulls(result_ent.vars.keys()) <= 7:
+                        results['objects'][ent['handle']] = result_ent.vars
+                        results['entities'].append(ent['handle'])
+                        try:
+                            for tmp in ent['entities']:
+                                roles[tmp['handle']] = tmp['roles']
+                        except KeyError:
+                            pass
+                    else:
+                        to_be_queried.append(ent['handle'])
 
         except KeyError:
-
             pass
-
         # Iterate through to the defined depth, retrieving and parsing all
         # unique entities.
         temp_objects = results['objects']
+        new_objects  = {}
+        depth_counter = 0
+        # if Depth comes first, terminate
+        for ent in to_be_queried:
+            if bootstrap:
+                entity_url = '{0}/entity/{1}'.format(BOOTSTRAP_URL, ent)
+            else:
 
-        if depth > 0 and len(temp_objects) > 0:
-
-            log.debug('Parsing RDAP sub-entities to depth: {0}'.format(str(
-                depth)))
-
-        while depth > 0 and len(temp_objects) > 0:
-
-            new_objects = {}
-            for obj in temp_objects.values():
-
+                tmp_reg = asn_data['asn_registry']
+                entity_url = RIR_RDAP[tmp_reg]['entity_url']
+                entity_url = str(entity_url).format(ent)
+            try:
+                # RDAP entity query
+                response = self._net.get_http_json(url=entity_url, retry_count=retry_count,rate_limit_timeout=rate_limit_timeout)
+                # Parse the entity
+                result_ent = _RDAPEntity(response)
+                result_ent.parse()
+                new_objects[ent] = result_ent.vars
+                new_objects[ent]['roles'] = None
                 try:
-
-                    for ent in obj['entities']:
-
-                        if ent not in (list(results['objects'].keys()) +
-                                       list(new_objects.keys()) +
-                                       excluded_entities):
-
-                            if bootstrap:
-                                entity_url = '{0}/entity/{1}'.format(
-                                    BOOTSTRAP_URL, ent)
-                            else:
-                                tmp_reg = asn_data['asn_registry']
-                                entity_url = RIR_RDAP[tmp_reg]['entity_url']
-                                entity_url = str(entity_url).format(ent)
-
-                            try:
-
-                                # RDAP entity query
-                                response = self._net.get_http_json(
-                                    url=entity_url, retry_count=retry_count,
-                                    rate_limit_timeout=rate_limit_timeout
-                                )
-
-                                # Parse the entity
-                                result_ent = _RDAPEntity(response)
-                                result_ent.parse()
-                                new_objects[ent] = result_ent.vars
-
-                                new_objects[ent]['roles'] = None
-                                try:
-
-                                    new_objects[ent]['roles'] = roles[ent]
-
-                                except KeyError:  # pragma: no cover
-
-                                    pass
-
-                                try:
-
-                                    for tmp in response['entities']:
-
-                                        if tmp['handle'] not in roles:
-
-                                            roles[tmp['handle']] = tmp['roles']
-
-                                except (IndexError, KeyError):
-
-                                    pass
-
-                                if inc_raw:
-
-                                    new_objects[ent]['raw'] = response
-
-                            except (HTTPLookupError, InvalidEntityObject):
-
-                                pass
-
-                except TypeError:
-
+                    new_objects[ent]['roles'] = roles[ent]
+                except KeyError:  # pragma: no cover
                     pass
+                try:
+                    for tmp in response['entities']:
+                        if tmp['handle'] not in roles:
+                            roles[tmp['handle']] = tmp['roles']
+                except (IndexError, KeyError):
+                    pass
+                if inc_raw:
+                    new_objects[ent]['raw'] = response
+            except (HTTPLookupError, InvalidEntityObject):
+                pass
+            except TypeError:
+                pass
 
-            # Update the result objects, and set the new temp object list to
-            # iterate for the next depth of entities.
-            results['objects'].update(new_objects)
-            temp_objects = new_objects
-            depth -= 1
+            depth_counter += 1
+            if depth_counter == depth:
+                break
 
+        results['objects'].update(new_objects)
         return results
