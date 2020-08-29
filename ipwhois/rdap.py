@@ -28,8 +28,6 @@ from .utils import ipv4_lstrip_zeros, calculate_cidr, unique_everseen
 from .net import ip_address
 import logging
 import json
-from itertools import product
-from pprint import pp 
 
 log = logging.getLogger(__name__)
 
