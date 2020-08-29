@@ -924,7 +924,7 @@ class RDAP:
                             new_objects[ent]['raw'] = response
                 except (HTTPLookupError, InvalidEntityObject):
                     pass
-             except TypeError:
+            except TypeError:
                 pass
 
 
