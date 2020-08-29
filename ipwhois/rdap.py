@@ -552,9 +552,9 @@ class _RDAPNetwork(_RDAPCommon):
         for v in ['name', 'type', 'country']:
 
             try:
-                
 
-                self.vars[v] = self.json[v].strip()
+                if self.json[v]:
+                    self.vars[v] = self.json[v].strip()
 
             except (KeyError, ValueError):
 
