@@ -631,4 +631,3 @@ def ipv6_generate_random(total=100):
             yield address
 
 
-
