@@ -692,7 +692,6 @@ class RDAP:
     def lookup(self, inc_raw=False, retry_count=3, asn_data=None, depth=0,
                excluded_entities=None, response=None, bootstrap=False,
                rate_limit_timeout=120):
-
         """
         The function for retrieving and parsing information for an IP
         address via RDAP (HTTP).
@@ -784,7 +783,6 @@ class RDAP:
         results['entities'] = []
         results['objects'] = {}
         roles = {}
-
         query_again = []
 
         # Iterate through and parse the root level entities.
