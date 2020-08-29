@@ -552,6 +552,7 @@ class _RDAPNetwork(_RDAPCommon):
         for v in ['name', 'type', 'country']:
 
             try:
+                
 
                 self.vars[v] = self.json[v].strip()
 
@@ -694,7 +695,6 @@ class RDAP:
                excluded_entities=None, response=None, bootstrap=False,
                rate_limit_timeout=120):
 
-        depth_counter = 0
         """
         The function for retrieving and parsing information for an IP
         address via RDAP (HTTP).
@@ -822,7 +822,6 @@ class RDAP:
         if depth > 0 and len(temp_objects) > 0:
 
             log.debug('Parsing RDAP sub-entities to depth: {0}'.format(str(depth)))
-
 
         while depth > 0 and len(temp_objects) > 0:
 
