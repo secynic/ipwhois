@@ -886,41 +886,45 @@ class RDAP:
             depth -= 1
 
         new_objects = {}
+        
         for again in query_again:
-            ent = again['handle']
-            if bootstrap:
-                entity_url = '{0}/entity/{1}'.format(BOOTSTRAP_URL, ent)
-            else:
-                tmp_reg = asn_data['asn_registry']
-                entity_url = RIR_RDAP[tmp_reg]['entity_url']
-                entity_url = str(entity_url).format(ent)
-            try:
-                # RDAP entity query
-                response = self._net.get_http_json(
-                                url=entity_url, retry_count=retry_count,
-                                rate_limit_timeout=rate_limit_timeout
-                                )
-
-                result_ent = _RDAPEntity(response)
-                result_ent.parse()
-                new_objects[ent] = result_ent.vars
-
-                new_objects[ent]['roles'] = None
+            try: 
+                ent = again['handle']
+                if bootstrap:
+                    entity_url = '{0}/entity/{1}'.format(BOOTSTRAP_URL, ent)
+                else:
+                    tmp_reg = asn_data['asn_registry']
+                    entity_url = RIR_RDAP[tmp_reg]['entity_url']
+                    entity_url = str(entity_url).format(ent)
                 try:
-                    new_objects[ent]['roles'] = roles[ent]
-                except KeyError:  # pragma: no cover
-                    pass
+                    # RDAP entity query
+                    response = self._net.get_http_json(
+                                    url=entity_url, retry_count=retry_count,
+                                    rate_limit_timeout=rate_limit_timeout
+                                    )
 
-                try:
-                    for tmp in response['entities']:
-                        if tmp['handle'] not in roles:
-                            roles[tmp['handle']] = tmp['roles']
-                except (IndexError, KeyError):
-                    pass
+                    result_ent = _RDAPEntity(response)
+                    result_ent.parse()
+                    new_objects[ent] = result_ent.vars
 
-                    if inc_raw:
-                        new_objects[ent]['raw'] = response
-            except (HTTPLookupError, InvalidEntityObject):
+                    new_objects[ent]['roles'] = None
+                    try:
+                        new_objects[ent]['roles'] = roles[ent]
+                    except KeyError:  # pragma: no cover
+                        pass
+
+                    try:
+                        for tmp in response['entities']:
+                            if tmp['handle'] not in roles:
+                                roles[tmp['handle']] = tmp['roles']
+                    except (IndexError, KeyError):
+                        pass
+
+                        if inc_raw:
+                            new_objects[ent]['raw'] = response
+                except (HTTPLookupError, InvalidEntityObject):
+                    pass
+             except TypeError:
                 pass
 
 
