@@ -808,7 +808,6 @@ class RDAP:
                 except KeyError:
                     pass
         except KeyError:
-
             pass
 
         # Iterate through to the defined depth, retrieving and parsing all
