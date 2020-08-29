@@ -926,5 +926,4 @@ class RDAP:
 
 
         results['objects'].update(new_objects)
-
         return results
