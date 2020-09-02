@@ -67,8 +67,22 @@ class TestExperimental(TestCommon):
             '115.1.2.3'  # KRNIC
         ]
 
+        expected_stats = {'ip_input_total': 12, 'ip_unique_total': 12, 'ip_lookup_total': 12,
+                          'lacnic': {'failed': [], 'rate_limited': [], 'total': 2},
+                          'ripencc': {'failed': [], 'rate_limited': [], 'total': 2},
+                          'apnic': {'failed': [], 'rate_limited': [], 'total': 4},
+                          'afrinic': {'failed': [], 'rate_limited': [], 'total': 2},
+                          'arin': {'failed': [], 'rate_limited': [], 'total': 2},
+                          'unallocated_addresses': []}
+
         try:
-            self.assertIsInstance(bulk_lookup_rdap(addresses=ips), tuple)
+            result = bulk_lookup_rdap(addresses=ips)
+            self.assertIsInstance(result, tuple)
+
+            results, stats = result
+            self.assertEqual(stats, expected_stats)
+            self.assertEqual(len(results), 12)
+
         except ASNLookupError:
             pass
         except AssertionError as e:
