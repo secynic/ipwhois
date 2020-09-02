@@ -553,7 +553,7 @@ class _RDAPNetwork(_RDAPCommon):
 
                 self.vars[v] = self.json[v].strip()
 
-            except (KeyError, ValueError):
+            except (KeyError, ValueError, AttributeError):
 
                 pass
 
