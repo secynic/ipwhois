@@ -87,9 +87,9 @@ NIR_WHOIS = {
             'updated': r'(\[Last Update\])[^\S\n]+(?P<val>.*?)\n',
             'nameservers': r'(\[Nameserver\])[^\S\n]+(?P<val>.*?)\n',
             'contact_admin': r'(\[Administrative Contact\])[^\S\n]+.+?\>'
-                             '(?P<val>.+?)\<\/A\>\n',
+                             '(?P<val>.+?)\\<\\/A\\>\n',
             'contact_tech': r'(\[Technical Contact\])[^\S\n]+.+?\>'
-                             '(?P<val>.+?)\<\/A\>\n'
+                             '(?P<val>.+?)\\<\\/A\\>\n'
         },
         'contact_fields': {
             'name': r'(\[Last, First\])[^\S\n]+(?P<val>.*?)\n',
@@ -125,9 +125,9 @@ NIR_WHOIS = {
             'postal_code': r'(Zip Code)[\s]+\:[^\S\n]+(?P<val>.+?)\n',
             'created': r'(Registration Date)[\s]+\:[^\S\n]+(?P<val>.+?)\n',
             'contact_admin': r'(id="eng_isp_contact").+?\>(?P<val>.*?)\<'
-                              '\/div\>\n',
+                              '\\/div\\>\n',
             'contact_tech': r'(id="eng_user_contact").+?\>(?P<val>.*?)\<'
-                             '\/div\>\n'
+                             '\\/div\\>\n'
         },
         'contact_fields': {
             'name': r'(Name)[^\S\n]+?:[^\S\n]+?(?P<val>.*?)\n',
@@ -379,7 +379,7 @@ class NIRWhois:
         # and the start and end positions.
         for match in re.finditer(
                 r'^(IPv4 Address)[\s]+:[^\S\n]+((.+?)[^\S\n]-[^\S\n](.+?)'
-                '[^\S\n]\((.+?)\)|.+)$',
+                '[^\\S\n]\\((.+?)\\)|.+)$',
                 response,
                 re.MULTILINE
         ):
