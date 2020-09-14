@@ -22,6 +22,7 @@ v1.2.0
   nir.NIRWhois._get_nets_krnic, nir.NIRWhois._get_contact
 - Removed deprecated asn_alts parameter
 - Removed deprecated allow_permutations parameter
+- Added support for Python 3.8
 
 ******
 v1.1.0
