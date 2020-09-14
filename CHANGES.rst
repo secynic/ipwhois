@@ -21,6 +21,7 @@ Changelog
 - Fixed deprecation warnings due to invalid escape sequences 
   (#272 - tirkarthi)
 - Added support for Python 3.8 (#267)
+- Fixed travis build warnings (#268)
 
 1.1.0 (2019-02-01)
 ------------------
