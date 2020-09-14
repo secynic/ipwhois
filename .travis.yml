@@ -1,5 +1,5 @@
 language: python
-sudo: required
+os: linux
 dist: xenial
 python:
   - 2.7
