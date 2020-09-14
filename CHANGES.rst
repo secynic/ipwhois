@@ -18,6 +18,8 @@ Changelog
 - Fixed bug in KRNIC queries due to a change in their service (#243)
 - Fixed bug in experimental.bulk_lookup_rdap where only the last 
   result was returned (#262 - ameidatou)
+- Fixed deprecation warnings due to invalid escape sequences 
+  (#272 - tirkarthi)
 
 1.1.0 (2019-02-01)
 ------------------
