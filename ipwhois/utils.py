@@ -101,7 +101,7 @@ IP_REGEX = (
     r'(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(('
     r'(:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1'
     r'\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(('
-    '[0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4})'
+    r'[0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4})'
     r'{0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]'
     r'?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:(('
     r'25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})'
@@ -212,6 +212,7 @@ def get_countries(is_legacy_xml=False):
 
         # Read the file.
         data = f.read()
+        f.close()
 
         # Check if there is data.
         if not data:  # pragma: no cover
@@ -257,6 +258,8 @@ def get_countries(is_legacy_xml=False):
 
             # Add to the countries dictionary.
             countries[code] = name
+
+        f.close()
 
     return countries
 
@@ -506,6 +509,7 @@ def unique_addresses(data=None, file_path=None):
 
         # Read the file.
         file_data = f.read()
+        f.close()
 
     pattern = re.compile(
         str(IP_REGEX),
