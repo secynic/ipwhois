@@ -157,56 +157,7 @@ class TestFunctions(TestCommon):
 
         # Expected result is different on 2.x vs 3.x, possible issues with
         # ipaddr vs ipaddress output. Investigation pending...
-        if (3, 3) <= sys.version_info < (3, 8):
-
-            fp_expected_result = {
-                '74.125.225.0/24': {'count': 1, 'ports': {}},
-                '62.239.0.0/16': {'count': 1, 'ports': {}},
-                '2001:43f8:7b0:ffff:ffff:ffff:ffff:ffff':
-                    {'count': 1, 'ports': {}},
-                '210.0.0.0': {'count': 1, 'ports': {}},
-                '196.11.240.0/23': {'count': 1, 'ports': {}},
-                '2001:240:10c:1::ca20:9d1d': {'count': 2, 'ports': {}},
-                '196.11.240.215': {'count': 2, 'ports': {}},
-                '62.239.237.0/32': {'count': 1, 'ports': {}},
-                '210.107.0.0/17': {'count': 6, 'ports': {}},
-                '2001:4860::/32': {'count': 1, 'ports': {}},
-                '210.107.73.73': {'count': 2, 'ports': {}},
-                '210.107.0.0': {'count': 2, 'ports': {}},
-                '2001:200::/23': {'count': 2, 'ports': {}},
-                '2001:240:ffff:ffff:ffff:ffff:ffff:ffff':
-                    {'count': 1, 'ports': {}},
-                '210.255.255.255': {'count': 1, 'ports': {}},
-                '2001:43f8:7b0::': {'count': 3, 'ports': {}},
-                '196.255.255.255': {'count': 1, 'ports': {}},
-                '2001:240::/32': {'count': 6, 'ports': {}},
-                '196.0.0.0': {'count': 1, 'ports': {}},
-                '2001:240::': {'count': 1, 'ports': {}},
-                '196.11.246.255': {'count': 2, 'ports': {}},
-                '196.11.239.0': {'count': 2, 'ports': {}},
-                '2001:4200::/23': {'count': 1, 'ports': {}},
-                '2a00:2380::/25': {'count': 1, 'ports': {}},
-                '200.57.128.0/20': {'count': 1, 'ports': {}},
-                '62.239.237.255': {'count': 1, 'ports': {}},
-                '2001:4860:4860::8888': {'count': 10, 'ports': {}},
-                '2001:4860::': {'count': 2, 'ports': {}},
-                '2001:4860:ffff:ffff:ffff:ffff:ffff:ffff':
-                    {'count': 1, 'ports': {}},
-                '74.125.225.229': {'count': 8, 'ports': {}},
-                '210.107.127.255': {'count': 2, 'ports': {}},
-                '200.57.141.161': {'count': 7, 'ports': {}},
-                '62.239.237.255/32': {'count': 1, 'ports': {}},
-                '2801:10:c000::': {'count': 7, 'ports': {}},
-                '2a00:2381:ffff::1': {'count': 4, 'ports': {}},
-                '62.239.237.0': {'count': 1, 'ports': {}},
-                '62.239.237.1': {'count': 4, 'ports': {}},
-                '210.0.0.0/8': {'count': 1, 'ports': {}}
-            }
-
-            self.assertEqual(unique_addresses(file_path=fp),
-                              fp_expected_result)
-
-        if sys.version_info >= (3, 8):
+        if sys.version_info >= (3, 3):
 
             fp_expected_result = {
                 '196.0.0.0': {'count': 1, 'ports': {}},
@@ -256,7 +207,7 @@ class TestFunctions(TestCommon):
             }
 
             self.assertEqual(unique_addresses(file_path=fp),
-                              fp_expected_result)
+                             fp_expected_result)
 
         else:
 
