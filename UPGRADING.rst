@@ -23,6 +23,7 @@ v1.2.0
 - Removed deprecated asn_alts parameter
 - Removed deprecated allow_permutations parameter
 - Added support for Python 3.8
+- Pinned requirements
 
 ******
 v1.1.0
