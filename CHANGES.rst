@@ -29,6 +29,7 @@ Changelog
 - Pinned requirements (#274)
 - Added ip_failed_total key to stats dictionary in
   experimental.bulk_lookup_rdap (#235)
+- Added ipv4_generate_random and ipv6_generate_random to utils CLI (#236)
 
 1.1.0 (2019-02-01)
 ------------------
