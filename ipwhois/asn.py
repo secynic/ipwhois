@@ -447,11 +447,6 @@ class IPASN:
         dns_success = False
         for index, lookup_method in enumerate(lookups):
 
-            if index > 0 and not asn_methods:
-
-                raise ASNRegistryError('ASN registry lookup failed. '
-                                       'Permutations not allowed.')
-
             if lookup_method == 'dns':
 
                 try:
