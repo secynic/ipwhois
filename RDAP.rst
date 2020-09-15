@@ -73,6 +73,10 @@ Arguments supported by IPWhois.lookup_rdap().
 |                    |        | pulling ASN information via dns, in order to  |
 |                    |        | get the ASN description. Defaults to True.    |
 +--------------------+--------+-----------------------------------------------+
+| root_ent_check     | bool   | If True, will perform additional RDAP HTTP    |
+|                    |        | queries for missing entity data at the root   |
+|                    |        | level. Defaults to True.                      |
++--------------------+--------+-----------------------------------------------+
 
 .. _rdap-output:
 
@@ -593,3 +597,12 @@ this very low for bulk queries, or disable completely by setting retry_count=0.
 
 Note that setting this result too low may cause a larger number of IP lookups
 to fail.
+
+root_ent_check
+^^^^^^^^^^^^^^
+
+When root level entities (depth=0) are missing vcard data, additional
+entity specific HTTP lookups are performed. In the past, you would expect
+depth=0 to mean a single lookup per IP. This was a bug and has been fixed as of
+v1.2.0. Set this to False to revert back to the old method, although you will be
+missing entity specific data.

@@ -199,7 +199,7 @@ class IPWhois:
                     excluded_entities=None, bootstrap=False,
                     rate_limit_timeout=120, extra_org_map=None,
                     inc_nir=True, nir_field_list=None, asn_methods=None,
-                    get_asn_description=True):
+                    get_asn_description=True, root_ent_check=True):
         """
         The function for retrieving and parsing whois information for an IP
         address via HTTP (RDAP).
@@ -247,6 +247,9 @@ class IPWhois:
             get_asn_description (:obj:`bool`): Whether to run an additional
                 query when pulling ASN information via dns, in order to get
                 the ASN description. Defaults to True.
+            root_ent_check (:obj:`bool`): If True, will perform
+                additional RDAP HTTP queries for missing entity data at the
+                root level. Defaults to True.
 
         Returns:
             dict: The IP RDAP lookup results
@@ -305,7 +308,8 @@ class IPWhois:
             inc_raw=inc_raw, retry_count=retry_count, asn_data=asn_data,
             depth=depth, excluded_entities=excluded_entities,
             response=response, bootstrap=bootstrap,
-            rate_limit_timeout=rate_limit_timeout
+            rate_limit_timeout=rate_limit_timeout,
+            root_ent_check=root_ent_check
         )
 
         # Add the RDAP information to the return dictionary.

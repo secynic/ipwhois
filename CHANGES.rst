@@ -20,6 +20,10 @@ Changelog
   result was returned (#262 - ameidatou)
 - Fixed deprecation warnings due to invalid escape sequences 
   (#272 - tirkarthi)
+- Fixed bug in root and sub-entities not getting queried/data (#247)
+- Added new argument root_ent_check to IPWhois.lookup_rdap and
+  RDAP.lookup. Set this to False to revert to old functionality - missing data,
+  but less queries (#247)
 - Added support for Python 3.8 (#267)
 - Fixed travis build warnings (#268)
 - Pinned requirements (#274)
