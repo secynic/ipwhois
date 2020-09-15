@@ -23,6 +23,8 @@ Changelog
 - Added support for Python 3.8 (#267)
 - Fixed travis build warnings (#268)
 - Pinned requirements (#274)
+- Added ip_failed_total key to stats dictionary in
+  experimental.bulk_lookup_rdap (#235)
 
 1.1.0 (2019-02-01)
 ------------------
