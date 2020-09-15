@@ -91,7 +91,7 @@ parser.add_argument(
     '--ipv4_generate_random',
     type=int,
     nargs=1,
-    metavar='"TOTAL"',
+    metavar='TOTAL',
     help='Generate random, unique IPv4 addresses that are not defined (can be '
          'looked up using ipwhois).'
 )
@@ -99,7 +99,7 @@ parser.add_argument(
     '--ipv6_generate_random',
     type=int,
     nargs=1,
-    metavar='"TOTAL"',
+    metavar='TOTAL',
     help='Generate random, unique IPv6 addresses that are not defined (can be '
          'looked up using ipwhois).'
 )
