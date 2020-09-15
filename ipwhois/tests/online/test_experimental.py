@@ -67,7 +67,8 @@ class TestExperimental(TestCommon):
             '115.1.2.3'  # KRNIC
         ]
 
-        expected_stats = {'ip_input_total': 12, 'ip_unique_total': 12, 'ip_lookup_total': 12,
+        expected_stats = {'ip_input_total': 12, 'ip_unique_total': 12,
+                          'ip_lookup_total': 12, 'ip_failed_total': 0,
                           'lacnic': {'failed': [], 'rate_limited': [], 'total': 2},
                           'ripencc': {'failed': [], 'rate_limited': [], 'total': 2},
                           'apnic': {'failed': [], 'rate_limited': [], 'total': 4},
