@@ -22,6 +22,12 @@ v1.2.0
   nir.NIRWhois._get_nets_krnic, nir.NIRWhois._get_contact
 - Removed deprecated asn_alts parameter
 - Removed deprecated allow_permutations parameter
+- Added new argument root_ent_check to IPWhois.lookup_rdap and
+  RDAP.lookup. Set this to False to revert to old functionality - missing data,
+  but less queries. If you leave this set to default of True, you will notice
+  more queries and potentially more rate-limiting.
+- Added support for Python 3.8
+- Pinned requirements
 
 ******
 v1.1.0

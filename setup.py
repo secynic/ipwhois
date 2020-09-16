@@ -58,6 +58,7 @@ CLASSIFIERS = [
     'Programming Language :: Python :: 3.5',
     'Programming Language :: Python :: 3.6',
     'Programming Language :: Python :: 3.7',
+    'Programming Language :: Python :: 3.8',
     'Topic :: Internet',
     'Topic :: Software Development',
 ]
@@ -66,7 +67,7 @@ PACKAGES = ['ipwhois']
 
 PACKAGE_DATA = {'ipwhois': ['data/*.xml', 'data/*.csv']}
 
-INSTALL_REQUIRES = ['dnspython', 'ipaddr;python_version<"3.3"']
+INSTALL_REQUIRES = ['dnspython<=2.0.0', 'ipaddr==2.2.0;python_version<"3.3"']
 
 setup(
     name=NAME,

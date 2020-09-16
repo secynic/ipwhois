@@ -82,7 +82,8 @@ class TestRDAP(TestCommon):
                                              'endAddress': '74.125.225.229'
                                          },
                                          asn_data=val['asn_data'],
-                                         depth=0), dict)
+                                         depth=0,
+                                         root_ent_check=False), dict)
 
         log.debug('Testing rdap.lookup entitiy checks')
         net = Net('74.125.225.229')
@@ -99,7 +100,8 @@ class TestRDAP(TestCommon):
                                              'entities': entity
                                          },
                                          asn_data=val['asn_data'],
-                                         depth=1), dict)
+                                         depth=0,
+                                         root_ent_check=False), dict)
 
         self.assertIsInstance(obj.lookup(response={
                                              'handle': 'test',
@@ -109,9 +111,10 @@ class TestRDAP(TestCommon):
                                              'entities': entity
                                          },
                                          asn_data=val['asn_data'],
-                                         depth=1,
+                                         depth=0,
                                          bootstrap=True,
-                                         inc_raw=True), dict)
+                                         inc_raw=True,
+                                         root_ent_check=False), dict)
 
         # No sub entities. This is for coverage, but won't error out.
         entity = [{'handle': 'test', 'roles': [
@@ -125,7 +128,8 @@ class TestRDAP(TestCommon):
             'entities': entity
         },
             asn_data=val['asn_data'],
-            depth=1), dict)
+            depth=0,
+            root_ent_check=False), dict)
 
 
 class TestRDAPContact(TestCommon):

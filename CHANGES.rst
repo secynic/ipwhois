@@ -18,6 +18,19 @@ Changelog
 - Fixed bug in KRNIC queries due to a change in their service (#243)
 - Fixed bug in experimental.bulk_lookup_rdap where only the last 
   result was returned (#262 - ameidatou)
+- Fixed deprecation warnings due to invalid escape sequences 
+  (#272 - tirkarthi)
+- Fixed bug in root and sub-entities not getting queried/data (#247)
+- Added new argument root_ent_check to IPWhois.lookup_rdap and
+  RDAP.lookup. Set this to False to revert to old functionality - missing data,
+  but less queries (#247)
+- Added support for Python 3.8 (#267)
+- Fixed travis build warnings (#268)
+- Pinned requirements (#274)
+- Added ip_failed_total key to stats dictionary in
+  experimental.bulk_lookup_rdap (#235)
+- Added ipv4_generate_random and ipv6_generate_random to utils CLI (#236)
+- Added documentation note for ASN data (#278)
 
 1.1.0 (2019-02-01)
 ------------------
