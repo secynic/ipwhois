@@ -5,6 +5,25 @@ IP ASN Lookups
 This is new functionality as of v0.15.0. This functionality was migrated from
 net.Net and is still used by IPWhois.lookup*().
 
+.. note::
+
+    Cymru ASN data should not be considered a primary source for data points
+    like country code.
+
+    Message from the Cymru site::
+
+        The country code, registry, and allocation date are all based on data
+        obtained directly from the regional registries including: ARIN, RIPE,
+        AFRINIC, APNIC, LACNIC. The information returned relating to these
+        categories will only be as accurate as the data present in the RIR
+        databases.
+
+        IMPORTANT NOTE: Country codes are likely to vary significantly from
+        actual IP locations, and we must strongly advise that the IP to ASN
+        mapping tool not be used as an IP geolocation (GeoIP) service.
+
+    https://team-cymru.com/community-services/ip-asn-mapping/
+
 .. _ip-asn-input:
 
 IP ASN Input
