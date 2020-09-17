@@ -96,4 +96,5 @@ class TestASNOrigin(TestCommon):
 
         net = Net(address='74.125.225.229')
         asnorigin = ASNOrigin(net)
-        asnorigin.lookup(asn='15169', asn_methods=['whois', 'http'])
+        asnorigin.lookup(asn='15169', asn_methods=['whois'])
+        asnorigin.lookup(asn='15169', asn_methods=['http'])

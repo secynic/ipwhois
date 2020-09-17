@@ -53,12 +53,6 @@ Arguments supported by IPWhois.lookup_whois().
 |                        |        | 'postal_code', 'emails', 'created',       |
 |                        |        | 'updated']. If None, defaults to all.     |
 +------------------------+--------+-------------------------------------------+
-| asn_alts               | list   | Additional lookup types to attempt if the |
-|                        |        | ASN dns lookup fails. Allow permutations  |
-|                        |        | must be enabled. If None, defaults to all |
-|                        |        | ['whois', 'http']. *WARNING* deprecated   |
-|                        |        | in favor of new argument asn_methods.     |
-+------------------------+--------+-------------------------------------------+
 | extra_org_map          | dict   | Dictionary mapping org handles to RIRs.   |
 |                        |        | This is for limited cases where ARIN      |
 |                        |        | REST (ASN fallback HTTP lookup) does not  |

@@ -136,8 +136,29 @@ class TestIPASN(TestCommon):
             self.fail('Unexpected exception raised: {0}'.format(e))
 
     def test_lookup(self):
-        # TODO: need to modify asn.json for this.
-        return NotImplemented
+        data_dir = path.dirname(__file__)
+
+        with io.open(str(data_dir) + '/asn.json', 'r') as \
+                data_file:
+            data = json.load(data_file)
+
+        for key, val in data.items():
+
+            log.debug('Testing: {0}'.format(key))
+            net = Net(key)
+            obj = IPASN(net)
+
+        try:
+
+            self.assertIsInstance(obj.lookup(), dict)
+
+        except AssertionError as e:
+
+            raise e
+
+        except Exception as e:
+
+            self.fail('Unexpected exception raised: {0}'.format(e))
 
 
 class TestASNOrigin(TestCommon):
@@ -243,7 +264,10 @@ class TestASNOrigin(TestCommon):
         obj.get_nets_radb(multi_net_response)
 
         self.assertEqual(obj.get_nets_radb(multi_net_response, is_http=True),
-                         [])
+                         [{'cidr': '66.249.64.0/20', 'description': None, 'maintainer': None, 'updated': None,
+                           'source': None, 'start': 2, 'end': 29},
+                          {'cidr': '66.249.80.0/20', 'description': None, 'maintainer': None, 'updated': None,
+                           'source': None, 'start': 175, 'end': 202}])
 
         net = Net('2001:43f8:7b0::')
         obj = ASNOrigin(net)

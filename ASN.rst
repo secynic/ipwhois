@@ -5,6 +5,25 @@ IP ASN Lookups
 This is new functionality as of v0.15.0. This functionality was migrated from
 net.Net and is still used by IPWhois.lookup*().
 
+.. note::
+
+    Cymru ASN data should not be considered a primary source for data points
+    like country code.
+
+    Message from the Cymru site::
+
+        The country code, registry, and allocation date are all based on data
+        obtained directly from the regional registries including: ARIN, RIPE,
+        AFRINIC, APNIC, LACNIC. The information returned relating to these
+        categories will only be as accurate as the data present in the RIR
+        databases.
+
+        IMPORTANT NOTE: Country codes are likely to vary significantly from
+        actual IP locations, and we must strongly advise that the IP to ASN
+        mapping tool not be used as an IP geolocation (GeoIP) service.
+
+    https://team-cymru.com/community-services/ip-asn-mapping/
+
 .. _ip-asn-input:
 
 IP ASN Input
@@ -23,12 +42,6 @@ Arguments supported by IPASN.lookup().
 |                        |        | socket errors, timeouts, connection       |
 |                        |        | resets, etc. are encountered.             |
 |                        |        | Defaults to 3.                            |
-+------------------------+--------+-------------------------------------------+
-| asn_alts               | list   | Additional lookup types to attempt if the |
-|                        |        | ASN dns lookup fails. Allow permutations  |
-|                        |        | must be enabled. If None, defaults to all |
-|                        |        | ['whois', 'http']. *WARNING* deprecated   |
-|                        |        | in favor of new argument asn_methods.     |
 +------------------------+--------+-------------------------------------------+
 | extra_org_map          | dict   | Dictionary mapping org handles to RIRs.   |
 |                        |        | This is for limited cases where ARIN      |
@@ -156,12 +169,6 @@ Arguments supported by ASNOrigin.lookup().
 | field_list             | list   | If provided, fields to parse:             |
 |                        |        | ['description', 'maintainer', 'updated',  |
 |                        |        | 'source']. If None, defaults to all.      |
-+------------------------+--------+-------------------------------------------+
-| asn_alts               | list   | Additional lookup types to attempt if the |
-|                        |        | ASN dns lookup fails. Allow permutations  |
-|                        |        | must be enabled. If None, defaults to all |
-|                        |        | ['http']. *WARNING* deprecated            |
-|                        |        | in favor of new argument asn_methods.     |
 +------------------------+--------+-------------------------------------------+
 | asn_methods            | list   | ASN lookup types to attempt, in order. If |
 |                        |        | None, defaults to all ['whois', 'http'].  |

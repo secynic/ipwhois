@@ -22,7 +22,7 @@ ipwhois_cli.py [-h] [--whois] [--exclude_nir] [--json] [--hr]
                       [--proxy_http "PROXY_HTTP"]
                       [--proxy_https "PROXY_HTTPS"]
                       [--inc_raw] [--retry_count RETRY_COUNT]
-                      [--asn_alts "ASN_ALTS"] [--asn_methods "ASN_METHODS"]
+                      [--asn_methods "ASN_METHODS"]
                       [--extra_org_map "EXTRA_ORG_MAP"]
                       [--skip_asn_description] [--depth COLOR_DEPTH]
                       [--excluded_entities "EXCLUDED_ENTITIES"] [--bootstrap]
@@ -66,12 +66,6 @@ Common settings (RDAP & Legacy Whois):
   --retry_count RETRY_COUNT
                         The number of times to retry in case socket errors,
                         timeouts, connection resets, etc. are encountered.
-  --asn_alts ASN_ALTS
-                        A comma delimited list of additional lookup types to
-                        attempt if the ASN dns lookup fails. Allow
-                        permutations must be enabled. Defaults to all:
-                        "whois,http". *WARNING* deprecated in favor of new
-                        argument asn_methods.
   --asn_methods ASN_METHODS
                         List of ASN lookup types to attempt, in order.
                         Defaults to all ['dns', 'whois', 'http'].
@@ -174,6 +168,12 @@ optional arguments:
   --ipv6_is_defined IPADDRESS
                         Check if an IPv6 address is defined (in a reserved
                         address range).
+  --ipv4_generate_random TOTAL
+                        Generate random, unique IPv4 addresses that are not
+                        defined (can be looked up using ipwhois).
+  --ipv6_generate_random TOTAL
+                        Generate random, unique IPv6 addresses that are not
+                        defined (can be looked up using ipwhois).
   --unique_everseen ITERABLE
                         List unique elements from input iterable, preserving
                         the order.
@@ -266,6 +266,32 @@ ipv6_is_defined
     fc00:: is defined:
     Name: Unique Local Unicast
     RFC: RFC 4193
+
+ipv4_generate_random
+^^^^^^^^^^^^^^^^^^^^
+
+::
+
+    >>>> ipwhois_utils_cli.py --ipv4_generate_random 5
+
+    119.224.47.74
+    128.106.183.195
+    54.97.0.158
+    52.206.105.37
+    126.180.201.81
+
+ipv6_generate_random
+^^^^^^^^^^^^^^^^^^^^
+
+::
+
+    >>>> ipwhois_utils_cli.py --ipv6_generate_random 5
+
+    3e8c:dc93:49c8:57fd:31dd:2963:6332:426e
+    2e3d:fd84:b57b:9282:91e6:5d4d:18d5:34f1
+    21d4:9d25:7dd6:e28b:77d7:7ce9:f85f:b34f
+    3659:2b9:12ed:1eac:fd40:5756:3753:6d2d
+    2e05:6d47:83fd:5de8:c6cb:85cb:912:fdb1
 
 unique_everseen
 ^^^^^^^^^^^^^^^
