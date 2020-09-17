@@ -1,6 +1,38 @@
 Changelog
 =========
 
+1.2.0 (TBD)
+------------------
+
+- Removed deprecated functions: asn.IPASN._parse_fields_http,
+  asn.IPASN._parse_fields_dns, asn.IPASN._parse_fields_whois,
+  asn.ASNOrigin._parse_fields, asn.ASNOrigin._get_nets_radb,
+  net.Net.lookup_asn, whois.Whois._parse_fields, whois.Whois._get_nets_arin
+  whois.Whois._get_nets_lacnic, whois.Whois._get_nets_other,
+  nir.NIRWhois._parse_fields, nir.NIRWhois._get_nets_jpnic
+  nir.NIRWhois._get_nets_krnic, nir.NIRWhois._get_contact (#230)
+- Removed deprecated asn_alts parameter (#230)
+- Removed deprecated allow_permutations parameter (#230)
+- Fixed ASNOrigin lookups (#216)
+- Fixed bug in ASNOrigin lookups when multiple asn_methods provided (#216)
+- Fixed bug in KRNIC queries due to a change in their service (#243)
+- Fixed bug in experimental.bulk_lookup_rdap where only the last 
+  result was returned (#262 - ameidatou)
+- Fixed deprecation warnings due to invalid escape sequences 
+  (#272 - tirkarthi)
+- Fixed bug in root and sub-entities not getting queried/data (#247)
+- Fixed NIR datetime parsing issue if only date is returned (#284)
+- Added new argument root_ent_check to IPWhois.lookup_rdap and
+  RDAP.lookup. Set this to False to revert to old functionality - missing data,
+  but less queries (#247)
+- Added support for Python 3.8 (#267)
+- Fixed travis build warnings (#268)
+- Pinned requirements (#274)
+- Added ip_failed_total key to stats dictionary in
+  experimental.bulk_lookup_rdap (#235)
+- Added ipv4_generate_random and ipv6_generate_random to utils CLI (#236)
+- Added documentation note for ASN data (#278)
+
 1.1.0 (2019-02-01)
 ------------------
 

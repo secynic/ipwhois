@@ -68,21 +68,21 @@ Basic usage
     >>>> pprint(results.split('\n'))
 
     [
-    "Bulk mode; whois.cymru.com [2017-07-30 23:02:21 +0000]",
-    "15169   | 74.125.225.229   | 74.125.225.0/24     | US | arin     | 2007-03-13 | GOOGLE - Google Inc., US",
-    "15169   | 2001:4860:4860::8888                     | 2001:4860::/32      | US | arin     | 2005-03-14 | GOOGLE - Google Inc., US",
+    "Bulk mode; whois.cymru.com [2020-09-15 16:42:29 +0000]",
+    "15169   | 74.125.225.229   | 74.125.225.0/24     | US | arin     | 2007-03-13 | GOOGLE, US",
+    "15169   | 2001:4860:4860::8888                     | 2001:4860::/32      | US | arin     | 2005-03-14 | GOOGLE, US",
     "2856    | 62.239.237.1     | 62.239.0.0/16       | GB | ripencc  | 2001-01-02 | BT-UK-AS BTnet UK Regional network, GB",
     "2856    | 2a00:2381:ffff::1                        | 2a00:2380::/25      | GB | ripencc  | 2007-08-29 | BT-UK-AS BTnet UK Regional network, GB",
-    "3786    | 210.107.73.73    | 210.107.0.0/17      | KR | apnic    |            | LGDACOM LG DACOM Corporation, KR",
+    "3786    | 210.107.73.73    | 210.107.0.0/17      | KR | apnic    | 1997-08-29 | LGDACOM LG DACOM Corporation, KR",
     "2497    | 2001:240:10c:1::ca20:9d1d                | 2001:240::/32       | JP | apnic    | 2000-03-08 | IIJ Internet Initiative Japan Inc., JP",
     "19373   | 200.57.141.161   | 200.57.128.0/20     | MX | lacnic   | 2000-12-04 | Triara.com, S.A. de C.V., MX",
     "NA      | 2801:10:c000::                           | NA                  | CO | lacnic   | 2013-10-29 | NA",
-    "12091   | 196.11.240.215   | 196.11.240.0/24     | ZA | afrinic  |            | MTNNS-1, ZA",
+    "12091   | 196.11.240.215   | 196.11.240.0/24     | ZA | afrinic  | 1994-07-21 | MTNNS-1, ZA",
     "37578   | 2001:43f8:7b0::                          | 2001:43f8:7b0::/48  | KE | afrinic  | 2013-03-22 | Tespok, KE",
-    "4730    | 133.1.2.5        | 133.1.0.0/16        | JP | apnic    |            | ODINS Osaka University, JP",
-    "4134    | 115.1.2.3        | 115.0.0.0/14        | KR | apnic    | 2008-07-01 | CHINANET-BACKBONE No.31,Jin-rong Street, CN",
+    "4730    | 133.1.2.5        | 133.1.0.0/16        | JP | apnic    | 1997-03-01 | ODINS Osaka University, JP",
+    "4766    | 115.1.2.3        | 115.0.0.0/12        | KR | apnic    | 2008-07-01 | KIXS-AS-KR Korea Telecom, KR",
     ""
-    }
+    ]
 
 .. GET_BULK_ASN_WHOIS_OUTPUT_BASIC END
 
@@ -175,11 +175,14 @@ The stats dictionary returned by ipwhois.experimental.bulk_lookup_rdap()
         'ip_lookup_total' (int) - The total number of addresses that
             lookups were attempted for, excluding any that failed ASN
             registry checks.
+        'ip_failed_total' (int) - The total number of addresses that
+            lookups failed for. Excludes any that failed initially, but
+            succeeded after further retries.
         'lacnic' (dict) -
         {
             'failed' (list) - The addresses that failed to lookup.
                 Excludes any that failed initially, but succeeded after
-                futher retries.
+                further retries.
             'rate_limited' (list) - The addresses that encountered
                 rate-limiting. Unless an address is also in 'failed',
                 it eventually succeeded.
@@ -222,9 +225,7 @@ Basic usage
         "total": 2
     },
     "apnic": {
-        "failed": [
-            "115.1.2.3"
-        ],
+        "failed": [],
         "rate_limited": [],
         "total": 4
     },
@@ -233,6 +234,7 @@ Basic usage
         "rate_limited": [],
         "total": 2
     },
+    "ip_failed_total": 0,
     "ip_input_total": 12,
     "ip_lookup_total": 12,
     "ip_unique_total": 12,
