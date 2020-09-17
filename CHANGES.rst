@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.2.0 (TBD)
+1.2.0 (2020-09-17)
 ------------------
 
 - Removed deprecated functions: asn.IPASN._parse_fields_http,

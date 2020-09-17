@@ -4,7 +4,7 @@ from setuptools import setup
 import io
 
 NAME = 'ipwhois'
-VERSION = '1.1.0'
+VERSION = '1.2.0'
 AUTHOR = 'Philip Hane'
 AUTHOR_EMAIL = 'secynic@gmail.com'
 DESCRIPTION = 'Retrieve and parse whois data for IPv4 and IPv6 addresses.'
