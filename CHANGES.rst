@@ -21,6 +21,7 @@ Changelog
 - Fixed deprecation warnings due to invalid escape sequences 
   (#272 - tirkarthi)
 - Fixed bug in root and sub-entities not getting queried/data (#247)
+- Fixed NIR datetime parsing issue if only date is returned (#284)
 - Added new argument root_ent_check to IPWhois.lookup_rdap and
   RDAP.lookup. Set this to False to revert to old functionality - missing data,
   but less queries (#247)
