@@ -512,7 +512,7 @@ class Net:
             )
 
     def get_whois(self, asn_registry='arin', retry_count=3, server=None,
-                  port=43, extra_blacklist=None):
+                  port=43, extra_blacklist=None, get_recursive=True):
         """
         The function for retrieving whois or rwhois information for an IP
         address via any port. Defaults to port 43/tcp (WHOIS).
@@ -562,8 +562,9 @@ class Net:
             # Prep the query.
             query = self.address_str + '\r\n'
             if asn_registry == 'arin':
-
                 query = 'n + {0}'.format(query)
+            if asn_registry == 'ripencc' and get_recursive is False:
+                query = '-r {0}'.format(query)
 
             # Query the whois server, and store the results.
             conn.send(query.encode())
