@@ -1,7 +1,12 @@
 Changelog
 =========
 
-1.2.0 (TBD)
+1.3.0 (TBD)
+-----------
+
+- Fixed deprecated query method of dnspython (#294 - monoidic)
+
+1.2.0 (2020-09-17)
 ------------------
 
 - Removed deprecated functions: asn.IPASN._parse_fields_http,
@@ -21,6 +26,7 @@ Changelog
 - Fixed deprecation warnings due to invalid escape sequences 
   (#272 - tirkarthi)
 - Fixed bug in root and sub-entities not getting queried/data (#247)
+- Fixed NIR datetime parsing issue if only date is returned (#284)
 - Added new argument root_ent_check to IPWhois.lookup_rdap and
   RDAP.lookup. Set this to False to revert to old functionality - missing data,
   but less queries (#247)

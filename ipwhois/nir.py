@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2019 Philip Hane
+# Copyright (c) 2013-2020 Philip Hane
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -265,12 +265,20 @@ class NIRWhois:
 
                     if field in ['created', 'updated'] and dt_format:
 
-                        value = (
-                            datetime.strptime(
-                                values[0],
-                                str(dt_format)
-                            ) - timedelta(hours=hourdelta)
-                        ).isoformat('T')
+                        try:
+                            value = (
+                                datetime.strptime(
+                                    values[0],
+                                    str(dt_format)
+                                ) - timedelta(hours=hourdelta)
+                            ).isoformat('T')
+                        except ValueError:
+                            value = (
+                                datetime.strptime(
+                                    values[0],
+                                    '%Y/%m/%d'
+                                )
+                            ).isoformat('T')
 
                     elif field in ['nameservers']:
 

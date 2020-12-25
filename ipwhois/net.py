@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2019 Philip Hane
+# Copyright (c) 2013-2020 Philip Hane
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -245,7 +245,7 @@ class Net:
         try:
 
             log.debug('ASN query for {0}'.format(self.dns_zone))
-            data = self.dns_resolver.query(self.dns_zone, 'TXT')
+            data = self.dns_resolver.resolve(self.dns_zone, 'TXT')
             return list(data)
 
         except (dns.resolver.NXDOMAIN, dns.resolver.NoNameservers,
@@ -287,7 +287,7 @@ class Net:
         try:
 
             log.debug('ASN verbose query for {0}'.format(zone))
-            data = self.dns_resolver.query(zone, 'TXT')
+            data = self.dns_resolver.resolve(zone, 'TXT')
             return str(data[0])
 
         except (dns.resolver.NXDOMAIN, dns.resolver.NoNameservers,
