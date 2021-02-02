@@ -429,7 +429,7 @@ class IPASN:
             ASNRegistryError: ASN registry does not match.
         """
 
-        if asn_methods is None:
+        if not asn_methods:
 
             lookups = ['dns', 'whois', 'http']
 
@@ -752,7 +752,7 @@ class ASNOrigin:
 
             asn = 'AS{0}'.format(asn)
 
-        if asn_methods is None:
+        if asn_methods:
 
             lookups = ['whois', 'http']
 
