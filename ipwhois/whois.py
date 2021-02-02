@@ -26,7 +26,8 @@ import sys
 import re
 import copy
 from datetime import datetime
-import logging
+from logging import getLogger
+from logging import
 from .utils import unique_everseen
 from . import (BlacklistError, WhoisLookupError, NetError)
 
@@ -41,7 +42,7 @@ else:  # pragma: no cover
                         summarize_address_range,
                         collapse_address_list as collapse_addresses)
 
-log = logging.getLogger(__name__)
+log = getLogger(__name__)
 
 # Legacy base whois output dictionary.
 BASE_NET = {
@@ -256,11 +257,11 @@ class Whois:
                 re.DOTALL
             )
 
-            if net_start is not None:
+            if net_start:
 
                 match = pattern.finditer(response, net_end, net_start)
 
-            elif net_end is not None:
+            elif net_end:
 
                 match = pattern.finditer(response, net_end)
 
@@ -290,7 +291,7 @@ class Whois:
 
                 sub_section_end = m.end()
 
-            if len(values) > 0:
+            if values:
 
                 value = None
                 try:
@@ -353,7 +354,7 @@ class Whois:
         temp = pattern.search(response)
         net_range = None
         net_range_start = None
-        if temp is not None:
+        if temp:
             net_range = temp.group(1).strip()
             net_range_start = temp.start()
 
@@ -369,16 +370,17 @@ class Whois:
 
                 net = copy.deepcopy(BASE_NET)
 
-                if len(nets) > 0:
+                if nets:
                     temp = pattern.search(response, match.start())
                     net_range = None
                     net_range_start = None
-                    if temp is not None:
+                    if temp:
                         net_range = temp.group(1).strip()
                         net_range_start = temp.start()
 
-                if net_range is not None:
-                    if net_range_start < match.start() or len(nets) > 0:
+                if net_range:
+                    if net_range_start < match.start() or nets:
+                        #note: len(net) > 0 and if net works basically same since net is a list
 
                         try:
 
