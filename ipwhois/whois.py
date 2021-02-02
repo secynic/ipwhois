@@ -27,7 +27,6 @@ import re
 import copy
 from datetime import datetime
 from logging import getLogger
-from logging import
 from .utils import unique_everseen
 from . import (BlacklistError, WhoisLookupError, NetError)
 
