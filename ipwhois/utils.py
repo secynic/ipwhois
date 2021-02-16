@@ -23,7 +23,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import sys
-from xml.dom.minidom import parseString
+from defusedxml.minidom import parseString
 from os import path
 import re
 import copy
