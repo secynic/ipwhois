@@ -61,7 +61,7 @@ ASN_ORIGIN_WHOIS = {
 
 ASN_ORIGIN_HTTP = {
     'radb': {
-        'url': 'http://www.radb.net/query',
+        'url': 'https://www.radb.net/query',
         'form_data_asn_field': 'keywords',
         'form_data': {
             'advanced_query': '1',

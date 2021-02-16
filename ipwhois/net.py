@@ -69,7 +69,7 @@ except ImportError:  # pragma: no cover
 log = logging.getLogger(__name__)
 
 # POSSIBLY UPDATE TO USE RDAP
-ARIN = 'http://whois.arin.net/rest/nets;q={0}?showDetails=true&showARIN=true'
+ARIN = 'https://whois.arin.net/rest/nets;q={0}?showDetails=true&showARIN=true'
 
 CYMRU_WHOIS = 'whois.cymru.com'
 
