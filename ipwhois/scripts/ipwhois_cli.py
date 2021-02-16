@@ -31,12 +31,7 @@ from ipwhois import IPWhois
 from ipwhois.hr import (HR_ASN, HR_RDAP, HR_RDAP_COMMON, HR_WHOIS,
                         HR_WHOIS_NIR)
 
-try:  # pragma: no cover
-    from urllib.request import (ProxyHandler,
-                                build_opener)
-except ImportError:  # pragma: no cover
-    from urllib2 import (ProxyHandler,
-                         build_opener)
+from httpx import Client
 
 # CLI ANSI rendering
 ANSI = {
@@ -348,18 +343,15 @@ class IPWhoisCLI:
             An IPv4 or IPv6 address
         timeout (:obj:`int`): The default timeout for socket connections in
             seconds. Defaults to 5.
-        proxy_http (:obj:`urllib.request.OpenerDirector`): The request for
-            proxy HTTP support or None.
-        proxy_https (:obj:`urllib.request.OpenerDirector`): The request for
-            proxy HTTPS support or None.
+        http_client (:obj:`httpx.Client`): The httpx.Client objects.
+            Proxies and not only are here.
     """
 
     def __init__(
         self,
         addr,
         timeout,
-        proxy_http,
-        proxy_https
+        http_client
     ):
 
         self.addr = addr
@@ -368,29 +360,28 @@ class IPWhoisCLI:
         handler_dict = None
         if proxy_http is not None:
 
-            handler_dict = {'http': proxy_http}
+            handler_dict = {'http://*': proxy_http}
 
         if proxy_https is not None:
 
             if handler_dict is None:
 
-                handler_dict = {'https': proxy_https}
+                handler_dict = {'https://*': proxy_https}
 
             else:
 
-                handler_dict['https'] = proxy_https
+                handler_dict['https://*'] = proxy_https
 
         if handler_dict is None:
 
-            self.opener = None
+            self.http_client = None
         else:
 
-            handler = ProxyHandler(handler_dict)
-            self.opener = build_opener(handler)
+            self.http_client = Client(proxies=handler_dict)
 
         self.obj = IPWhois(address=self.addr,
                            timeout=self.timeout,
-                           proxy_opener=self.opener)
+                           http_client=self.http_client)
 
     def generate_output_header(self, query_type='RDAP'):
         """

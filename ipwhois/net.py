@@ -49,22 +49,11 @@ else:  # pragma: no cover
                         IPv4Address,
                         IPv6Address)
 
-try:  # pragma: no cover
-    from urllib.request import (OpenerDirector,
-                                ProxyHandler,
-                                build_opener,
-                                Request,
-                                URLError,
-                                HTTPError)
-    from urllib.parse import urlencode
-except ImportError:  # pragma: no cover
-    from urllib2 import (OpenerDirector,
-                         ProxyHandler,
-                         build_opener,
-                         Request,
-                         URLError,
-                         HTTPError)
-    from urllib import urlencode
+from httpx import (Client,
+                   HTTPStatusError,
+                   TransportError,
+                   InvalidURL)
+from urllib.parse import urlencode
 
 log = logging.getLogger(__name__)
 
@@ -101,15 +90,15 @@ class Net:
             An IPv4 or IPv6 address
         timeout (:obj:`int`): The default timeout for socket connections in
             seconds. Defaults to 5.
-        proxy_opener (:obj:`urllib.request.OpenerDirector`): The request for
-            proxy support. Defaults to None.
+        http_client (:obj:`httpx.client`): httpx client allows you to customize
+            usage of HTTP by this lib. Proxies are also configured via it.
 
     Raises:
         IPDefinedError: The address provided is defined (does not need to be
             resolved).
     """
 
-    def __init__(self, address, timeout=5, proxy_opener=None):
+    def __init__(self, address, timeout=5, http_client=None):
 
         # IPv4Address or IPv6Address
         if isinstance(address, IPv4Address) or isinstance(
@@ -129,15 +118,10 @@ class Net:
         self.dns_resolver.timeout = timeout
         self.dns_resolver.lifetime = timeout
 
-        # Proxy opener.
-        if isinstance(proxy_opener, OpenerDirector):
+        if not http_client:
+            http_client = Client()
 
-            self.opener = proxy_opener
-
-        else:
-
-            handler = ProxyHandler()
-            self.opener = build_opener(handler)
+        self.http_client = http_client
 
         # IP address in string format for use in queries.
         self.address_str = self.address.__str__()
@@ -709,10 +693,10 @@ class Net:
 
             return d
 
-        except HTTPError as e:  # pragma: no cover
+        except HTTPStatusError as e:  # pragma: no cover
 
             # RIPE is producing this HTTP error rather than a JSON error.
-            if e.code == 429:
+            if e.response.status_code == 429:
 
                 log.debug('HTTP query rate limit exceeded.')
 
@@ -737,7 +721,7 @@ class Net:
                 raise HTTPLookupError('HTTP lookup failed for {0} with error '
                                       'code {1}.'.format(url, str(e.code)))
 
-        except (URLError, socket.timeout, socket.error) as e:
+        except (TransportError,) as e:
 
             log.debug('HTTP query socket error: {0}'.format(e))
             if retry_count > 0:
@@ -865,22 +849,10 @@ class Net:
             # Create the connection for the HTTP query.
             log.debug('HTTP query for {0} at {1}'.format(
                 self.address_str, url))
-            try:
-                # Py 2 inspection alert bypassed by using kwargs dict.
-                conn = Request(url=url, data=enc_form_data, headers=headers,
-                               **{'method': request_type})
-            except TypeError:  # pragma: no cover
-                conn = Request(url=url, data=enc_form_data, headers=headers)
-            data = self.opener.open(conn, timeout=self.timeout)
+            return self.http_client.request(url=url, data=enc_form_data, headers=headers,
+                                        **{'method': request_type}).text
 
-            try:
-                d = data.readall().decode('ascii', 'ignore')
-            except AttributeError:  # pragma: no cover
-                d = data.read().decode('ascii', 'ignore')
-
-            return str(d)
-
-        except (URLError, socket.timeout, socket.error) as e:
+        except (InvalidURL, TransportError) as e:
 
             log.debug('HTTP query socket error: {0}'.format(e))
             if retry_count > 0:
