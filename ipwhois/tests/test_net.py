@@ -38,20 +38,12 @@ class TestNet(TestCommon):
         result = Net('74.125.225.229')
         self.assertIsInstance(result.timeout, int)
 
-    def test_proxy_opener(self):
-        try:
-            from urllib.request import (OpenerDirector,
-                                        ProxyHandler,
-                                        build_opener)
-        except ImportError:
-            from urllib2 import (OpenerDirector,
-                                 ProxyHandler,
-                                 build_opener)
+    def test_http_client(self):
+        from httpx import Client
 
         result = Net('74.125.225.229')
-        self.assertIsInstance(result.opener, OpenerDirector)
+        self.assertIsInstance(result.http_client, Client)
 
-        handler = ProxyHandler()
-        opener = build_opener(handler)
-        result = Net(address='74.125.225.229', proxy_opener=opener)
-        self.assertIsInstance(result.opener, OpenerDirector)
+        client = Client()
+        result = Net(address='74.125.225.229', http_client=client)
+        self.assertIsInstance(result.http_client, Client)

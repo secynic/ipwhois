@@ -2,6 +2,7 @@ import logging
 from ipwhois.tests import TestCommon
 from ipwhois.exceptions import (ASNLookupError)
 from ipwhois.experimental import (get_bulk_asn_whois, bulk_lookup_rdap)
+from httpx import Client
 
 LOG_FORMAT = ('[%(asctime)s] [%(levelname)s] [%(filename)s:%(lineno)s] '
               '[%(funcName)s()] %(message)s')
@@ -39,18 +40,9 @@ class TestExperimental(TestCommon):
 
     def test_bulk_lookup_rdap(self):
 
-        try:
-            from urllib.request import (OpenerDirector,
-                                        ProxyHandler,
-                                        build_opener)
-        except ImportError:
-            from urllib2 import (OpenerDirector,
-                                 ProxyHandler,
-                                 build_opener)
+        from httpx import Client
 
-        handler = ProxyHandler()
-        opener = build_opener(handler)
-        bulk_lookup_rdap(addresses=['74.125.225.229'], proxy_openers=[opener])
+        bulk_lookup_rdap(addresses=['74.125.225.229'], http_client=Client())
 
         ips = [
             '74.125.225.229',  # ARIN

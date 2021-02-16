@@ -40,14 +40,14 @@ class IPWhois:
             An IPv4 or IPv6 address
         timeout (:obj:`int`): The default timeout for socket connections in
             seconds. Defaults to 5.
-        proxy_opener (:obj:`urllib.request.OpenerDirector`): The request for
-            proxy support. Defaults to None.
+        http_client (:obj:`httpx.Client`): HTTP client object. Proxies are here.
+            Defaults to None.
     """
 
-    def __init__(self, address, timeout=5, proxy_opener=None):
+    def __init__(self, address, timeout=5, http_client=None):
 
         self.net = Net(
-            address=address, timeout=timeout, proxy_opener=proxy_opener
+            address=address, timeout=timeout, http_client=http_client
         )
         self.ipasn = IPASN(self.net)
 
@@ -61,7 +61,7 @@ class IPWhois:
     def __repr__(self):
 
         return 'IPWhois({0}, {1}, {2})'.format(
-            self.address_str, str(self.timeout), repr(self.net.opener)
+            self.address_str, str(self.timeout), repr(self.net.http_client)
         )
 
     def lookup_whois(self, inc_raw=False, retry_count=3, get_referral=False,
