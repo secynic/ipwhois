@@ -165,7 +165,7 @@ class IPASN:
         except Exception as e:
 
             raise ASNParseError('Parsing failed for "{0}" with exception: {1}.'
-                                ''.format(response, e)[:100])
+                                ''.format(response, e)[:100]) from e
 
         return ret
 
@@ -222,7 +222,7 @@ class IPASN:
         except Exception as e:
 
             raise ASNParseError('Parsing failed for "{0}" with exception: {1}.'
-                                ''.format(response, e)[:100])
+                                ''.format(response, e)[:100]) from e
 
         return ret
 
@@ -279,7 +279,7 @@ class IPASN:
         except Exception as e:
 
             raise ASNParseError('Parsing failed for "{0}" with exception: {1}.'
-                                ''.format(response, e)[:100])
+                                ''.format(response, e)[:100]) from e
 
         return ret
 
@@ -379,7 +379,7 @@ class IPASN:
         except Exception as e:  # pragma: no cover
 
             raise ASNParseError('Parsing failed for "{0}" with exception: {1}.'
-                                ''.format(response, e)[:100])
+                                ''.format(response, e)[:100]) from e
 
         return asn_data
 

@@ -24,8 +24,6 @@ class TestIPASN(TestCommon):
             self.assertIsInstance(ipasn.lookup(inc_raw=True), dict)
         except ASNRegistryError:
             pass
-        except AssertionError as e:
-            raise e
         except Exception as e:
             self.fail('Unexpected exception raised: {0}'.format(e))
 
@@ -79,10 +77,6 @@ class TestASNOrigin(TestCommon):
             except AssertionError as e:
 
                 raise e
-
-            except Exception as e:
-
-                self.fail('Unexpected exception raised: {0}'.format(e))
 
         net = Net(address='74.125.225.229', timeout=0)
         asnorigin = ASNOrigin(net)

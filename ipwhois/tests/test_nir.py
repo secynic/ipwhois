@@ -54,10 +54,6 @@ class TestNIRWhois(TestCommon):
 
                 raise e
 
-            except Exception as e:
-
-                self.fail('Unexpected exception raised: {0}'.format(e))
-
         self.assertRaises(NetError, NIRWhois, 'a')
         self.assertRaises(KeyError, obj.lookup)
         self.assertRaises(KeyError, obj.lookup, **dict(nir='a'))

@@ -51,8 +51,6 @@ class TestIPWhois(TestCommon):
             except (ASNLookupError, ASNRegistryError, WhoisLookupError,
                     HTTPLookupError):
                 pass
-            except AssertionError as e:
-                raise e
             except Exception as e:
                 self.fail('Unexpected exception raised: {0}'.format(e))
 
@@ -70,8 +68,6 @@ class TestIPWhois(TestCommon):
                     inc_raw=True), dict)
             except (ASNLookupError, ASNRegistryError, WhoisLookupError):
                 pass
-            except AssertionError as e:
-                raise e
             except Exception as e:
                 self.fail('Unexpected exception raised: {0}'.format(e))
 
@@ -86,8 +82,6 @@ class TestIPWhois(TestCommon):
                     extra_blacklist=['rwhois.cogentco.com']), dict)
             except (ASNLookupError, ASNRegistryError, WhoisLookupError):
                 pass
-            except AssertionError as e:
-                raise e
             except Exception as e:
                 self.fail('Unexpected exception raised: {0}'.format(e))
 
@@ -164,10 +158,6 @@ class TestIPWhois(TestCommon):
             except (ASNLookupError, ASNRegistryError, WhoisLookupError,
                     HTTPLookupError):
                 pass
-            except AssertionError as e:
-                raise e
-            except Exception as e:
-                self.fail('Unexpected exception raised: {0}'.format(e))
 
         handler = ProxyHandler({'http': 'http://0.0.0.0:80/'})
         opener = build_opener(handler)

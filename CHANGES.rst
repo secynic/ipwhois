@@ -1,6 +1,11 @@
 Changelog
 =========
 
+1.3.0 (TBD)
+-----------
+
+- Fixed deprecated query method of dnspython (#294 - monoidic)
+
 1.2.0 (2020-09-17)
 ------------------
 

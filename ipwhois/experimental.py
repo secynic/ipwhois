@@ -103,11 +103,11 @@ def get_bulk_asn_whois(addresses=None, retry_count=3, timeout=120):
 
         else:
 
-            raise ASNLookupError('ASN bulk lookup failed.')
+            raise ASNLookupError('ASN bulk lookup failed.') from e
 
-    except:  # pragma: no cover
+    except BaseException as e:  # pragma: no cover
 
-        raise ASNLookupError('ASN bulk lookup failed.')
+        raise ASNLookupError('ASN bulk lookup failed.') from e
 
 
 def bulk_lookup_rdap(addresses=None, inc_raw=False, retry_count=3, depth=0,
