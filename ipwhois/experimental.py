@@ -103,16 +103,16 @@ def get_bulk_asn_whois(addresses=None, retry_count=3, timeout=120):
 
         else:
 
-            raise ASNLookupError('ASN bulk lookup failed.')
+            raise ASNLookupError('ASN bulk lookup failed.') from e
 
-    except:  # pragma: no cover
+    except BaseException as e:  # pragma: no cover
 
-        raise ASNLookupError('ASN bulk lookup failed.')
+        raise ASNLookupError('ASN bulk lookup failed.') from e
 
 
 def bulk_lookup_rdap(addresses=None, inc_raw=False, retry_count=3, depth=0,
                      excluded_entities=None, rate_limit_timeout=60,
-                     socket_timeout=10, asn_timeout=240, proxy_openers=None):
+                     socket_timeout=10, asn_timeout=240, http_clients=None):
     """
     The function for bulk retrieving and parsing whois information for a list
     of IP addresses via HTTP (RDAP). This bulk lookup method uses bulk
@@ -138,8 +138,8 @@ def bulk_lookup_rdap(addresses=None, inc_raw=False, retry_count=3, depth=0,
             connections in seconds. Defaults to 10.
         asn_timeout (:obj:`int`): The default timeout for bulk ASN lookups in
             seconds. Defaults to 240.
-        proxy_openers (:obj:`list` of :obj:`OpenerDirector`): Proxy openers
-            for single/rotating proxy support. Defaults to None.
+        http_clients (:obj:`list` of :obj:`httpx.Client`): httpx clients
+            for single/rotating proxy and fingerprint support. Defaults to None.
 
     Returns:
         namedtuple:
@@ -209,11 +209,11 @@ def bulk_lookup_rdap(addresses=None, inc_raw=False, retry_count=3, depth=0,
     }
     asn_parsed_results = {}
 
-    if proxy_openers is None:
+    if http_clients is None:
 
-        proxy_openers = [None]
+        http_clients = [None]
 
-    proxy_openers_copy = iter(proxy_openers)
+    http_clients_copy = iter(http_clients)
 
     # Make sure addresses is unique
     unique_ip_list = list(unique_everseen(addresses))
@@ -347,19 +347,19 @@ def bulk_lookup_rdap(addresses=None, inc_raw=False, retry_count=3, depth=0,
 
                         rate_tracker[rir]['count'] += 1
 
-                    # Get the next proxy opener to use, or None
+                    # Get the next HTTP client object to use, or None
                     try:
 
-                        opener = next(proxy_openers_copy)
+                        client = next(http_clients_copy)
 
                     # Start at the beginning if all have been used
                     except StopIteration:
 
-                        proxy_openers_copy = iter(proxy_openers)
-                        opener = next(proxy_openers_copy)
+                        http_clients_copy = iter(http_clients)
+                        client = next(http_clients_copy)
 
                     # Instantiate the objects needed for the RDAP lookup
-                    net = Net(ip, timeout=socket_timeout, proxy_opener=opener)
+                    net = Net(ip, timeout=socket_timeout, http_client=client)
                     rdap = RDAP(net)
 
                     try:

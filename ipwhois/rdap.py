@@ -476,9 +476,9 @@ class _RDAPNetwork(_RDAPCommon):
 
             _RDAPCommon.__init__(self, json_result)
 
-        except ValueError:
+        except ValueError as e:
 
-            raise InvalidNetworkObject('JSON result must be a dict.')
+            raise InvalidNetworkObject('JSON result must be a dict.') from e
 
         self.vars.update({
             'start_address': None,
@@ -500,12 +500,12 @@ class _RDAPNetwork(_RDAPCommon):
 
             self.vars['handle'] = self.json['handle'].strip()
 
-        except (KeyError, ValueError):
+        except (KeyError, ValueError) as e:
 
             log.debug('Handle missing, json_output: {0}'.format(json.dumps(
                 self.json)))
             raise InvalidNetworkObject('Handle is missing for RDAP network '
-                                       'object')
+                                       'object') from e
 
         try:
 
@@ -529,12 +529,12 @@ class _RDAPNetwork(_RDAPCommon):
                 self.vars['start_address'] = self.json['startAddress'].strip()
                 self.vars['end_address'] = self.json['endAddress'].strip()
 
-        except (KeyError, ValueError, TypeError):
+        except (KeyError, ValueError, TypeError) as e:
 
             log.debug('IP address data incomplete. Data parsed prior to '
                       'exception: {0}'.format(json.dumps(self.vars)))
             raise InvalidNetworkObject('IP address data is missing for RDAP '
-                                       'network object.')
+                                       'network object.') from e
 
         try:
 
@@ -587,9 +587,9 @@ class _RDAPEntity(_RDAPCommon):
 
             _RDAPCommon.__init__(self, json_result)
 
-        except ValueError:
+        except ValueError as e:
 
-            raise InvalidEntityObject('JSON result must be a dict.')
+            raise InvalidEntityObject('JSON result must be a dict.') from e
 
         self.vars.update({
             'roles': None,
@@ -607,9 +607,9 @@ class _RDAPEntity(_RDAPCommon):
 
             self.vars['handle'] = self.json['handle'].strip()
 
-        except (KeyError, ValueError, TypeError):
+        except (KeyError, ValueError, TypeError) as e:
 
-            raise InvalidEntityObject('Handle is missing for RDAP entity')
+            raise InvalidEntityObject('Handle is missing for RDAP entity') from e
 
         for v in ['roles', 'country']:
 

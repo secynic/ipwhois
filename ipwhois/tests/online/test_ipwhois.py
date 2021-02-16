@@ -51,8 +51,6 @@ class TestIPWhois(TestCommon):
             except (ASNLookupError, ASNRegistryError, WhoisLookupError,
                     HTTPLookupError):
                 pass
-            except AssertionError as e:
-                raise e
             except Exception as e:
                 self.fail('Unexpected exception raised: {0}'.format(e))
 
@@ -70,8 +68,6 @@ class TestIPWhois(TestCommon):
                     inc_raw=True), dict)
             except (ASNLookupError, ASNRegistryError, WhoisLookupError):
                 pass
-            except AssertionError as e:
-                raise e
             except Exception as e:
                 self.fail('Unexpected exception raised: {0}'.format(e))
 
@@ -86,8 +82,6 @@ class TestIPWhois(TestCommon):
                     extra_blacklist=['rwhois.cogentco.com']), dict)
             except (ASNLookupError, ASNRegistryError, WhoisLookupError):
                 pass
-            except AssertionError as e:
-                raise e
             except Exception as e:
                 self.fail('Unexpected exception raised: {0}'.format(e))
 
@@ -125,10 +119,7 @@ class TestIPWhois(TestCommon):
             break
 
     def test_lookup_rdap(self):
-        try:
-            from urllib.request import ProxyHandler, build_opener
-        except ImportError:
-            from urllib2 import ProxyHandler, build_opener
+        from httpx import Client
 
         ips = [
             '74.125.225.229',  # ARIN
@@ -164,13 +155,8 @@ class TestIPWhois(TestCommon):
             except (ASNLookupError, ASNRegistryError, WhoisLookupError,
                     HTTPLookupError):
                 pass
-            except AssertionError as e:
-                raise e
-            except Exception as e:
-                self.fail('Unexpected exception raised: {0}'.format(e))
 
-        handler = ProxyHandler({'http': 'http://0.0.0.0:80/'})
-        opener = build_opener(handler)
+        http_client = Client(proxies={'http://*': 'http://0.0.0.0:80/'})
         result = IPWhois(address='74.125.225.229', timeout=0,
-                         proxy_opener=opener)
+                         http_client=http_client)
         self.assertRaises(ASNRegistryError, result.lookup_rdap)
