@@ -229,13 +229,13 @@ class Net:
             raise ASNLookupError(
                 'ASN lookup failed (DNS {0}) for {1}.'.format(
                     e.__class__.__name__, self.address_str)
-            )
+            ) from e
 
-        except:  # pragma: no cover
+        except BaseException as e:  # pragma: no cover
 
             raise ASNLookupError(
                 'ASN lookup failed for {0}.'.format(self.address_str)
-            )
+            ) from e
 
     def get_asn_verbose_dns(self, asn=None):
         """
@@ -271,13 +271,13 @@ class Net:
             raise ASNLookupError(
                 'ASN lookup failed (DNS {0}) for {1}.'.format(
                     e.__class__.__name__, asn)
-            )
+            ) from e
 
-        except:  # pragma: no cover
+        except BaseException as e:  # pragma: no cover
 
             raise ASNLookupError(
                 'ASN lookup failed for {0}.'.format(asn)
-            )
+            ) from e
 
     def get_asn_whois(self, retry_count=3):
         """
@@ -337,13 +337,13 @@ class Net:
 
                 raise ASNLookupError(
                     'ASN lookup failed for {0}.'.format(self.address_str)
-                )
+                ) from e
 
-        except:  # pragma: no cover
+        except BaseException as e:  # pragma: no cover
 
             raise ASNLookupError(
                 'ASN lookup failed for {0}.'.format(self.address_str)
-            )
+            ) from e
 
     def get_asn_http(self, retry_count=3):
         """
@@ -391,9 +391,9 @@ class Net:
 
                 raise ASNLookupError(
                     'ASN lookup failed for {0}.'.format(self.address_str)
-                )
+                ) from e
 
-        except:
+        except BaseException as e:
 
             raise ASNLookupError(
                 'ASN lookup failed for {0}.'.format(self.address_str)
@@ -505,11 +505,11 @@ class Net:
 
             raise
 
-        except:  # pragma: no cover
+        except BaseException as e:  # pragma: no cover
 
             raise WhoisLookupError(
                 'ASN origin WHOIS lookup failed for {0}.'.format(asn)
-            )
+            ) from e
 
     def get_whois(self, asn_registry='arin', retry_count=3, server=None,
                   port=43, extra_blacklist=None):
@@ -624,7 +624,7 @@ class Net:
 
                 raise WhoisLookupError(
                     'WHOIS lookup failed for {0}.'.format(self.address_str)
-                )
+                ) from e
 
         except WhoisRateLimitError:  # pragma: no cover
 
@@ -634,7 +634,7 @@ class Net:
 
             raise
 
-        except:  # pragma: no cover
+        except BaseException as e:  # pragma: no cover
 
             raise WhoisLookupError(
                 'WHOIS lookup failed for {0}.'.format(self.address_str)
@@ -673,12 +673,9 @@ class Net:
             # Create the connection for the whois query.
             log.debug('HTTP query for {0} at {1}'.format(
                 self.address_str, url))
-            conn = Request(url, headers=headers)
-            data = self.opener.open(conn, timeout=self.timeout)
-            try:
-                d = json.loads(data.readall().decode('utf-8', 'ignore'))
-            except AttributeError:  # pragma: no cover
-                d = json.loads(data.read().decode('utf-8', 'ignore'))
+            r = self.http_client.get(url, headers=headers)
+            r.raise_for_status()
+            d = r.json
 
             try:
                 # Tests written but commented out. I do not want to send a
@@ -730,12 +727,12 @@ class Net:
                     raise HTTPRateLimitError(
                         'HTTP lookup failed for {0}. Rate limit '
                         'exceeded, wait and try again (possibly a '
-                        'temporary block).'.format(url))
+                        'temporary block).'.format(url)) from e
 
             else:
 
                 raise HTTPLookupError('HTTP lookup failed for {0} with error '
-                                      'code {1}.'.format(url, str(e.code)))
+                                      'code {1}.'.format(url, str(e.code))) from e
 
         except (URLError, socket.timeout, socket.error) as e:
 
@@ -753,15 +750,15 @@ class Net:
             else:
 
                 raise HTTPLookupError('HTTP lookup failed for {0}.'.format(
-                    url))
+                    url)) from e
 
         except (HTTPLookupError, HTTPRateLimitError) as e:  # pragma: no cover
 
             raise e
 
-        except:  # pragma: no cover
+        except BaseException as e:  # pragma: no cover
 
-            raise HTTPLookupError('HTTP lookup failed for {0}.'.format(url))
+            raise HTTPLookupError('HTTP lookup failed for {0}.'.format(url)) from e
 
     def get_host(self, retry_count=3):
         """
@@ -819,11 +816,11 @@ class Net:
                     'Host lookup failed for {0}.'.format(self.address_str)
                 )
 
-        except:  # pragma: no cover
+        except BaseException as e:  # pragma: no cover
 
             raise HostLookupError(
                 'Host lookup failed for {0}.'.format(self.address_str)
-            )
+            ) from e
 
     def get_http_raw(self, url=None, retry_count=3, headers=None,
                      request_type='GET', form_data=None):
@@ -896,12 +893,12 @@ class Net:
             else:
 
                 raise HTTPLookupError('HTTP lookup failed for {0}.'.format(
-                    url))
+                    url)) from e
 
         except HTTPLookupError as e:  # pragma: no cover
 
             raise e
 
-        except Exception:  # pragma: no cover
+        except BaseException as e:  # pragma: no cover
 
-            raise HTTPLookupError('HTTP lookup failed for {0}.'.format(url))
+            raise HTTPLookupError('HTTP lookup failed for {0}.'.format(url)) from e

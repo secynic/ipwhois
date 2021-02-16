@@ -32,8 +32,6 @@ class TestExperimental(TestCommon):
             self.assertIsInstance(get_bulk_asn_whois(addresses=ips), str)
         except ASNLookupError:
             pass
-        except AssertionError as e:
-            raise e
         except Exception as e:
             self.fail('Unexpected exception raised: {0}'.format(e))
 
@@ -86,7 +84,5 @@ class TestExperimental(TestCommon):
 
         except ASNLookupError:
             pass
-        except AssertionError as e:
-            raise e
         except Exception as e:
             self.fail('Unexpected exception raised: {0}'.format(e))
