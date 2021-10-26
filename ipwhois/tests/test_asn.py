@@ -282,7 +282,7 @@ class TestASNOrigin(TestCommon):
             '\nsource:         AFRINIC'
             '\n\n'
         )
-        self.assertEquals(
+        self.assertEqual(
             obj.get_nets_radb(multi_net_response),
             [{
                 'updated': None,
