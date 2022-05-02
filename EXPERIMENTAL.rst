@@ -39,6 +39,9 @@ Arguments supported:
 | timeout            | int    | The default timeout for socket connections in |
 |                    |        | seconds. Defaults to 120.                     |
 +--------------------+--------+-----------------------------------------------+
+| as_dict            | bool   | Return the results as a dictionary instead of |
+|                    |        | a string. Defaults to False.                  |
++--------------------+--------+-----------------------------------------------+
 
 .. _get_bulk_asn_whois-output:
 
@@ -47,6 +50,8 @@ Output
 
 Outputs a string of the raw ASN bulk data, new line separated. The first line
 is obsolete.
+If as_dict set to True returns a dictionary with the IP address as the key and 
+ASN details in a dictionary as the value.
 
 .. _get_bulk_asn_whois-examples:
 

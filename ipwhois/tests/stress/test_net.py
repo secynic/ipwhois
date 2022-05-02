@@ -17,7 +17,7 @@ class TestNet(TestCommon):
         # Test for HTTPRateLimitError for up to 20 requests. Exits when raised.
         url = RIR_RDAP['lacnic']['ip_url'].format('200.57.141.161')
         result = Net('200.57.141.161')
-        count = 20
+        count = 100
         http_lookup_errors = 0
         while count > 0:
             log.debug('Attempts left: {0}'.format(str(count)))

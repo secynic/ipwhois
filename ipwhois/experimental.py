@@ -36,8 +36,10 @@ from .utils import unique_everseen
 
 log = logging.getLogger(__name__)
 
+_IPASN = IPASN(Net('1.2.3.4'))
 
-def get_bulk_asn_whois(addresses=None, retry_count=3, timeout=120):
+
+def get_bulk_asn_whois(addresses=None, retry_count=3, timeout=120, as_dict=False):
     """
     The function for retrieving ASN information for multiple IP addresses from
     Cymru via port 43/tcp (WHOIS).
@@ -49,6 +51,8 @@ def get_bulk_asn_whois(addresses=None, retry_count=3, timeout=120):
             Defaults to 3.
         timeout (:obj:`int`): The default timeout for socket connections in
             seconds. Defaults to 120.
+        as_dict (obj:`bool`): Return the results as a dictionary instead of a
+            string. Defaults to False.
 
     Returns:
         str: The raw ASN bulk data, new line separated.
@@ -89,6 +93,9 @@ def get_bulk_asn_whois(addresses=None, retry_count=3, timeout=120):
                 break
 
         conn.close()
+
+        if as_dict:
+            return _raw_results_to_dict(data)
 
         return str(data)
 
@@ -225,46 +232,10 @@ def bulk_lookup_rdap(addresses=None, inc_raw=False, retry_count=3, depth=0,
     rir_keys_ordered = ['lacnic', 'ripencc', 'apnic', 'afrinic', 'arin']
 
     # First query the ASN data for all IPs, can raise ASNLookupError, no catch
-    bulk_asn = get_bulk_asn_whois(unique_ip_list, timeout=asn_timeout)
+    asn_parsed_results = get_bulk_asn_whois(unique_ip_list, timeout=asn_timeout, as_dict=True)
 
-    # ASN results are returned as string, parse lines to list and remove first
-    asn_result_list = bulk_asn.split('\n')
-    del asn_result_list[0]
-
-    # We need to instantiate IPASN, which currently needs a Net object,
-    # IP doesn't matter here
-    net = Net('1.2.3.4')
-    ipasn = IPASN(net)
-
-    # Iterate each IP ASN result, and add valid RIR results to
-    # asn_parsed_results for RDAP lookups
-    for asn_result in asn_result_list:
-
-        temp = asn_result.split('|')
-
-        # Not a valid entry, move on to next
-        if len(temp) == 1:
-
-            continue
-
-        ip = temp[1].strip()
-
-        # We need this since ASN bulk lookup is returning duplicates
-        # This is an issue on the Cymru end
-        if ip in asn_parsed_results.keys():  # pragma: no cover
-
-            continue
-
-        try:
-
-            asn_parsed = ipasn.parse_fields_whois(asn_result)
-
-        except ASNRegistryError:  # pragma: no cover
-
-            continue
-
-        # Add valid IP ASN result to asn_parsed_results for RDAP lookup
-        asn_parsed_results[ip] = asn_parsed
+    # Gather ASN Registry stats from data
+    for asn_parsed in asn_parsed_results.values():
         stats[asn_parsed['asn_registry']]['total'] += 1
 
     # Set the list of IPs that are not allocated/failed ASN lookup
@@ -462,3 +433,22 @@ def bulk_lookup_rdap(addresses=None, inc_raw=False, retry_count=3, depth=0,
 
     return_tuple = namedtuple('return_tuple', ['results', 'stats'])
     return return_tuple(results, stats)
+
+
+def _raw_results_to_dict(data: str) -> dict:
+    """Take a raw results set and return it as a dict."""
+    data_list = data.split("\n")
+    asn_results = {}
+    # Use created ipasn instance
+    ipasn = _IPASN
+    for result in data_list:
+        # Discard the header line and any blank lines in the results
+        if not result.startswith("Bulk mode") and len(result) > 0:
+            ip_addr = result.split("|")[1].strip()
+            try:
+                asn_data = ipasn.parse_fields_whois(result)
+            except ASNRegistryError:  # pragma: no cover
+                continue
+            if ip_addr not in asn_results:
+                asn_results[ip_addr] = asn_data
+    return asn_results
