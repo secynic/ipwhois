@@ -30,6 +30,7 @@ class TestExperimental(TestCommon):
 
         try:
             self.assertIsInstance(get_bulk_asn_whois(addresses=ips), str)
+            self.assertIsInstance(get_bulk_asn_whois(addresses=ips, as_dict=True), dict)
         except ASNLookupError:
             pass
         except AssertionError as e:
