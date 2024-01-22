@@ -257,7 +257,7 @@ class Net:
 
             asn = 'AS{0}'.format(asn)
 
-        zone = '{0}.asn.cymru.com'.format(asn)
+        zone = '{0}.asn.cymru.com.'.format(asn)
 
         try:
 
