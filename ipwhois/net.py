@@ -73,9 +73,9 @@ ARIN = 'http://whois.arin.net/rest/nets;q={0}?showDetails=true&showARIN=true'
 
 CYMRU_WHOIS = 'whois.cymru.com'
 
-IPV4_DNS_ZONE = '{0}.origin.asn.cymru.com'
+IPV4_DNS_ZONE = '{0}.origin.asn.cymru.com.'
 
-IPV6_DNS_ZONE = '{0}.origin6.asn.cymru.com'
+IPV6_DNS_ZONE = '{0}.origin6.asn.cymru.com.'
 
 BLACKLIST = [
     'root.rwhois.net'
