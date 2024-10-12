@@ -67,7 +67,8 @@ PACKAGES = ['ipwhois']
 
 PACKAGE_DATA = {'ipwhois': ['data/*.xml', 'data/*.csv']}
 
-INSTALL_REQUIRES = ['dnspython', 'ipaddr==2.2.0;python_version<"3.3"']
+INSTALL_REQUIRES = ['dnspython', 'ipaddr==2.2.0;python_version<"3.3"',
+                    'defusedxml']
 
 setup(
     name=NAME,
