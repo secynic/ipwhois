@@ -816,6 +816,11 @@ class ASNOrigin:
                                  ).format(ASN_ORIGIN_HTTP['radb']['url'], asn),
                             retry_count=retry_count,
                             request_type='GET',
+                            headers={'Accept': 'text/html',
+                                     'User-Agent':
+                                         'Mozilla/5.0 (X11; Ubuntu; '
+                                         'Linux x86_64; rv:131.0) '
+                                         'Gecko/20100101 Firefox/131.0'}
                             # form_data=tmp
                         )
                         is_http = True   # pragma: no cover
