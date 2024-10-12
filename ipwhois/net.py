@@ -619,6 +619,10 @@ class Net:
         except (socket.timeout, socket.error) as e:
 
             log.debug('WHOIS query socket error: {0}'.format(e))
+            try:
+                conn.close()
+            except Exception:
+                pass
             if retry_count > 0:
 
                 log.debug('WHOIS query retrying (count: {0})'.format(
