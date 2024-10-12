@@ -327,6 +327,10 @@ class Net:
         except (socket.timeout, socket.error) as e:  # pragma: no cover
 
             log.debug('ASN query socket error: {0}'.format(e))
+            try:
+                conn.close()
+            except Exception:
+                pass
             if retry_count > 0:
 
                 log.debug('ASN query retrying (count: {0})'.format(
@@ -486,6 +490,10 @@ class Net:
         except (socket.timeout, socket.error) as e:
 
             log.debug('ASN origin WHOIS query socket error: {0}'.format(e))
+            try:
+                conn.close()
+            except Exception:
+                pass
             if retry_count > 0:
 
                 log.debug('ASN origin WHOIS query retrying (count: {0})'
