@@ -75,7 +75,7 @@ ASN_ORIGIN_HTTP = {
             'description': r'(descr):[^\S\n]+(?P<val>.+?)\n',
             'maintainer': r'(mnt-by):[^\S\n]+(?P<val>.+?)\n',
             'updated': r'(changed):[^\S\n]+(?P<val>.+?)\n',
-            'source': r'(source):[^\S\n]+(?P<val>.+?)\<',
+            'source': r'(source):[^\S\n]+(?P<val>.+?)(\<|\n)',
         }
     },
 }
