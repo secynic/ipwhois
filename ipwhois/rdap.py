@@ -32,7 +32,7 @@ from collections import namedtuple
 
 log = logging.getLogger(__name__)
 
-BOOTSTRAP_URL = 'https://rdap.arin.net/bootstrap'
+BOOTSTRAP_URL = 'https://rdap-bootstrap.arin.net/bootstrap'
 
 RIR_RDAP = {
     'arin': {
