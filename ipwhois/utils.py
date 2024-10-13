@@ -352,12 +352,6 @@ def ipv4_is_defined(address):
 
         return results(True, 'Private-Use Networks', 'RFC 1918')
 
-    # New IANA Reserved
-    # TODO: Someone needs to find the RFC for this
-    elif query_ip in IPv4Network('198.97.38.0/24'):
-
-        return results(True, 'IANA Reserved', '')
-
     return results(False, '', '')
 
 
