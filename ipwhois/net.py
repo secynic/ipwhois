@@ -73,9 +73,9 @@ ARIN = 'https://whois.arin.net/rest/nets;q={0}?showDetails=true&showARIN=true'
 
 CYMRU_WHOIS = 'whois.cymru.com'
 
-IPV4_DNS_ZONE = '{0}.origin.asn.cymru.com'
+IPV4_DNS_ZONE = '{0}.origin.asn.cymru.com.'
 
-IPV6_DNS_ZONE = '{0}.origin6.asn.cymru.com'
+IPV6_DNS_ZONE = '{0}.origin6.asn.cymru.com.'
 
 BLACKLIST = [
     'root.rwhois.net'
@@ -221,6 +221,8 @@ class Net:
 
             log.debug('ASN query for {0}'.format(self.dns_zone))
             data = self.dns_resolver.resolve(self.dns_zone, 'TXT')
+            log.debug('ASN query results using {0}: {1}'.format(
+                self.dns_zone, list(data)))
             return list(data)
 
         except (dns.resolver.NXDOMAIN, dns.resolver.NoNameservers,
@@ -257,7 +259,7 @@ class Net:
 
             asn = 'AS{0}'.format(asn)
 
-        zone = '{0}.asn.cymru.com'.format(asn)
+        zone = '{0}.asn.cymru.com.'.format(asn)
 
         try:
 
