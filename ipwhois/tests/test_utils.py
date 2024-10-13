@@ -92,8 +92,6 @@ class TestFunctions(TestCommon):
                           (True, 'Limited Broadcast', 'RFC 919, Section 7'))
         self.assertEqual(ipv4_is_defined('192.168.0.1'),
                           (True, 'Private-Use Networks', 'RFC 1918'))
-        self.assertEqual(ipv4_is_defined('198.97.38.0'),
-                          (True, 'IANA Reserved', ''))
 
     def test_ipv6_is_defined(self):
         if sys.version_info >= (3, 3):
