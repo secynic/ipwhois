@@ -555,6 +555,24 @@ Use a proxy
     >>>> opener = request.build_opener(handler)
     >>>> obj = IPWhois('74.125.225.229', proxy_opener = opener)
 
+Use a local file with RDAP data
+-------------------------------
+
+::
+
+    >>>> from ipwhois.net import Net
+    >>>> from ipwhois.rdap import RDAP
+    >>>> data_dir = '/some/dir'
+    >>>> with io.open(str(data_dir) + '/rdap.json', 'r') as data_file:
+    >>>>    data = json.load(data_file)
+    >>>>    for key, val in data.items():
+    >>>>    net = Net(key)
+    >>>>    obj = RDAP(net)
+    >>>>    obj.lookup(response=val['response'],
+                asn_data=val['asn_data'],
+                depth=0
+            )
+
 Optimizing queries for your network
 -----------------------------------
 
