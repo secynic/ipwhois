@@ -550,7 +550,7 @@ class Whois:
     def lookup(self, inc_raw=False, retry_count=3, response=None,
                get_referral=False, extra_blacklist=None,
                ignore_referral_errors=False, asn_data=None,
-               field_list=None, is_offline=False):
+               field_list=None, is_offline=False, get_recursive=True):
         """
         The function for retrieving and parsing whois information for an IP
         address via port 43/tcp (WHOIS).
@@ -635,7 +635,7 @@ class Whois:
             # Retrieve the whois data.
             response = self._net.get_whois(
                 asn_registry=asn_data['asn_registry'], retry_count=retry_count,
-                extra_blacklist=extra_blacklist
+                extra_blacklist=extra_blacklist, get_recursive=get_recursive
             )
 
             if get_referral:
