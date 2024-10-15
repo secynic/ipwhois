@@ -40,14 +40,12 @@ from .whois import RIR_WHOIS
 from .asn import ASN_ORIGIN_WHOIS
 from .utils import ipv4_is_defined, ipv6_is_defined
 
-if sys.version_info >= (3, 3):  # pragma: no cover
-    from ipaddress import (ip_address,
-                           IPv4Address,
-                           IPv6Address)
-else:  # pragma: no cover
-    from ipaddr import (IPAddress as ip_address,
+from ipaddress import (ip_address,
                         IPv4Address,
-                        IPv6Address)
+                        IPv6Address,
+                        ip_network,
+                        IPv4Network,
+                        IPv6Network)
 
 try:  # pragma: no cover
     from urllib.request import (OpenerDirector,
@@ -65,6 +63,12 @@ except ImportError:  # pragma: no cover
                          URLError,
                          HTTPError)
     from urllib import urlencode
+
+if sys.version_info >= (3, 3):  # pragma: no cover
+    # There is no builtin unicode function in Python3, all strings are unicode
+    # in Python3
+    def unicode(string):
+        return string
 
 log = logging.getLogger(__name__)
 
@@ -113,14 +117,19 @@ class Net:
 
         # IPv4Address or IPv6Address
         if isinstance(address, IPv4Address) or isinstance(
-                address, IPv6Address):
+                address, IPv6Address) or isinstance(
+                address, IPv4Network) or isinstance(address, IPv6Network):
 
             self.address = address
+
+        elif isinstance(address, str) and '/' in address:
+
+            self.address = ip_network(unicode(address))
 
         else:
 
             # Use ipaddress package exception handling.
-            self.address = ip_address(address)
+            self.address = ip_address(unicode(address))
 
         # Default timeout for socket connections.
         self.timeout = timeout
@@ -147,8 +156,16 @@ class Net:
 
         if self.version == 4:
 
-            # Check if no ASN/whois resolution needs to occur.
-            is_defined = ipv4_is_defined(self.address_str)
+            if isinstance(self.address, IPv4Network):
+
+                # Check if no ASN/whois resolution needs to occur with the
+                # first IP in the subnet.
+                is_defined = ipv4_is_defined(next(self.address.hosts()))
+
+            else:
+
+                # Check if no ASN/whois resolution needs to occur.
+                is_defined = ipv4_is_defined(self.address_str)
 
             if is_defined[0]:
 
@@ -168,8 +185,16 @@ class Net:
 
         else:
 
-            # Check if no ASN/whois resolution needs to occur.
-            is_defined = ipv6_is_defined(self.address_str)
+            if isinstance(self.address, IPv6Network):
+
+                # Check if no ASN/whois resolution needs to occur with the
+                # first IP in the subnet.
+                is_defined = ipv6_is_defined(next(self.address.hosts()))
+
+            else:
+
+                # Check if no ASN/whois resolution needs to occur.
+                is_defined = ipv6_is_defined(self.address_str)
 
             if is_defined[0]:
 
