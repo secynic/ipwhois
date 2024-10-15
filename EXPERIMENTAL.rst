@@ -68,15 +68,15 @@ Basic usage
     >>>> pprint(results.split('\n'))
 
     [
-    "Bulk mode; whois.cymru.com [2020-09-15 16:42:29 +0000]",
+    "Bulk mode; whois.cymru.com [2024-10-15 05:46:42 +0000]",
     "15169   | 74.125.225.229   | 74.125.225.0/24     | US | arin     | 2007-03-13 | GOOGLE, US",
     "15169   | 2001:4860:4860::8888                     | 2001:4860::/32      | US | arin     | 2005-03-14 | GOOGLE, US",
     "2856    | 62.239.237.1     | 62.239.0.0/16       | GB | ripencc  | 2001-01-02 | BT-UK-AS BTnet UK Regional network, GB",
     "2856    | 2a00:2381:ffff::1                        | 2a00:2380::/25      | GB | ripencc  | 2007-08-29 | BT-UK-AS BTnet UK Regional network, GB",
     "3786    | 210.107.73.73    | 210.107.0.0/17      | KR | apnic    | 1997-08-29 | LGDACOM LG DACOM Corporation, KR",
     "2497    | 2001:240:10c:1::ca20:9d1d                | 2001:240::/32       | JP | apnic    | 2000-03-08 | IIJ Internet Initiative Japan Inc., JP",
-    "19373   | 200.57.141.161   | 200.57.128.0/20     | MX | lacnic   | 2000-12-04 | Triara.com, S.A. de C.V., MX",
-    "NA      | 2801:10:c000::                           | NA                  | CO | lacnic   | 2013-10-29 | NA",
+    "19373   | 200.57.141.161   | 200.57.128.0/20     | MX | lacnic   | 2000-12-04 | Triara.com S.A. de C.V., MX",
+    "264653  | 2801:10:c000::                           | 2801:10:c000::/48   | CO | lacnic   | 2013-10-29 | Universidad Catolica de Oriente, CO",
     "12091   | 196.11.240.215   | 196.11.240.0/24     | ZA | afrinic  | 1994-07-21 | MTNNS-1, ZA",
     "37578   | 2001:43f8:7b0::                          | 2001:43f8:7b0::/48  | KE | afrinic  | 2013-03-22 | Tespok, KE",
     "4730    | 133.1.2.5        | 133.1.0.0/16        | JP | apnic    | 1997-03-01 | ODINS Osaka University, JP",

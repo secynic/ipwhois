@@ -250,11 +250,32 @@ Basic usage
             "updated": "***@isoc.org 20160720"
         },
         {
+            "cidr": "196.49.22.0/24",
+            "description": "KIXP Mombasa Management Network",
+            "maintainer": "TESPOK-MNT",
+            "source": "AFRINIC",
+            "updated": "***@tespok.co.ke 20210510"
+        },
+        {
+            "cidr": "2001:43f8:c1::/48",
+            "description": "KIXP Mombasa Management Network",
+            "maintainer": "TESPOK-MNT",
+            "source": "AFRINIC",
+            "updated": "***@tespok.co.ke 20201218"
+        },
+        {
             "cidr": "2001:43f8:7b0::/48",
             "description": "KIXP Nairobi Management Network",
             "maintainer": "TESPOK-MNT",
             "source": "AFRINIC",
             "updated": "***@isoc.org 20160721"
+        },
+        {
+            "cidr": "2001:43f8:c40::/48",
+            "description": "KIXP GRX Management",
+            "maintainer": "TESPOK-MNT",
+            "source": "AFRINIC",
+            "updated": "***@tespok.co.ke 20201218"
         }
     ],
     "query": "AS37578",
