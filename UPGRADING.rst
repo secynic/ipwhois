@@ -22,6 +22,8 @@ v1.3.0
   lookup to avoid 403
 - Updated to HTTPS where applicable
 - Fix for local domain searches with ASN
+- Added get_recursive argument (-r) for IPWhois.lookup_whois() and
+  ipwhois.net.Net.get_whois()
 
 ******
 v1.2.0

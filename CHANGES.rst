@@ -17,6 +17,8 @@ Changelog
 - Close sockets on exception to avoid warnings
 - Move tests from assertEquals to assertEqual
 - Fix for local domain searches with ASN (#324)
+- Added get_recursive argument (-r) for IPWhois.lookup_whois() and
+  ipwhois.net.Net.get_whois() (#295)
 
 1.2.0 (2020-09-17)
 ------------------
