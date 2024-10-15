@@ -1,2 +1,3 @@
-dnspython<=2.0.0
-ipaddr==2.2.0
+dnspython
+ipaddr
+defusedxml

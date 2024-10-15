@@ -248,13 +248,13 @@ RST_FILES = {
                 '    >>>> from ipwhois import IPWhois\n'
                 '    >>>> from pprint import pprint\n\n'
                 '    >>>> obj = IPWhois(\'38.113.198.252\')\n'
-                '    >>>> results = obj.lookup_whois(get_referral=True)\n'
+                '    >>>> results = obj.lookup_whois(get_referral=True, timeout=30)\n'
                 '    >>>> pprint(results)\n\n'
                 '    {0}'
             ),
             'queries': {
                 '0': lambda: IPWhois('38.113.198.252',
-                                     timeout=15).lookup_whois(
+                                     timeout=30).lookup_whois(
                     get_referral=True, retry_count=10
                 ),
             }

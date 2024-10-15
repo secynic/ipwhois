@@ -1,3 +1,4 @@
 sphinx
 sphinx_rtd_theme
-dnspython<=2.0.0
+dnspython
+defusedxml

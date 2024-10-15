@@ -48,7 +48,7 @@ Feature Requests
 Testing
 =======
 
-You may have noticed that Travis CI tests are taking longer to complete.
+You may have noticed that CI tests are taking longer to complete.
 This is due to the enabling of online lookup tests (network tests in the
 ipwhois/tests/online directory).
 

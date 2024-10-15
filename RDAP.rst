@@ -306,7 +306,7 @@ Basic usage
     "asn_cidr": "74.125.225.0/24",
     "asn_country_code": "US",
     "asn_date": "2007-03-13",
-    "asn_description": "GOOGLE - Google Inc., US",
+    "asn_description": "GOOGLE, US",
     "asn_registry": "arin",
     "entities": [
         "GOGL"
@@ -330,7 +330,7 @@ Basic usage
         "handle": "NET-74-125-0-0-1",
         "ip_version": "v4",
         "links": [
-            "https://rdap.arin.net/registry/ip/074.125.000.000",
+            "https://rdap.arin.net/registry/ip/74.125.0.0",
             "https://whois.arin.net/rest/net/NET-74-125-0-0-1"
         ],
         "name": "GOOGLE",
@@ -338,17 +338,31 @@ Basic usage
             {
                 "description": "By using the ARIN RDAP/Whois service, you are agreeing to the RDAP/Whois Terms of Use",
                 "links": [
-                    "https://www.arin.net/whois_tou.html"
+                    "https://www.arin.net/resources/registry/whois/tou/"
                 ],
                 "title": "Terms of Service"
+            },
+            {
+                "description": "If you see inaccuracies in the results, please visit: ",
+                "links": [
+                    "https://www.arin.net/resources/registry/whois/inaccuracy_reporting/"
+                ],
+                "title": "Whois Inaccuracy Reporting"
+            },
+            {
+                "description": "Copyright 1997-2024, American Registry for Internet Numbers, Ltd.",
+                "links": None,
+                "title": "Copyright Notice"
             }
         ],
         "parent_handle": "NET-74-0-0-0-0",
         "raw": None,
         "remarks": None,
         "start_address": "74.125.0.0",
-        "status": None,
-        "type": None
+        "status": [
+            "active"
+        ],
+        "type": "DIRECT ALLOCATION"
     },
     "nir": None,
     "objects": {
@@ -357,7 +371,7 @@ Basic usage
                 "address": [
                     {
                         "type": None,
-                        "value": "1600 Amphitheatre Parkway\nMountain View\nCA\n94043\nUNITED STATES"
+                        "value": "1600 Amphitheatre Parkway\nMountain View\nCA\n94043\nUnited States"
                     }
                 ],
                 "email": [
@@ -385,7 +399,7 @@ Basic usage
                 {
                     "action": "last changed",
                     "actor": None,
-                    "timestamp": "2016-11-08T14:12:52-05:00"
+                    "timestamp": "2024-08-01T17:54:23-04:00"
                 },
                 {
                     "action": "registration",
@@ -403,15 +417,27 @@ Basic usage
                 {
                     "description": "By using the ARIN RDAP/Whois service, you are agreeing to the RDAP/Whois Terms of Use",
                     "links": [
-                        "https://www.arin.net/whois_tou.html"
+                        "https://www.arin.net/resources/registry/whois/tou/"
                     ],
                     "title": "Terms of Service"
+                },
+                {
+                    "description": "If you see inaccuracies in the results, please visit: ",
+                    "links": [
+                        "https://www.arin.net/resources/registry/whois/inaccuracy_reporting/"
+                    ],
+                    "title": "Whois Inaccuracy Reporting"
+                },
+                {
+                    "description": "Copyright 1997-2024, American Registry for Internet Numbers, Ltd.",
+                    "links": None,
+                    "title": "Copyright Notice"
                 }
             ],
             "raw": None,
             "remarks": [
                 {
-                    "description": "Please note that the recommended way to file abuse complaints are located in the following links.\r\n\r\nTo report abuse and illegal activity: https://www.google.com/intl/en_US/goodtoknow/online-safety/reporting-abuse/ \r\n\r\nFor legal requests: http://support.google.com/legal \r\n\r\nRegards,\r\nThe Google Team",
+                    "description": "Please note that the recommended way to file abuse complaints are located in the following links.\n\nTo report abuse and illegal activity: https://www.google.com/contact/\n\nFor legal requests: http://support.google.com/legal \n\nRegards,\nThe Google Team",
                     "links": None,
                     "title": "Registration Comments"
                 }
@@ -428,12 +454,12 @@ Basic usage
                 "address": [
                     {
                         "type": None,
-                        "value": "1600 Amphitheatre Parkway\nMountain View\nCA\n94043\nUNITED STATES"
+                        "value": "1600 Amphitheatre Parkway\nMountain View\nCA\n94043\nUnited States"
                     }
                 ],
                 "email": None,
                 "kind": "org",
-                "name": "Google Inc.",
+                "name": "Google LLC",
                 "phone": None,
                 "role": None,
                 "title": None
@@ -446,7 +472,7 @@ Basic usage
                 {
                     "action": "last changed",
                     "actor": None,
-                    "timestamp": "2017-01-28T08:32:29-05:00"
+                    "timestamp": "2019-10-31T15:45:45-04:00"
                 },
                 {
                     "action": "registration",
@@ -462,7 +488,13 @@ Basic usage
             ],
             "notices": None,
             "raw": None,
-            "remarks": None,
+            "remarks": [
+                {
+                    "description": "Please note that the recommended way to file abuse complaints are located in the following links. \n\nTo report abuse and illegal activity: https://www.google.com/contact/\n\nFor legal requests: http://support.google.com/legal \n\nRegards, \nThe Google Team",
+                    "links": None,
+                    "title": "Registration Comments"
+                }
+            ],
             "roles": [
                 "registrant"
             ],
@@ -473,7 +505,7 @@ Basic usage
                 "address": [
                     {
                         "type": None,
-                        "value": "1600 Amphitheatre Parkway\nMountain View\nCA\n94043\nUNITED STATES"
+                        "value": "1600 Amphitheatre Parkway\nMountain View\nCA\n94043\nUnited States"
                     }
                 ],
                 "email": [
@@ -483,7 +515,7 @@ Basic usage
                     }
                 ],
                 "kind": "group",
-                "name": "Google Inc",
+                "name": "Google LLC",
                 "phone": [
                     {
                         "type": [
@@ -501,7 +533,7 @@ Basic usage
                 {
                     "action": "last changed",
                     "actor": None,
-                    "timestamp": "2017-03-13T07:08:09-04:00"
+                    "timestamp": "2023-11-10T07:01:59-05:00"
                 },
                 {
                     "action": "registration",
@@ -519,16 +551,28 @@ Basic usage
                 {
                     "description": "By using the ARIN RDAP/Whois service, you are agreeing to the RDAP/Whois Terms of Use",
                     "links": [
-                        "https://www.arin.net/whois_tou.html"
+                        "https://www.arin.net/resources/registry/whois/tou/"
                     ],
                     "title": "Terms of Service"
+                },
+                {
+                    "description": "If you see inaccuracies in the results, please visit: ",
+                    "links": [
+                        "https://www.arin.net/resources/registry/whois/inaccuracy_reporting/"
+                    ],
+                    "title": "Whois Inaccuracy Reporting"
+                },
+                {
+                    "description": "Copyright 1997-2024, American Registry for Internet Numbers, Ltd.",
+                    "links": None,
+                    "title": "Copyright Notice"
                 }
             ],
             "raw": None,
             "remarks": None,
             "roles": [
-                "administrative",
-                "technical"
+                "technical",
+                "administrative"
             ],
             "status": [
                 "validated"
@@ -554,6 +598,24 @@ Use a proxy
         })
     >>>> opener = request.build_opener(handler)
     >>>> obj = IPWhois('74.125.225.229', proxy_opener = opener)
+
+Use a local file with RDAP data
+-------------------------------
+
+::
+
+    >>>> from ipwhois.net import Net
+    >>>> from ipwhois.rdap import RDAP
+    >>>> data_dir = '/some/dir'
+    >>>> with io.open(str(data_dir) + '/rdap.json', 'r') as data_file:
+    >>>>    data = json.load(data_file)
+    >>>>    for key, val in data.items():
+    >>>>    net = Net(key)
+    >>>>    obj = RDAP(net)
+    >>>>    obj.lookup(response=val['response'],
+                asn_data=val['asn_data'],
+                depth=0
+            )
 
 Optimizing queries for your network
 -----------------------------------
