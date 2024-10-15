@@ -18,8 +18,7 @@ class TestExperimental(TestCommon):
                list(ipv6_generate_random(500)))
         try:
             self.assertIsInstance(get_bulk_asn_whois(addresses=ips), str)
-        except ASNLookupError:
-            pass
+            self.assertIsInstance(get_bulk_asn_whois(addresses=ips, as_dict=True), dict)
         except AssertionError as e:
             raise e
         except Exception as e:
