@@ -1,10 +1,22 @@
 Changelog
 =========
 
-1.3.0 (TBD)
------------
+1.3.0 (2024-10-15)
+------------------
 
 - Fixed deprecated query method of dnspython (#294 - monoidic)
+- Upgrade dnspython (#303)
+- Added requirement for defusedxml for security (#306)
+- Added support for Python up to 3.12
+- Remove reserved IANA 198.97.38.0/24 (#315)
+- Fix for ASN queries against RADB for RIPE source (#317)
+- Temporary (move to config later) hardcoding of user agent for ASN origin
+  lookup to avoid 403
+- Updated to HTTPS where applicable (#307)
+- Updated ARIN bootstrap URL (#300)
+- Close sockets on exception to avoid warnings
+- Move tests from assertEquals to assertEqual
+- Fix for local domain searches with ASN (#324)
 
 1.2.0 (2020-09-17)
 ------------------

@@ -10,6 +10,20 @@ This page is new as of version 1.0.0. Any information on older versions is
 likely missing or incomplete.
 
 ******
+v1.3.0
+******
+
+- Upgrade dnspython
+- Added requirement for defusedxml for security
+- Added support for Python up to 3.12
+- Remove reserved IANA 198.97.38.0/24
+- Fix for ASN queries against RADB for RIPE source
+- Temporary (move to config later) hardcoding of user agent for ASN origin
+  lookup to avoid 403
+- Updated to HTTPS where applicable
+- Fix for local domain searches with ASN
+
+******
 v1.2.0
 ******
 

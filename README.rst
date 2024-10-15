@@ -2,8 +2,6 @@
 ipwhois
 =======
 
-.. image:: https://travis-ci.org/secynic/ipwhois.svg?branch=master
-    :target: https://travis-ci.org/secynic/ipwhois
 .. image:: https://coveralls.io/repos/github/secynic/ipwhois/badge.svg?branch=
     master
     :target: https://coveralls.io/github/secynic/ipwhois?branch=master

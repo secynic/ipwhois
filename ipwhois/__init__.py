@@ -26,4 +26,4 @@ from .exceptions import *
 from .net import Net
 from .ipwhois import IPWhois
 
-__version__ = '1.2.0'
+__version__ = '1.3.0'
