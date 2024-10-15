@@ -100,10 +100,12 @@ Python 2.7::
 
     dnspython
     ipaddr
+    defusedxml
 
 Python 3.4+::
 
     dnspython
+    defusedxml
 
 Installing
 ==========
