@@ -611,11 +611,16 @@ class Net:
                         'exceeded, wait and try again (possibly a '
                         'temporary block).'.format(self.address_str))
 
-            elif ('error 501' in response or 'error 230' in response
-                  ):  # pragma: no cover
+            elif 'error 501' in response:  # pragma: no cover
 
                 log.debug('WHOIS query error: {0}'.format(response))
                 raise ValueError
+
+            elif 'error 230' in response:  # pragma: no cover
+
+                # No results found
+                log.debug('WHOIS query error: {0}'.format(response))
+                pass
 
             return str(response)
 
