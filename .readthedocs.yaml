@@ -33,4 +33,4 @@ python:
 
    install:
 
-     - requirements: docs/requirements.txt
+     - requirements: ipwhois/docs/requirements.txt
