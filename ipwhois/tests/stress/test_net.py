@@ -39,5 +39,5 @@ class TestNet(TestCommon):
                     raise Exception('HTTPLookupError has been raised 5 times. '
                                     'Likely cause is socket connection '
                                     'timeouts. Quitting test to avoid an '
-                                    'endless loop.')
+                                    'endless loop.') from e
                 continue
